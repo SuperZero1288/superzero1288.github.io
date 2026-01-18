@@ -3,46 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぜろくんでんせつのウェブサイト</title>
-    <link rel="stylesheet" href="style.css">
+    <title>ZERO LEGEND - PORTFOLIO</title>
+    <style>
+        /* --- CSS設定エリア --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* デフォルトの背景色 */
+            color: #f8fafc;
+            transition: background-color 0.8s ease; /* 背景色をフワッと変える魔法 */
+            overflow-x: hidden;
+        }
+
+        /* 画面を左右に分割するレイアウト */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 左1:右1 の割合 */
+            min-height: 100vh;
+        }
+
+        /* 左側：画像表示エリア（固定） */
+        .visual-area {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .visual-frame {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 16/9;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* 画像そのものの設定 */
+        #dynamic-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* 画像切り替え時のアニメーション用 */
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* 右側：コンテンツエリア（スクロール） */
+        .content-area {
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4rem; /* セクション間の余白 */
+        }
+
+        /* 各セクションのデザイン */
+        header h1 {
+            font-size: 4rem;
+            line-height: 1;
+            margin: 0;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-section {
+            padding: 2rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .info-section:hover {
+            transform: translateX(10px); /* ホバー時に少し右に動く */
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* リンクボタンのデザイン */
+        .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+        .btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* スマホ対応：縦並びにする */
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .visual-area { position: relative; height: 300px; }
+            header h1 { font-size: 2.5rem; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header id="headline">
-            <h1>ZERO LEGEND</h1>
-            <p class="subtitle">ぜろくんでんせつのウェブサイト</p>
-        </header>
 
-        <section class="about-me">
-            <h2>About Me</h2>
-            <p>ガジェットとUnityが趣味の16歳です。</p>
-        </section>
-
-        <section class="links">
-            <h2>Social & Code</h2>
-            <div class="link-grid">
-                <a href="https://x.com/ZErrrrrO_1288" class="btn twitter" target="_blank" rel="noopener noreferrer">Twitter メイン</a>
-                <a href="https://www.youtube.com/channel/UCuyl2Vpy1E0Fneqdpb_ITDA" class="btn youtube" target="_blank" rel="noopener noreferrer">YouTube</a>
-                <a href="https://github.com/SuperZero1288" class="btn github" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <div class="main-layout">
+        <div class="visual-area">
+            <div class="visual-frame">
+                <img id="dynamic-image" src="https://placehold.co/600x400/1e293b/FFF?text=ZERO+LEGEND" alt="Main Visual">
             </div>
-        </section>
+        </div>
 
-        <section class="links">
-            <h2>VRChat & Creative</h2>
-            <div class="link-grid">
-                <a href="https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6" class="btn vrchat" target="_blank" rel="noopener noreferrer">VRChat Profile</a>
-                <a href="https://x.com/ZErrrrrO_VRC" class="btn twitter-vrc" target="_blank" rel="noopener noreferrer">Twitter VRChat</a>
-                <a href="https://zerrrrro.booth.pm/" class="btn booth" target="_blank" rel="noopener noreferrer">Booth ぜろいちば</a>
-            </div>
-        </section>
+        <div class="content-area">
+            <header>
+                <h1>ZERO<br>LEGEND</h1>
+                <p>ガジェットとUnityが趣味の16歳。</p>
+            </header>
 
-        <section class="links">
-            <h2>Marketplace</h2>
-            <div class="link-grid">
-                <a href="https://jp.mercari.com/user/profile/152986747?utm_source=android&utm_medium=share" class="btn mercari" target="_blank" rel="noopener noreferrer">メルカリ</a>
-                <a href="https://paypayfleamarket.yahoo.co.jp/user/p55065762" class="btn paypay" target="_blank" rel="noopener noreferrer">Paypayフリマ</a>
-            </div>
-        </section>
+            <section class="info-section hover-trigger" 
+                     data-img="https://placehold.co/600x400/3b82f6/FFF?text=About+Me" 
+                     data-bg="#172554">
+                <h2>About Me</h2>
+                <p>Unityでの制作活動を中心に、ガジェットいじりをしています。<br>
+                最強のクリエイターを目指して修行中。</p>
+            </section>
+
+            <section class="info-section hover-trigger" 
+                     data-img="https://placehold.co/600x400/22c55e/FFF?text=Coding+Life" 
+                     data-bg="#064e3b">
+                <h2>Social & Code</h2>
+                <div class="link-grid">
+                    <a href="https://x.com/ZErrrrrO_1288" class="btn">Twitter Main</a>
+                    <a href="https://www.youtube.com/channel/UCuyl2Vpy1E0Fneqdpb_ITDA" class="btn">YouTube</a>
+                    <a href="https://github.com/SuperZero1288" class="btn">GitHub</a>
+                </div>
+            </section>
+
+            <section class="info-section hover-trigger" 
+                     data-img="https://placehold.co/600x400/06b6d4/FFF?text=VRChat+World" 
+                     data-bg="#164e63">
+                <h2>VRChat & Creative</h2>
+                <div class="link-grid">
+                    <a href="https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6" class="btn">VRChat Profile</a>
+                    <a href="https://x.com/ZErrrrrO_VRC" class="btn">Twitter VRC</a>
+                    <a href="https://zerrrrro.booth.pm/" class="btn">Booth</a>
+                </div>
+            </section>
+
+            <section class="info-section hover-trigger" 
+                     data-img="https://placehold.co/600x400/f43f5e/FFF?text=Marketplace" 
+                     data-bg="#881337">
+                <h2>Marketplace</h2>
+                <div class="link-grid">
+                    <a href="https://jp.mercari.com/user/profile/152986747" class="btn">Mercari</a>
+                    <a href="https://paypayfleamarket.yahoo.co.jp/user/p55065762" class="btn">PayPayフリマ</a>
+                </div>
+            </section>
+            
+            <footer style="margin-top: 50px; color: #64748b; font-size: 0.8rem;">
+                © 2024 Zero Legend
+            </footer>
+        </div>
     </div>
+
+    <script>
+        // --- JavaScriptエリア ---
+        // ここでお前さんの野望を実現するロジックを組んでいる
+
+        const sections = document.querySelectorAll('.hover-trigger');
+        const displayImage = document.getElementById('dynamic-image');
+        const body = document.body;
+
+        // デフォルトの状態（何もホバーしていない時）
+        const defaultState = {
+            img: "https://placehold.co/600x400/1e293b/FFF?text=ZERO+LEGEND",
+            bg: "#0f172a"
+        };
+
+        sections.forEach(section => {
+            // マウスが乗った時
+            section.addEventListener('mouseenter', () => {
+                const newImg = section.getAttribute('data-img');
+                const newBg = section.getAttribute('data-bg');
+
+                // 画像をフワッと切り替える
+                displayImage.classList.add('fade-out');
+                body.style.backgroundColor = newBg;
+
+                setTimeout(() => {
+                    displayImage.src = newImg;
+                    displayImage.classList.remove('fade-out');
+                }, 300); // 0.3秒後に画像を入れ替え
+            });
+
+            // マウスが離れた時
+            section.addEventListener('mouseleave', () => {
+                // ここを有効にすると「離れたら即デフォルト」に戻るが、
+                // 連続して見るときに目がチカチカするから、あえて
+                // 「次のセクションに乗るまではそのまま」か、
+                // 「完全にエリア外に出たら戻す」処理にするのがプロの技だ。
+                // 今回はシンプルにするため、何もしない（次のセクションに乗れば変わる）。
+            });
+        });
+
+        // 右側のコンテンツエリア全体からマウスが外れたらデフォルトに戻す
+        document.querySelector('.content-area').addEventListener('mouseleave', () => {
+             displayImage.classList.add('fade-out');
+             body.style.backgroundColor = defaultState.bg;
+             setTimeout(() => {
+                displayImage.src = defaultState.img;
+                displayImage.classList.remove('fade-out');
+            }, 300);
+        });
+
+    </script>
 </body>
 </html>
