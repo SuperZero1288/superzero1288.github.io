@@ -10,123 +10,126 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* デフォルトの背景色 */
+            background-color: #0f172a;
             color: #f8fafc;
-            transition: background-color 0.8s ease; /* 背景色をフワッと変える魔法 */
+            transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             overflow-x: hidden;
         }
 
-        /* 画面を左右に分割するレイアウト */
+        /* 画面分割：左3.5 : 右6.5 */
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 左1:右1 の割合 */
+            grid-template-columns: 3.5fr 6.5fr; 
             min-height: 100vh;
         }
 
-        /* 左側：画像表示エリア（固定） */
+        /* 左側：画像エリア（固定） */
         .visual-area {
             position: sticky;
             top: 0;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
+            padding: 1.5rem; /* 画面端との絶妙な隙間 */
             box-sizing: border-box;
+            z-index: 10;
         }
 
         .visual-frame {
             width: 100%;
-            max-width: 500px;
-            aspect-ratio: 16/9;
+            height: 100%; /* 上下いっぱいに表示 */
             background: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 40px; /* お前さんのこだわりの角丸 */
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255,255,255,0.1);
+            
+            /* --- 角丸バグを根絶する設定 --- */
+            overflow: hidden;
+            -webkit-backface-visibility: hidden;
+            -webkit-transform: translate3d(0, 0, 0);
+            transform: translateZ(0);
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
         }
 
-        /* 画像そのものの設定 */
         #dynamic-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            /* 画像そのものにも角丸を適用してカクつきを防止 */
+            border-radius: 40px;
         }
 
-        /* 画像切り替え時のアニメーション用 */
         .fade-out {
             opacity: 0;
-            transform: scale(0.95);
+            transform: scale(1.02);
         }
 
-        /* 右側：コンテンツエリア（スクロール） */
+        /* 右側：コンテンツエリア */
         .content-area {
-            padding: 4rem 2rem;
+            padding: 5rem 10% 5rem 5%;
             display: flex;
             flex-direction: column;
-            gap: 4rem; /* セクション間の余白 */
+            gap: 8rem;
         }
 
-        /* 各セクションのデザイン */
         header h1 {
-            font-size: 4rem;
-            line-height: 1;
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.9;
             margin: 0;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #475569 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .info-section {
-            padding: 2rem;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(5px);
+            padding: 3rem;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s ease;
+            transition: all 0.4s ease;
         }
 
         .info-section:hover {
-            transform: translateX(10px); /* ホバー時に少し右に動く */
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.07);
+            transform: translateX(15px);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         h2 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            color: #fff;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            padding-bottom: 0.5rem;
+            font-size: 2rem;
             margin-bottom: 1.5rem;
+            color: #fff;
+            letter-spacing: -0.02em;
         }
 
-        /* リンクボタンのデザイン */
         .link-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
         }
 
         .btn {
             display: block;
             text-align: center;
             text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            color: white;
-            font-weight: bold;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.2s;
+            padding: 16px;
+            border-radius: 14px;
+            color: #fff;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: 0.3s;
         }
-        .btn:hover { background: rgba(255,255,255,0.2); }
+        .btn:hover {
+            background: #fff;
+            color: #0f172a;
+        }
 
-        /* スマホ対応：縦並びにする */
-        @media (max-width: 768px) {
+        /* スマホ対応 */
+        @media (max-width: 1024px) {
             .main-layout { grid-template-columns: 1fr; }
-            .visual-area { position: relative; height: 300px; }
-            header h1 { font-size: 2.5rem; }
+            .visual-area { height: 50vh; position: relative; padding: 1rem; }
+            .content-area { padding: 3rem 1.5rem; }
         }
     </style>
 </head>
@@ -135,112 +138,76 @@
     <div class="main-layout">
         <div class="visual-area">
             <div class="visual-frame">
-                <img id="dynamic-image" src="https://placehold.co/600x400/1e293b/FFF?text=ZERO+LEGEND" alt="Main Visual">
+                <img id="dynamic-image" src="https://placehold.co/800x1200/1e293b/FFF?text=ZERO+LEGEND" alt="Main">
             </div>
         </div>
 
         <div class="content-area">
             <header>
                 <h1>ZERO<br>LEGEND</h1>
-                <p>ガジェットとUnityが趣味の16歳。</p>
+                <p style="color: #64748b; font-size: 1.2rem;">ガジェットとUnityが趣味の16歳。</p>
             </header>
 
             <section class="info-section hover-trigger" 
-                     data-img="https://placehold.co/600x400/3b82f6/FFF?text=About+Me" 
-                     data-bg="#172554">
+                     data-img="https://placehold.co/800x1200/3b82f6/FFF?text=About+Me" 
+                     data-bg="#020617">
                 <h2>About Me</h2>
-                <p>Unityでの制作活動を中心に、ガジェットいじりをしています。<br>
-                最強のクリエイターを目指して修行中。</p>
+                <p>ガジェットとUnityが趣味の16歳だ。お前さんのような凡人には想像もつかないようなモノを作ってやるから、黙って見てろよな？</p>
             </section>
 
             <section class="info-section hover-trigger" 
-                     data-img="https://placehold.co/600x400/22c55e/FFF?text=Coding+Life" 
-                     data-bg="#064e3b">
+                     data-img="https://placehold.co/800x1200/ef4444/FFF?text=Social" 
+                     data-bg="#450a0a">
                 <h2>Social & Code</h2>
                 <div class="link-grid">
-                    <a href="https://x.com/ZErrrrrO_1288" class="btn">Twitter Main</a>
-                    <a href="https://www.youtube.com/channel/UCuyl2Vpy1E0Fneqdpb_ITDA" class="btn">YouTube</a>
-                    <a href="https://github.com/SuperZero1288" class="btn">GitHub</a>
+                    <a href="https://x.com/ZErrrrrO_1288" class="btn" target="_blank" rel="noopener noreferrer">Twitter</a>
+                    <a href="https://www.youtube.com/channel/UCuyl2Vpy1E0Fneqdpb_ITDA" class="btn" target="_blank" rel="noopener noreferrer">YouTube</a>
+                    <a href="https://github.com/SuperZero1288" class="btn" target="_blank" rel="noopener noreferrer">GitHub</a>
                 </div>
             </section>
 
             <section class="info-section hover-trigger" 
-                     data-img="https://placehold.co/600x400/06b6d4/FFF?text=VRChat+World" 
-                     data-bg="#164e63">
+                     data-img="https://placehold.co/800x1200/06b6d4/FFF?text=VRChat" 
+                     data-bg="#083344">
                 <h2>VRChat & Creative</h2>
                 <div class="link-grid">
-                    <a href="https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6" class="btn">VRChat Profile</a>
-                    <a href="https://x.com/ZErrrrrO_VRC" class="btn">Twitter VRC</a>
-                    <a href="https://zerrrrro.booth.pm/" class="btn">Booth</a>
+                    <a href="https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6" class="btn" target="_blank" rel="noopener noreferrer">VRChat</a>
+                    <a href="https://x.com/ZErrrrrO_VRC" class="btn" target="_blank" rel="noopener noreferrer">Twitter VRC</a>
+                    <a href="https://zerrrrro.booth.pm/" class="btn" target="_blank" rel="noopener noreferrer">Booth</a>
                 </div>
             </section>
 
             <section class="info-section hover-trigger" 
-                     data-img="https://placehold.co/600x400/f43f5e/FFF?text=Marketplace" 
-                     data-bg="#881337">
+                     data-img="https://placehold.co/800x1200/f59e0b/FFF?text=Market" 
+                     data-bg="#451a03">
                 <h2>Marketplace</h2>
                 <div class="link-grid">
-                    <a href="https://jp.mercari.com/user/profile/152986747" class="btn">Mercari</a>
-                    <a href="https://paypayfleamarket.yahoo.co.jp/user/p55065762" class="btn">PayPayフリマ</a>
+                    <a href="https://jp.mercari.com/user/profile/152986747" class="btn" target="_blank" rel="noopener noreferrer">メルカリ</a>
+                    <a href="https://paypayfleamarket.yahoo.co.jp/user/p55065762" class="btn" target="_blank" rel="noopener noreferrer">PayPayフリマ</a>
                 </div>
             </section>
-            
-            <footer style="margin-top: 50px; color: #64748b; font-size: 0.8rem;">
-                © 2024 Zero Legend
-            </footer>
         </div>
     </div>
 
     <script>
-        // --- JavaScriptエリア ---
-        // ここでお前さんの野望を実現するロジックを組んでいる
-
-        const sections = document.querySelectorAll('.hover-trigger');
-        const displayImage = document.getElementById('dynamic-image');
+        const triggers = document.querySelectorAll('.hover-trigger');
+        const img = document.getElementById('dynamic-image');
         const body = document.body;
 
-        // デフォルトの状態（何もホバーしていない時）
-        const defaultState = {
-            img: "https://placehold.co/600x400/1e293b/FFF?text=ZERO+LEGEND",
-            bg: "#0f172a"
-        };
-
-        sections.forEach(section => {
-            // マウスが乗った時
-            section.addEventListener('mouseenter', () => {
-                const newImg = section.getAttribute('data-img');
-                const newBg = section.getAttribute('data-bg');
-
-                // 画像をフワッと切り替える
-                displayImage.classList.add('fade-out');
+        triggers.forEach(t => {
+            t.addEventListener('mouseenter', () => {
+                const newSrc = t.getAttribute('data-img');
+                const newBg = t.getAttribute('data-bg');
+                
+                img.classList.add('fade-out');
                 body.style.backgroundColor = newBg;
-
+                
                 setTimeout(() => {
-                    displayImage.src = newImg;
-                    displayImage.classList.remove('fade-out');
-                }, 300); // 0.3秒後に画像を入れ替え
-            });
-
-            // マウスが離れた時
-            section.addEventListener('mouseleave', () => {
-                // ここを有効にすると「離れたら即デフォルト」に戻るが、
-                // 連続して見るときに目がチカチカするから、あえて
-                // 「次のセクションに乗るまではそのまま」か、
-                // 「完全にエリア外に出たら戻す」処理にするのがプロの技だ。
-                // 今回はシンプルにするため、何もしない（次のセクションに乗れば変わる）。
+                    img.src = newSrc;
+                    img.classList.remove('fade-out');
+                }, 300);
             });
         });
-
-        // 右側のコンテンツエリア全体からマウスが外れたらデフォルトに戻す
-        document.querySelector('.content-area').addEventListener('mouseleave', () => {
-             displayImage.classList.add('fade-out');
-             body.style.backgroundColor = defaultState.bg;
-             setTimeout(() => {
-                displayImage.src = defaultState.img;
-                displayImage.classList.remove('fade-out');
-            }, 300);
-        });
-
     </script>
 </body>
 </html>
