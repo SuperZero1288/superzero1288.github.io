@@ -87,6 +87,7 @@
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.4s ease;
+            cursor: pointer;
         }
 
         .info-section:hover {
@@ -193,20 +194,34 @@
         const triggers = document.querySelectorAll('.hover-trigger');
         const img = document.getElementById('dynamic-image');
         const body = document.body;
+        const contentArea = document.querySelector('.content-area');
+
+        // デフォルトの状態を保存
+        const defaultState = {
+            img: "https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/VRChat_2025-10-04_02-36-04.052_2560x1440.png?raw=true",
+            bg: "#0f172a"
+        };
+
+        // 表示を更新する共通の関数だぞ？
+        function updateView(src, bg) {
+            img.classList.add('fade-out');
+            body.style.backgroundColor = bg;
+            
+            setTimeout(() => {
+                img.src = src;
+                img.classList.remove('fade-out');
+            }, 300);
+        }
 
         triggers.forEach(t => {
             t.addEventListener('mouseenter', () => {
-                const newSrc = t.getAttribute('data-img');
-                const newBg = t.getAttribute('data-bg');
-                
-                img.classList.add('fade-out');
-                body.style.backgroundColor = newBg;
-                
-                setTimeout(() => {
-                    img.src = newSrc;
-                    img.classList.remove('fade-out');
-                }, 300);
+                updateView(t.getAttribute('data-img'), t.getAttribute('data-bg'));
             });
+        });
+
+        // 右側のエリアからマウスが外れたら元に戻す処理だ
+        contentArea.addEventListener('mouseleave', () => {
+            updateView(defaultState.img, defaultState.bg);
         });
     </script>
 </body>
