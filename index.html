@@ -28,20 +28,18 @@
             position: sticky;
             top: 0;
             height: 100vh;
-            padding: 1.5rem; /* 画面端との絶妙な隙間 */
+            padding: 1.5rem;
             box-sizing: border-box;
             z-index: 10;
         }
 
         .visual-frame {
             width: 100%;
-            height: 100%; /* 上下いっぱいに表示 */
+            height: 100%;
             background: rgba(0,0,0,0.2);
             border-radius: 40px; 
             box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255,255,255,0.1);
-            
-            /* --- 角丸バグを根絶する設定 --- */
             overflow: hidden;
             -webkit-backface-visibility: hidden;
             -webkit-transform: translate3d(0, 0, 0);
@@ -54,7 +52,6 @@
             height: 100%;
             object-fit: cover;
             transition: opacity 0.6s ease, transform 0.6s ease;
-            /* 画像そのものにも角丸を適用してカクつきを防止 */
             border-radius: 40px;
         }
 
@@ -126,7 +123,6 @@
             color: #0f172a;
         }
 
-        /* スマホ対応 */
         @media (max-width: 1024px) {
             .main-layout { grid-template-columns: 1fr; }
             .visual-area { height: 50vh; position: relative; padding: 1rem; }
@@ -194,15 +190,13 @@
         const triggers = document.querySelectorAll('.hover-trigger');
         const img = document.getElementById('dynamic-image');
         const body = document.body;
-        const contentArea = document.querySelector('.content-area');
 
-        // デフォルトの状態を保存
+        // デフォルトの状態
         const defaultState = {
             img: "https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/VRChat_2025-10-04_02-36-04.052_2560x1440.png?raw=true",
             bg: "#0f172a"
         };
 
-        // 表示を更新する共通の関数だぞ？
         function updateView(src, bg) {
             img.classList.add('fade-out');
             body.style.backgroundColor = bg;
@@ -214,14 +208,15 @@
         }
 
         triggers.forEach(t => {
+            // マウスが乗った時
             t.addEventListener('mouseenter', () => {
                 updateView(t.getAttribute('data-img'), t.getAttribute('data-bg'));
             });
-        });
 
-        // 右側のエリアからマウスが外れたら元に戻す処理だ
-        contentArea.addEventListener('mouseleave', () => {
-            updateView(defaultState.img, defaultState.bg);
+            // 【ここが重要だ！】マウスが「個別のセクション」から離れた瞬間にリセットするぞ
+            t.addEventListener('mouseleave', () => {
+                updateView(defaultState.img, defaultState.bg);
+            });
         });
     </script>
 </body>
