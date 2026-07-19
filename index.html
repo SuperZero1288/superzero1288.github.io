@@ -12,10 +12,8 @@
             padding: 0;
         }
 
-        /* スムーズスクロールを有効化する設定だぞ？ */
         html {
             scroll-behavior: smooth;
-            scroll-padding-top: 20px; /* スクロールしたときに少し余白を残す調整だな？ */
         }
 
         body {
@@ -39,7 +37,7 @@
         .hero-slider {
             position: relative;
             width: 100vw;
-            height: 100vh;
+            height: 100vh; /* 1画面分の高さだぞ？ */
             overflow: hidden;
             background-color: #000;
         }
@@ -93,14 +91,26 @@
             60% { transform: translate(-50%, -5px); }
         }
 
-        /* ――― コンテンツセクション ――― */
+        /* ――― コンテンツセクション（ここも1画面分のサイズにするぞ？） ――― */
+        .content-screen {
+            width: 100vw;
+            height: 100vh; /* スライドショーと全く同じ高さだな？ */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 上下のパーツを綺麗に配置するぞ？ */
+            padding: 20px 0;
+            overflow: hidden; /* はみ出しを禁止してスクロール量を固定するぞ？ */
+        }
+
         .header-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
             max-width: 1200px;
-            margin: 40px auto 20px;
+            margin: 0 auto;
             padding: 0 20px;
+            flex-shrink: 0;
         }
 
         .site-title {
@@ -126,16 +136,19 @@
         .container {
             display: flex;
             flex-direction: column;
+            width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            gap: 24px;
+            padding: 10px 20px;
+            gap: 16px;
+            flex-grow: 1;
+            justify-content: center; /* 縦方向の中央寄せだな？ */
         }
 
         .main-content-layout {
             display: flex;
             gap: 24px;
-            align-items: flex-start;
+            align-items: stretch;
         }
 
         /* 左側：プロフィールカード */
@@ -144,27 +157,30 @@
             background-color: #252229;
             border: 1px solid #312d36;
             border-radius: 12px;
-            padding: 40px 24px;
+            padding: 30px 24px;
             text-align: center;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .avatar-container {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             background-color: #ffccd5;
             border-radius: 24px;
-            margin: 0 auto 20px;
+            margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 2.8rem;
             border: 2px solid #ff8fa3;
         }
 
         .profile-name {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             margin-bottom: 4px;
         }
@@ -172,16 +188,16 @@
         .profile-id {
             font-size: 0.85rem;
             color: #ff8fa3;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             letter-spacing: 1px;
         }
 
         .profile-desc {
             background-color: #1a171d;
             border-radius: 8px;
-            padding: 16px;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            padding: 14px;
+            font-size: 0.85rem;
+            line-height: 1.5;
             text-align: left;
             color: #c0c0c8;
         }
@@ -192,14 +208,17 @@
             background-color: #252229;
             border: 1px solid #312d36;
             border-radius: 12px;
-            padding: 32px;
+            padding: 24px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .section-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -212,15 +231,15 @@
         }
 
         .section-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #888;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 12px;
         }
 
         .grid-item {
@@ -239,9 +258,9 @@
         }
 
         .item-content {
-            padding: 30px 20px;
+            padding: 20px 16px;
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #d0d0d8;
             flex-grow: 1;
             display: flex;
@@ -252,9 +271,10 @@
 
         .item-link {
             border-top: 1px solid #3d3745;
-            padding: 12px 20px;
-            font-size: 0.85rem;
+            padding: 10px 16px;
+            font-size: 0.8rem;
             background-color: #28242e;
+            text-align: center;
         }
 
         /* 下部：アクティビティセクション */
@@ -262,36 +282,35 @@
             background-color: #252229;
             border: 1px solid #312d36;
             border-radius: 12px;
-            padding: 32px;
+            padding: 24px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            margin-top: 8px;
         }
 
         .activities-list {
-            margin-top: 16px;
+            margin-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .activity-card {
             background-color: #2d2933;
             border: 1px solid #3d3745;
             border-radius: 8px;
-            padding: 16px;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .activity-date {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #ff8fa3;
             font-weight: bold;
         }
 
         .activity-text {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: #d0d0d8;
             flex-grow: 1;
             margin-left: 20px;
@@ -299,6 +318,10 @@
 
         /* レスポンシブ対応 */
         @media (max-width: 850px) {
+            .content-screen {
+                height: auto;
+                overflow: visible;
+            }
             .main-content-layout {
                 flex-direction: column;
                 align-items: center;
@@ -314,7 +337,7 @@
 </head>
 <body>
 
-    <!-- 全画面スライドショー -->
+    <!-- 全画面スライドショー (1画面目) -->
     <div class="hero-slider">
         <div class="slides"></div>
         <div class="slides"></div>
@@ -322,82 +345,81 @@
         <div class="scroll-indicator">SCROLL DOWN ▼</div>
     </div>
 
-    <!-- ナビゲーションヘッダー -->
-    <header class="header-nav">
-        <div class="site-title">portfolio / ぜろくんでんせつ</div>
-        <nav class="nav-links">
-            <!-- 各セクションのidと連動させてスクロールさせるぞ？ -->
-            <a href="#about">About</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#activities">Activities</a>
-        </nav>
-    </header>
+    <!-- コンテンツ画面 (ここが丸ごと2画面目になるぞ？) -->
+    <div class="content-screen" id="about">
+        <!-- ナビゲーションヘッダー -->
+        <header class="header-nav">
+            <div class="site-title">portfolio / ぜろくんでんせつ</div>
+            <nav class="nav-links">
+                <!-- 1枚の画面に収まっているのでスクロール先はすべて同じコンテナだぞ？ -->
+                <a href="#about">About</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#activities">Activities</a>
+            </nav>
+        </header>
 
-    <!-- メインコンテンツ -->
-    <main class="container">
-        
-        <div class="main-content-layout">
-            <!-- 左側：プロフィール情報 (About) -->
-            <section class="profile-card" id="about">
-                <div class="avatar-container">🐱</div>
-                <h1 class="profile-name">ぜろくんでんせつ</h1>
-                <p class="profile-id">ZErrrrrO</p>
-                <div class="profile-desc">
-                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
-                </div>
-            </section>
-
-            <!-- 右側：リンク一覧 (Gallery) -->
-            <section class="gallery-section" id="gallery">
-                <h2 class="section-title">Gallery（制作物・リンク）</h2>
-                <p class="section-subtitle">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
-                
-                <div class="grid-container">
-                    <div class="grid-item">
-                        <div class="item-content">🐙 GitHub Repository</div>
-                        <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
-                    </div>
-                    
-                    <div class="grid-item">
-                        <div class="item-content">🕊️ Twitter / X</div>
-                        <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
-                    </div>
-                    
-                    <div class="grid-item">
-                        <div class="item-content">📸 VRChat World View</div>
-                        <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
-                    </div>
-                    
-                    <div class="grid-item">
-                        <div class="item-content">✨ Custom Shader</div>
-                        <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- 下部：アクティビティ履歴 (Activities) -->
-        <section class="activities-section" id="activities">
-            <h2 class="section-title">Activities（活動履歴）</h2>
-            <p class="section-subtitle">最近の進捗や更新情報だぞ？</p>
+        <!-- メインコンテンツ -->
+        <main class="container">
             
-            <div class="activities-list">
-                <div class="activity-card">
-                    <span class="activity-date">2026.02</span>
-                    <span class="activity-text">VRChat RNGプロジェクトのUIをTextMeshProへ移行完了だぞ？</span>
-                </div>
-                <div class="activity-card">
-                    <span class="activity-date">2026.01</span>
-                    <span class="activity-text">ポートフォリオ用ウェブサイトのレイアウトをリニューアルしたぞ？</span>
-                </div>
-                <div class="activity-card">
-                    <span class="activity-date">2025.12</span>
-                    <span class="activity-text">UdonSharpを使用した新しいクライミングシステムギミックを試作中だな？</span>
-                </div>
-            </div>
-        </section>
+            <div class="main-content-layout" id="gallery">
+                <!-- 左側：プロフィール情報 (About) -->
+                <section class="profile-card">
+                    <div class="avatar-container">🐱</div>
+                    <h1 class="profile-name">ぜろくんでんせつ</h1>
+                    <p class="profile-id">ZErrrrrO</p>
+                    <div class="profile-desc">
+                        UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
+                    </div>
+                </section>
 
-    </main>
+                <!-- 右側：リンク一覧 (Gallery) -->
+                <section class="gallery-section">
+                    <h2 class="section-title">Gallery（制作物・リンク）</h2>
+                    <p class="section-subtitle">画像をクリックするとそれぞれのリンク先のジャンプするぞ？</p>
+                    
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <div class="item-content">🐙 GitHub Repository</div>
+                            <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="item-content">🕊️ Twitter / X</div>
+                            <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="item-content">📸 VRChat World View</div>
+                            <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
+                        </div>
+                        
+                        <div class="grid-item">
+                            <div class="item-content">✨ Custom Shader</div>
+                            <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- 下部：アクティビティ履歴 (Activities) -->
+            <section class="activities-section" id="activities">
+                <h2 class="section-title">Activities（活動履歴）</h2>
+                <p class="section-subtitle">最近の進捗や更新情報だぞ？</p>
+                
+                <div class="activities-list">
+                    <div class="activity-card">
+                        <span class="activity-date">2026.02</span>
+                        <span class="activity-text">VRChat RNGプロジェクトのUIをTextMeshProへ移行完了だぞ？</span>
+                    </div>
+                    <div class="activity-card">
+                        <span class="activity-date">2026.01</span>
+                        <span class="activity-text">ポートフォリオ用ウェブサイトのレイアウトをリニューアルしたぞ？</span>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
 
 </body>
 </html>
