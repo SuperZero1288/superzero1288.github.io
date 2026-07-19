@@ -3,119 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VRChat Portfolio</title>
+    <title>ぜろくんでんせつ - ポートフォリオ</title>
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --card-bg: #2a2a2a;
-            --accent-color: #00d2ff;
-            --text-color: #ffffff;
-            --text-muted: #aaaaaa;
+            --bg-color: #121214;
+            --card-bg: #1e1e22;
+            --card-sub-bg: #252529;
+            --accent-color: #ff6584;
+            --text-color: #e0e0e6;
+            --text-muted: #a0a0a8;
         }
 
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+        html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* 1. 全画面スライドショーセクション */
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
 
-        .container {
+        .slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 600px;
-            padding: 20px;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: slideAnimation 12s infinite;
+        }
+
+        /* 3枚のスライドショーの想定（必要に応じて画像URLを変えるんだぞ？） */
+        .slide:nth-child(1) {
+            background-image: url('https://via.placeholder.com/1920x1080/111');
+            animation-delay: 0s;
+        }
+        .slide:nth-child(2) {
+            background-image: url('https://via.placeholder.com/1920x1080/222');
+            animation-delay: 4s;
+        }
+        .slide:nth-child(3) {
+            background-image: url('https://via.placeholder.com/1920x1080/333');
+            animation-delay: 8s;
+        }
+
+        @keyframes slideAnimation {
+            0% { opacity: 0; transform: scale(1.05); }
+            5% { opacity: 1; }
+            33% { opacity: 1; }
+            38% { opacity: 0; transform: scale(1); }
+            100% { opacity: 0; }
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 2;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            color: var(--text-color);
+            z-index: 3;
+            font-size: 14px;
+            letter-spacing: 2px;
+            animation: bounce 2s infinite;
+            text-decoration: none;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+
+        /* 2. メインコンテンツセクション（赤枠部分） */
+        .main-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
             box-sizing: border-box;
         }
 
-        .profile-card {
+        /* 左側：プロフィールカード */
+        .profile-side {
+            flex: 0 0 280px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .profile-avatar-wrapper {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 15px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-color);
+            overflow: hidden;
+            background-color: var(--card-sub-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            margin: 0 0 4px 0;
+            font-weight: bold;
+        }
+
+        .profile-sub {
+            font-size: 12px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .profile-bio {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            text-align: left;
+            background-color: var(--card-sub-bg);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 0;
+        }
+
+        /* 右側：ギャラリー・リンクエリア */
+        .gallery-side {
+            flex: 1;
             background-color: var(--card-bg);
             border-radius: 16px;
             padding: 30px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
 
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-color);
-            object-fit: cover;
-            margin-bottom: 20px;
+        .gallery-title {
+            font-size: 18px;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        h1 {
-            font-size: 24px;
-            margin: 0 0 10px 0;
+        .gallery-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
         }
 
-        .vrchat-id {
-            font-size: 14px;
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        .bio {
-            font-size: 15px;
+        .gallery-desc {
+            font-size: 12px;
             color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 30px;
+            margin: 0 0 20px 0;
         }
 
-        .links {
+        /* 2段2列のグリッド配置 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .grid-card {
+            background-color: var(--card-sub-bg);
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-decoration: none;
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
+            min-height: 110px;
+            box-sizing: border-box;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid transparent;
         }
 
-        .btn {
-            display: block;
-            padding: 12px;
-            background-color: transparent;
-            color: var(--text-color);
-            text-decoration: none;
-            border: 2px solid var(--accent-color);
-            border-radius: 8px;
+        .grid-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            border-color: rgba(255, 101, 132, 0.2);
+        }
+
+        .grid-card-title {
+            font-size: 14px;
             font-weight: bold;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
-        .btn:hover {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        .grid-card-action {
+            font-size: 12px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* レスポンシブ対応（画面が狭くなったら縦並びにするぞ？） */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .profile-side {
+                width: 100%;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="profile-card">
-            <!-- アバターの画像URLをここに入れるんだぞ？ -->
-            <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar">
-            
-            <!-- お前さんの名前とVRChatのIDを書く場所だな？ -->
-            <h1>お前さんの名前</h1>
-            <div class="vrchat-id">VRC ID: 自分のIDを入力</div>
-            
-            <!-- 自己紹介文 -->
-            <p class="bio">
-                ここにVRChatでの活動内容や、普段生息しているワールド、好きなことなんかを適当に書き連ねるんだぞ？Udonスクラッパーなりシェーダーいじりなり、アピールしたいことを書けばいいんじゃないか？
+    <!-- 1. 全画面スライドショーセクション -->
+    <div class="hero-section">
+        <div class="slideshow">
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+        </div>
+        <div class="hero-overlay"></div>
+        <a href="#content" class="scroll-hint">SCROLL DOWN</a>
+    </div>
+
+    <!-- 2. メインコンテンツセクション（赤枠部分） -->
+    <div class="main-content" id="content">
+        
+        <!-- 左側：プロフィール -->
+        <div class="profile-side">
+            <div class="profile-avatar-wrapper">
+                <!-- ここにお前さんのアイコン画像を突っ込むんだぞ？ -->
+                <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar">
+            </div>
+            <h2 class="profile-name">ぜろくんでんせつ</h2>
+            <div class="profile-sub">ZEro0</div>
+            <p class="profile-bio">
+                UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
             </p>
+        </div>
+
+        <!-- 右側：制作物・リンク -->
+        <div class="gallery-side">
+            <h3 class="gallery-title">Gallery（制作物・リンク）</h3>
+            <p class="gallery-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
             
-            <!-- リンク集 -->
-            <div class="links">
-                <a href="https://vrchat.com/home/user/ユーザーID" target="_blank" class="btn">VRChat Profile</a>
-                <a href="https://twitter.com/ユーザー名" target="_blank" class="btn">X (Twitter)</a>
-                <a href="https://github.com/ユーザー名" target="_blank" class="btn">GitHub</a>
+            <div class="grid-container">
+                <!-- カード 1 -->
+                <a href="https://github.com/" target="_blank" class="grid-card">
+                    <div class="grid-card-title">🐙 GitHub Repository</div>
+                    <div class="grid-card-action">GitHubでコードを見る ↗</div>
+                </a>
+
+                <!-- カード 2 -->
+                <a href="https://twitter.com/" target="_blank" class="grid-card">
+                    <div class="grid-card-title">🐦 Twitter / X</div>
+                    <div class="grid-card-action">日常・開発進捗アカウント ↗</div>
+                </a>
+
+                <!-- カード 3 -->
+                <a href="https://vrchat.com/" target="_blank" class="grid-card">
+                    <div class="grid-card-title">📁 VRChat World View</div>
+                    <div class="grid-card-action">Udonギミックワールドへ行く ↗</div>
+                </a>
+
+                <!-- カード 4 -->
+                <a href="#" class="grid-card">
+                    <div class="grid-card-title">✨ Custom Shader</div>
+                    <div class="grid-card-action">自作アバターシェーダー詳細 ↗</div>
+                </a>
             </div>
         </div>
+
     </div>
 
 </body>
