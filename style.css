@@ -40,7 +40,7 @@ a:hover {
     width: 100%;
     height: 100%;
     opacity: 0;
-    animation: slideAnimation 12s infinite;
+    animation: slideAnimation 52s infinite;
     background-size: cover;
     background-position: center;
 }
