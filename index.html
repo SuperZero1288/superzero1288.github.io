@@ -12,6 +12,12 @@
             padding: 0;
         }
 
+        /* スムーズスクロールを有効化する設定だぞ？ */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 20px; /* スクロールしたときに少し余白を残す調整だな？ */
+        }
+
         body {
             background-color: #1e1e24;
             color: #e0e0e6;
@@ -48,7 +54,6 @@
             background-position: center;
         }
 
-        /* 画像URLはお前さんの好きなVRChatのスクリーンショットに差し替えるんだぞ？ */
         .slides:nth-child(1) {
             background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920');
             animation-delay: 0s;
@@ -120,9 +125,15 @@
 
         .container {
             display: flex;
+            flex-direction: column;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            gap: 24px;
+        }
+
+        .main-content-layout {
+            display: flex;
             gap: 24px;
             align-items: flex-start;
         }
@@ -246,9 +257,49 @@
             background-color: #28242e;
         }
 
+        /* 下部：アクティビティセクション */
+        .activities-section {
+            background-color: #252229;
+            border: 1px solid #312d36;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            margin-top: 8px;
+        }
+
+        .activities-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activity-card {
+            background-color: #2d2933;
+            border: 1px solid #3d3745;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-date {
+            font-size: 0.85rem;
+            color: #ff8fa3;
+            font-weight: bold;
+        }
+
+        .activity-text {
+            font-size: 0.95rem;
+            color: #d0d0d8;
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
         /* レスポンシブ対応 */
         @media (max-width: 850px) {
-            .container {
+            .main-content-layout {
                 flex-direction: column;
                 align-items: center;
             }
@@ -275,6 +326,7 @@
     <header class="header-nav">
         <div class="site-title">portfolio / ぜろくんでんせつ</div>
         <nav class="nav-links">
+            <!-- 各セクションのidと連動させてスクロールさせるぞ？ -->
             <a href="#about">About</a>
             <a href="#gallery">Gallery</a>
             <a href="#activities">Activities</a>
@@ -284,44 +336,63 @@
     <!-- メインコンテンツ -->
     <main class="container">
         
-        <!-- 左側：プロフィール情報 -->
-        <section class="profile-card" id="about">
-            <div class="avatar-container">🐱</div>
-            <h1 class="profile-name">ぜろくんでんせつ</h1>
-            <p class="profile-id">ZErrrrrO</p>
-            <div class="profile-desc">
-                UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
-            </div>
-        </section>
+        <div class="main-content-layout">
+            <!-- 左側：プロフィール情報 (About) -->
+            <section class="profile-card" id="about">
+                <div class="avatar-container">🐱</div>
+                <h1 class="profile-name">ぜろくんでんせつ</h1>
+                <p class="profile-id">ZErrrrrO</p>
+                <div class="profile-desc">
+                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
+                </div>
+            </section>
 
-        <!-- 右側：リンク一覧 -->
-        <section class="gallery-section" id="gallery">
-            <h2 class="section-title">Gallery（制作物・リンク）</h2>
-            <p class="section-subtitle">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
+            <!-- 右側：リンク一覧 (Gallery) -->
+            <section class="gallery-section" id="gallery">
+                <h2 class="section-title">Gallery（制作物・リンク）</h2>
+                <p class="section-subtitle">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
+                
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <div class="item-content">🐙 GitHub Repository</div>
+                        <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <div class="item-content">🕊️ Twitter / X</div>
+                        <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <div class="item-content">📸 VRChat World View</div>
+                        <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
+                    </div>
+                    
+                    <div class="grid-item">
+                        <div class="item-content">✨ Custom Shader</div>
+                        <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 下部：アクティビティ履歴 (Activities) -->
+        <section class="activities-section" id="activities">
+            <h2 class="section-title">Activities（活動履歴）</h2>
+            <p class="section-subtitle">最近の進捗や更新情報だぞ？</p>
             
-            <div class="grid-container">
-                <!-- リンク1 -->
-                <div class="grid-item">
-                    <div class="item-content">🐙 GitHub Repository</div>
-                    <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
+            <div class="activities-list">
+                <div class="activity-card">
+                    <span class="activity-date">2026.02</span>
+                    <span class="activity-text">VRChat RNGプロジェクトのUIをTextMeshProへ移行完了だぞ？</span>
                 </div>
-                
-                <!-- リンク2 -->
-                <div class="grid-item">
-                    <div class="item-content">🕊️ Twitter / X</div>
-                    <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
+                <div class="activity-card">
+                    <span class="activity-date">2026.01</span>
+                    <span class="activity-text">ポートフォリオ用ウェブサイトのレイアウトをリニューアルしたぞ？</span>
                 </div>
-                
-                <!-- リンク3 -->
-                <div class="grid-item">
-                    <div class="item-content">📸 VRChat World View</div>
-                    <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
-                </div>
-                
-                <!-- リンク4 -->
-                <div class="grid-item">
-                    <div class="item-content">✨ Custom Shader</div>
-                    <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
+                <div class="activity-card">
+                    <span class="activity-date">2025.12</span>
+                    <span class="activity-text">UdonSharpを使用した新しいクライミングシステムギミックを試作中だな？</span>
                 </div>
             </div>
         </section>
