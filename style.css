@@ -1,4 +1,4 @@
-/* 全体のリセットと基本設定 */
+/* 全体の初期化とダークテーマの基本設定 */
 * {
     margin: 0;
     padding: 0;
@@ -7,81 +7,305 @@
 
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
+    background-color: #0b0f19;
+    color: #c9d1d9;
     line-height: 1.6;
+    scroll-behavior: smooth;
 }
 
-/* ヘッダーのデザイン */
-header {
-    background: linear-gradient(135deg, #1f4068, #162447);
+/* 上部ナビゲーションバー */
+.navbar {
+    background-color: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1200px;
+    z-index: 1000;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+}
+
+.nav-logo {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-links a {
+    color: #94a3b8;
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
     color: #fff;
+}
+
+/* カバー画像エリア */
+.cover-banner {
+    width: 100%;
+    height: 380px;
+    background: linear-gradient(180deg, #1e293b, #0b0f19);
+    background-size: cover;
+    background-position: center;
+}
+
+/* メインレイアウト */
+.main-wrapper {
+    width: 100%;
+    padding: 0 1.5rem;
+    margin-top: -100px;
+    position: relative;
+    z-index: 10;
+    padding-bottom: 5rem;
+}
+
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+/* 左側：サイドバー（プロフィール） */
+.sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 80px; /* スクロール時に画面に追従させるぞ？ */
+}
+
+.profile-card {
+    background-color: #151f32;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem 1.5rem;
     text-align: center;
-    padding: 3rem 1rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 20px;
+    background-color: #24324d;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* メインコンテンツのレイアウト */
-.container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+.profile-name {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 0.2rem;
 }
 
-section {
-    background: #fff;
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-h2 {
-    color: #1f4068;
-    border-bottom: 2px solid #e43f5a;
-    padding-bottom: 0.3rem;
+.profile-status {
+    font-size: 0.85rem;
+    color: #38bdf8;
     margin-bottom: 1rem;
 }
 
-/* スキルリスト */
-ul {
-    list-style-type: none;
-}
-
-ul li {
-    background: #e43f5a;
-    color: #fff;
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    margin: 0.3rem;
-    border-radius: 4px;
+.profile-bio {
     font-size: 0.9rem;
-}
-
-/* プロジェクトアイテム */
-.project-item {
-    background: #f9f9f9;
+    color: #94a3b8;
+    text-align: left;
+    background: #0b0f19;
     padding: 1rem;
-    margin-top: 0.8rem;
-    border-left: 4px solid #1f4068;
-    border-radius: 0 4px 4px 0;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.project-item h3 {
-    margin-bottom: 0.3rem;
-    color: #162447;
+/* SNSセクション */
+.sns-section h3 {
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    text-align: left;
+    border-left: 3px solid #38bdf8;
+    padding-left: 0.5rem;
 }
 
-/* フッター */
-footer {
+.sns-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sns-btn {
+    display: block;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.1s;
     text-align: center;
+}
+
+.gh { background-color: #24292e; color: #fff; }
+.gh:hover { background-color: #2f363d; }
+
+.x-tw { background-color: #14171a; color: #fff; }
+.x-tw:hover { background-color: #272c30; }
+
+.vrc { background-color: #06b6d4; color: #0f172a; }
+.vrc:hover { background-color: #22d3ee; }
+
+.sns-btn:active {
+    transform: scale(0.98);
+}
+
+/* 右側：メインコンテンツ領域 */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.content-section {
+    background-color: #151f32;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.section-title {
+    color: #fff;
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+}
+
+.title-marker {
+    color: #38bdf8;
+    margin-right: 0.5rem;
+}
+
+.section-intro {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+/* 活動カード */
+.activity-card {
+    background-color: #1b263b;
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #38bdf8;
+    transition: transform 0.2s;
+}
+
+.activity-card:hover {
+    transform: translateX(4px);
+}
+
+.activity-date {
     font-size: 0.8rem;
-    color: #777;
-    background: #eef2f5;
-    margin-top: 3rem;
+    color: #64748b;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.activity-card h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+}
+
+.activity-desc {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin-bottom: 0.6rem;
+}
+
+.activity-tech {
+    font-size: 0.8rem;
+    color: #38bdf8;
+}
+
+/* ギャラリーグリッド（画像を貼る場所） */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 180px;
+    background-color: #24324d;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    font-size: 0.95rem;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover .image-placeholder {
+    transform: scale(1.05);
+}
+
+.item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(15,23,42,0.95), rgba(15,23,42,0));
+    color: #fff;
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 968px) {
+    .content-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        position: static;
+    }
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    .navbar {
+        width: 95%;
+    }
 }
