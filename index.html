@@ -3,87 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>portfolio / ぜろくんでんせつ</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VRChat Portfolio</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --accent-color: #00d2ff;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+
+        .vrchat-id {
+            font-size: 14px;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .bio {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            display: block;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--text-color);
+            text-decoration: none;
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+    </style>
 </head>
 <body>
 
-    <!-- 全画面のヒーローセクション -->
-    <header class="hero-section">
-        <div class="hero-content">
-            <h1>portfolio / ぜろくんでんせつ</h1>
-            <p>Scroll Down</p>
-            <div class="arrow-down">↓</div>
+    <div class="container">
+        <div class="profile-card">
+            <!-- アバターの画像URLをここに入れるんだぞ？ -->
+            <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar">
+            
+            <!-- お前さんの名前とVRChatのIDを書く場所だな？ -->
+            <h1>お前さんの名前</h1>
+            <div class="vrchat-id">VRC ID: 自分のIDを入力</div>
+            
+            <!-- 自己紹介文 -->
+            <p class="bio">
+                ここにVRChatでの活動内容や、普段生息しているワールド、好きなことなんかを適当に書き連ねるんだぞ？Udonスクラッパーなりシェーダーいじりなり、アピールしたいことを書けばいいんじゃないか？
+            </p>
+            
+            <!-- リンク集 -->
+            <div class="links">
+                <a href="https://vrchat.com/home/user/ユーザーID" target="_blank" class="btn">VRChat Profile</a>
+                <a href="https://twitter.com/ユーザー名" target="_blank" class="btn">X (Twitter)</a>
+                <a href="https://github.com/ユーザー名" target="_blank" class="btn">GitHub</a>
+            </div>
         </div>
-    </header>
-
-    <!-- 常に上部に固定されるナビゲーションバー -->
-    <nav class="nav-bar">
-        <div class="logo">portfolio / ぜろくんでんせつ</div>
-        <div class="nav-links">
-            <a href="#about">About</a>
-            <a href="#gallery">Gallery</a>
-            <a href="#activities">Activities</a>
-        </div>
-    </nav>
-
-    <!-- メインコンテンツ（ポートフォリオ部分） -->
-    <main class="container">
-        <div class="content-layout">
-            <!-- 左側：プロフィールカード -->
-            <section id="about" class="profile-card">
-                <div class="avatar-container">
-                    <!-- アイコン画像（必要に応じてパスを変更しろ） -->
-                    <span class="avatar-emoji">🐱</span>
-                </div>
-                <h2>ぜろくんでんせつ</h2>
-                <p class="subtitle">ZErrrrrO</p>
-                <div class="bio-box">
-                    <p>UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？</p>
-                </div>
-            </section>
-
-            <!-- 右側：ギャラリーセクション -->
-            <section id="gallery" class="gallery-section">
-                <h2 class="section-title">Gallery（制作物・リンク）</h2>
-                <p class="section-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
-                
-                <div class="grid-container">
-                    <!-- カード 1 -->
-                    <a href="https://github.com" target="_blank" class="gallery-card">
-                        <div class="card-content">
-                            <span class="card-icon">🐙</span> GitHub Repository
-                        </div>
-                        <div class="card-footer">GitHubでコードを見る ↗</div>
-                    </a>
-
-                    <!-- カード 2 -->
-                    <a href="https://x.com" target="_blank" class="gallery-card">
-                        <div class="card-content">
-                            <span class="card-icon">💬</span> Twitter / X
-                        </div>
-                        <div class="card-footer">日常・開発進捗アカウント ↗</div>
-                    </a>
-
-                    <!-- カード 3 -->
-                    <a href="#" target="_blank" class="gallery-card">
-                        <div class="card-content">
-                            <span class="card-icon">📁</span> VRChat World View
-                        </div>
-                        <div class="card-footer">Udonギミックワールドへ行く ↗</div>
-                    </a>
-
-                    <!-- カード 4 -->
-                    <a href="#" target="_blank" class="gallery-card">
-                        <div class="card-content">
-                            <span class="card-icon">✨</span> Custom Shader
-                        </div>
-                        <div class="card-footer">自作アバターシェーダー詳細 ↗</div>
-                    </a>
-                </div>
-            </section>
-        </div>
-    </main>
+    </div>
 
 </body>
 </html>
