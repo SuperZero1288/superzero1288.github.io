@@ -25,7 +25,7 @@ body {
     max-width: 1200px;
     z-index: 1000;
     border-radius: 12px;
-    border: 1px solid rgba(255, 192, 203, 0.2); /* アクセントの薄いピンクを微かに */
+    border: 1px solid rgba(255, 192, 203, 0.2); /* アクセントの薄いピンク */
 }
 
 .nav-container {
@@ -52,14 +52,14 @@ body {
 }
 
 .nav-links a:hover {
-    color: #ffb7c5; /* ホバー時にピンクに光るぞ？ */
+    color: #ffb7c5;
 }
 
 /* カバー画像エリア */
 .cover-banner {
     width: 100%;
     height: 380px;
-    background: linear-gradient(180deg, #2c2c35, #1a1a1e); /* 濃いグレーのグラデーション */
+    background: linear-gradient(180deg, #2c2c35, #1a1a1e);
     background-size: cover;
     background-position: center;
 }
@@ -93,7 +93,7 @@ body {
 .profile-card {
     background-color: #26262c; /* 基調となる濃いグレー */
     border-radius: 16px;
-    border: 1px solid rgba(255, 192, 203, 0.15); /* ピンクの枠線で引き締めるぞ */
+    border: 1px solid rgba(255, 192, 203, 0.15);
     padding: 2rem 1.5rem;
     text-align: center;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
@@ -108,7 +108,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #ffb7c5; /* アバターの縁を薄いピンクに */
+    border: 2px solid #ffb7c5;
 }
 
 .profile-name {
@@ -119,7 +119,7 @@ body {
 
 .profile-status {
     font-size: 0.85rem;
-    color: #ffb7c5; /* 薄いピンク */
+    color: #ffb7c5;
     margin-bottom: 1rem;
 }
 
@@ -130,50 +130,7 @@ body {
     background: #1a1a1e;
     padding: 1rem;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
     border: 1px solid rgba(255, 192, 203, 0.05);
-}
-
-/* SNSセクション */
-.sns-section h3 {
-    font-size: 0.95rem;
-    color: #fff;
-    margin-bottom: 0.8rem;
-    text-align: left;
-    border-left: 3px solid #ffb7c5; /* 薄いピンクのインジケータ */
-    padding-left: 0.5rem;
-}
-
-.sns-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.sns-btn {
-    display: block;
-    width: 100%;
-    padding: 0.6rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.2s, transform 0.1s, color 0.2s;
-    text-align: center;
-}
-
-/* SNSボタンもグレーとピンクに調和させるぞ？ */
-.gh { background-color: #33333d; color: #ffb7c5; border: 1px solid rgba(255, 192, 203, 0.3); }
-.gh:hover { background-color: #444452; color: #fff; }
-
-.x-tw { background-color: #14171a; color: #e2e2e6; }
-.x-tw:hover { background-color: #26262c; color: #ffb7c5; }
-
-.vrc { background-color: #ffb7c5; color: #1a1a1e; }
-.vrc:hover { background-color: #ffd0da; }
-
-.sns-btn:active {
-    transform: scale(0.98);
 }
 
 /* 右側：メインコンテンツ領域 */
@@ -186,7 +143,7 @@ body {
 }
 
 .content-section {
-    background-color: #26262c; /* 濃いグレー */
+    background-color: #26262c;
     border-radius: 16px;
     border: 1px solid rgba(255, 192, 203, 0.1);
     padding: 2rem;
@@ -201,7 +158,7 @@ body {
 }
 
 .title-marker {
-    color: #ffb7c5; /* タイトルの縦棒を薄いピンクに */
+    color: #ffb7c5;
     margin-right: 0.5rem;
 }
 
@@ -211,13 +168,72 @@ body {
     margin-bottom: 1rem;
 }
 
+/* ギャラリーグリッド（画像自体がリンクになったぞ？） */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 180px;
+    background-color: #33333d;
+    border: 1px solid rgba(255, 192, 203, 0.1);
+    cursor: pointer;
+    display: block; /* リンクとして正しく領域を持たせるぞ */
+    text-decoration: none; /* 下線を消すぞ */
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a9a9b3;
+    font-size: 0.95rem;
+    transition: transform 0.3s;
+}
+
+/* ホバー時に画像（プレースホルダー）を少し拡大し、枠線を発光させるぞ */
+.gallery-item:hover .image-placeholder {
+    transform: scale(1.05);
+}
+
+.gallery-item:hover {
+    border-color: rgba(255, 192, 203, 0.6);
+    box-shadow: 0 0 10px rgba(255, 192, 203, 0.2);
+}
+
+.item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(38,38,44,0.95), rgba(38,38,44,0));
+    color: #ffb7c5; /* 文字色を薄いピンクにして目立たせるぞ */
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-top: 1px solid rgba(255, 192, 203, 0.2);
+    transition: color 0.2s;
+}
+
+.gallery-item:hover .item-overlay {
+    color: #fff; /* ホバー時に白く光るぞ */
+}
+
 /* 活動カード */
 .activity-card {
-    background-color: #33333d; /* 少し明るめの濃いグレー */
+    background-color: #33333d;
     border-radius: 12px;
     padding: 1.2rem;
     margin-bottom: 1rem;
-    border-left: 4px solid #ffb7c5; /* 左線をピンクにして際立たせるぞ */
+    border-left: 4px solid #ffb7c5;
     transition: transform 0.2s;
 }
 
@@ -247,52 +263,6 @@ body {
 .activity-tech {
     font-size: 0.8rem;
     color: #ffb7c5;
-}
-
-/* ギャラリーグリッド（画像を貼る場所） */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-
-.gallery-item {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    height: 180px;
-    background-color: #33333d;
-    border: 1px solid rgba(255, 192, 203, 0.1);
-    cursor: pointer;
-}
-
-.image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #a9a9b3;
-    font-size: 0.95rem;
-    transition: transform 0.3s;
-}
-
-.gallery-item:hover .image-placeholder {
-    transform: scale(1.05);
-}
-
-.item-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(to top, rgba(38,38,44,0.95), rgba(38,38,44,0));
-    color: #fff;
-    padding: 0.8rem;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-top: 1px solid rgba(255, 192, 203, 0.2);
 }
 
 /* レスポンシブ対応 */
