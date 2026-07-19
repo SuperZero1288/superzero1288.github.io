@@ -3,47 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お前さんのポートフォリオ</title>
+    <title>ぜろくんでんせつ - ポートフォリオ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>My Portfolio</h1>
-        <p>ぜろくんでんせつ - ウェブサイト</p>
+    <!-- ナビゲーションバー -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo"> portfolio / ぜろくんでんせつ</a>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#activities">Activities</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#sns">SNS</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- カバー画像エリア -->
+    <header class="cover-banner">
+        <!-- お気に入りのスクショなどを背景に指定するんだぞ？ -->
     </header>
 
-    <main class="container">
-        <section class="profile-card">
-            <h2>Profile</h2>
-            <p>ここに自分のプロフィールや自己紹介文を書くんだぞ？UnityやUdonSharpでのVRChatワールド制作、Androidのシステムカスタマイズなどが趣味の男だぞ？</p>
-        </section>
+    <!-- メインコンテンツ（2カラムレイアウト） -->
+    <div class="main-wrapper">
+        <div class="content-container">
+            
+            <!-- 左側：プロフィール＆SNS固定カード -->
+            <aside class="sidebar">
+                <div class="profile-card" id="about">
+                    <div class="profile-avatar">
+                        <!-- ここにお前さんのアバター画像を設置するんだぞ？ -->
+                        <span style="font-size: 3rem;">🐱</span>
+                    </div>
+                    <h2 class="profile-name">ぜろくんでんせつ</h2>
+                    <p class="profile-status">ねむたいです</p>
+                    <p class="profile-bio">
+                        UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
+                    </p>
+                    
+                    <!-- SNSリンクエリア -->
+                    <div class="sns-section" id="sns">
+                        <h3>SNS Links</h3>
+                        <div class="sns-links">
+                            <a href="https://github.com" target="_blank" class="sns-btn gh">GitHub ↗</a>
+                            <a href="https://x.com" target="_blank" class="sns-btn x-tw">Twitter / X ↗</a>
+                            <a href="https://vrchat.com" target="_blank" class="sns-btn vrc">VRChat ↗</a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-        <section class="skills">
-            <h2>Skills</h2>
-            <ul>
-                <li>HTML / CSS</li>
-                <li>Unity / UdonSharp</li>
-                <li>Android Customization</li>
-            </ul>
-        </section>
+            <!-- 右側：メインコンテンツ（活動実績＆ギャラリー） -->
+            <main class="main-content">
+                
+                <!-- 活動実績セクション -->
+                <section class="content-section" id="activities">
+                    <h2 class="section-title"><span class="title-marker">|</span> Activities（活動実績）</h2>
+                    
+                    <div class="activity-card">
+                        <div class="activity-info">
+                            <span class="activity-date">2026-02</span>
+                            <h3>VRChat RNG Project のリファクタリング</h3>
+                            <p class="activity-desc">既存のテキストオブジェクトをTextMeshProへ全面的に移行し、コンパイルスクリプトのデバッグと最適化を完遂したぞ？</p>
+                            <span class="activity-tech">#Unity #UdonSharp #TextMeshPro</span>
+                        </div>
+                    </div>
 
-        <section class="projects">
-            <h2>Projects</h2>
-            <div class="project-item">
-                <h3>VRChat RNG Project</h3>
-                <p>TextMeshProを利用した乱数生成システムの開発とリファクタリング。</p>
-            </div>
-            <div class="project-item">
-                <h3>Eco-Bag & LED Circuit Battery Lid</h3>
-                <p>家庭科の実習で作ったエコバッグや、実習で製作したLED回路用電池蓋などの工作実績だぞ？</p>
-            </div>
-        </section>
-    </main>
+                    <div class="activity-card">
+                        <div class="activity-info">
+                            <span class="activity-date">2026-01</span>
+                            <h3>ポートフォリオWebサイトのモックアップ作成</h3>
+                            <p class="activity-desc">HTMLとCSSを駆使し、自身の活動や作品をスタイリッシュに魅せるための独自のポートフォリオサイトの設計・開発を行ったぞ？</p>
+                            <span class="activity-tech">#HTML #CSS #GitHubPages</span>
+                        </div>
+                    </div>
 
-    <footer>
-        <p>&copy; 2026 ぜろくんでんせつ. All Rights Reserved.</p>
-    </footer>
+                    <div class="activity-card">
+                        <div class="activity-info">
+                            <span class="activity-date">2025-11</span>
+                            <h3>LED回路用電池蓋の製作及び実用工作</h3>
+                            <p class="activity-desc">実習にてLED回路を格納するための専用電池蓋の設計・加工を行い、キーホルダーのストラップ穴あけ等の精密な穴あけ加工技術を修得したぞ？</p>
+                            <span class="activity-tech">#Hardware #Crafting</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ギャラリーセクション（画像を貼る場所） -->
+                <section class="content-section" id="gallery">
+                    <h2 class="section-title"><span class="title-marker">|</span> Gallery（制作物・画像）</h2>
+                    <p class="section-intro">画像アセットを配置して、お前さんの作品をアピールする場所だぞ？</p>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <!-- img src="work1.jpg" alt="作品1" -->
+                            <div class="image-placeholder">📸 VRChat World View</div>
+                            <div class="item-overlay">Udonギミックワールド</div>
+                        </div>
+                        <div class="gallery-item">
+                            <!-- img src="work2.jpg" alt="作品2" -->
+                            <div class="image-placeholder">📸 Custom Shader</div>
+                            <div class="item-overlay">自作アバターシェーダー</div>
+                        </div>
+                        <div class="gallery-item">
+                            <!-- img src="work3.jpg" alt="作品3" -->
+                            <div class="image-placeholder">📸 Eco-Bag Design</div>
+                            <div class="item-overlay">実習製作エコバッグ</div>
+                        </div>
+                        <div class="gallery-item">
+                            <!-- img src="work4.jpg" alt="作品4" -->
+                            <div class="image-placeholder">📸 Android Custom</div>
+                            <div class="item-overlay">システムチューニング</div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+        </div>
+    </div>
 
 </body>
 </html>
