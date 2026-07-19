@@ -47,7 +47,10 @@
                 <div class="main-content-layout" id="gallery">
                     <!-- 左側：プロフィール情報 (About) -->
                     <section class="profile-card">
-                        <div class="avatar-container">🐱</div>
+                        <!-- 🐱をimgタグに変更したぞ？ここにアイコン用の画像URLを入れるんだな？ -->
+                        <div class="avatar-container">
+                            <img src="https://i.ibb.co/BHDtqs5P/image.png" alt="アイコン">
+                        </div>
                         <h1 class="profile-name">ぜろくんでんせつ</h1>
                         <p class="profile-id">ZErrrrrO</p>
                         <div class="profile-desc">
@@ -61,22 +64,23 @@
                         <p class="section-subtitle">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
                         
                         <div class="grid-container">
-                            <div class="grid-item">
+                            <!-- 各アイテムに画像指定用の id を追加したぞ？ -->
+                            <div class="grid-item" id="gallery-github">
                                 <div class="item-content">🐙 GitHub Repository</div>
                                 <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
                             </div>
                             
-                            <div class="grid-item">
+                            <div class="grid-item" id="gallery-twitter">
                                 <div class="item-content">🕊️ Twitter / X</div>
                                 <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
                             </div>
                             
-                            <div class="grid-item">
+                            <div class="grid-item" id="gallery-vrchat">
                                 <div class="item-content">📸 VRChat World View</div>
                                 <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
                             </div>
                             
-                            <div class="grid-item">
+                            <div class="grid-item" id="gallery-shader">
                                 <div class="item-content">✨ Custom Shader</div>
                                 <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
                             </div>
