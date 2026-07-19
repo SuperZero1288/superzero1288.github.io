@@ -46,16 +46,56 @@ a:hover {
 }
 
 .slides:nth-child(1) {
-    background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920');
+    background-image: url('https://ibb.co/6JDgG1WD');
     animation-delay: 0s;
 }
 .slides:nth-child(2) {
-    background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1920');
+    background-image: url('https://ibb.co/RGpsFM7q');
     animation-delay: 4s;
 }
 .slides:nth-child(3) {
-    background-image: url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=1920');
+    background-image: url('https://ibb.co/KpYMKLW6');
     animation-delay: 8s;
+}
+.slides:nth-child(4) {
+    background-image: url('https://ibb.co/WN96gK43');
+    animation-delay: 12s;
+}
+.slides:nth-child(5) {
+    background-image: url('https://ibb.co/5XwLh3Ys');
+    animation-delay: 16s;
+}
+.slides:nth-child(6) {
+    background-image: url('https://ibb.co/C3BgTY9f');
+    animation-delay: 20s;
+}
+.slides:nth-child(7) {
+    background-image: url('https://ibb.co/JW9dqJ7D');
+    animation-delay: 24s;
+}
+.slides:nth-child(8) {
+    background-image: url('https://ibb.co/rKynYxJ5');
+    animation-delay: 28s;
+}
+.slides:nth-child(9) {
+    background-image: url('https://ibb.co/qHkvqV5');
+    animation-delay: 32s;
+}
+.slides:nth-child(10) {
+    background-image: url('https://ibb.co/SwK3hZfQ');
+    animation-delay: 36s;
+}
+.slides:nth-child(11) {
+    background-image: url('https://ibb.co/HfFJbfn2');
+    animation-delay: 40s;
+}
+.slides:nth-child(12) {
+    background-image: url('https://ibb.co/93tHFkvR');
+    animation-delay: 44s;
+}
+.slides:nth-child(13) {
+    background-image: url('https://ibb.co/KpK0PjML');
+    animation-delay: 48s;
 }
 
 @keyframes slideAnimation {
