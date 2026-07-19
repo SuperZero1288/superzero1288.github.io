@@ -1,1 +1,37 @@
+/* style.css の中身 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #1e1e24;
+    color: #e0e0e6;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* （中略：残りのCSSコードも全部ここにぶち込むんだぞ？） */
+
+@media (max-width: 850px) {
+    .content-screen {
+        height: auto;
+        overflow: visible;
+        padding: 20px;
+    }
+    .main-content-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+    .profile-card {
+        width: 100%;
+    }
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+}
