@@ -1,4 +1,4 @@
-/* 全体の初期化とダークテーマの基本設定 */
+/* 全体の初期化とカラーテーマの基本設定 */
 * {
     margin: 0;
     padding: 0;
@@ -7,15 +7,15 @@
 
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #0b0f19;
-    color: #c9d1d9;
+    background-color: #1a1a1e; /* 基本となる超濃いグレー */
+    color: #e2e2e6;
     line-height: 1.6;
     scroll-behavior: smooth;
 }
 
 /* 上部ナビゲーションバー */
 .navbar {
-    background-color: rgba(15, 23, 42, 0.85);
+    background-color: rgba(38, 38, 44, 0.85); /* 濃いグレー */
     backdrop-filter: blur(8px);
     position: fixed;
     top: 10px;
@@ -25,7 +25,7 @@ body {
     max-width: 1200px;
     z-index: 1000;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 192, 203, 0.2); /* アクセントの薄いピンクを微かに */
 }
 
 .nav-container {
@@ -36,7 +36,7 @@ body {
 }
 
 .nav-logo {
-    color: #38bdf8;
+    color: #ffb7c5; /* 薄いピンク */
     text-decoration: none;
     font-weight: bold;
     font-size: 1.1rem;
@@ -44,7 +44,7 @@ body {
 }
 
 .nav-links a {
-    color: #94a3b8;
+    color: #a9a9b3;
     text-decoration: none;
     margin-left: 1.5rem;
     font-size: 0.95rem;
@@ -52,14 +52,14 @@ body {
 }
 
 .nav-links a:hover {
-    color: #fff;
+    color: #ffb7c5; /* ホバー時にピンクに光るぞ？ */
 }
 
 /* カバー画像エリア */
 .cover-banner {
     width: 100%;
     height: 380px;
-    background: linear-gradient(180deg, #1e293b, #0b0f19);
+    background: linear-gradient(180deg, #2c2c35, #1a1a1e); /* 濃いグレーのグラデーション */
     background-size: cover;
     background-position: center;
 }
@@ -87,28 +87,28 @@ body {
     width: 320px;
     flex-shrink: 0;
     position: sticky;
-    top: 80px; /* スクロール時に画面に追従させるぞ？ */
+    top: 80px;
 }
 
 .profile-card {
-    background-color: #151f32;
+    background-color: #26262c; /* 基調となる濃いグレー */
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 192, 203, 0.15); /* ピンクの枠線で引き締めるぞ */
     padding: 2rem 1.5rem;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
 }
 
 .profile-avatar {
     width: 110px;
     height: 110px;
     border-radius: 20px;
-    background-color: #24324d;
+    background-color: #33333d;
     margin: 0 auto 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid #ffb7c5; /* アバターの縁を薄いピンクに */
 }
 
 .profile-name {
@@ -119,19 +119,19 @@ body {
 
 .profile-status {
     font-size: 0.85rem;
-    color: #38bdf8;
+    color: #ffb7c5; /* 薄いピンク */
     margin-bottom: 1rem;
 }
 
 .profile-bio {
     font-size: 0.9rem;
-    color: #94a3b8;
+    color: #c9c9d1;
     text-align: left;
-    background: #0b0f19;
+    background: #1a1a1e;
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 192, 203, 0.05);
 }
 
 /* SNSセクション */
@@ -140,7 +140,7 @@ body {
     color: #fff;
     margin-bottom: 0.8rem;
     text-align: left;
-    border-left: 3px solid #38bdf8;
+    border-left: 3px solid #ffb7c5; /* 薄いピンクのインジケータ */
     padding-left: 0.5rem;
 }
 
@@ -158,18 +158,19 @@ body {
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
-    transition: background 0.2s, transform 0.1s;
+    transition: background 0.2s, transform 0.1s, color 0.2s;
     text-align: center;
 }
 
-.gh { background-color: #24292e; color: #fff; }
-.gh:hover { background-color: #2f363d; }
+/* SNSボタンもグレーとピンクに調和させるぞ？ */
+.gh { background-color: #33333d; color: #ffb7c5; border: 1px solid rgba(255, 192, 203, 0.3); }
+.gh:hover { background-color: #444452; color: #fff; }
 
-.x-tw { background-color: #14171a; color: #fff; }
-.x-tw:hover { background-color: #272c30; }
+.x-tw { background-color: #14171a; color: #e2e2e6; }
+.x-tw:hover { background-color: #26262c; color: #ffb7c5; }
 
-.vrc { background-color: #06b6d4; color: #0f172a; }
-.vrc:hover { background-color: #22d3ee; }
+.vrc { background-color: #ffb7c5; color: #1a1a1e; }
+.vrc:hover { background-color: #ffd0da; }
 
 .sns-btn:active {
     transform: scale(0.98);
@@ -185,11 +186,11 @@ body {
 }
 
 .content-section {
-    background-color: #151f32;
+    background-color: #26262c; /* 濃いグレー */
     border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 192, 203, 0.1);
     padding: 2rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .section-title {
@@ -200,23 +201,23 @@ body {
 }
 
 .title-marker {
-    color: #38bdf8;
+    color: #ffb7c5; /* タイトルの縦棒を薄いピンクに */
     margin-right: 0.5rem;
 }
 
 .section-intro {
     font-size: 0.9rem;
-    color: #64748b;
+    color: #8a8a93;
     margin-bottom: 1rem;
 }
 
 /* 活動カード */
 .activity-card {
-    background-color: #1b263b;
+    background-color: #33333d; /* 少し明るめの濃いグレー */
     border-radius: 12px;
     padding: 1.2rem;
     margin-bottom: 1rem;
-    border-left: 4px solid #38bdf8;
+    border-left: 4px solid #ffb7c5; /* 左線をピンクにして際立たせるぞ */
     transition: transform 0.2s;
 }
 
@@ -226,7 +227,7 @@ body {
 
 .activity-date {
     font-size: 0.8rem;
-    color: #64748b;
+    color: #8a8a93;
     display: block;
     margin-bottom: 0.2rem;
 }
@@ -239,13 +240,13 @@ body {
 
 .activity-desc {
     font-size: 0.95rem;
-    color: #94a3b8;
+    color: #c9c9d1;
     margin-bottom: 0.6rem;
 }
 
 .activity-tech {
     font-size: 0.8rem;
-    color: #38bdf8;
+    color: #ffb7c5;
 }
 
 /* ギャラリーグリッド（画像を貼る場所） */
@@ -261,8 +262,8 @@ body {
     border-radius: 12px;
     overflow: hidden;
     height: 180px;
-    background-color: #24324d;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background-color: #33333d;
+    border: 1px solid rgba(255, 192, 203, 0.1);
     cursor: pointer;
 }
 
@@ -272,7 +273,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #64748b;
+    color: #a9a9b3;
     font-size: 0.95rem;
     transition: transform 0.3s;
 }
@@ -286,11 +287,12 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(to top, rgba(15,23,42,0.95), rgba(15,23,42,0));
+    background: linear-gradient(to top, rgba(38,38,44,0.95), rgba(38,38,44,0));
     color: #fff;
     padding: 0.8rem;
     font-size: 0.85rem;
     font-weight: 500;
+    border-top: 1px solid rgba(255, 192, 203, 0.2);
 }
 
 /* レスポンシブ対応 */
