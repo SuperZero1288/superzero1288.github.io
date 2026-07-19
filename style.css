@@ -45,58 +45,19 @@ a:hover {
     background-position: center;
 }
 
-.slides:nth-child(1) {
-    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
-    animation-delay: 0s;
-}
-.slides:nth-child(2) {
-    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
-    animation-delay: 4s;
-}
-.slides:nth-child(3) {
-    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
-    animation-delay: 8s;
-}
-.slides:nth-child(4) {
-    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
-    animation-delay: 12s;
-}
-.slides:nth-child(5) {
-    background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png');
-    animation-delay: 16s;
-}
-.slides:nth-child(6) {
-    background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png');
-    animation-delay: 20s;
-}
-.slides:nth-child(7) {
-    background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png');
-    animation-delay: 24s;
-}
-.slides:nth-child(8) {
-    background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png');
-    animation-delay: 28s;
-}
-.slides:nth-child(9) {
-    background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png');
-    animation-delay: 32s;
-}
-.slides:nth-child(10) {
-    background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png');
-    animation-delay: 36s;
-}
-.slides:nth-child(11) {
-    background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png');
-    animation-delay: 40s;
-}
-.slides:nth-child(12) {
-    background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png');
-    animation-delay: 44s;
-}
-.slides:nth-child(13) {
-    background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');
-    animation-delay: 48s;
-}
+.slides:nth-child(1) { background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'); animation-delay: 0s; }
+.slides:nth-child(2) { background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'); animation-delay: 4s; }
+.slides:nth-child(3) { background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'); animation-delay: 8s; }
+.slides:nth-child(4) { background-image: url('https://i.ibb.co/BHDtqs5P/image.png'); animation-delay: 12s; }
+.slides:nth-child(5) { background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'); animation-delay: 16s; }
+.slides:nth-child(6) { background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'); animation-delay: 20s; }
+.slides:nth-child(7) { background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'); animation-delay: 24s; }
+.slides:nth-child(8) { background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'); animation-delay: 28s; }
+.slides:nth-child(9) { background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'); animation-delay: 32s; }
+.slides:nth-child(10) { background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'); animation-delay: 36s; }
+.slides:nth-child(11) { background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'); animation-delay: 40s; }
+.slides:nth-child(12) { background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'); animation-delay: 44s; }
+.slides:nth-child(13) { background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'); animation-delay: 48s; }
 
 @keyframes slideAnimation {
     0% { opacity: 0; transform: scale(1); }
@@ -198,17 +159,21 @@ a:hover {
     justify-content: center;
 }
 
+/* 画像が綺麗に丸枠に収まるように指定を追加したぞ？ */
 .avatar-container {
     width: 90px;
     height: 90px;
-    background-color: #ffccd5;
     border-radius: 24px;
     margin: 0 auto 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.8rem;
+    overflow: hidden;
     border: 2px solid #ff8fa3;
+    flex-shrink: 0;
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .profile-name {
@@ -273,6 +238,7 @@ a:hover {
     gap: 12px;
 }
 
+/* 背景画像が見えやすいように設定を調整したぞ？ */
 .grid-item {
     background-color: #2d2933;
     border: 1px solid #3d3745;
@@ -281,6 +247,9 @@ a:hover {
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, border-color 0.2s;
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
 .grid-item:hover {
@@ -288,8 +257,9 @@ a:hover {
     border-color: #524a5d;
 }
 
+/* 文字が見づらくならないように半透明の黒を重ねる設定だぞ？ */
 .item-content {
-    padding: 20px 16px;
+    padding: 40px 16px;
     text-align: center;
     font-size: 0.9rem;
     color: #d0d0d8;
@@ -298,6 +268,9 @@ a:hover {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background-color: rgba(0, 0, 0, 0.5); 
+    font-weight: bold;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
 
 .item-link {
@@ -306,6 +279,21 @@ a:hover {
     font-size: 0.8rem;
     background-color: #28242e;
     text-align: center;
+    z-index: 1;
+}
+
+/* ――― ここにGallery各カードの背景画像URLを設定するんだぞ？ ――― */
+#gallery-github {
+    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
+}
+#gallery-twitter {
+    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
+}
+#gallery-vrchat {
+    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
+}
+#gallery-shader {
+    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
 }
 
 .activities-section {
