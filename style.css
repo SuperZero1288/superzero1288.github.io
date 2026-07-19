@@ -54,23 +54,23 @@ body {
     60% { transform: translateY(-5px); }
 }
 
-/* メインコンテナ */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* ナビゲーションバー */
+/* 常に上部に固定されるナビゲーションバー */
 .nav-bar {
+    position: sticky;
+    top: 10px; /* 画面最上部から少し隙間を空けて綺麗に見せるぞ */
+    z-index: 100; /* コンテンツより前面に表示させる */
+    max-width: 1200px;
+    width: calc(100% - 40px); /* 左右の余白を計算 */
+    margin: 20px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #252429;
+    background-color: rgba(37, 36, 41, 0.9); /* スクロール時に下が透けるように少し透過させたぞ */
+    backdrop-filter: blur(10px); /* すりガラス効果 */
     border: 1px solid #3c3a3f;
     border-radius: 30px;
     padding: 15px 30px;
-    margin-bottom: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .nav-bar .logo {
@@ -87,6 +87,13 @@ body {
 
 .nav-links a:hover {
     color: #ffb4ab;
+}
+
+/* メインコンテナ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 40px 20px;
 }
 
 /* レイアウト配置 */
@@ -217,6 +224,11 @@ body {
 
 /* レスポンシブ対応 */
 @media (max-width: 900px) {
+    .nav-bar {
+        width: calc(100% - 20px);
+        margin: 10px auto;
+        padding: 10px 20px;
+    }
     .content-layout {
         flex-direction: column;
     }
