@@ -3,223 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぜろくんでんせつ - ポートフォリオ</title>
+    <title>portfolio / ぜろくんでんせつ</title>
     <style>
-        :root {
-            /* 添付画像に基づいた濃いグレーと薄いピンクの配色だな？ */
-            --bg-color: #121214; 
-            --card-bg: rgba(24, 24, 28, 0.8); /* 濃いグレー（半透明） */
-            --card-sub-bg: rgba(34, 34, 40, 0.85); /* やや明るめの濃いグレー */
-            --accent-color: #fca5a5; /* 添付画像に合わせた優しい薄いピンク */
-            --text-color: #e2e8f0; /* 明るいグレー */
-            --text-muted: #94a3b8; /* くすんだグレー */
-        }
-
-        html, body {
+        /* 全体のスタイル設定 */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            width: 100%;
-            min-height: 100vh;
-            color: var(--text-color);
+        }
+
+        body {
+            background-color: #1e1e24;
+            color: #e0e0e6;
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
+            overflow-x: hidden;
         }
 
-        /* 1. 背景固定スライドショー（ここが全画面の裏側に固定されるぞ？） */
-        .background-slideshow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        a {
+            color: #ff8fa3;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #ffb3c1;
+        }
+
+        /* ――― 全画面スライドショーセクション ――― */
+        .hero-slider {
+            position: relative;
+            width: 100vw;
             height: 100vh;
-            z-index: -2;
             overflow: hidden;
+            background-color: #000;
         }
 
-        .slide {
+        .slides {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-size: cover;
-            background-position: center;
             opacity: 0;
             animation: slideAnimation 12s infinite;
+            background-size: cover;
+            background-position: center;
         }
 
-        /* スライドの画像URLはお前さんの好きなVRChatのスクショに変えるんだぞ？ */
-        .slide:nth-child(1) {
-            background-image: url('https://via.placeholder.com/1920x1080/111');
+        /* 画像URLはお前さんの好きなVRChatのスクリーンショットに差し替えるんだぞ？ */
+        .slides:nth-child(1) {
+            background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920');
             animation-delay: 0s;
         }
-        .slide:nth-child(2) {
-            background-image: url('https://via.placeholder.com/1920x1080/222');
+        .slides:nth-child(2) {
+            background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1920');
             animation-delay: 4s;
         }
-        .slide:nth-child(3) {
-            background-image: url('https://via.placeholder.com/1920x1080/333');
+        .slides:nth-child(3) {
+            background-image: url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=1920');
             animation-delay: 8s;
         }
 
         @keyframes slideAnimation {
-            0% { opacity: 0; transform: scale(1.05); }
-            5% { opacity: 1; }
+            0% { opacity: 0; transform: scale(1); }
+            8% { opacity: 1; }
             33% { opacity: 1; }
-            38% { opacity: 0; transform: scale(1); }
+            41% { opacity: 0; transform: scale(1.05); }
             100% { opacity: 0; }
         }
 
-        /* 背景画像を見やすくするための黒いモヤだぞ？ */
-        .background-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(18,18,20,0.85) 100%);
-            z-index: -1;
-        }
-
-        /* 2. 前面のスクロールするメインコンテンツエリア */
-        .scroll-container {
-            width: 100%;
-            min-height: 100vh;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 最初に見える全画面のクッションエリア（スクロールを促すぞ？） */
-        .hero-welcome {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .scroll-hint {
-            color: var(--text-color);
-            font-size: 14px;
+        .scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: 0.9rem;
             letter-spacing: 2px;
-            text-decoration: none;
             animation: bounce 2s infinite;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 10px 20px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(252, 165, 165, 0.2); /* ほんのりピンクの枠線だぞ？ */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
+            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+            40% { transform: translate(-50%, -10px); }
+            60% { transform: translate(-50%, -5px); }
         }
 
-        /* 下にスクロールすると浮かび上がってくる赤枠のコンテンツだな？ */
-        .main-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px 100px 20px;
+        /* ――― コンテンツセクション ――― */
+        .header-nav {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            padding: 0 20px;
+        }
+
+        .site-title {
+            background-color: #2a252a;
+            border: 1px solid #3d353d;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            color: #ff8fa3;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: #aaa;
+            margin-left: 20px;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
             gap: 24px;
             align-items: flex-start;
-            box-sizing: border-box;
-            width: 100%;
         }
 
         /* 左側：プロフィールカード */
-        .profile-side {
-            flex: 0 0 280px;
-            background-color: var(--card-bg);
-            backdrop-filter: blur(14px); /* すりガラス効果を高めたぞ？ */
-            border-radius: 16px;
-            padding: 30px 20px;
+        .profile-card {
+            width: 320px;
+            background-color: #252229;
+            border: 1px solid #312d36;
+            border-radius: 12px;
+            padding: 40px 24px;
             text-align: center;
-            box-sizing: border-box;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
-        .profile-avatar-wrapper {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 15px;
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
-            overflow: hidden;
-            background-color: var(--card-sub-bg);
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            background-color: #ffccd5;
+            border-radius: 24px;
+            margin: 0 auto 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-        }
-
-        .profile-avatar {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            justify-content: center;
+            font-size: 3rem;
+            border: 2px solid #ff8fa3;
         }
 
         .profile-name {
-            font-size: 20px;
-            margin: 0 0 4px 0;
+            font-size: 1.4rem;
             font-weight: bold;
+            margin-bottom: 4px;
         }
 
-        .profile-sub {
-            font-size: 12px;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+        .profile-id {
+            font-size: 0.85rem;
+            color: #ff8fa3;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
         }
 
-        .profile-bio {
-            font-size: 13px;
-            color: var(--text-muted);
+        .profile-desc {
+            background-color: #1a171d;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 0.9rem;
             line-height: 1.6;
             text-align: left;
-            background-color: var(--card-sub-bg);
-            padding: 15px;
+            color: #c0c0c8;
+        }
+
+        /* 右側：ギャラリー・リンク */
+        .gallery-section {
+            flex-grow: 1;
+            background-color: #252229;
+            border: 1px solid #312d36;
             border-radius: 12px;
-            margin: 0;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-        /* 右側：ギャラリー・リンクエリア */
-        .gallery-side {
-            flex: 1;
-            background-color: var(--card-bg);
-            backdrop-filter: blur(14px);
-            border-radius: 16px;
-            padding: 30px;
-            box-sizing: border-box;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .gallery-title {
-            font-size: 18px;
-            margin: 0 0 6px 0;
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .gallery-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 18px;
-            background-color: var(--accent-color);
-            border-radius: 2px;
+        .section-title::before {
+            content: "|";
+            color: #ff8fa3;
+            font-weight: bold;
         }
 
-        .gallery-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin: 0 0 20px 0;
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 24px;
         }
 
         .grid-container {
@@ -228,52 +212,47 @@
             gap: 16px;
         }
 
-        .grid-card {
-            background-color: var(--card-sub-bg);
-            border-radius: 12px;
-            padding: 24px 20px;
-            text-decoration: none;
-            color: var(--text-color);
+        .grid-item {
+            background-color: #2d2933;
+            border: 1px solid #3d3745;
+            border-radius: 8px;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 110px;
-            box-sizing: border-box;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .grid-card:hover {
+        .grid-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-            border-color: rgba(252, 165, 165, 0.3); /* ホバー時に薄いピンクの枠線が浮き出るぞ？ */
+            border-color: #524a5d;
         }
 
-        .grid-card-title {
-            font-size: 14px;
-            font-weight: bold;
+        .item-content {
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #d0d0d8;
+            flex-grow: 1;
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 10px;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .grid-card-action {
-            font-size: 12px;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-weight: 500;
+        .item-link {
+            border-top: 1px solid #3d3745;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            background-color: #28242e;
         }
 
-        /* レスポンシブ対応だな？ */
-        @media (max-width: 768px) {
-            .main-content {
+        /* レスポンシブ対応 */
+        @media (max-width: 850px) {
+            .container {
                 flex-direction: column;
-                padding-top: 20px;
+                align-items: center;
             }
-            .profile-side {
+            .profile-card {
                 width: 100%;
             }
             .grid-container {
@@ -284,71 +263,70 @@
 </head>
 <body>
 
-    <!-- 1. 全画面背景スライドショー（裏側に固定されるぞ？） -->
-    <div class="background-slideshow">
-        <div class="slide"></div>
-        <div class="slide"></div>
-        <div class="slide"></div>
+    <!-- 全画面スライドショー -->
+    <div class="hero-slider">
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="scroll-indicator">SCROLL DOWN ▼</div>
     </div>
-    <div class="background-overlay"></div>
 
-    <!-- 2. 前面のスクロールレイヤー -->
-    <div class="scroll-container">
+    <!-- ナビゲーションヘッダー -->
+    <header class="header-nav">
+        <div class="site-title">portfolio / ぜろくんでんせつ</div>
+        <nav class="nav-links">
+            <a href="#about">About</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#activities">Activities</a>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container">
         
-        <!-- 初期表示用の全画面透明セクション -->
-        <div class="hero-welcome">
-            <a href="#content" class="scroll-hint">SCROLL DOWN</a>
-        </div>
+        <!-- 左側：プロフィール情報 -->
+        <section class="profile-card" id="about">
+            <div class="avatar-container">🐱</div>
+            <h1 class="profile-name">ぜろくんでんせつ</h1>
+            <p class="profile-id">ZErrrrrO</p>
+            <div class="profile-desc">
+                UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
+            </div>
+        </section>
 
-        <!-- 下にスクロールすると現れるメインコンテンツ（赤枠部分） -->
-        <div class="main-content" id="content">
+        <!-- 右側：リンク一覧 -->
+        <section class="gallery-section" id="gallery">
+            <h2 class="section-title">Gallery（制作物・リンク）</h2>
+            <p class="section-subtitle">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
             
-            <!-- 左側：プロフィール -->
-            <div class="profile-side">
-                <div class="profile-avatar-wrapper">
-                    <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar">
+            <div class="grid-container">
+                <!-- リンク1 -->
+                <div class="grid-item">
+                    <div class="item-content">🐙 GitHub Repository</div>
+                    <a href="https://github.com" class="item-link" target="_blank">GitHubでコードを見る ↗</a>
                 </div>
-                <h2 class="profile-name">ぜろくんでんせつ</h2>
-                <div class="profile-sub">ZEro0</div>
-                <p class="profile-bio">
-                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
-                </p>
-            </div>
-
-            <!-- 右側：制作物・リンク -->
-            <div class="gallery-side">
-                <h3 class="gallery-title">Gallery（制作物・リンク）</h3>
-                <p class="gallery-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
                 
-                <div class="grid-container">
-                    <!-- カード 1 -->
-                    <a href="https://github.com/" target="_blank" class="grid-card">
-                        <div class="grid-card-title">🐙 GitHub Repository</div>
-                        <div class="grid-card-action">GitHubでコードを見る ↗</div>
-                    </a>
-
-                    <!-- カード 2 -->
-                    <a href="https://twitter.com/" target="_blank" class="grid-card">
-                        <div class="grid-card-title">🐦 Twitter / X</div>
-                        <div class="grid-card-action">日常・開発進捗アカウント ↗</div>
-                    </a>
-
-                    <!-- カード 3 -->
-                    <a href="https://vrchat.com/" target="_blank" class="grid-card">
-                        <div class="grid-card-title">📁 VRChat World View</div>
-                        <div class="grid-card-action">Udonギミックワールドへ行く ↗</div>
-                    </a>
-
-                    <!-- カード 4 -->
-                    <a href="#" class="grid-card">
-                        <div class="grid-card-title">✨ Custom Shader</div>
-                        <div class="grid-card-action">自作アバターシェーダー詳細 ↗</div>
-                    </a>
+                <!-- リンク2 -->
+                <div class="grid-item">
+                    <div class="item-content">🕊️ Twitter / X</div>
+                    <a href="https://twitter.com" class="item-link" target="_blank">日常・開発進捗アカウント ↗</a>
+                </div>
+                
+                <!-- リンク3 -->
+                <div class="grid-item">
+                    <div class="item-content">📸 VRChat World View</div>
+                    <a href="https://vrchat.com" class="item-link" target="_blank">Udonギミックワールドへ行く ↗</a>
+                </div>
+                
+                <!-- リンク4 -->
+                <div class="grid-item">
+                    <div class="item-content">✨ Custom Shader</div>
+                    <a href="#" class="item-link" target="_blank">自作アバターシェーダー詳細 ↗</a>
                 </div>
             </div>
+        </section>
 
-        </div>
-    </div>
+    </main>
 
 </body>
 </html>
