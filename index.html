@@ -6,12 +6,13 @@
     <title>ぜろくんでんせつ - ポートフォリオ</title>
     <style>
         :root {
-            --bg-color: #121214;
-            --card-bg: rgba(30, 30, 34, 0.75); /* 背景の画像を透かすために半透明にしたぞ？ */
-            --card-sub-bg: rgba(37, 37, 41, 0.8);
-            --accent-color: #ff6584;
-            --text-color: #e0e0e6;
-            --text-muted: #a0a0a8;
+            /* 添付画像に基づいた濃いグレーと薄いピンクの配色だな？ */
+            --bg-color: #121214; 
+            --card-bg: rgba(24, 24, 28, 0.8); /* 濃いグレー（半透明） */
+            --card-sub-bg: rgba(34, 34, 40, 0.85); /* やや明るめの濃いグレー */
+            --accent-color: #fca5a5; /* 添付画像に合わせた優しい薄いピンク */
+            --text-color: #e2e8f0; /* 明るいグレー */
+            --text-muted: #94a3b8; /* くすんだグレー */
         }
 
         html, body {
@@ -74,7 +75,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(18,18,20,0.8) 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(18,18,20,0.85) 100%);
             z-index: -1;
         }
 
@@ -103,10 +104,11 @@
             letter-spacing: 2px;
             text-decoration: none;
             animation: bounce 2s infinite;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             padding: 10px 20px;
             border-radius: 20px;
             backdrop-filter: blur(4px);
+            border: 1px solid rgba(252, 165, 165, 0.2); /* ほんのりピンクの枠線だぞ？ */
         }
 
         @keyframes bounce {
@@ -131,13 +133,13 @@
         .profile-side {
             flex: 0 0 280px;
             background-color: var(--card-bg);
-            backdrop-filter: blur(12px); /* すりガラス効果でオシャレにしてやったぞ？ */
+            backdrop-filter: blur(14px); /* すりガラス効果を高めたぞ？ */
             border-radius: 16px;
             padding: 30px 20px;
             text-align: center;
             box-sizing: border-box;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .profile-avatar-wrapper {
@@ -170,6 +172,7 @@
             color: var(--accent-color);
             margin-bottom: 20px;
             font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
         .profile-bio {
@@ -181,18 +184,19 @@
             padding: 15px;
             border-radius: 12px;
             margin: 0;
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         /* 右側：ギャラリー・リンクエリア */
         .gallery-side {
             flex: 1;
             background-color: var(--card-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
             border-radius: 16px;
             padding: 30px;
             box-sizing: border-box;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .gallery-title {
@@ -235,15 +239,14 @@
             justify-content: space-between;
             min-height: 110px;
             box-sizing: border-box;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         .grid-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-            background-color: rgba(45, 45, 50, 0.9);
-            border-color: rgba(255, 101, 132, 0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border-color: rgba(252, 165, 165, 0.3); /* ホバー時に薄いピンクの枠線が浮き出るぞ？ */
         }
 
         .grid-card-title {
@@ -261,6 +264,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            font-weight: 500;
         }
 
         /* レスポンシブ対応だな？ */
@@ -307,7 +311,7 @@
                 <h2 class="profile-name">ぜろくんでんせつ</h2>
                 <div class="profile-sub">ZEro0</div>
                 <p class="profile-bio">
-                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroid of システムカスタマイズも好物だぞ？
+                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
                 </p>
             </div>
 
