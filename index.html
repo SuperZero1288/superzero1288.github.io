@@ -3,221 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぜろくんでんせつ - ウェブサイト</title>
+    <title>My Portfolio</title>
     <style>
-        /* --- CSS設定エリア --- */
-        body {
+        /* 全体のリセットと基本設定 */
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-            transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-x: hidden;
-        }
-
-        /* 画面分割：左3.5 : 右6.5 */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 3.5fr 6.5fr; 
-            min-height: 100vh;
-        }
-
-        /* 左側：画像エリア（固定） */
-        .visual-area {
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            padding: 1.5rem;
             box-sizing: border-box;
-            z-index: 10;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
-        .visual-frame {
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #7dd3fc;
+        }
+
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.2);
-            border-radius: 40px; 
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            -webkit-backface-visibility: hidden;
-            -webkit-transform: translate3d(0, 0, 0);
-            transform: translateZ(0);
-            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            border-bottom: 1px solid #1e293b;
         }
 
-        #dynamic-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            border-radius: 40px;
-        }
-
-        .fade-out {
-            opacity: 0;
-            transform: scale(1.02);
-        }
-
-        /* 右側：コンテンツエリア */
-        .content-area {
-            padding: 5rem 10% 5rem 5%;
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
             display: flex;
-            flex-direction: column;
-            gap: 8rem;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        header h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
-            line-height: 0.9;
-            margin: 0;
-            font-weight: 900;
-            background: linear-gradient(135deg, #fff 0%, #475569 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #38bdf8;
         }
 
-        .info-section {
-            padding: 3rem;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s ease;
-            cursor: pointer;
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
         }
 
-        .info-section:hover {
-            background: rgba(255, 255, 255, 0.07);
-            transform: translateX(15px);
-            border-color: rgba(255, 255, 255, 0.2);
+        /* メインコンテンツの外枠 */
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem 2rem;
+        }
+
+        section {
+            padding: 5rem 0;
+            border-bottom: 1px solid #1e293b;
         }
 
         h2 {
             font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: #fff;
-            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+            color: #f8fafc;
+            position: relative;
+            display: inline-block;
         }
 
-        .link-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 50%;
+            height: 3px;
+            background-color: #38bdf8;
         }
 
-        .btn {
-            display: block;
+        /* ヒーローセクション */
+        .hero {
             text-align: center;
-            text-decoration: none;
-            padding: 16px;
-            border-radius: 14px;
-            color: #fff;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.3s;
-        }
-        .btn:hover {
-            background: #fff;
-            color: #0f172a;
+            padding: 7rem 0;
         }
 
-        @media (max-width: 1024px) {
-            .main-layout { grid-template-columns: 1fr; }
-            .visual-area { height: 50vh; position: relative; padding: 1rem; }
-            .content-area { padding: 3rem 1.5rem; }
+        .hero h1 {
+            font-size: 3.5rem;
+            color: #f8fafc;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        /* プロフィールセクション */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .profile-img {
+            width: 100%;
+            max-width: 250px;
+            aspect-ratio: 1;
+            background-color: #1e293b;
+            border-radius: 50%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #38bdf8;
+            color: #94a3b8;
+        }
+
+        /* 作品セクション */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+
+        .project-card h3 {
+            margin-bottom: 0.5rem;
+            color: #f8fafc;
+        }
+
+        .project-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background-color: #0f172a;
+            color: #38bdf8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* フッター */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-layout">
-        <div class="visual-area">
-            <div class="visual-frame">
-                <img id="dynamic-image" src="https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/VRChat_2025-10-04_02-36-04.052_2560x1440.png?raw=true" alt="Main">
+    <header>
+        <nav class="nav-container">
+            <div class="logo">PORTFOLIO</div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- ヒーローセクション -->
+        <section class="hero">
+            <h1>Hello, I'm Template</h1>
+            <p>ここに自分を表現する短いキャッチコピーを書くんだぞ？お前さんの得意なことや目指しているものを一行でスマートに伝えるんだな？</p>
+        </section>
+
+        <!-- アバウトセクション -->
+        <section id="about">
+            <h2>About Me</h2>
+            <div class="about-content">
+                <div class="profile-img">
+                    <span>[ Image ]</span>
+                </div>
+                <div>
+                    <p>ここにはお前さんの詳しい自己紹介を書くんだぞ？どんなことに興味があって、普段どんな活動をしているのかをアピールすればいいねぇぞ？</p>
+                    <br>
+                    <p>GitHub Pagesを使えば、このファイルをアップロードするだけで世界中に公開できるからな？</p>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="content-area">
-            <header>
-                <h1>ZERO<br>Website</h1>
-                <p style="color: #64748b; font-size: 1.2rem;">ガジェットとUnityが趣味の17歳。</p>
-            </header>
-
-            <section class="info-section hover-trigger" 
-                     data-img="https://raw.githubusercontent.com/SuperZero1288/superzero1288.github.io/refs/heads/main/Picture/Ge1hsyBakAAle7V.jpeg" 
-                     data-bg="#020617">
-                <h2>About Me</h2>
-                <p>ガジェットとUnityが趣味の16歳です。</p>
-            </section>
-
-            <section class="info-section hover-trigger" 
-                     data-img="https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/channels4_profile.jpg?raw=true" 
-                     data-bg="#450a0a">
-                <h2>Social</h2>
-                <div class="link-grid">
-                    <a href="https://x.com/ZErrrrrO_1288" class="btn" target="_blank" rel="noopener noreferrer">Twitter</a>
-                    <a href="https://www.youtube.com/channel/UCuyl2Vpy1E0Fneqdpb_ITDA" class="btn" target="_blank" rel="noopener noreferrer">YouTube</a>
-                    <a href="https://github.com/SuperZero1288" class="btn" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <!-- プロジェクトセクション -->
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="projects-grid">
+                <!-- 作品1 -->
+                <div class="project-card">
+                    <h3>ウェブサイト制作</h3>
+                    <p>HTMLとCSSを使って構築したシンプルな個人ポートフォリオサイトだぞ？</p>
+                    <div class="tags">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                    </div>
                 </div>
-            </section>
-
-            <section class="info-section hover-trigger" 
-                     data-img="https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/%E3%81%95%E3%82%80%E3%81%AD.png?raw=true" 
-                     data-bg="#083344">
-                <h2>VRChat & Creative</h2>
-                <div class="link-grid">
-                    <a href="https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6" class="btn" target="_blank" rel="noopener noreferrer">VRChat</a>
-                    <a href="https://x.com/ZErrrrrO_VRC" class="btn" target="_blank" rel="noopener noreferrer">Twitter VRC</a>
-                    <a href="https://zerrrrro.booth.pm/" class="btn" target="_blank" rel="noopener noreferrer">Booth</a>
+                <!-- 作品2 -->
+                <div class="project-card">
+                    <h3>未来のプロジェクト</h3>
+                    <p>ここにはお前さんがこれから作る素晴らしい成果物を並べるんだぞ？</p>
+                    <div class="tags">
+                        <span class="tag">Unity</span>
+                        <span class="tag">UdonSharp</span>
+                    </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="info-section hover-trigger" 
-                     data-img="https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/%7B710D50F6-807F-4891-AC15-C0111E1A8198%7D.png?raw=true" 
-                     data-bg="#451a03">
-                <h2>Marketplace</h2>
-                <div class="link-grid">
-                    <a href="https://jp.mercari.com/user/profile/152986747" class="btn" target="_blank" rel="noopener noreferrer">メルカリ</a>
-                    <a href="https://paypayfleamarket.yahoo.co.jp/user/p55065762" class="btn" target="_blank" rel="noopener noreferrer">PayPayフリマ</a>
-                </div>
-            </section>
-        </div>
-    </div>
+        <!-- コンタクトセクション -->
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>お前さんに連絡を取りたい奴がいるなら、ここにSNSのアカウントやリンクを載せておくんだな？</p>
+            <br>
+            <p>GitHub: <a href="https://github.com" target="_blank">@your-username</a></p>
+        </nav>
+    </main>
 
-    <script>
-        const triggers = document.querySelectorAll('.hover-trigger');
-        const img = document.getElementById('dynamic-image');
-        const body = document.body;
+    <footer>
+        <p>&copy; 2026 Portfolio. All rights reserved.</p>
+    </footer>
 
-        // デフォルトの状態
-        const defaultState = {
-            img: "https://github.com/SuperZero1288/superzero1288.github.io/blob/main/Picture/VRChat_2025-10-04_02-36-04.052_2560x1440.png?raw=true",
-            bg: "#0f172a"
-        };
-
-        function updateView(src, bg) {
-            img.classList.add('fade-out');
-            body.style.backgroundColor = bg;
-            
-            setTimeout(() => {
-                img.src = src;
-                img.classList.remove('fade-out');
-            }, 300);
-        }
-
-        triggers.forEach(t => {
-            // マウスが乗った時
-            t.addEventListener('mouseenter', () => {
-                updateView(t.getAttribute('data-img'), t.getAttribute('data-bg'));
-            });
-
-            // 【ここが重要だ！】マウスが「個別のセクション」から離れた瞬間にリセットするぞ
-            t.addEventListener('mouseleave', () => {
-                updateView(defaultState.img, defaultState.bg);
-            });
-        });
-    </script>
 </body>
-</html>
+</html>ｓ
