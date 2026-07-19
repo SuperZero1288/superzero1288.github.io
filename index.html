@@ -3,123 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ぜろくんでんせつ - ポートフォリオ</title>
+    <title>portfolio / ぜろくんでんせつ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ナビゲーションバー -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="nav-logo">portfolio / ぜろくんでんせつ</a>
+    <!-- 全画面のヒーローセクション -->
+    <header class="hero-section">
+        <div class="hero-content">
+            <h1>portfolio / ぜろくんでんせつ</h1>
+            <p>Scroll Down</p>
+            <div class="arrow-down">↓</div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ（ポートフォリオ部分） -->
+    <main class="container">
+        <!-- ナビゲーションバー -->
+        <nav class="nav-bar">
+            <div class="logo">portfolio / ぜろくんでんせつ</div>
             <div class="nav-links">
                 <a href="#about">About</a>
                 <a href="#gallery">Gallery</a>
                 <a href="#activities">Activities</a>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <!-- カバー画像エリア -->
-    <header class="cover-banner">
-        <!-- お気に入りのスクショなどを背景に指定するんだぞ？ -->
-    </header>
-
-    <!-- メインコンテンツ（2カラムレイアウト） -->
-    <div class="main-wrapper">
-        <div class="content-container">
-            
-            <!-- 左側：プロフィール固定カード（リンクは削除したぞ？） -->
-            <aside class="sidebar">
-                <div class="profile-card" id="about">
-                    <div class="profile-avatar">
-                        <!-- ここにお前さんのアバター画像を設置するんだぞ？ -->
-                        <span style="font-size: 3rem;">🐱</span>
-                    </div>
-                    <h2 class="profile-name">ぜろくんでんせつ</h2>
-                    <p class="profile-status">ZErrrrrO</p>
-                    <p class="profile-bio">
-                        UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
-                    </p>
+        <div class="content-layout">
+            <!-- 左側：プロフィールカード -->
+            <section id="about" class="profile-card">
+                <div class="avatar-container">
+                    <!-- アイコン画像（必要に応じてパスを変更しろ） -->
+                    <span class="avatar-emoji">🐱</span>
                 </div>
-            </aside>
+                <h2>ぜろくんでんせつ</h2>
+                <p class="subtitle">ZErrrrrO</p>
+                <div class="bio-box">
+                    <p>UnityやUdonSharpを使用したVRChatワールド・アバターのギミック制作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？</p>
+                </div>
+            </section>
 
-            <!-- 右側：メインコンテンツ（GalleryとActivitiesを入れ替えたぞ？） -->
-            <main class="main-content">
+            <!-- 右側：ギャラリーセクション -->
+            <section id="gallery" class="gallery-section">
+                <h2 class="section-title">Gallery（制作物・リンク）</h2>
+                <p class="section-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
                 
-                <!-- ギャラリーセクション（Activitiesの上に入れ替えたぞ？） -->
-                <section class="content-section" id="gallery">
-                    <h2 class="section-title"><span class="title-marker">|</span> Gallery（制作物・リンク）</h2>
-                    <p class="section-intro">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
-                    <div class="gallery-grid">
-                        
-                        <!-- GitHubへのリンク付き画像 -->
-                        <a href="https://github.com" target="_blank" class="gallery-item">
-                            <!-- img src="github_work.jpg" alt="GitHub" -->
-                            <div class="image-placeholder">🐙 GitHub Repository</div>
-                            <div class="item-overlay">GitHubでコードを見る ↗</div>
-                        </a>
-
-                        <!-- X (旧Twitter) へのリンク付き画像 -->
-                        <a href="https://x.com" target="_blank" class="gallery-item">
-                            <!-- img src="x_work.jpg" alt="Twitter/X" -->
-                            <div class="image-placeholder">🕊️ Twitter / X</div>
-                            <div class="item-overlay">日常・開発進捗アカウント ↗</div>
-                        </a>
-
-                        <!-- VRChat へのリンク付き画像 -->
-                        <a href="https://vrchat.com" target="_blank" class="gallery-item">
-                            <!-- img src="vrchat_world.jpg" alt="VRChat" -->
-                            <div class="image-placeholder">📸 VRChat World View</div>
-                            <div class="item-overlay">Udonギミックワールドへ行く ↗</div>
-                        </a>
-
-                        <!-- その他制作物へのリンク付き画像 -->
-                        <a href="#" class="gallery-item">
-                            <!-- img src="shader_work.jpg" alt="Custom Shader" -->
-                            <div class="image-placeholder">✨ Custom Shader</div>
-                            <div class="item-overlay">自作アバターシェーダー詳細 ↗</div>
-                        </a>
-                        
-                    </div>
-                </section>
-
-                <!-- 活動実績セクション（下に移動したぞ？） -->
-                <section class="content-section" id="activities">
-                    <h2 class="section-title"><span class="title-marker">|</span> Activities（活動実績）</h2>
-                    
-                    <div class="activity-card">
-                        <div class="activity-info">
-                            <span class="activity-date">2026-02</span>
-                            <h3>VRChat RNG Project のリファクタリング</h3>
-                            <p class="activity-desc">既存のテキストオブジェクトをTextMeshProへ全面的に移行し、コンパイルスクリプトのデバッグと最適化を完遂したぞ？</p>
-                            <span class="activity-tech">#Unity #UdonSharp #TextMeshPro</span>
+                <div class="grid-container">
+                    <!-- カード 1 -->
+                    <a href="https://github.com" target="_blank" class="gallery-card">
+                        <div class="card-content">
+                            <span class="card-icon">🐙</span> GitHub Repository
                         </div>
-                    </div>
+                        <div class="card-footer">GitHubでコードを見る ↗</div>
+                    </a>
 
-                    <div class="activity-card">
-                        <div class="activity-info">
-                            <span class="activity-date">2026-01</span>
-                            <h3>ポートフォリオWebサイトのモックアップ作成</h3>
-                            <p class="activity-desc">HTMLとCSSを駆使し、自身の活動や作品をスタイリッシュに魅せるための独自のポートフォリオサイトの設計・開発を行ったぞ？</p>
-                            <span class="activity-tech">#HTML #CSS #GitHubPages</span>
+                    <!-- カード 2 -->
+                    <a href="https://x.com" target="_blank" class="gallery-card">
+                        <div class="card-content">
+                            <span class="card-icon">💬</span> Twitter / X
                         </div>
-                    </div>
+                        <div class="card-footer">日常・開発進捗アカウント ↗</div>
+                    </a>
 
-                    <div class="activity-card">
-                        <div class="activity-info">
-                            <span class="activity-date">2025-11</span>
-                            <h3>LED回路用電池蓋の製作及び実用工作</h3>
-                            <p class="activity-desc">実習にてLED回路を格納するための専用電池蓋の設計・加工を行い、キーホルダーのストラップ穴あけ等の精密な穴あけ加工技術を修得したぞ？</p>
-                            <span class="activity-tech">#Hardware #Crafting</span>
+                    <!-- カード 3 -->
+                    <a href="#" target="_blank" class="gallery-card">
+                        <div class="card-content">
+                            <span class="card-icon">📁</span> VRChat World View
                         </div>
-                    </div>
-                </section>
+                        <div class="card-footer">Udonギミックワールドへ行く ↗</div>
+                    </a>
 
-            </main>
-
+                    <!-- カード 4 -->
+                    <a href="#" target="_blank" class="gallery-card">
+                        <div class="card-content">
+                            <span class="card-icon">✨</span> Custom Shader
+                        </div>
+                        <div class="card-footer">自作アバターシェーダー詳細 ↗</div>
+                    </a>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
 
 </body>
 </html>
