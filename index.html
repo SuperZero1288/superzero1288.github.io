@@ -7,8 +7,8 @@
     <style>
         :root {
             --bg-color: #121214;
-            --card-bg: #1e1e22;
-            --card-sub-bg: #252529;
+            --card-bg: rgba(30, 30, 34, 0.75); /* 背景の画像を透かすために半透明にしたぞ？ */
+            --card-sub-bg: rgba(37, 37, 41, 0.8);
             --accent-color: #ff6584;
             --text-color: #e0e0e6;
             --text-muted: #a0a0a8;
@@ -18,30 +18,21 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            background-color: var(--bg-color);
+            min-height: 100vh;
             color: var(--text-color);
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            scroll-behavior: smooth;
+            background-color: var(--bg-color);
         }
 
-        /* 1. 全画面スライドショーセクション */
-        .hero-section {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slideshow {
-            position: absolute;
+        /* 1. 背景固定スライドショー（ここが全画面の裏側に固定されるぞ？） */
+        .background-slideshow {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            z-index: 1;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
         }
 
         .slide {
@@ -54,7 +45,7 @@
             animation: slideAnimation 12s infinite;
         }
 
-        /* 3枚のスライドショーの想定（必要に応じて画像URLを変えるんだぞ？） */
+        /* スライドの画像URLはお前さんの好きなVRChatのスクショに変えるんだぞ？ */
         .slide:nth-child(1) {
             background-image: url('https://via.placeholder.com/1920x1080/111');
             animation-delay: 0s;
@@ -76,25 +67,46 @@
             100% { opacity: 0; }
         }
 
-        .hero-overlay {
-            position: absolute;
+        /* 背景画像を見やすくするための黒いモヤだぞ？ */
+        .background-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 2;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(18,18,20,0.8) 100%);
+            z-index: -1;
+        }
+
+        /* 2. 前面のスクロールするメインコンテンツエリア */
+        .scroll-container {
+            width: 100%;
+            min-height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 最初に見える全画面のクッションエリア（スクロールを促すぞ？） */
+        .hero-welcome {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
         }
 
         .scroll-hint {
-            position: absolute;
-            bottom: 30px;
             color: var(--text-color);
-            z-index: 3;
             font-size: 14px;
             letter-spacing: 2px;
-            animation: bounce 2s infinite;
             text-decoration: none;
+            animation: bounce 2s infinite;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
         }
 
         @keyframes bounce {
@@ -103,27 +115,29 @@
             60% { transform: translateY(-5px); }
         }
 
-
-        /* 2. メインコンテンツセクション（赤枠部分） */
+        /* 下にスクロールすると浮かび上がってくる赤枠のコンテンツだな？ */
         .main-content {
             max-width: 1100px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 0 20px 100px 20px;
             display: flex;
             gap: 24px;
             align-items: flex-start;
             box-sizing: border-box;
+            width: 100%;
         }
 
         /* 左側：プロフィールカード */
         .profile-side {
             flex: 0 0 280px;
             background-color: var(--card-bg);
+            backdrop-filter: blur(12px); /* すりガラス効果でオシャレにしてやったぞ？ */
             border-radius: 16px;
             padding: 30px 20px;
             text-align: center;
             box-sizing: border-box;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .profile-avatar-wrapper {
@@ -173,10 +187,12 @@
         .gallery-side {
             flex: 1;
             background-color: var(--card-bg);
+            backdrop-filter: blur(12px);
             border-radius: 16px;
             padding: 30px;
             box-sizing: border-box;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .gallery-title {
@@ -202,7 +218,6 @@
             margin: 0 0 20px 0;
         }
 
-        /* 2段2列のグリッド配置 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -220,14 +235,15 @@
             justify-content: space-between;
             min-height: 110px;
             box-sizing: border-box;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 1px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .grid-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
-            border-color: rgba(255, 101, 132, 0.2);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+            background-color: rgba(45, 45, 50, 0.9);
+            border-color: rgba(255, 101, 132, 0.3);
         }
 
         .grid-card-title {
@@ -247,10 +263,11 @@
             gap: 4px;
         }
 
-        /* レスポンシブ対応（画面が狭くなったら縦並びにするぞ？） */
+        /* レスポンシブ対応だな？ */
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
+                padding-top: 20px;
             }
             .profile-side {
                 width: 100%;
@@ -263,65 +280,70 @@
 </head>
 <body>
 
-    <!-- 1. 全画面スライドショーセクション -->
-    <div class="hero-section">
-        <div class="slideshow">
-            <div class="slide"></div>
-            <div class="slide"></div>
-            <div class="slide"></div>
-        </div>
-        <div class="hero-overlay"></div>
-        <a href="#content" class="scroll-hint">SCROLL DOWN</a>
+    <!-- 1. 全画面背景スライドショー（裏側に固定されるぞ？） -->
+    <div class="background-slideshow">
+        <div class="slide"></div>
+        <div class="slide"></div>
+        <div class="slide"></div>
     </div>
+    <div class="background-overlay"></div>
 
-    <!-- 2. メインコンテンツセクション（赤枠部分） -->
-    <div class="main-content" id="content">
+    <!-- 2. 前面のスクロールレイヤー -->
+    <div class="scroll-container">
         
-        <!-- 左側：プロフィール -->
-        <div class="profile-side">
-            <div class="profile-avatar-wrapper">
-                <!-- ここにお前さんのアイコン画像を突っ込むんだぞ？ -->
-                <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar">
-            </div>
-            <h2 class="profile-name">ぜろくんでんせつ</h2>
-            <div class="profile-sub">ZEro0</div>
-            <p class="profile-bio">
-                UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroidのシステムカスタマイズも好物だぞ？
-            </p>
+        <!-- 初期表示用の全画面透明セクション -->
+        <div class="hero-welcome">
+            <a href="#content" class="scroll-hint">SCROLL DOWN</a>
         </div>
 
-        <!-- 右側：制作物・リンク -->
-        <div class="gallery-side">
-            <h3 class="gallery-title">Gallery（制作物・リンク）</h3>
-            <p class="gallery-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
+        <!-- 下にスクロールすると現れるメインコンテンツ（赤枠部分） -->
+        <div class="main-content" id="content">
             
-            <div class="grid-container">
-                <!-- カード 1 -->
-                <a href="https://github.com/" target="_blank" class="grid-card">
-                    <div class="grid-card-title">🐙 GitHub Repository</div>
-                    <div class="grid-card-action">GitHubでコードを見る ↗</div>
-                </a>
-
-                <!-- カード 2 -->
-                <a href="https://twitter.com/" target="_blank" class="grid-card">
-                    <div class="grid-card-title">🐦 Twitter / X</div>
-                    <div class="grid-card-action">日常・開発進捗アカウント ↗</div>
-                </a>
-
-                <!-- カード 3 -->
-                <a href="https://vrchat.com/" target="_blank" class="grid-card">
-                    <div class="grid-card-title">📁 VRChat World View</div>
-                    <div class="grid-card-action">Udonギミックワールドへ行く ↗</div>
-                </a>
-
-                <!-- カード 4 -->
-                <a href="#" class="grid-card">
-                    <div class="grid-card-title">✨ Custom Shader</div>
-                    <div class="grid-card-action">自作アバターシェーダー詳細 ↗</div>
-                </a>
+            <!-- 左側：プロフィール -->
+            <div class="profile-side">
+                <div class="profile-avatar-wrapper">
+                    <img src="https://via.placeholder.com/90" alt="Avatar" class="profile-avatar">
+                </div>
+                <h2 class="profile-name">ぜろくんでんせつ</h2>
+                <div class="profile-sub">ZEro0</div>
+                <p class="profile-bio">
+                    UnityやUdonSharpを使用したVRChatワールド・アバターのギミック製作、カスタムシェーダーの開発を行っているぞ？OSやAndroid of システムカスタマイズも好物だぞ？
+                </p>
             </div>
-        </div>
 
+            <!-- 右側：制作物・リンク -->
+            <div class="gallery-side">
+                <h3 class="gallery-title">Gallery（制作物・リンク）</h3>
+                <p class="gallery-desc">画像をクリックするとそれぞれのリンク先にジャンプするぞ？</p>
+                
+                <div class="grid-container">
+                    <!-- カード 1 -->
+                    <a href="https://github.com/" target="_blank" class="grid-card">
+                        <div class="grid-card-title">🐙 GitHub Repository</div>
+                        <div class="grid-card-action">GitHubでコードを見る ↗</div>
+                    </a>
+
+                    <!-- カード 2 -->
+                    <a href="https://twitter.com/" target="_blank" class="grid-card">
+                        <div class="grid-card-title">🐦 Twitter / X</div>
+                        <div class="grid-card-action">日常・開発進捗アカウント ↗</div>
+                    </a>
+
+                    <!-- カード 3 -->
+                    <a href="https://vrchat.com/" target="_blank" class="grid-card">
+                        <div class="grid-card-title">📁 VRChat World View</div>
+                        <div class="grid-card-action">Udonギミックワールドへ行く ↗</div>
+                    </a>
+
+                    <!-- カード 4 -->
+                    <a href="#" class="grid-card">
+                        <div class="grid-card-title">✨ Custom Shader</div>
+                        <div class="grid-card-action">自作アバターシェーダー詳細 ↗</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </body>
