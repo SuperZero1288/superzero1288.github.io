@@ -1,892 +1,845 @@
-/* ――― テーマ変数 ――― */
+/* ――― テーマ（デザイン言語）変数定義 ――― */
 
-body.style-default{
---accent-color:#ff8fa3;
---accent-hover:#ffb3c1;
---ui-bg:rgba(22,20,26,.65);
---card-bg:rgba(37,34,41,.75);
---border-color:rgba(255,255,255,.18);
---card-border:rgba(255,255,255,.1);
---radius-main:28px;
---radius-card:16px;
---radius-capsule:9999px;
---font-family:'Helvetica Neue',Arial,sans-serif;
---glow-effect:none;
+/* 1. デフォルト */
+body.style-default {
+    --accent-color: #ff8fa3;
+    --accent-hover: #ffb3c1;
+    --ui-bg: rgba(22, 20, 26, 0.65);
+    --card-bg: rgba(37, 34, 41, 0.75);
+    --border-color: rgba(255, 255, 255, 0.18);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --radius-main: 28px;
+    --radius-card: 16px;
+    --radius-capsule: 9999px;
+    --font-family: 'Helvetica Neue', Arial, sans-serif;
+    --glow-effect: none;
 }
 
-body.style-material{
---accent-color:#d0bcff;
---accent-hover:#e8def8;
---ui-bg:rgba(29,27,32,.88);
---card-bg:rgba(33,29,39,.9);
---border-color:rgba(147,143,153,.2);
---card-border:rgba(147,143,153,.12);
---radius-main:32px;
---radius-card:24px;
---radius-capsule:9999px;
---font-family:'Roboto','Google Sans',sans-serif;
---glow-effect:0 4px 20px rgba(0,0,0,.25);
+/* 2. Google Material Design (Material You 風) */
+body.style-material {
+    --accent-color: #d0bcff;
+    --accent-hover: #e8def8;
+    --ui-bg: rgba(29, 27, 32, 0.88);
+    --card-bg: rgba(33, 29, 39, 0.9);
+    --border-color: rgba(147, 143, 153, 0.2);
+    --card-border: rgba(147, 143, 153, 0.12);
+    --radius-main: 32px;
+    --radius-card: 24px;
+    --radius-capsule: 9999px;
+    --font-family: 'Roboto', 'Google Sans', sans-serif;
+    --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-body.style-liquidglass{
---accent-color:#0a84ff;
---accent-hover:#64d2ff;
---ui-bg:rgba(255,255,255,.12);
---card-bg:rgba(255,255,255,.08);
---border-color:rgba(255,255,255,.3);
---card-border:rgba(255,255,255,.2);
---radius-main:36px;
---radius-card:22px;
---radius-capsule:9999px;
---font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;
---glow-effect:0 20px 40px rgba(0,0,0,.2);
+/* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
+body.style-liquidglass {
+    --accent-color: #0a84ff;
+    --accent-hover: #64d2ff;
+    --ui-bg: rgba(255, 255, 255, 0.12);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.3);
+    --card-border: rgba(255, 255, 255, 0.2);
+    --radius-main: 36px;
+    --radius-card: 22px;
+    --radius-capsule: 9999px;
+    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-body.style-vrchat{
---accent-color:#66c0f4;
---accent-hover:#1fcae6;
---ui-bg:rgba(23,29,37,.88);
---card-bg:rgba(27,40,56,.9);
---border-color:#2a475e;
---card-border:rgba(102,192,244,.3);
---radius-main:24px;
---radius-card:16px;
---radius-capsule:9999px;
---font-family:'Segoe UI',Tahoma,sans-serif;
---glow-effect:0 0 15px rgba(102,192,244,.25);
+/* 4. VRChat ゲーム内 UI 風 */
+body.style-vrchat {
+    --accent-color: #66c0f4;
+    --accent-hover: #1fcae6;
+    --ui-bg: rgba(23, 29, 37, 0.88);
+    --card-bg: rgba(27, 40, 56, 0.90);
+    --border-color: #2a475e;
+    --card-border: rgba(102, 192, 244, 0.3);
+    --radius-main: 24px;
+    --radius-card: 16px;
+    --radius-capsule: 9999px;
+    --font-family: 'Segoe UI', Tahoma, sans-serif;
+    --glow-effect: 0 0 15px rgba(102, 192, 244, 0.25);
 }
 
-body.style-fluent{
---accent-color:#60cdff;
---accent-hover:#99ebff;
---ui-bg:rgba(32,32,32,.75);
---card-bg:rgba(45,45,45,.8);
---border-color:rgba(255,255,255,.14);
---card-border:rgba(255,255,255,.08);
---radius-main:8px;
---radius-card:6px;
---radius-capsule:9999px;
---font-family:'Segoe UI Variable Text','Segoe UI',sans-serif;
---glow-effect:0 8px 32px rgba(0,0,0,.36);
+/* 5. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
+body.style-fluent {
+    --accent-color: #60cdff;
+    --accent-hover: #99ebff;
+    --ui-bg: rgba(32, 32, 32, 0.75);
+    --card-bg: rgba(45, 45, 45, 0.8);
+    --border-color: rgba(255, 255, 255, 0.14);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --radius-main: 8px;
+    --radius-card: 6px;
+    --radius-capsule: 9999px;
+    --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+    --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
 }
 
-body.style-unity{
---accent-color:#2c5d88;
---accent-hover:#3a78b0;
---ui-bg:rgba(56,56,56,.95);
---card-bg:rgba(40,40,40,.95);
---border-color:#232323;
---card-border:#1a1a1a;
---radius-main:3px;
---radius-card:3px;
---radius-capsule:4px;
---font-family:Inter,Arial,sans-serif;
---glow-effect:none;
+/* 6. Unity ゲームエンジン風 (Editor Dark Theme) */
+body.style-unity {
+    --accent-color: #2c5d88;
+    --accent-hover: #3a78b0;
+    --ui-bg: rgba(56, 56, 56, 0.95);
+    --card-bg: rgba(40, 40, 40, 0.95);
+    --border-color: #232323;
+    --card-border: #1a1a1a;
+    --radius-main: 3px;
+    --radius-card: 3px;
+    --radius-capsule: 4px;
+    --font-family: Inter, Arial, sans-serif;
+    --glow-effect: none;
 }
 
-/* ――― 全体 ――― */
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-html,body{
-width:100%;
-height:100%;
-overflow:hidden;
-background:#0f0f12;
-color:#e0e0e6;
-font-family:var(--font-family);
-transition:background-color .4s ease,color .4s ease,font-family .3s ease;
+/* 全体のスタイル設定 */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-.snap-container{
-width:100vw;
-height:100vh;
-overflow-y:scroll;
-scroll-snap-type:y mandatory;
-scroll-behavior:smooth;
-position:relative;
-z-index:10;
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0f0f12;
+    color: #e0e0e6;
+    font-family: var(--font-family);
+    transition: background-color 0.4s ease, color 0.4s ease, font-family 0.3s ease;
 }
 
-.snap-section{
-width:100vw;
-height:100vh;
-scroll-snap-align:start;
-scroll-snap-stop:always;
-position:relative;
+/* スライド（ページ切り替え）コンテナ */
+.snap-container {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    position: relative;
+    z-index: 10;
 }
 
-.svg-icon{
-display:flex;
-align-items:center;
-justify-content:center;
-width:18px;
-height:18px;
+.snap-section {
+    width: 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
 }
 
-.svg-icon svg{
-width:100%;
-height:100%;
-fill:currentColor;
+/* SVGアイコン共通設定 */
+.svg-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
 }
 
-/* ――― ライトテーマ ――― */
+.svg-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+}
 
-body.light-theme{
-background:#e8e8ee;
-color:#2e2e38;
+/* ライトテーマ設定 */
+body.light-theme {
+    background-color: #e8e8ee;
+    color: #2e2e38;
 }
 
 body.light-theme .floating-status-bar,
-body.light-theme .calendar-popup{
-background:rgba(235,235,242,.85);
-border-color:rgba(0,0,0,.15);
-box-shadow:0 8px 32px rgba(0,0,0,.12);
+body.light-theme .calendar-popup {
+    background: rgba(235, 235, 242, 0.85);
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
-body.light-theme .status-bar-indicator{
-background:rgba(0,0,0,.3);
+body.light-theme .status-bar-indicator {
+    background: rgba(0, 0, 0, 0.3);
 }
 
-body.light-theme .status-capsule{
-background:rgba(255,255,255,.85);
-border-color:rgba(0,0,0,.08);
-color:#2e2e38;
+body.light-theme .status-capsule {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #2e2e38;
 }
 
 body.light-theme .status-time,
 body.light-theme .calendar-header,
-body.light-theme .calendar-day-cell{
-color:#2e2e38;
+body.light-theme .calendar-day-cell {
+    color: #2e2e38;
 }
 
-body.light-theme .calendar-weekdays span{color:#777}
-
-body.light-theme .calendar-day-cell:hover:not(.empty){
-background:rgba(0,0,0,.08);
+body.light-theme .calendar-weekdays span {
+    color: #777;
 }
 
-body.light-theme .content-screen{
-background:rgba(244,244,247,.85);
-border-color:rgba(255,255,255,.8);
-box-shadow:0 16px 40px rgba(0,0,0,.12);
+body.light-theme .calendar-day-cell:hover:not(.empty) {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+body.light-theme .content-screen {
+    background: rgba(244, 244, 247, 0.85);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
 
 body.light-theme .profile-card,
-body.light-theme .gallery-section{
-background-color:rgba(255,255,255,.85);
-border-color:#e0e0e8;
-}
-
-body.light-theme .profile-desc{
-background:#f0f0f5;
-color:#4a4a5a;
-}
-
-body.light-theme .site-title{
-background:#eaeaea;
-border-color:#ddd;
-color:var(--accent-color);
-}
-
-a{
-color:var(--accent-color);
-text-decoration:none;
-transition:color .3s;
-}
-
-a:hover{color:var(--accent-hover)}
-
-/* ――― ライト非対応テーマのボタン ――― */
-
-#themeToggleBtn.disabled{
-opacity:.35;
-filter:grayscale(1);
-cursor:not-allowed;
-pointer-events:none;
-}
-
-#themeToggleBtn.disabled:hover{
-transform:none;
-border-color:var(--border-color);
-background:rgba(255,255,255,.08);
-}
-
-/* ――― フローティングバー ――― */
-
-.floating-status-bar{
-position:fixed;
-top:16px;
-left:50%;
-transform:translateX(-50%) translateY(0);
-width:50vw;
-min-width:380px;
-max-width:650px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:8px 14px;
-background:var(--ui-bg);
-border:1px solid var(--border-color);
-border-radius:var(--radius-main);
-backdrop-filter:blur(20px);
--webkit-backdrop-filter:blur(20px);
-box-shadow:0 8px 32px rgba(0,0,0,.45),var(--glow-effect);
-z-index:9999;
-opacity:1;
-pointer-events:auto;
-transition:transform .3s cubic-bezier(.175,.885,.32,1.275),opacity .3s ease,background .3s ease,border-color .3s ease,border-radius .3s ease;
-}
-
-.floating-status-bar.hidden{
-transform:translateX(-50%) translateY(-100px);
-opacity:0;
-pointer-events:none;
-transition:transform .3s cubic-bezier(.6,-.28,.735,.045),opacity .3s ease;
-}
-
-.status-bar-indicator{
-position:fixed;
-top:6px;
-left:50%;
-transform:translateX(-50%);
-width:50vw;
-min-width:380px;
-max-width:650px;
-height:3px;
-background:rgba(255,255,255,.4);
-border-radius:2px;
-backdrop-filter:blur(4px);
--webkit-backdrop-filter:blur(4px);
-z-index:9998;
-opacity:0;
-pointer-events:none;
-transition:opacity .25s ease;
-}
-
-.status-bar-indicator.visible{opacity:.25}
-
-.status-right-group{
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.status-capsule{
-display:flex;
-align-items:center;
-justify-content:center;
-height:42px;
-background:rgba(255,255,255,.08);
-border:1px solid var(--border-color);
-border-radius:var(--radius-capsule,var(--radius-card));
-color:#fff;
-font-weight:600;
-transition:all .2s ease;
-user-select:none;
-}
-
-.time-capsule{
-position:absolute;
-left:50%;
-transform:translateX(-50%);
-width:120px;
-height:42px;
-cursor:pointer;
-font-variant-numeric:tabular-nums;
-}
-
-.time-capsule:hover{
-background:rgba(255,255,255,.16);
-border-color:var(--accent-color);
-}
-
-.status-time{
-font-weight:700;
-color:#fff;
-letter-spacing:.5px;
-font-size:1.2rem;
-}
-
-/* ――― カレンダー ――― */
-
-.calendar-popup{
-position:absolute;
-top:calc(100% + 22px);
-left:50%;
-transform:translateX(-50%) translateY(-10px);
-width:220px;
-padding:14px;
-background:var(--ui-bg);
-border:1px solid var(--border-color);
-border-radius:var(--radius-card);
-backdrop-filter:blur(20px);
--webkit-backdrop-filter:blur(20px);
-box-shadow:0 8px 32px rgba(0,0,0,.45);
-display:flex;
-flex-direction:column;
-gap:8px;
-opacity:0;
-visibility:hidden;
-pointer-events:none;
-transition:opacity .3s ease,transform .3s ease,visibility .3s;
-z-index:10000;
-}
-
-.time-capsule::after{
-content:'';
-position:absolute;
-top:100%;
-left:0;
-width:100%;
-height:25px;
-}
-
-.time-capsule:hover .calendar-popup{
-opacity:1;
-visibility:visible;
-pointer-events:auto;
-transform:translateX(-50%) translateY(0);
-}
-
-.calendar-header{
-font-size:.85rem;
-font-weight:800;
-color:#fff;
-text-align:center;
-letter-spacing:1px;
-padding-bottom:2px;
-}
-
-.calendar-weekdays{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-text-align:center;
-font-size:.65rem;
-font-weight:700;
-color:#aaa;
-}
-
-.calendar-weekdays .sun{color:#ff6b6b}
-.calendar-weekdays .sat{color:#4dabf7}
-
-.calendar-days-grid{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:2px;
-text-align:center;
-}
-
-.calendar-day-cell{
-width:26px;
-height:26px;
-line-height:26px;
-font-size:.72rem;
-font-weight:600;
-color:#e0e0e6;
-margin:0 auto;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-transition:background-color .2s,transform .1s;
-}
-
-.calendar-day-cell:hover:not(.empty){
-background:rgba(255,255,255,.18);
-transform:scale(1.1);
-}
-
-.calendar-day-cell.sun{color:#ff6b6b}
-.calendar-day-cell.sat{color:#4dabf7}
-
-.calendar-day-cell.is-today{
-background:rgba(255,255,255,.2);
-border:2px solid var(--accent-color);
-color:#fff;
-font-weight:800;
-box-shadow:var(--glow-effect);
-}
-
-/* ――― トースト ――― */
-
-.toast-notification{
-position:fixed;
-bottom:24px;
-right:24px;
-background:var(--ui-bg);
-border:1px solid var(--accent-color);
-color:#fff;
-padding:10px 18px;
-border-radius:var(--radius-card);
-font-size:.85rem;
-font-weight:bold;
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-box-shadow:0 4px 16px rgba(0,0,0,.5),var(--glow-effect);
-opacity:0;
-transform:translateY(10px);
-pointer-events:none;
-transition:opacity .3s ease,transform .3s ease;
-z-index:10001;
-}
-
-.toast-notification.show{
-opacity:1;
-transform:translateY(0);
-}
-
-.icon-btn{
-width:42px;
-height:42px;
-padding:0;
-cursor:pointer;
-font-family:inherit;
-font-size:1rem;
-flex-shrink:0;
-border-radius:var(--radius-capsule,var(--radius-card));
-}
-
-.icon-btn:hover{
-background:rgba(255,255,255,.15);
-border-color:var(--accent-color);
-transform:scale(1.08);
-}
-
-/* ――― 背景スライドショー ――― */
-
-.hero-slider{
-position:fixed;
-top:0;
-left:0;
-width:100vw;
-height:100vh;
-z-index:1;
-overflow:hidden;
-background:#000;
-}
-
-.blur-overlay{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:2;
-pointer-events:none;
-transition:backdrop-filter .1s linear,background-color .1s linear;
-}
-
-.slides{
-position:absolute;
-width:100%;
-height:100%;
-opacity:0;
-animation:slideAnimation 52s infinite;
-background-size:cover;
-background-position:center;
-}
-
-.slides:nth-child(1){background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');animation-delay:0s}
-.slides:nth-child(2){background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');animation-delay:4s}
-.slides:nth-child(3){background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');animation-delay:8s}
-.slides:nth-child(4){background-image:url('https://i.ibb.co/BHDtqs5P/image.png');animation-delay:12s}
-.slides:nth-child(5){background-image:url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png');animation-delay:16s}
-.slides:nth-child(6){background-image:url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png');animation-delay:20s}
-.slides:nth-child(7){background-image:url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png');animation-delay:24s}
-.slides:nth-child(8){background-image:url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png');animation-delay:28s}
-.slides:nth-child(9){background-image:url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png');animation-delay:32s}
-.slides:nth-child(10){background-image:url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png');animation-delay:36s}
-.slides:nth-child(11){background-image:url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png');animation-delay:40s}
-.slides:nth-child(12){background-image:url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png');animation-delay:44s}
-.slides:nth-child(13){background-image:url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');animation-delay:48s}
-
-@keyframes slideAnimation{
-0%{opacity:0;transform:scale(1)}
-8%{opacity:1}
-33%{opacity:1}
-41%{opacity:0;transform:scale(1.05)}
-100%{opacity:0}
-}
-
-/* ――― ファーストビュー ――― */
-
-.hero-spacer{
-display:flex;
-justify-content:center;
-align-items:flex-end;
-padding-bottom:30px;
-}
-
-.scroll-indicator{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:6px;
-padding:12px 28px;
-background:var(--ui-bg);
-border:1px solid var(--accent-color);
-border-radius:var(--radius-card);
-backdrop-filter:blur(8px);
-box-shadow:0 4px 20px rgba(0,0,0,.6),var(--glow-effect);
-transition:opacity .4s ease,transform .4s ease;
-animation:floatAnimation 2.5s infinite ease-in-out;
-opacity:1;
-pointer-events:auto;
-}
-
-.scroll-indicator.hidden{
-opacity:0!important;
-pointer-events:none!important;
-transform:translateY(15px);
-}
-
-.scroll-indicator:hover{
-background:rgba(40,36,46,.9);
-border-color:var(--accent-hover);
-}
-
-.scroll-text{
-color:#fff;
-font-size:1rem;
-font-weight:800;
-letter-spacing:3px;
-text-shadow:0 2px 4px rgba(0,0,0,.9);
-}
-
-.scroll-arrow{
-color:var(--accent-color);
-font-size:1.1rem;
-animation:arrowBounce 1.5s infinite;
-}
-
-@keyframes floatAnimation{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-12px)}
-}
-
-@keyframes arrowBounce{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(5px)}
-}
-
-/* ――― コンテンツ ――― */
-
-.content-section-wrapper{
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.content-screen{
-width:90vw;
-max-width:1100px;
-padding:40px;
-background:var(--ui-bg);
-border:1px solid var(--border-color);
-backdrop-filter:blur(12px);
--webkit-backdrop-filter:blur(12px);
-border-radius:var(--radius-main);
-box-shadow:0 16px 40px rgba(0,0,0,.35),var(--glow-effect);
-transition:background .4s ease,border-color .4s ease,border-radius .3s ease;
-}
-
-.content-wrapper{
-width:100%;
-display:flex;
-flex-direction:column;
-gap:24px;
-}
-
-.header-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-width:100%;
-}
-
-.site-title{
-background:rgba(42,37,42,.8);
-border:1px solid var(--border-color);
-border-radius:var(--radius-card);
-padding:10px 20px;
-font-size:1.1rem;
-color:var(--accent-color);
-font-weight:bold;
-transition:color .3s ease,border-radius .3s ease;
-}
-
-.container{
-display:flex;
-flex-direction:column;
-width:100%;
-gap:16px;
-}
-
-.main-content-layout{
-display:flex;
-gap:24px;
-align-items:stretch;
-}
-
-.profile-card{
-width:300px;
-background-color:var(--card-bg);
-border:1px solid var(--card-border);
-border-radius:var(--radius-card);
-padding:24px;
-text-align:center;
-box-shadow:0 4px 16px rgba(0,0,0,.2);
-flex-shrink:0;
-display:flex;
-flex-direction:column;
-justify-content:center;
-transition:background-color .3s,border-color .3s,border-radius .3s;
-}
-
-.avatar-container{
-width:90px;
-height:90px;
-border-radius:var(--radius-card);
-margin:0 auto 16px;
-overflow:hidden;
-border:2px solid var(--accent-color);
-flex-shrink:0;
-transition:border-color .3s,border-radius .3s;
-}
-
-.avatar-container img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.profile-name{
-font-size:1.3rem;
-font-weight:bold;
-margin-bottom:4px;
-}
-
-.profile-id{
-font-size:.85rem;
-color:var(--accent-color);
-margin-bottom:16px;
-letter-spacing:1px;
-}
-
-.profile-desc{
-background:rgba(0,0,0,.3);
-border-radius:calc(var(--radius-card)/2);
-padding:14px;
-font-size:.85rem;
-line-height:1.5;
-text-align:left;
-color:#c0c0c8;
-}
-
-.gallery-section{
-flex-grow:1;
-background-color:var(--card-bg);
-border:1px solid var(--card-border);
-border-radius:var(--radius-card);
-padding:24px;
-box-shadow:0 4px 16px rgba(0,0,0,.2);
-display:flex;
-flex-direction:column;
-justify-content:center;
-transition:background-color .3s,border-color .3s,border-radius .3s;
-}
-
-.section-title{
-font-size:1.2rem;
-font-weight:bold;
-margin-bottom:4px;
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-.section-title::before{
-content:"|";
-color:var(--accent-color);
-font-weight:bold;
-}
-
-.section-subtitle{
-font-size:.8rem;
-color:#888;
-margin-bottom:16px;
-}
-
-.grid-container{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-}
-
-.grid-item{
-background:#2d2933;
-border:1px solid var(--card-border);
-border-radius:calc(var(--radius-card)/2);
-overflow:hidden;
-display:flex;
-flex-direction:column;
-transition:transform .2s,border-color .2s,border-radius .3s;
-background-size:cover;
-background-position:center;
-position:relative;
-text-decoration:none;
-}
-
-.grid-item:hover{
-transform:translateY(-2px);
-border-color:var(--accent-color);
-}
-
-.item-content{
-padding:40px 16px;
-text-align:center;
-font-size:.9rem;
-color:#fff;
-flex-grow:1;
-display:flex;
-align-items:center;
-justify-content:center;
-gap:8px;
-background:rgba(0,0,0,.55);
-font-weight:bold;
-text-shadow:0 1px 4px rgba(0,0,0,.8);
-}
-
-.item-link{
-border-top:1px solid var(--card-border);
-padding:10px 16px;
-font-size:.8rem;
-background:rgba(0,0,0,.4);
-text-align:center;
-color:var(--accent-color);
-z-index:1;
-}
-
-.grid-item:hover .item-link{
-color:var(--accent-hover);
-background:rgba(0,0,0,.6);
-}
-
-#gallery-twitter{background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png')}
-#gallery-vrchat{background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png')}
-#gallery-booth{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
-#gallery-shader{background-image:url('https://i.ibb.co/BHDtqs5P/image.png')}
-
-/* =========================================================
-   LiquidGlass ライトモード
-   ========================================================= */
-
-body.style-liquidglass.light-theme{
---ui-bg:rgba(255,255,255,.18);
---card-bg:rgba(255,255,255,.11);
---border-color:rgba(255,255,255,.58);
---card-border:rgba(255,255,255,.38);
---glow-effect:0 18px 45px rgba(31,38,135,.12),inset 0 1px 0 rgba(255,255,255,.72);
-}
-
-/* 一般ライトテーマの白い板指定をLiquidGlassでは上書き */
-body.style-liquidglass.light-theme .floating-status-bar,
-body.style-liquidglass.light-theme .calendar-popup{
-background:rgba(255,255,255,.18);
-border-color:rgba(255,255,255,.58);
-box-shadow:0 18px 45px rgba(31,38,135,.12),inset 0 1px 0 rgba(255,255,255,.72);
-backdrop-filter:blur(14px) saturate(145%);
--webkit-backdrop-filter:blur(14px) saturate(145%);
-}
-
-body.style-liquidglass.light-theme .status-capsule{
-background:rgba(255,255,255,.13);
-border-color:rgba(255,255,255,.48);
-color:#1d2733;
-}
-
-body.style-liquidglass.light-theme .status-time,
-body.style-liquidglass.light-theme .calendar-header,
-body.style-liquidglass.light-theme .calendar-day-cell{
-color:#1d2733;
-}
-
-body.style-liquidglass.light-theme .content-screen{
-background:rgba(255,255,255,.16);
-border-color:rgba(255,255,255,.62);
-box-shadow:0 24px 60px rgba(31,38,135,.14),inset 0 1px 0 rgba(255,255,255,.75);
-backdrop-filter:blur(12px) saturate(145%);
--webkit-backdrop-filter:blur(12px) saturate(145%);
-}
-
-body.style-liquidglass.light-theme .profile-card,
-body.style-liquidglass.light-theme .gallery-section{
-background:rgba(255,255,255,.10);
-border-color:rgba(255,255,255,.42);
-box-shadow:0 10px 30px rgba(31,38,135,.08),inset 0 1px 0 rgba(255,255,255,.6);
-}
-
-body.style-liquidglass.light-theme .site-title{
-background:rgba(255,255,255,.14);
-border-color:rgba(255,255,255,.45);
-color:var(--accent-color);
-}
-
-body.style-liquidglass.light-theme .profile-desc{
-background:rgba(255,255,255,.12);
-color:#3d4650;
-}
-
-body.style-liquidglass.light-theme .grid-item{
-background-color:rgba(255,255,255,.08);
-border-color:rgba(255,255,255,.38);
-}
-
-body.style-liquidglass.light-theme .item-content{
-background:rgba(20,30,40,.38);
-}
-
-body.style-liquidglass.light-theme .item-link{
-background:rgba(20,30,40,.28);
-border-color:rgba(255,255,255,.25);
-}
-
-/* LiquidGlassライトの背景を完全な白にしない */
-body.style-liquidglass.light-theme .hero-slider{
-background:#dfe8f2;
-}
-
-/* =========================================================
-   LiquidGlass ダークモード
-   ========================================================= */
-
-body.style-liquidglass:not(.light-theme){
---ui-bg:rgba(255,255,255,.09);
---card-bg:rgba(255,255,255,.06);
-}
-
-body.style-liquidglass:not(.light-theme) .status-capsule{
-background:rgba(255,255,255,.055);
-}
-
-body.style-liquidglass:not(.light-theme) .time-capsule:hover,
-body.style-liquidglass:not(.light-theme) .icon-btn:hover{
-background:rgba(255,255,255,.10);
-}
-
-/* ライト非対応テーマは常にダーク */
-body.style-vrchat.light-theme,
-body.style-unity.light-theme{
-}
-
-/* ――― レスポンシブ ――― */
-
-@media(max-width:850px){
-.floating-status-bar,.status-bar-indicator{width:80vw}
-.content-screen{width:95vw;padding:20px 12px}
-.main-content-layout{flex-direction:column;align-items:center}
-.profile-card{width:100%}
-.grid-container{grid-template-columns:1fr}
+body.light-theme .gallery-section {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-color: #e0e0e8;
+}
+
+body.light-theme .profile-desc {
+    background-color: #f0f0f5;
+    color: #4a4a5a;
+}
+
+body.light-theme .site-title {
+    background-color: #eaeaea;
+    border-color: #ddd;
+    color: var(--accent-color);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+/* ――― 浮遊型 フローティングステータスバー ――― */
+.floating-status-bar {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: 50vw;
+    min-width: 380px;
+    max-width: 650px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-main);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
+    z-index: 9999;
+    opacity: 1;
+    pointer-events: auto;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
+}
+
+.floating-status-bar.hidden {
+    transform: translateX(-50%) translateY(-100px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.3s ease;
+}
+
+.status-bar-indicator {
+    position: fixed;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50vw;
+    min-width: 380px;
+    max-width: 650px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 9998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.status-bar-indicator.visible {
+    opacity: 0.25;
+}
+
+/* 右側ボタンをまとめるグループ */
+.status-right-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-capsule {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-capsule, var(--radius-card));
+    color: #ffffff;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.time-capsule {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 42px;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+}
+
+.time-capsule:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: var(--accent-color);
+}
+
+.status-time {
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    font-size: 1.2rem;
+}
+
+.calendar-popup {
+    position: absolute;
+    top: calc(100% + 22px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    width: 220px;
+    padding: 14px;
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    z-index: 10000;
+}
+
+.time-capsule::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 25px;
+}
+
+.time-capsule:hover .calendar-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.calendar-header {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-align: center;
+    letter-spacing: 1px;
+    padding-bottom: 2px;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #aaa;
+}
+
+.calendar-weekdays .sun { color: #ff6b6b; }
+.calendar-weekdays .sat { color: #4dabf7; }
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.calendar-day-cell {
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #e0e0e6;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.calendar-day-cell:hover:not(.empty) {
+    background: rgba(255, 255, 255, 0.18);
+    transform: scale(1.1);
+}
+
+.calendar-day-cell.sun { color: #ff6b6b; }
+.calendar-day-cell.sat { color: #4dabf7; }
+
+.calendar-day-cell.is-today {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--accent-color);
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: var(--glow-effect);
+}
+
+/* トースト通知 */
+.toast-notification {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--ui-bg);
+    border: 1px solid var(--accent-color);
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: var(--radius-card);
+    font-size: 0.85rem;
+    font-weight: bold;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), var(--glow-effect);
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10001;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-capsule, var(--radius-card));
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    transform: scale(1.08);
+}
+
+/* ――― 背景固定 全画面スライドショー ――― */
+.hero-slider {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* 背景ぼかしオーバーレイ */
+.blur-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    transition: backdrop-filter 0.1s linear, background-color 0.1s linear;
+}
+
+.slides {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    animation: slideAnimation 52s infinite;
+    background-size: cover;
+    background-position: center;
+}
+
+.slides:nth-child(1) { background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'); animation-delay: 0s; }
+.slides:nth-child(2) { background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'); animation-delay: 4s; }
+.slides:nth-child(3) { background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'); animation-delay: 8s; }
+.slides:nth-child(4) { background-image: url('https://i.ibb.co/BHDtqs5P/image.png'); animation-delay: 12s; }
+.slides:nth-child(5) { background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'); animation-delay: 16s; }
+.slides:nth-child(6) { background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'); animation-delay: 20s; }
+.slides:nth-child(7) { background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'); animation-delay: 24s; }
+.slides:nth-child(8) { background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'); animation-delay: 28s; }
+.slides:nth-child(9) { background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'); animation-delay: 32s; }
+.slides:nth-child(10) { background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'); animation-delay: 36s; }
+.slides:nth-child(11) { background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'); animation-delay: 40s; }
+.slides:nth-child(12) { background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'); animation-delay: 44s; }
+.slides:nth-child(13) { background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'); animation-delay: 48s; }
+
+@keyframes slideAnimation {
+    0% { opacity: 0; transform: scale(1); }
+    8% { opacity: 1; }
+    33% { opacity: 1; }
+    41% { opacity: 0; transform: scale(1.05); }
+    100% { opacity: 0; }
+}
+
+/* Section 1: ファーストビューエリア */
+.hero-spacer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 30px;
+}
+
+.scroll-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 28px;
+    background: var(--ui-bg);
+    border: 1px solid var(--accent-color);
+    border-radius: var(--radius-card);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), var(--glow-effect);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    animation: floatAnimation 2.5s infinite ease-in-out;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.scroll-indicator.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(15px);
+}
+
+.scroll-indicator:hover {
+    background: rgba(40, 36, 46, 0.9);
+    border-color: var(--accent-hover);
+}
+
+.scroll-text {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.scroll-arrow {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    animation: arrowBounce 1.5s infinite;
+}
+
+@keyframes floatAnimation {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+/* Section 2: 中央配置用の親ラッパー */
+.content-section-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ――― 【画面中央固定】コンテンツウィンドウ ――― */
+.content-screen {
+    width: 90vw;
+    max-width: 1100px;
+    padding: 40px;
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-main);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), var(--glow-effect);
+    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease;
+}
+
+.content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.site-title {
+    background-color: rgba(42, 37, 42, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    transition: color 0.3s ease, border-radius 0.3s ease;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+.main-content-layout {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.profile-card {
+    width: 300px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
+}
+
+.avatar-container {
+    width: 90px;
+    height: 90px;
+    border-radius: var(--radius-card);
+    margin: 0 auto 16px;
+    overflow: hidden;
+    border: 2px solid var(--accent-color);
+    flex-shrink: 0;
+    transition: border-color 0.3s, border-radius 0.3s;
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.profile-id {
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.profile-desc {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: calc(var(--radius-card) / 2);
+    padding: 14px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: left;
+    color: #c0c0c8;
+}
+
+.gallery-section {
+    flex-grow: 1;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: "|";
+    color: var(--accent-color);
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.section-subtitle {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.grid-item {
+    background-color: #2d2933;
+    border: 1px solid var(--card-border);
+    border-radius: calc(var(--radius-card) / 2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, border-color 0.2s, border-radius 0.3s;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    text-decoration: none;
+}
+
+.grid-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+}
+
+.item-content {
+    padding: 40px 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ffffff;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: rgba(0, 0, 0, 0.55);
+    font-weight: bold;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+
+.item-link {
+    border-top: 1px solid var(--card-border);
+    padding: 10px 16px;
+    font-size: 0.8rem;
+    background-color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    color: var(--accent-color);
+    z-index: 1;
+    transition: color 0.3s;
+}
+
+.grid-item:hover .item-link {
+    color: var(--accent-hover);
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Galleryカード背景画像 */
+#gallery-twitter {
+    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
+}
+
+#gallery-vrchat {
+    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
+}
+
+#gallery-booth {
+    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
+}
+
+#gallery-shader {
+    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
+}
+
+/* ――― LiquidGlass ライトテーマ：以前の状態を維持 ――― */
+body.style-liquidglass.light-theme {
+    --ui-bg: rgba(255, 255, 255, 0.34);
+    --card-bg: rgba(255, 255, 255, 0.25);
+    --border-color: rgba(255, 255, 255, 0.72);
+    --card-border: rgba(255, 255, 255, 0.55);
+}
+
+/* ――― LiquidGlass ダークテーマ ――― */
+body.style-liquidglass:not(.light-theme) {
+    --ui-bg: rgba(255, 255, 255, 0.09);
+    --card-bg: rgba(255, 255, 255, 0.06);
+}
+
+/* LiquidGlass ダークテーマ：カプセルのみ少し暗く */
+body.style-liquidglass:not(.light-theme) .status-capsule {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+body.style-liquidglass:not(.light-theme) .time-capsule:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+body.style-liquidglass:not(.light-theme) .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 850px) {
+    .floating-status-bar,
+    .status-bar-indicator {
+        width: 80vw;
+    }
+
+    .content-screen {
+        width: 95vw;
+        padding: 20px 12px;
+    }
+
+    .main-content-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-card {
+        width: 100%;
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
 }
