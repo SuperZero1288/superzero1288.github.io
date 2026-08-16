@@ -44,8 +44,8 @@ body.style-liquidglass{
 --font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
 --glow-effect:0 1px 4px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.20);
 --lg-blur:2px;
---lg-saturation:80%;
---lg-brightness:90%;
+--lg-saturation:160%;
+--lg-brightness:20%;
 }
 
 /* LiquidGlass ダーク */
