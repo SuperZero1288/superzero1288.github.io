@@ -108,16 +108,16 @@ let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
 let clickCount=0,clickTimer=null,isThursdayMode=false;
 
-const uiStyles=[
-{id:'style-default',name:'DefaultUI',light:true},
-{id:'style-material',name:'Material Design',light:true},
-{id:'style-liquidglass',name:'LiquidGlass',light:true},
-{id:'style-fluent',name:'Fluent Design',light:true},
-{id:'style-vrchat',name:'VRChat HUD',light:false},
-{id:'style-unity',name:'Unity Engine',light:false}
+const uiStyles = [
+    { id:'style-default', name:'Default', light:true },
+    { id:'style-material', name:'Material', light:true },
+    { id:'style-liquidglass', name:'LiquidGlass', light:true },
+    { id:'style-fluent', name:'Fluent Design', light:true },
+    { id:'style-vrchat', name:'VRChat UI', light:false },
+    { id:'style-unity', name:'Unity Engine', light:false }
 ];
 
-let currentStyleIndex=0;
+let currentStyleIndex = 0;
 
 function currentStyle(){return uiStyles[currentStyleIndex];}
 
