@@ -45,6 +45,9 @@
 
     </div>
 
+    <!-- コピー完了通知トースト -->
+    <div class="toast-notification" id="toast">コピーしました！</div>
+
     <!-- バー格納時に出現する極細インジケーター -->
     <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
@@ -141,11 +144,23 @@
         const themeIcon = document.getElementById('themeIcon');
         const calendarHeader = document.getElementById('calendarHeader');
         const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+        const toast = document.getElementById('toast');
         
         let hideTimeout;
         let indicatorTimeout;
+        let toastTimeout;
         let is24Hour = true; // 24時間表記フラグ
         let lastRenderedMonth = -1;
+
+        // トースト通知を表示
+        function showToast(text) {
+            toast.textContent = text;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
 
         // リアルタイム時計更新＆月レンダー判定
         function updateTime() {
@@ -212,6 +227,20 @@
                 }
 
                 dayCell.textContent = day;
+
+                // 日付クリック時にYYYY/MM/DD形式でコピー
+                dayCell.addEventListener('click', (e) => {
+                    e.stopPropagation(); // カプセルの時計クリック（12h/24h切り替え）イベントを発火させない
+                    const dStr = String(day).padStart(2, '0');
+                    const formattedDate = `${year}/${monthStr}/${dStr}`;
+
+                    navigator.clipboard.writeText(formattedDate).then(() => {
+                        showToast(`コピーしました: ${formattedDate}`);
+                    }).catch(err => {
+                        console.error('コピーに失敗しました', err);
+                    });
+                });
+
                 calendarDaysGrid.appendChild(dayCell);
             }
         }
