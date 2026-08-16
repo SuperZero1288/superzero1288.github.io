@@ -1,978 +1,161 @@
-/* ――― テーマ（デザイン言語）変数定義 ――― */
-
-/* 1. デフォルト */
-body.style-default {
-    --accent-color: #ff8fa3;
-    --accent-hover: #ffb3c1;
-    --ui-bg: rgba(22, 20, 26, 0.65);
-    --card-bg: rgba(37, 34, 41, 0.75);
-    --border-color: rgba(255, 255, 255, 0.18);
-    --card-border: rgba(255, 255, 255, 0.1);
-    --radius-main: 28px;
-    --radius-card: 16px;
-    --radius-capsule: 9999px;
-    --font-family: 'Helvetica Neue', Arial, sans-serif;
-    --glow-effect: none;
-}
-
-/* 2. Google Material Design (Material You 風) */
-body.style-material {
-    --accent-color: #d0bcff;
-    --accent-hover: #e8def8;
-    --ui-bg: rgba(29, 27, 32, 0.88);
-    --card-bg: rgba(33, 29, 39, 0.9);
-    --border-color: rgba(147, 143, 153, 0.2);
-    --card-border: rgba(147, 143, 153, 0.12);
-    --radius-main: 32px;
-    --radius-card: 24px;
-    --radius-capsule: 9999px;
-    --font-family: 'Roboto', 'Google Sans', sans-serif;
-    --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
-}
-
-/* 3. Apple LiquidGlass */
-body.style-liquidglass {
-    --accent-color: #0a84ff;
-    --accent-hover: #64d2ff;
-    --ui-bg: rgba(255, 255, 255, 0.065);
-    --card-bg: rgba(255, 255, 255, 0.045);
-    --border-color: rgba(255, 255, 255, 0.34);
-    --card-border: rgba(255, 255, 255, 0.32);
-    --radius-main: 36px;
-    --radius-card: 22px;
-    --radius-capsule: 9999px;
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.18);
-    --lg-blur: 6px;
-}
-
-/* 4. VRChat ゲーム内 UI 風 */
-body.style-vrchat {
-    --accent-color: #66c0f4;
-    --accent-hover: #1fcae6;
-    --ui-bg: rgba(23, 29, 37, 0.88);
-    --card-bg: rgba(27, 40, 56, 0.90);
-    --border-color: #2a475e;
-    --card-border: rgba(102, 192, 244, 0.3);
-    --radius-main: 24px;
-    --radius-card: 16px;
-    --radius-capsule: 9999px;
-    --font-family: 'Segoe UI', Tahoma, sans-serif;
-    --glow-effect: 0 0 15px rgba(102, 192, 244, 0.25);
-}
-
-/* 5. Microsoft Fluent Design */
-body.style-fluent {
-    --accent-color: #60cdff;
-    --accent-hover: #99ebff;
-    --ui-bg: rgba(32, 32, 32, 0.75);
-    --card-bg: rgba(45, 45, 45, 0.8);
-    --border-color: rgba(255, 255, 255, 0.14);
-    --card-border: rgba(255, 255, 255, 0.12);
-    --radius-main: 8px;
-    --radius-card: 6px;
-    --radius-capsule: 8px;
-    --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
-    --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
-}
-
-/* 6. Unity ゲームエンジン風 */
-body.style-unity {
-    --accent-color: #2c5d88;
-    --accent-hover: #3a78b0;
-    --ui-bg: rgba(56, 56, 56, 0.95);
-    --card-bg: rgba(40, 40, 40, 0.95);
-    --border-color: #232323;
-    --card-border: #1a1a1a;
-    --radius-main: 3px;
-    --radius-card: 3px;
-    --radius-capsule: 4px;
-    --font-family: Inter, Arial, sans-serif;
-    --glow-effect: none;
-}
-
-/* 全体のスタイル設定 */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #0f0f12;
-    color: #e0e0e6;
-    font-family: var(--font-family);
-    transition: background-color 0.4s ease, color 0.4s ease, font-family 0.3s ease;
-}
-
-.snap-container {
-    width: 100vw;
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    position: relative;
-    z-index: 10;
-}
-
-.snap-section {
-    width: 100vw;
-    height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    position: relative;
-}
-
-.svg-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-}
-
-.svg-icon svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-}
-
-/* ライトテーマ */
-body.light-theme {
-    background-color: #e8e8ee;
-    color: #2e2e38;
-}
-
-body.light-theme .floating-status-bar,
-body.light-theme .calendar-popup {
-    background: rgba(235, 235, 242, 0.85);
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .status-bar-indicator {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-body.light-theme .status-capsule {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #2e2e38;
-}
-
-body.light-theme .status-time,
-body.light-theme .calendar-header,
-body.light-theme .calendar-day-cell {
-    color: #2e2e38;
-}
-
-body.light-theme .calendar-weekdays span {
-    color: #777;
-}
-
-body.light-theme .calendar-day-cell:hover:not(.empty) {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-body.light-theme .content-screen {
-    background: rgba(244, 244, 247, 0.85);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .profile-card,
-body.light-theme .gallery-section {
-    background-color: rgba(255, 255, 255, 0.85);
-    border-color: #e0e0e8;
-}
-
-body.light-theme .grid-item {
-    border-color: #d8d8e0 !important;
-}
-
-body.light-theme .item-link {
-    border-top-color: #d8d8e0 !important;
-}
-
-body.light-theme .profile-desc {
-    background-color: #f0f0f5;
-    color: #4a4a5a;
-}
-
-body.light-theme .site-title {
-    background-color: #eaeaea;
-    border-color: #ddd;
-    color: var(--accent-color);
-}
-
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-a:hover {
-    color: var(--accent-hover);
-}
-
-/* ――― 浮遊型 フローティングステータスバー ――― */
-.floating-status-bar {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-    width: 50vw;
-    min-width: 380px;
-    max-width: 650px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 14px;
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-main);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
-    z-index: 9999;
-    opacity: 1;
-    pointer-events: auto;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
-}
-
-.floating-status-bar.hidden {
-    transform: translateX(-50%) translateY(-100px);
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.3s ease;
-}
-
-.status-bar-indicator {
-    position: fixed;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50vw;
-    min-width: 380px;
-    max-width: 650px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 2px;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 9998;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-}
-
-.status-bar-indicator.visible {
-    opacity: 0.25;
-}
-
-.status-right-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.status-capsule {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 42px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-capsule, var(--radius-card));
-    color: #ffffff;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    user-select: none;
-}
-
-.time-capsule {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 42px;
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-}
-
-.time-capsule:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: var(--accent-color);
-}
-
-.status-time {
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-    font-size: 0.95rem;
-}
-
-.calendar-popup {
-    position: absolute;
-    top: calc(100% + 22px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    width: 220px;
-    padding: 14px;
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    z-index: 10000;
-}
-
-.time-capsule::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 25px;
-}
-
-.time-capsule:hover .calendar-popup {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-}
-
-.calendar-header {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #ffffff;
-    text-align: center;
-    letter-spacing: 1px;
-    padding-bottom: 2px;
-}
-
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #aaa;
-}
-
-.calendar-weekdays .sun { color: #ff6b6b; }
-.calendar-weekdays .sat { color: #4dabf7; }
-
-.calendar-days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    text-align: center;
-}
-
-.calendar-day-cell {
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #e0e0e6;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.calendar-day-cell:hover:not(.empty) {
-    background: rgba(255, 255, 255, 0.18);
-    transform: scale(1.1);
-}
-
-.calendar-day-cell.sun { color: #ff6b6b; }
-.calendar-day-cell.sat { color: #4dabf7; }
-
-.calendar-day-cell.is-today {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 2px solid var(--accent-color);
-    color: #ffffff;
-    font-weight: 800;
-    box-shadow: var(--glow-effect);
-}
-
-/* トースト通知 */
-.toast-notification {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--ui-bg);
-    border: 1px solid var(--accent-color);
-    color: #ffffff;
-    padding: 10px 18px;
-    border-radius: var(--radius-card);
-    font-size: 0.85rem;
-    font-weight: bold;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), var(--glow-effect);
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10001;
-}
-
-.toast-notification.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.icon-btn {
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 1rem;
-    flex-shrink: 0;
-    border-radius: var(--radius-capsule, var(--radius-card));
-}
-
-.icon-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--accent-color);
-    transform: scale(1.08);
-}
-
-/* ――― 背景固定 全画面スライドショー ――― */
-.hero-slider {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    overflow: hidden;
-    background-color: #000;
-}
-
-.blur-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    pointer-events: none;
-    transition: backdrop-filter 0.1s linear, background-color 0.1s linear;
-}
-
-.slides {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    animation: slideAnimation 52s infinite;
-    background-size: cover;
-    background-position: center;
-}
-
-.slides:nth-child(1) { background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'); animation-delay: 0s; }
-.slides:nth-child(2) { background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'); animation-delay: 4s; }
-.slides:nth-child(3) { background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'); animation-delay: 8s; }
-.slides:nth-child(4) { background-image: url('https://i.ibb.co/BHDtqs5P/image.png'); animation-delay: 12s; }
-.slides:nth-child(5) { background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'); animation-delay: 16s; }
-.slides:nth-child(6) { background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'); animation-delay: 20s; }
-.slides:nth-child(7) { background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'); animation-delay: 24s; }
-.slides:nth-child(8) { background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'); animation-delay: 28s; }
-.slides:nth-child(9) { background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'); animation-delay: 32s; }
-.slides:nth-child(10) { background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'); animation-delay: 36s; }
-.slides:nth-child(11) { background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'); animation-delay: 40s; }
-.slides:nth-child(12) { background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'); animation-delay: 44s; }
-.slides:nth-child(13) { background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'); animation-delay: 48s; }
-
-@keyframes slideAnimation {
-    0% { opacity: 0; transform: scale(1); }
-    8% { opacity: 1; }
-    33% { opacity: 1; }
-    41% { opacity: 0; transform: scale(1.05); }
-    100% { opacity: 0; }
-}
-
-/* Section 1: ファーストビュー */
-.hero-spacer {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 30px;
-}
-
-.scroll-indicator {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 28px;
-    background: var(--ui-bg);
-    border: 1px solid var(--accent-color);
-    border-radius: var(--radius-card);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), var(--glow-effect);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    animation: floatAnimation 2.5s infinite ease-in-out;
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.scroll-indicator.hidden {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(15px);
-}
-
-.scroll-indicator:hover {
-    background: rgba(40, 36, 46, 0.9);
-    border-color: var(--accent-hover);
-}
-
-.scroll-text {
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-}
-
-.scroll-arrow {
-    color: var(--accent-color);
-    font-size: 1.1rem;
-    animation: arrowBounce 1.5s infinite;
-}
-
-@keyframes floatAnimation {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-@keyframes arrowBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-}
-
-/* Section 2 */
-.content-section-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/* ――― テーマ変数 ――― */
+body.style-default{--accent-color:#ff8fa3;--accent-hover:#ffb3c1;--ui-bg:rgba(22,20,26,.65);--card-bg:rgba(37,34,41,.75);--border-color:rgba(255,255,255,.18);--card-border:rgba(255,255,255,.28);--radius-main:28px;--radius-card:16px;--radius-capsule:9999px;--font-family:'Helvetica Neue',Arial,sans-serif;--glow-effect:none}
+body.style-material{--accent-color:#d0bcff;--accent-hover:#e8def8;--ui-bg:rgba(29,27,32,.88);--card-bg:rgba(33,29,39,.9);--border-color:rgba(147,143,153,.2);--card-border:rgba(147,143,153,.35);--radius-main:32px;--radius-card:24px;--radius-capsule:9999px;--font-family:'Roboto','Google Sans',sans-serif;--glow-effect:0 4px 20px rgba(0,0,0,.25)}
+body.style-liquidglass{--accent-color:#0a84ff;--accent-hover:#64d2ff;--ui-bg:rgba(255,255,255,.045);--card-bg:rgba(255,255,255,.025);--border-color:rgba(255,255,255,.32);--card-border:rgba(255,255,255,.46);--radius-main:36px;--radius-card:22px;--radius-capsule:9999px;--font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;--glow-effect:0 20px 40px rgba(0,0,0,.18);--lg-blur:3px}
+body.style-vrchat{--accent-color:#66c0f4;--accent-hover:#1fcae6;--ui-bg:rgba(23,29,37,.88);--card-bg:rgba(27,40,56,.9);--border-color:#2a475e;--card-border:rgba(102,192,244,.55);--radius-main:24px;--radius-card:16px;--radius-capsule:9999px;--font-family:'Segoe UI',Tahoma,sans-serif;--glow-effect:0 0 15px rgba(102,192,244,.25)}
+body.style-fluent{--accent-color:#60cdff;--accent-hover:#99ebff;--ui-bg:rgba(32,32,32,.75);--card-bg:rgba(45,45,45,.8);--border-color:rgba(255,255,255,.18);--card-border:rgba(255,255,255,.3);--radius-main:8px;--radius-card:6px;--radius-capsule:8px;--font-family:'Segoe UI Variable Text','Segoe UI',sans-serif;--glow-effect:0 8px 32px rgba(0,0,0,.36)}
+body.style-unity{--accent-color:#2c5d88;--accent-hover:#3a78b0;--ui-bg:rgba(56,56,56,.95);--card-bg:rgba(40,40,40,.95);--border-color:#232323;--card-border:#555;--radius-main:3px;--radius-card:3px;--radius-capsule:4px;--font-family:Inter,Arial,sans-serif;--glow-effect:none}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#0f0f12;color:#e0e0e6;font-family:var(--font-family);transition:background-color .4s ease,color .4s ease,font-family .3s ease}
+.snap-container{width:100vw;height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth;position:relative;z-index:10}
+.snap-section{width:100vw;height:100vh;scroll-snap-align:start;scroll-snap-stop:always;position:relative}
+.svg-icon{display:flex;align-items:center;justify-content:center;width:18px;height:18px}
+.svg-icon svg{width:100%;height:100%;fill:currentColor}
+
+/* ――― ライトモード ――― */
+body.light-theme{background:#e8e8ee;color:#2e2e38}
+body.light-theme .floating-status-bar,body.light-theme .calendar-popup{background:rgba(235,235,242,.85);border-color:rgba(0,0,0,.15);box-shadow:0 8px 32px rgba(0,0,0,.12)}
+body.light-theme .status-bar-indicator{background:rgba(0,0,0,.3)}
+body.light-theme .status-capsule{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.08);color:#2e2e38}
+body.light-theme .status-time,body.light-theme .calendar-header,body.light-theme .calendar-day-cell{color:#2e2e38}
+body.light-theme .calendar-weekdays span{color:#777}
+body.light-theme .calendar-day-cell:hover:not(.empty){background:rgba(0,0,0,.08)}
+body.light-theme .content-screen{background:rgba(244,244,247,.85);border-color:rgba(255,255,255,.8);box-shadow:0 16px 40px rgba(0,0,0,.12)}
+body.light-theme .profile-card,body.light-theme .gallery-section{background:rgba(255,255,255,.85);border-color:#d4d4dc}
+body.light-theme .grid-item{border-color:#c7c7d0!important}
+body.light-theme .item-link{border-top-color:#c7c7d0!important}
+body.light-theme .profile-desc{background:#f0f0f5;color:#4a4a5a}
+body.light-theme .site-title{background:#eaeaea;border-color:#d0d0d0;color:var(--accent-color)}
+
+/* ライトモード非対応テーマのトグル */
+#themeToggleBtn.disabled{opacity:.32!important;filter:grayscale(1);cursor:not-allowed;pointer-events:auto;transform:none!important;background:rgba(128,128,128,.12)!important;border-color:rgba(128,128,128,.2)!important;color:#777!important}
+#themeToggleBtn.disabled:hover{transform:none!important;background:rgba(128,128,128,.12)!important;border-color:rgba(128,128,128,.2)!important}
+
+/* ――― フローティングステータスバー ――― */
+.floating-status-bar{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(0);width:50vw;min-width:380px;max-width:650px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--ui-bg);border:1px solid var(--border-color);border-radius:var(--radius-main);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.45),var(--glow-effect);z-index:9999;opacity:1;pointer-events:auto;transition:transform .3s cubic-bezier(.175,.885,.32,1.275),opacity .3s ease,background .3s ease,border-color .3s ease,border-radius .3s ease}
+.floating-status-bar.hidden{transform:translateX(-50%) translateY(-100px);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.6,-.28,.735,.045),opacity .3s ease}
+.status-bar-indicator{position:fixed;top:6px;left:50%;transform:translateX(-50%);width:50vw;min-width:380px;max-width:650px;height:3px;background:rgba(255,255,255,.4);border-radius:2px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:9998;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.status-bar-indicator.visible{opacity:.25}
+.status-right-group{display:flex;align-items:center;gap:8px}
+.status-capsule{display:flex;align-items:center;justify-content:center;height:42px;background:rgba(255,255,255,.08);border:1px solid var(--border-color);border-radius:var(--radius-capsule,var(--radius-card));color:#fff;font-weight:600;transition:all .2s ease;user-select:none}
+.time-capsule{position:absolute;left:50%;transform:translateX(-50%);width:120px;height:42px;cursor:pointer;font-variant-numeric:tabular-nums}
+.time-capsule:hover{background:rgba(255,255,255,.16);border-color:var(--accent-color)}
+.status-time{font-weight:700;color:#fff;letter-spacing:.5px;font-size:.95rem}
+.calendar-popup{position:absolute;top:calc(100% + 22px);left:50%;transform:translateX(-50%) translateY(-10px);width:220px;padding:14px;background:var(--ui-bg);border:1px solid var(--border-color);border-radius:var(--radius-card);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 8px 32px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,transform .3s ease,visibility .3s;z-index:10000}
+.time-capsule::after{content:'';position:absolute;top:100%;left:0;width:100%;height:25px}
+.time-capsule:hover .calendar-popup{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.calendar-header{font-size:.85rem;font-weight:800;color:#fff;text-align:center;letter-spacing:1px;padding-bottom:2px}
+.calendar-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:.65rem;font-weight:700;color:#aaa}
+.calendar-weekdays .sun{color:#ff6b6b}.calendar-weekdays .sat{color:#4dabf7}
+.calendar-days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.calendar-day-cell{width:26px;height:26px;line-height:26px;font-size:.72rem;font-weight:600;color:#e0e0e6;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color .2s,transform .1s}
+.calendar-day-cell:hover:not(.empty){background:rgba(255,255,255,.18);transform:scale(1.1)}
+.calendar-day-cell.sun{color:#ff6b6b}.calendar-day-cell.sat{color:#4dabf7}
+.calendar-day-cell.is-today{background:rgba(255,255,255,.2);border:2px solid var(--accent-color);color:#fff;font-weight:800;box-shadow:var(--glow-effect)}
+.icon-btn{width:42px;height:42px;padding:0;cursor:pointer;font-family:inherit;font-size:1rem;flex-shrink:0;border-radius:var(--radius-capsule,var(--radius-card))}
+.icon-btn:hover{background:rgba(255,255,255,.15);border-color:var(--accent-color);transform:scale(1.08)}
+
+/* ――― トースト ――― */
+.toast-notification{position:fixed;bottom:24px;right:24px;background:var(--ui-bg);border:1px solid var(--accent-color);color:#fff;padding:10px 18px;border-radius:var(--radius-card);font-size:.85rem;font-weight:bold;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(0,0,0,.5),var(--glow-effect);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:10001}
+.toast-notification.show{opacity:1;transform:translateY(0)}
+
+/* ――― 背景スライドショー ――― */
+.hero-slider{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;overflow:hidden;background:#000}
+.blur-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;transition:backdrop-filter .1s linear,background-color .1s linear}
+.slides{position:absolute;width:100%;height:100%;opacity:0;animation:slideAnimation 52s infinite;background-size:cover;background-position:center}
+.slides:nth-child(1){background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');animation-delay:0s}
+.slides:nth-child(2){background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');animation-delay:4s}
+.slides:nth-child(3){background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');animation-delay:8s}
+.slides:nth-child(4){background-image:url('https://i.ibb.co/BHDtqs5P/image.png');animation-delay:12s}
+.slides:nth-child(5){background-image:url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png');animation-delay:16s}
+.slides:nth-child(6){background-image:url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png');animation-delay:20s}
+.slides:nth-child(7){background-image:url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png');animation-delay:24s}
+.slides:nth-child(8){background-image:url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png');animation-delay:28s}
+.slides:nth-child(9){background-image:url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png');animation-delay:32s}
+.slides:nth-child(10){background-image:url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png');animation-delay:36s}
+.slides:nth-child(11){background-image:url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png');animation-delay:40s}
+.slides:nth-child(12){background-image:url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png');animation-delay:44s}
+.slides:nth-child(13){background-image:url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');animation-delay:48s}
+@keyframes slideAnimation{0%{opacity:0;transform:scale(1)}8%{opacity:1}33%{opacity:1}41%{opacity:0;transform:scale(1.05)}100%{opacity:0}}
+
+/* ――― ファーストビュー ――― */
+.hero-spacer{display:flex;justify-content:center;align-items:flex-end;padding-bottom:30px}
+.scroll-indicator{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 28px;background:var(--ui-bg);border:1px solid var(--accent-color);border-radius:var(--radius-card);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 4px 20px rgba(0,0,0,.6),var(--glow-effect);transition:opacity .4s ease,transform .4s ease;animation:floatAnimation 2.5s infinite ease-in-out}
+.scroll-indicator.hidden{opacity:0!important;pointer-events:none!important;transform:translateY(15px)}
+.scroll-indicator:hover{background:rgba(40,36,46,.9);border-color:var(--accent-hover)}
+.scroll-text{color:#fff;font-size:1rem;font-weight:800;letter-spacing:3px;text-shadow:0 2px 4px rgba(0,0,0,.9)}
+.scroll-arrow{color:var(--accent-color);font-size:1.1rem;animation:arrowBounce 1.5s infinite}
+@keyframes floatAnimation{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes arrowBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 
 /* ――― コンテンツウィンドウ ――― */
-.content-screen {
-    width: 90vw;
-    max-width: 1100px;
-    padding: 40px;
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: var(--radius-main);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), var(--glow-effect);
-    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease;
-    position: relative;
-}
-
-/* LiquidGlassはコンテンツ全体をSVGで歪ませない */
-body.style-liquidglass .content-screen {
-    background:
-        linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025) 55%, rgba(255,255,255,0.055)) !important;
-    border: 1px solid rgba(255,255,255,0.38) !important;
-    backdrop-filter: blur(6px) saturate(155%);
-    -webkit-backdrop-filter: blur(6px) saturate(155%);
-    filter: none !important;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.18);
-}
-
-body.style-liquidglass .content-screen::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 30%);
-}
-
-body.style-liquidglass .content-screen::after {
-    content: none !important;
-}
-
-.content-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.header-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.site-title {
-    background-color: rgba(42, 37, 42, 0.8);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    color: var(--accent-color);
-    font-weight: bold;
-    transition: color 0.3s ease, border-radius 0.3s ease;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 16px;
-}
-
-.main-content-layout {
-    display: flex;
-    gap: 24px;
-    align-items: stretch;
-}
-
-.profile-card {
-    width: 300px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 24px;
-    text-align: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
-}
-
-.avatar-container {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-card);
-    margin: 0 auto 16px;
-    overflow: hidden;
-    border: 2px solid var(--accent-color);
-    flex-shrink: 0;
-    transition: border-color 0.3s, border-radius 0.3s;
-}
-
-.avatar-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-name {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.profile-id {
-    font-size: 0.85rem;
-    color: var(--accent-color);
-    margin-bottom: 16px;
-    letter-spacing: 1px;
-    transition: color 0.3s;
-}
-
-.profile-desc {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: calc(var(--radius-card) / 2);
-    padding: 14px;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    text-align: left;
-    color: #c0c0c8;
-}
-
-.gallery-section {
-    flex-grow: 1;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 24px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
-}
-
-.section-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.section-title::before {
-    content: "|";
-    color: var(--accent-color);
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.section-subtitle {
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 16px;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
+.content-section-wrapper{display:flex;justify-content:center;align-items:center}
+.content-screen{width:90vw;max-width:1100px;padding:40px;background:var(--ui-bg);border:1px solid var(--border-color);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:var(--radius-main);box-shadow:0 16px 40px rgba(0,0,0,.35),var(--glow-effect);transition:background .4s ease,border-color .4s ease,border-radius .3s ease;position:relative}
+.content-wrapper{width:100%;display:flex;flex-direction:column;gap:24px}
+.header-nav{display:flex;justify-content:space-between;align-items:center;width:100%}
+.site-title{background:rgba(42,37,42,.8);border:1px solid var(--border-color);border-radius:var(--radius-card);padding:10px 20px;font-size:1.1rem;color:var(--accent-color);font-weight:bold;transition:color .3s ease,border-radius .3s ease}
+.container{display:flex;flex-direction:column;width:100%;gap:16px}
+.main-content-layout{display:flex;gap:24px;align-items:stretch}
+.profile-card{width:300px;background:var(--card-bg);border:1px solid var(--card-border)!important;border-radius:var(--radius-card);padding:24px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2);flex-shrink:0;display:flex;flex-direction:column;justify-content:center;transition:background-color .3s,border-color .3s,border-radius .3s}
+.avatar-container{width:90px;height:90px;border-radius:var(--radius-card);margin:0 auto 16px;overflow:hidden;border:2px solid var(--accent-color);flex-shrink:0;transition:border-color .3s,border-radius .3s}
+.avatar-container img{width:100%;height:100%;object-fit:cover}
+.profile-name{font-size:1.3rem;font-weight:bold;margin-bottom:4px}
+.profile-id{font-size:.85rem;color:var(--accent-color);margin-bottom:16px;letter-spacing:1px;transition:color .3s}
+.profile-desc{background:rgba(0,0,0,.3);border-radius:calc(var(--radius-card)/2);padding:14px;font-size:.85rem;line-height:1.5;text-align:left;color:#c0c0c8}
+.gallery-section{flex-grow:1;background:var(--card-bg);border:1px solid var(--card-border)!important;border-radius:var(--radius-card);padding:24px;box-shadow:0 4px 16px rgba(0,0,0,.2);display:flex;flex-direction:column;justify-content:center;transition:background-color .3s,border-color .3s,border-radius .3s}
 
 /* ――― リンクカード ――― */
-.grid-item {
-    background-color: #2d2933;
-    border: 1px solid var(--card-border) !important;
-    border-radius: calc(var(--radius-card) / 2);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, border-color 0.2s, border-radius 0.3s;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    text-decoration: none;
-    filter: none !important;
-}
+.section-title{font-size:1.2rem;font-weight:bold;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:"|";color:var(--accent-color);font-weight:bold}
+.section-subtitle{font-size:.8rem;color:#888;margin-bottom:16px}
+.grid-container{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.grid-item{background-color:#2d2933;border:1px solid var(--card-border)!important;border-radius:calc(var(--radius-card)/2);overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,border-radius .3s;background-size:cover;background-position:center;position:relative;text-decoration:none;filter:none!important}
+.grid-item::after{content:"";position:absolute;inset:0;border:1px solid var(--card-border);border-radius:inherit;pointer-events:none;z-index:5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)}
+.grid-item:hover{transform:translateY(-2px);border-color:var(--accent-color)!important}
+.grid-item:hover::after{border-color:var(--accent-color)}
+.grid-item .item-content,.grid-item .item-link{position:relative;z-index:2;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.item-content{padding:40px 16px;text-align:center;font-size:.9rem;color:#fff;flex-grow:1;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,0,0,.55);font-weight:bold;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.item-link{border-top:1px solid var(--card-border)!important;padding:10px 16px;font-size:.8rem;background:rgba(0,0,0,.4);text-align:center;color:var(--accent-color);z-index:2;transition:color .3s,background-color .3s}
+.grid-item:hover .item-link{color:var(--accent-hover);background:rgba(0,0,0,.6)}
 
-/* カード画像を歪ませない */
-.grid-item,
-.grid-item::before,
-.grid-item::after {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-}
+#gallery-twitter{background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png')}
+#gallery-vrchat{background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png')}
+#gallery-booth{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
+#gallery-shader{background-image:url('https://i.ibb.co/BHDtqs5P/image.png')}
 
-.grid-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent-color) !important;
-}
-
-.item-content {
-    padding: 40px 16px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #ffffff;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: rgba(0, 0, 0, 0.55);
-    font-weight: bold;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
-
-.item-link {
-    border-top: 1px solid var(--card-border) !important;
-    padding: 10px 16px;
-    font-size: 0.8rem;
-    background-color: rgba(0, 0, 0, 0.4);
-    text-align: center;
-    color: var(--accent-color);
-    z-index: 1;
-    transition: color 0.3s, background-color 0.3s;
-}
-
-.grid-item:hover .item-link {
-    color: var(--accent-hover);
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Galleryカード背景画像 */
-#gallery-twitter {
-    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
-}
-
-#gallery-vrchat {
-    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
-}
-
-#gallery-booth {
-    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
-}
-
-#gallery-shader {
-    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
-}
-
-/* ――― LiquidGlass専用調整 ――― */
-
-/* ガラス面は薄く、白っぽさを抑える */
-body.style-liquidglass .floating-status-bar,
-body.style-liquidglass .calendar-popup,
-body.style-liquidglass .site-title,
-body.style-liquidglass .scroll-indicator,
-body.style-liquidglass .toast-notification {
-    background:
-        linear-gradient(135deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025) 55%, rgba(255,255,255,0.06)) !important;
-    backdrop-filter: blur(6px) saturate(155%);
-    -webkit-backdrop-filter: blur(6px) saturate(155%);
-}
-
-/* LiquidGlassの境界線 */
-body.style-liquidglass .floating-status-bar,
-body.style-liquidglass .calendar-popup,
-body.style-liquidglass .site-title,
-body.style-liquidglass .scroll-indicator,
-body.style-liquidglass .toast-notification {
-    border-color: rgba(255,255,255,0.36) !important;
-}
-
-/* LiquidGlassのプロフィール・ギャラリー */
-body.style-liquidglass .profile-card,
-body.style-liquidglass .gallery-section {
-    background:
-        linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018) 55%, rgba(255,255,255,0.045)) !important;
-    border: 1px solid rgba(255,255,255,0.30) !important;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-
-/* LiquidGlassカード */
-body.style-liquidglass .grid-item {
-    background-color: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.34) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.16),
-        0 8px 28px rgba(0,0,0,0.14);
-}
-
-body.style-liquidglass .grid-item:hover {
-    border-color: rgba(255,255,255,0.62) !important;
-}
-
-/* カード内の画像・文字は完全に通常表示 */
-body.style-liquidglass .grid-item .item-content,
-body.style-liquidglass .grid-item .item-link {
-    filter: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-}
-
-/* LiquidGlassアバター */
-body.style-liquidglass .avatar-container {
-    border-color: rgba(255,255,255,0.55);
-    box-shadow:
-        0 1px 0 rgba(255,255,255,0.25) inset,
-        0 8px 24px rgba(0,0,0,0.15);
-}
-
-/* LiquidGlassフローティングバー */
-body.style-liquidglass .floating-status-bar {
-    box-shadow:
-        0 12px 40px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.18);
-}
+/* ――― LiquidGlass ――― */
+body.style-liquidglass .content-screen{background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.012) 55%,rgba(255,255,255,.035))!important;border:1px solid rgba(255,255,255,.34)!important;backdrop-filter:blur(3px) saturate(145%);-webkit-backdrop-filter:blur(3px) saturate(145%);filter:none!important;box-shadow:0 20px 60px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.16)}
+body.style-liquidglass .content-screen::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.045),transparent 30%)}
+body.style-liquidglass .content-screen::after{content:none!important}
+body.style-liquidglass .floating-status-bar,body.style-liquidglass .calendar-popup,body.style-liquidglass .site-title,body.style-liquidglass .scroll-indicator,body.style-liquidglass .toast-notification{background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.012) 55%,rgba(255,255,255,.04))!important;backdrop-filter:blur(3px) saturate(145%);-webkit-backdrop-filter:blur(3px) saturate(145%);border-color:rgba(255,255,255,.34)!important}
+body.style-liquidglass .profile-card,body.style-liquidglass .gallery-section{background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 55%,rgba(255,255,255,.025))!important;border:1px solid rgba(255,255,255,.38)!important;backdrop-filter:none;-webkit-backdrop-filter:none}
+body.style-liquidglass .grid-item{background-color:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.48)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 28px rgba(0,0,0,.12)}
+body.style-liquidglass .grid-item::after{border-color:rgba(255,255,255,.5);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+body.style-liquidglass .grid-item:hover{border-color:rgba(255,255,255,.7)!important}
+body.style-liquidglass .grid-item:hover::after{border-color:rgba(255,255,255,.72)}
+body.style-liquidglass .grid-item .item-content,body.style-liquidglass .grid-item .item-link{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.style-liquidglass .item-link{border-top:1px solid rgba(255,255,255,.35)!important}
+body.style-liquidglass .avatar-container{border-color:rgba(255,255,255,.55);box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 8px 24px rgba(0,0,0,.15)}
+body.style-liquidglass .floating-status-bar{box-shadow:0 12px 40px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.16)}
 
 /* ――― Fluent Design ――― */
+body.style-fluent .floating-status-bar{border-radius:12px}
+body.style-fluent .floating-status-bar .status-capsule,body.style-fluent .floating-status-bar .icon-btn,body.style-fluent .floating-status-bar .time-capsule{border-radius:8px}
+body.style-fluent .grid-item{border:1px solid var(--card-border)!important}
+body.style-fluent .grid-item::after{border-color:var(--card-border)}
+body.style-fluent .grid-item:hover{border-color:var(--accent-color)!important}
 
-body.style-fluent .floating-status-bar {
-    border-radius: 12px;
-}
+/* ――― 全テーマのカード縁取り保護 ――― */
+body.style-default .grid-item,body.style-material .grid-item,body.style-vrchat .grid-item,body.style-fluent .grid-item,body.style-unity .grid-item{border:1px solid var(--card-border)!important}
+body.style-default .grid-item::after,body.style-material .grid-item::after,body.style-vrchat .grid-item::after,body.style-fluent .grid-item::after,body.style-unity .grid-item::after{border-color:var(--card-border)}
+body.style-default .item-link,body.style-material .item-link,body.style-vrchat .item-link,body.style-fluent .item-link,body.style-unity .item-link{border-top:1px solid var(--card-border)!important}
 
-body.style-fluent .floating-status-bar .status-capsule,
-body.style-fluent .floating-status-bar .icon-btn,
-body.style-fluent .floating-status-bar .time-capsule {
-    border-radius: 8px;
-}
-
-body.style-fluent .grid-item {
-    border: 1px solid var(--card-border) !important;
-}
-
-body.style-fluent .grid-item:hover {
-    border-color: var(--accent-color) !important;
-}
-
-/* ――― 全テーマ共通：カード境界線保護 ――― */
-
-body.style-default .grid-item,
-body.style-material .grid-item,
-body.style-vrchat .grid-item,
-body.style-fluent .grid-item,
-body.style-unity .grid-item {
-    border: 1px solid var(--card-border) !important;
-}
-
-body.style-default .item-link,
-body.style-material .item-link,
-body.style-vrchat .item-link,
-body.style-fluent .item-link,
-body.style-unity .item-link {
-    border-top: 1px solid var(--card-border) !important;
-}
-
-/* LiquidGlassは専用色を優先 */
-body.style-liquidglass .grid-item {
-    border: 1px solid rgba(255,255,255,0.34) !important;
-}
-
-body.style-liquidglass .item-link {
-    border-top: 1px solid rgba(255,255,255,0.25) !important;
-}
-
-/* ――― レスポンシブ調整 ――― */
-
-@media (max-width: 850px) {
-    .floating-status-bar,
-    .status-bar-indicator {
-        width: 80vw;
-    }
-
-    .content-screen {
-        width: 95vw;
-        padding: 20px 12px;
-    }
-
-    .main-content-layout {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .profile-card {
-        width: 100%;
-    }
-
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
+/* ――― レスポンシブ ――― */
+@media(max-width:850px){
+.floating-status-bar,.status-bar-indicator{width:80vw}
+.content-screen{width:95vw;padding:20px 12px}
+.main-content-layout{flex-direction:column;align-items:center}
+.profile-card{width:100%}
+.grid-container{grid-template-columns:1fr}
 }
