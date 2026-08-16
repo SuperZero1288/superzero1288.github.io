@@ -58,6 +58,7 @@ body.style-liquidglass:not(.light-theme) .time-capsule:hover {
 
 body.style-liquidglass:not(.light-theme) .icon-btn:hover {
     background: rgba(255, 255, 255, 0.10);
+}
 /* 4. VRChat ゲーム内 UI 風 */
 body.style-vrchat {
     --accent-color: #42a8b8;
