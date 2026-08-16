@@ -10,6 +10,7 @@ body.style-default {
     --card-border: rgba(255, 255, 255, 0.1);
     --radius-main: 28px;
     --radius-card: 16px;
+    --radius-capsule: 9999px; /* ボタンとカプセルを完全なまん丸に設定 */
     --font-family: 'Helvetica Neue', Arial, sans-serif;
     --glow-effect: none;
 }
@@ -24,25 +25,12 @@ body.style-material {
     --card-border: rgba(147, 143, 153, 0.12);
     --radius-main: 32px;
     --radius-card: 24px;
+    --radius-capsule: 9999px;
     --font-family: 'Roboto', 'Google Sans', sans-serif;
     --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* 3. system24 (Discord Mod Theme) */
-body.style-system24 {
-    --accent-color: #5865f2;
-    --accent-hover: #4752c4;
-    --ui-bg: rgba(17, 18, 20, 0.92);
-    --card-bg: rgba(30, 31, 34, 0.92);
-    --border-color: rgba(255, 255, 255, 0.06);
-    --card-border: rgba(255, 255, 255, 0.04);
-    --radius-main: 12px;
-    --radius-card: 8px;
-    --font-family: 'gg sans', 'Noto Sans', sans-serif;
-    --glow-effect: 0 8px 16px rgba(0, 0, 0, 0.4);
-}
-
-/* 4. Apple LiquidGlass (iOS/macOS すりガラス風) */
+/* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
 body.style-liquidglass {
     --accent-color: #0a84ff;
     --accent-hover: #64d2ff;
@@ -52,25 +40,27 @@ body.style-liquidglass {
     --card-border: rgba(255, 255, 255, 0.2);
     --radius-main: 36px;
     --radius-card: 22px;
+    --radius-capsule: 9999px;
     --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
     --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* 5. VRChat ゲーム内 UI 風 (ダークブルー系・SFパネル感) */
+/* 4. VRChat ゲーム内 UI 風 (Steam風の落ち着いたダークブルー ＋ 角丸・ネオンSFパネル感) */
 body.style-vrchat {
-    --accent-color: #1fcae6;
-    --accent-hover: #6ee7b7;
-    --ui-bg: rgba(10, 20, 32, 0.85);
-    --card-bg: rgba(16, 32, 50, 0.85);
-    --border-color: #1fcae6;
-    --card-border: rgba(31, 202, 230, 0.4);
-    --radius-main: 16px;
-    --radius-card: 10px;
+    --accent-color: #66c0f4;
+    --accent-hover: #1fcae6;
+    --ui-bg: rgba(23, 29, 37, 0.88);
+    --card-bg: rgba(27, 40, 56, 0.90);
+    --border-color: #2a475e;
+    --card-border: rgba(102, 192, 244, 0.3);
+    --radius-main: 24px;
+    --radius-card: 16px;
+    --radius-capsule: 9999px;
     --font-family: 'Segoe UI', Tahoma, sans-serif;
-    --glow-effect: 0 0 15px rgba(31, 202, 230, 0.35);
+    --glow-effect: 0 0 15px rgba(102, 192, 244, 0.25);
 }
 
-/* 6. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
+/* 5. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
 body.style-fluent {
     --accent-color: #60cdff;
     --accent-hover: #99ebff;
@@ -80,11 +70,12 @@ body.style-fluent {
     --card-border: rgba(255, 255, 255, 0.08);
     --radius-main: 8px;
     --radius-card: 6px;
+    --radius-capsule: 9999px;
     --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
     --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
 }
 
-/* 7. Unity ゲームエンジン風 (Editor Dark Theme) */
+/* 6. Unity ゲームエンジン風 (Editor Dark Theme) */
 body.style-unity {
     --accent-color: #2c5d88;
     --accent-hover: #3a78b0;
@@ -94,11 +85,12 @@ body.style-unity {
     --card-border: #1a1a1a;
     --radius-main: 3px;
     --radius-card: 3px;
+    --radius-capsule: 4px;
     --font-family: Inter, Arial, sans-serif;
     --glow-effect: none;
 }
 
-/* 8. Steam クライアント風 (Steam Dark Blue) */
+/* 7. Steam クライアント風 (Steam Dark Blue) */
 body.style-steam {
     --accent-color: #66c0f4;
     --accent-hover: #a4d007;
@@ -108,6 +100,7 @@ body.style-steam {
     --card-border: #1b2838;
     --radius-main: 4px;
     --radius-card: 3px;
+    --radius-capsule: 2px;
     --font-family: 'Motiva Sans', Arial, sans-serif;
     --glow-effect: 0 0 10px rgba(102, 192, 244, 0.2);
 }
@@ -305,7 +298,7 @@ a:hover {
     height: 42px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-capsule, var(--radius-card)); /* カプセル用に指定、フォールバックでcardを使用 */
     color: #ffffff;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -468,6 +461,7 @@ a:hover {
     font-family: inherit;
     font-size: 1rem;
     flex-shrink: 0;
+    border-radius: var(--radius-capsule, var(--radius-card));
 }
 
 .icon-btn:hover {
