@@ -22,7 +22,7 @@ body.style-material{
 --ui-bg:rgba(29,27,32,.88);
 --card-bg:rgba(33,29,39,.9);
 --border-color:rgba(147,143,153,.2);
---card-border:rgba(147,143,153,.0);
+--card-border:rgba(147,143,153,.12);
 --radius-main:32px;
 --radius-card:24px;
 --radius-capsule:9999px;
@@ -34,16 +34,16 @@ body.style-material{
 body.style-liquidglass{
 --accent-color:#007aff;
 --accent-hover:#0a84ff;
---ui-bg:rgba(248,248,250,.30);
---card-bg:rgba(255,255,255,.23);
+--ui-bg:rgba(248,248,250,.38);
+--card-bg:rgba(255,255,255,.28);
 --border-color:rgba(255,255,255,.55);
 --card-border:rgba(255,255,255,.42);
 --radius-main:30px;
 --radius-card:20px;
 --radius-capsule:9999px;
 --font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
---glow-effect:0 1px 4px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.20);
---lg-blur:2px;
+--glow-effect:0 8px 30px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.55);
+--lg-blur:14px;
 --lg-saturation:165%;
 --lg-brightness:108%;
 }
@@ -808,7 +808,7 @@ position:absolute;
 inset:0;
 border-radius:inherit;
 pointer-events:none;
-background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 30%)
+background:linear-gradient(180deg,rgba(255,255,255,.16),transparent 42%)
 }
 
 body.style-liquidglass .floating-status-bar{border-radius:9999px}
@@ -816,7 +816,7 @@ body.style-liquidglass .floating-status-bar{border-radius:9999px}
 body.style-liquidglass .status-capsule:hover,
 body.style-liquidglass .grid-item:hover{
 background:rgba(255,255,255,.22);
-border-color:rgba(255,255,255,.50)
+border-color:rgba(255,255,255,.65)
 }
 
 body.style-liquidglass .grid-item{
@@ -846,8 +846,8 @@ body.style-liquidglass:not(.light-theme) .profile-card,
 body.style-liquidglass:not(.light-theme) .gallery-section,
 body.style-liquidglass:not(.light-theme) .site-title,
 body.style-liquidglass:not(.light-theme) .status-capsule{
-background:linear-gradient(100deg,rgba(255,255,255,.6),rgba(255,255,255,.018));
-border-color:rgba(255,255,255,.20);
+background:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.025));
+border-color:rgba(255,255,255,.25);
 }
 
 /* LiquidGlass ライト */
@@ -858,8 +858,8 @@ body.style-liquidglass.light-theme .profile-card,
 body.style-liquidglass.light-theme .gallery-section,
 body.style-liquidglass.light-theme .site-title,
 body.style-liquidglass.light-theme .status-capsule{
-background:linear-gradient(100deg,rgba(255,255,255,.10),rgba(255,255,255,.9));
-border-color:rgba(255,255,255,.35);
+background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.10));
+border-color:rgba(255,255,255,.62);
 }
 
 /* 屈折はコンテンツ全体ではなく外周レイヤーだけ */
