@@ -50,18 +50,18 @@ body.style-liquidglass{
 
 /* LiquidGlass ダーク */
 body.style-liquidglass:not(.light-theme){
---ui-bg:rgba(18,18,22,.22);
---card-bg:rgba(20,20,24,.16);
---border-color:rgba(255,255,255,.28);
---card-border:rgba(255,255,255,.22);
+--ui-bg:rgba(18,18,22,.17);
+--card-bg:rgba(20,20,24,.12);
+--border-color:rgba(255,255,255,.24);
+--card-border:rgba(255,255,255,.17);
 }
 
 /* LiquidGlass ライト */
 body.style-liquidglass.light-theme{
---ui-bg:rgba(255,255,255,.30);
---card-bg:rgba(255,255,255,.20);
---border-color:rgba(255,255,255,.68);
---card-border:rgba(255,255,255,.48);
+--ui-bg:rgba(18,18,22,.22);
+--card-bg:rgba(20,20,24,.16);
+--border-color:rgba(255,255,255,.28);
+--card-border:rgba(255,255,255,.22);
 }
 
 /* 4. Fluent */
