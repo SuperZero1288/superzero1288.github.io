@@ -51,8 +51,8 @@
     <!-- バー格納時に出現する極細インジケーター -->
     <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
-    <!-- 背景固定 全画面スライドショー -->
-    <div class="hero-slider">
+    <!-- 背景固定 全画面スライドショー（オーバーレイで徐々にぼかし適用） -->
+    <div class="hero-slider" id="heroSlider">
         <div class="slides"></div>
         <div class="slides"></div>
         <div class="slides"></div>
@@ -66,9 +66,11 @@
         <div class="slides"></div>
         <div class="slides"></div>
         <div class="slides"></div>
+        <!-- 動的ぼかし用レイヤー -->
+        <div class="blur-overlay" id="blurOverlay"></div>
     </div>
 
-    <!-- ファーストビュー用の見えないスクロールエリア (SCROLL DOWNインジケーター配置) -->
+    <!-- ファーストビュー用の見えないスクロールエリア -->
     <div class="hero-spacer">
         <a href="#about" class="scroll-indicator">
             <span class="scroll-text">SCROLL DOWN</span>
@@ -76,7 +78,7 @@
         </a>
     </div>
 
-    <!-- コンテンツ画面 (背景の上を競り上がってくるエリア) -->
+    <!-- コンテンツ画面 (コンパクトなすりガラスウィンドウ風) -->
     <div class="content-screen" id="about">
         <div class="content-wrapper">
             
@@ -149,15 +151,15 @@
         const calendarPopup = document.getElementById('calendarPopup');
         const calendarHeader = document.getElementById('calendarHeader');
         const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+        const blurOverlay = document.getElementById('blurOverlay');
         const toast = document.getElementById('toast');
         
         let hideTimeout;
         let indicatorTimeout;
         let toastTimeout;
-        let is24Hour = true; // 24時間表記フラグ
+        let is24Hour = true;
         let lastRenderedMonth = -1;
 
-        // トースト通知を表示
         function showToast(text) {
             toast.textContent = text;
             toast.classList.add('show');
@@ -167,12 +169,10 @@
             }, 2000);
         }
 
-        // カレンダーポップアップ全体のクリックイベント伝播を防止（時計切り替えを発火させない）
         calendarPopup.addEventListener('click', (e) => {
             e.stopPropagation();
         });
 
-        // リアルタイム時計更新＆月レンダー判定
         function updateTime() {
             const now = new Date();
             let hours = now.getHours();
@@ -188,7 +188,6 @@
                 statusTime.textContent = `${ampm} ${hours}:${minutes}`;
             }
 
-            // 月が変わったら、または初回レンダー時にカレンダー生成
             const currentMonth = now.getMonth();
             if (lastRenderedMonth !== currentMonth) {
                 renderCalendar(now);
@@ -196,31 +195,25 @@
             }
         }
 
-        // 月カレンダーの生成ロジック
         function renderCalendar(now) {
             const year = now.getFullYear();
             const month = now.getMonth();
             const today = now.getDate();
 
-            // ヘッダー (年.月)
             const monthStr = String(month + 1).padStart(2, '0');
             calendarHeader.textContent = `${year}.${monthStr}`;
 
             calendarDaysGrid.innerHTML = '';
 
-            // 当月1日の曜日
             const firstDayIndex = new Date(year, month, 1).getDay();
-            // 当月の最終日
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // 空セル
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'calendar-day-cell empty';
                 calendarDaysGrid.appendChild(emptyCell);
             }
 
-            // 日付セル
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = 'calendar-day-cell';
@@ -237,7 +230,6 @@
 
                 dayCell.textContent = day;
 
-                // コピー機能
                 dayCell.addEventListener('click', (e) => {
                     const dStr = String(day).padStart(2, '0');
                     const formattedDate = `${year}/${monthStr}/${dStr}`;
@@ -253,7 +245,6 @@
             }
         }
 
-        // 時計クリック切り替え
         timeCapsule.addEventListener('click', (e) => {
             is24Hour = !is24Hour;
             updateTime();
@@ -262,7 +253,6 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // ステータスバーの表示制御
         function showStatusBar() {
             clearTimeout(indicatorTimeout);
             statusBarIndicator.classList.remove('visible');
@@ -283,8 +273,16 @@
 
         showStatusBar();
 
+        // スクロール時のぼかし＆バー制御
         window.addEventListener('scroll', () => {
             showStatusBar();
+
+            // 1画面分のスクロール量を基準にして、背景を徐々にぼかす (最大16px)
+            const scrollRatio = Math.min(window.scrollY / window.innerHeight, 1);
+            const blurVal = scrollRatio * 16;
+            blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
         }, { passive: true });
 
         window.addEventListener('mousemove', (e) => {
@@ -303,7 +301,6 @@
             showStatusBar();
         });
 
-        // テーマ切り替え
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
