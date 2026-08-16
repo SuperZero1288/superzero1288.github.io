@@ -16,7 +16,7 @@
             <span>★</span>
         </button>
 
-        <!-- 絶対中央配置：時計カプセル (高さ42pxに統一) -->
+        <!-- 絶対中央配置：時計カプセル -->
         <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
             <span class="status-time" id="statusTime">12:00</span>
             
@@ -51,7 +51,7 @@
     <!-- バー格納時に出現する極細インジケーター -->
     <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
-    <!-- 全画面スライドショー (1画面目) -->
+    <!-- 背景固定 全画面スライドショー -->
     <div class="hero-slider">
         <div class="slides"></div>
         <div class="slides"></div>
@@ -66,13 +66,17 @@
         <div class="slides"></div>
         <div class="slides"></div>
         <div class="slides"></div>
+    </div>
+
+    <!-- ファーストビュー用の見えないスクロールエリア (SCROLL DOWNインジケーター配置) -->
+    <div class="hero-spacer">
         <a href="#about" class="scroll-indicator">
             <span class="scroll-text">SCROLL DOWN</span>
             <span class="scroll-arrow">▼</span>
         </a>
     </div>
 
-    <!-- コンテンツ画面 (2画面目) -->
+    <!-- コンテンツ画面 (背景の上を競り上がってくるエリア) -->
     <div class="content-screen" id="about">
         <div class="content-wrapper">
             
@@ -204,19 +208,19 @@
 
             calendarDaysGrid.innerHTML = '';
 
-            // 当月1日の曜日 (0: 日曜日 ～ 6: 土曜日)
+            // 当月1日の曜日
             const firstDayIndex = new Date(year, month, 1).getDay();
             // 当月の最終日
             const totalDays = new Date(year, month + 1, 0).getDate();
 
-            // 1日より前の空セル
+            // 空セル
             for (let i = 0; i < firstDayIndex; i++) {
                 const emptyCell = document.createElement('div');
                 emptyCell.className = 'calendar-day-cell empty';
                 calendarDaysGrid.appendChild(emptyCell);
             }
 
-            // 日付セルの作成
+            // 日付セル
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = 'calendar-day-cell';
@@ -227,14 +231,13 @@
                 if (dayOfWeek === 0) dayCell.classList.add('sun');
                 if (dayOfWeek === 6) dayCell.classList.add('sat');
 
-                // 本日の判定（丸枠付与）
                 if (day === today) {
                     dayCell.classList.add('is-today');
                 }
 
                 dayCell.textContent = day;
 
-                // 日付クリック時にYYYY/MM/DD形式でコピー
+                // コピー機能
                 dayCell.addEventListener('click', (e) => {
                     const dStr = String(day).padStart(2, '0');
                     const formattedDate = `${year}/${monthStr}/${dStr}`;
@@ -250,7 +253,7 @@
             }
         }
 
-        // 時計クリックで12時間/24時間表記切り替え
+        // 時計クリック切り替え
         timeCapsule.addEventListener('click', (e) => {
             is24Hour = !is24Hour;
             updateTime();
@@ -278,22 +281,18 @@
             }
         }
 
-        // 初期表示
         showStatusBar();
 
-        // スクロール時に表示・非表示判定
         window.addEventListener('scroll', () => {
             showStatusBar();
         }, { passive: true });
 
-        // 画面上部70px以内にマウスが入った時に表示
         window.addEventListener('mousemove', (e) => {
             if (e.clientY <= 70) {
                 showStatusBar();
             }
         });
 
-        // バー自体をホバーしている間はタイマー停止
         statusBar.addEventListener('mouseenter', () => {
             clearTimeout(hideTimeout);
             clearTimeout(indicatorTimeout);
@@ -304,7 +303,7 @@
             showStatusBar();
         });
 
-        // テーマ切り替え機能（ダーク / ライト）
+        // テーマ切り替え
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
