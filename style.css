@@ -44,13 +44,21 @@ body.light-theme .status-time {
 }
 
 body.light-theme .calendar-popup {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     border-color: rgba(0, 0, 0, 0.12);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     color: #2e2e38;
 }
 
-body.light-theme .calendar-date {
+body.light-theme .calendar-header {
+    color: #2e2e38;
+}
+
+body.light-theme .calendar-weekdays span {
+    color: #777;
+}
+
+body.light-theme .calendar-day-cell {
     color: #2e2e38;
 }
 
@@ -184,28 +192,28 @@ a:hover {
     font-size: 0.95rem;
 }
 
-/* ――― カレンダーポップアップ ――― */
+/* ――― リアルカレンダーポップアップ ――― */
 .calendar-popup {
     position: absolute;
     top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%) translateY(-8px);
-    width: 130px;
-    padding: 10px 12px;
-    background: rgba(20, 20, 26, 0.85);
+    width: 210px;
+    padding: 12px;
+    background: rgba(20, 20, 26, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
     backdrop-filter: blur(16px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 2px;
+    gap: 8px;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
     z-index: 10000;
+    font-family: Roboto, -apple-system, sans-serif;
 }
 
 .time-capsule:hover .calendar-popup {
@@ -214,556 +222,58 @@ a:hover {
     transform: translateX(-50%) translateY(0);
 }
 
-.calendar-date {
-    font-family: Roboto, -apple-system, sans-serif;
+.calendar-header {
     font-size: 0.85rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-}
-
-.calendar-day {
-    font-family: Roboto, -apple-system, sans-serif;
-    font-size: 0.7rem;
     font-weight: 800;
-    color: #ff8fa3;
-    letter-spacing: 1px;
-}
-
-/* アイコン専用正円ボタン (高さに合わせて 42px × 42px) */
-.icon-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 1rem;
-    flex-shrink: 0;
-}
-
-.icon-btn:hover {
-    background: rgba(255, 143, 163, 0.25);
-    border-color: rgba(255, 143, 163, 0.5);
-    transform: scale(1.08);
-}
-
-/* ――― 全画面スライドショーセクション ――― */
-.hero-slider {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #000;
-}
-
-.slides {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    animation: slideAnimation 52s infinite;
-    background-size: cover;
-    background-position: center;
-}
-
-.slides:nth-child(1) { background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'); animation-delay: 0s; }
-.slides:nth-child(2) { background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'); animation-delay: 4s; }
-.slides:nth-child(3) { background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'); animation-delay: 8s; }
-.slides:nth-child(4) { background-image: url('https://i.ibb.co/BHDtqs5P/image.png'); animation-delay: 12s; }
-.slides:nth-child(5) { background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'); animation-delay: 16s; }
-.slides:nth-child(6) { background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'); animation-delay: 20s; }
-.slides:nth-child(7) { background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'); animation-delay: 24s; }
-.slides:nth-child(8) { background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'); animation-delay: 28s; }
-.slides:nth-child(9) { background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'); animation-delay: 32s; }
-.slides:nth-child(10) { background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'); animation-delay: 36s; }
-.slides:nth-child(11) { background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'); animation-delay: 40s; }
-.slides:nth-child(12) { background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'); animation-delay: 44s; }
-.slides:nth-child(13) { background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'); animation-delay: 48s; }
-
-@keyframes slideAnimation {
-    0% { opacity: 0; transform: scale(1); }
-    8% { opacity: 1; }
-    33% { opacity: 1; }
-    41% { opacity: 0; transform: scale(1.05); }
-    100% { opacity: 0; }
-}
-
-/* ――― SCROLL DOWN インジケーター ――― */
-.scroll-indicator {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 28px;
-    background: rgba(30, 30, 36, 0.75);
-    border: 1px solid rgba(255, 143, 163, 0.5);
-    border-radius: 30px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 143, 163, 0.2);
-    transition: all 0.3s ease;
-    animation: floatAnimation 2.5s infinite ease-in-out;
-    cursor: pointer;
-}
-
-.scroll-indicator:hover {
-    background: rgba(40, 36, 46, 0.9);
-    border-color: #ff8fa3;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 143, 163, 0.5);
-}
-
-.scroll-text {
     color: #ffffff;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-}
-
-.scroll-arrow {
-    color: #ff8fa3;
-    font-size: 1.1rem;
-    animation: arrowBounce 1.5s infinite;
-}
-
-@keyframes floatAnimation {
-    0%, 100% { transform: translate(-50%, 0); }
-    50% { transform: translate(-50%, -12px); }
-}
-
-@keyframes arrowBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-}
-
-/* ――― コンテンツセクション ――― */
-.content-screen {
-    width: 100vw;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-}
-
-.content-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.header-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.site-title {
-    background-color: #2a252a;
-    border: 1px solid #3d353d;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    color: #ff8fa3;
-    font-weight: bold;
-}
-
-.nav-links a {
-    color: #aaa;
-    margin-left: 20px;
-    font-size: 0.95rem;
-}
-
-.nav-links a:hover {
-    color: #fff;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 16px;
-}
-
-.main-content-layout {
-    display: flex;
-    gap: 24px;
-    align-items: stretch;
-}
-
-.profile-card {
-    width: 320px;
-    background-color: #252229;
-    border: 1px solid #312d36;
-    border-radius: 12px;
-    padding: 30px 24px;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.avatar-container {
-    width: 90px;
-    height: 90px;
-    border-radius: 24px;
-    margin: 0 auto 16px;
-    overflow: hidden;
-    border: 2px solid #ff8fa3;
-    flex-shrink: 0;
-}
-
-.avatar-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-name {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.profile-id {
-    font-size: 0.85rem;
-    color: #ff8fa3;
-    margin-bottom: 16px;
     letter-spacing: 1px;
+    padding-bottom: 2px;
 }
 
-.profile-desc {
-    background-color: #1a171d;
-    border-radius: 8px;
-    padding: 14px;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    text-align: left;
-    color: #c0c0c8;
-}
-
-.gallery-section {
-    flex-grow: 1;
-    background-color: #252229;
-    border: 1px solid #312d36;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.section-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.section-title::before {
-    content: "|";
-    color: #ff8fa3;
-    font-weight: bold;
-}
-
-.section-subtitle {
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 16px;
-}
-
-.grid-container {
+.calendar-weekdays {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.grid-item {
-    background-color: #2d2933;
-    border: 1px solid #3d3745;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, border-color 0.2s;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    text-decoration: none;
-}
-
-.grid-item:hover {
-    transform: translateY(-2px);
-    border-color: #ff8fa3;
-}
-
-.item-content {
-    padding: 40px 16px;
+    grid-template-columns: repeat(7, 1fr);
     text-align: center;
-    font-size: 0.9rem;
-    color: #ffffff;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: rgba(0, 0, 0, 0.55); 
-    font-weight: bold;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
-
-.item-link {
-    border-top: 1px solid #3d3745;
-    padding: 10px 16px;
-    font-size: 0.8rem;
-    background-color: #28242e;
-    text-align: center;
-    color: #ff8fa3;
-    z-index: 1;
-}
-
-.grid-item:hover .item-link {
-    color: #ffb3c1;
-    background-color: #312b39;
-}
-
-/* Galleryカード背景画像 */
-#gallery-twitter {
-    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
-}
-#gallery-vrchat {
-    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
-}
-#gallery-booth {
-    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
-}
-#gallery-shader {
-    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
-}
-
-/* レスポンシブ調整 */
-@media (max-width: 850px) {
-    .floating-status-bar,
-    .status-bar-indicator {
-        width: 80vw;
-    }
-    .content-screen {
-        height: auto;
-        padding: 20px 12px;
-    }
-    .main-content-layout {
-        flex-direction: column;
-        align-items: center;
-    }
-    .profile-card {
-        width: 100%;
-    }
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
-}/* 時計カプセル (修正) */
-.time-capsule {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    
-    /* 横幅を固定値にするぜ */
-    width: 120px; 
-    
-    padding: 0 16px;
-    border-radius: 21px;
-    cursor: pointer;
-    
-    /* これで数字がピクリとも動かなくなるぞ */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-variant-numeric: tabular-nums;
-}/* 全体のスタイル設定 */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    background-color: #1e1e24;
-    color: #e0e0e6;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    overflow-x: hidden;
-    transition: background-color 0.4s ease, color 0.4s ease;
-}
-
-/* ライトテーマ設定 */
-body.light-theme {
-    background-color: #f4f4f7;
-    color: #2e2e38;
-}
-
-body.light-theme .floating-status-bar {
-    background: rgba(235, 235, 242, 0.75);
-    border-color: rgba(0, 0, 0, 0.1);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .status-bar-indicator {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-body.light-theme .status-capsule {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #2e2e38;
-}
-
-body.light-theme .status-time {
-    color: #2e2e38;
-}
-
-body.light-theme .profile-card,
-body.light-theme .gallery-section {
-    background-color: #ffffff;
-    border-color: #e0e0e8;
-}
-
-body.light-theme .profile-desc {
-    background-color: #f0f0f5;
-    color: #4a4a5a;
-}
-
-body.light-theme .site-title {
-    background-color: #eaeaea;
-    border-color: #ddd;
-    color: #d85a70;
-}
-
-body.light-theme .nav-links a {
-    color: #666;
-}
-
-body.light-theme .nav-links a:hover {
-    color: #000;
-}
-
-a {
-    color: #ff8fa3;
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-a:hover {
-    color: #ffb3c1;
-}
-
-/* ――― 浮遊型 フローティングステータスバー ――― */
-.floating-status-bar {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-    width: 50vw;
-    min-width: 340px;
-    max-width: 620px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 14px;
-    background: rgba(20, 20, 26, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 40px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    z-index: 9999;
-    opacity: 1;
-    pointer-events: auto;
-    
-    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.floating-status-bar.hidden {
-    transform: translateX(-50%) translateY(-100px);
-    pointer-events: none;
-    
-    transition: transform 0.35s cubic-bezier(0.6, -0.28, 0.735, 0.045);
-}
-
-/* ――― バー非表示時に現れる半透明な極細ガイドバー ――― */
-.status-bar-indicator {
-    position: fixed;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50vw;
-    min-width: 340px;
-    max-width: 620px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 2px;
-    backdrop-filter: blur(4px);
-    z-index: 9998;
-    opacity: 0;
-    pointer-events: none;
-    
-    transition: opacity 0.25s ease;
-}
-
-.status-bar-indicator.visible {
-    opacity: 0.2;
-}
-
-/* ――― バーの内部要素共通設定 ――― */
-.status-capsule {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 42px; /* 高さを42pxに統一 */
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #ffffff;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    user-select: none;
-}
-
-/* 時計カプセル (中央配置・高さ42px & カプセル丸み) */
-.time-capsule {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 95px; /* 必要最小限の横幅 */
-    padding: 0 16px;
-    border-radius: 21px; /* 高さに合わせた完全カプセル丸み */
-    cursor: pointer;
-}
-
-.time-capsule:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.25);
-}
-
-.status-time {
-    font-family: Roboto, -apple-system, sans-serif;
+    font-size: 0.65rem;
     font-weight: 700;
+    color: #aaa;
+}
+
+.calendar-weekdays .sun { color: #ff6b6b; }
+.calendar-weekdays .sat { color: #4dabf7; }
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.calendar-day-cell {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #e0e0e6;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-day-cell.sun { color: #ff6b6b; }
+.calendar-day-cell.sat { color: #4dabf7; }
+
+/* 本日の日にちを丸枠で囲む */
+.calendar-day-cell.is-today {
+    background-color: rgba(255, 143, 163, 0.2);
+    border: 2px solid #ff8fa3;
     color: #ffffff;
-    letter-spacing: 0.5px;
-    font-size: 0.95rem;
+    font-weight: 800;
+    box-shadow: 0 0 8px rgba(255, 143, 163, 0.4);
 }
 
 /* アイコン専用正円ボタン (高さに合わせて 42px × 42px) */
