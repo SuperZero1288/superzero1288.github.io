@@ -1,3 +1,61 @@
+/* ――― テーマ（デザイン言語）変数定義 ――― */
+
+/* 1. スタンダード (デフォルト) */
+body.style-default {
+    --accent-color: #ff8fa3;
+    --accent-hover: #ffb3c1;
+    --ui-bg: rgba(22, 20, 26, 0.65);
+    --card-bg: rgba(37, 34, 41, 0.75);
+    --border-color: rgba(255, 255, 255, 0.18);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --radius-main: 28px;
+    --radius-card: 16px;
+    --font-family: 'Helvetica Neue', Arial, sans-serif;
+    --glow-effect: none;
+}
+
+/* 2. サイバーパンク (近未来・ネオン) */
+body.style-cyber {
+    --accent-color: #00ffcc;
+    --accent-hover: #00b3ff;
+    --ui-bg: rgba(10, 15, 28, 0.85);
+    --card-bg: rgba(15, 23, 42, 0.85);
+    --border-color: #00ffcc;
+    --card-border: #00b3ff;
+    --radius-main: 4px;
+    --radius-card: 2px;
+    --font-family: 'Courier New', Consolas, monospace;
+    --glow-effect: 0 0 12px rgba(0, 255, 204, 0.4);
+}
+
+/* 3. フロストガラス (超透明感・エレガント) */
+body.style-glass {
+    --accent-color: #a5b4fc;
+    --accent-hover: #c7d2fe;
+    --ui-bg: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.35);
+    --card-border: rgba(255, 255, 255, 0.25);
+    --radius-main: 40px;
+    --radius-card: 24px;
+    --font-family: 'SF Pro Display', -apple-system, sans-serif;
+    --glow-effect: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+}
+
+/* 4. レトロピクセル (90年代PC・ドット風) */
+body.style-retro {
+    --accent-color: #ffcc00;
+    --accent-hover: #ffee55;
+    --ui-bg: #111111;
+    --card-bg: #222222;
+    --border-color: #ffffff;
+    --card-border: #888888;
+    --radius-main: 0px;
+    --radius-card: 0px;
+    --font-family: 'Impact', 'Arial Black', sans-serif;
+    --glow-effect: none;
+}
+
 /* 全体のスタイル設定 */
 * {
     box-sizing: border-box;
@@ -11,8 +69,8 @@ html, body {
     overflow: hidden;
     background-color: #0f0f12;
     color: #e0e0e6;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    font-family: var(--font-family);
+    transition: background-color 0.4s ease, color 0.4s ease, font-family 0.3s ease;
 }
 
 /* スライド（ページ切り替え）コンテナ */
@@ -57,8 +115,8 @@ body.light-theme {
 
 body.light-theme .floating-status-bar,
 body.light-theme .calendar-popup {
-    background: rgba(235, 235, 242, 0.7);
-    border-color: rgba(0, 0, 0, 0.1);
+    background: rgba(235, 235, 242, 0.85);
+    border-color: rgba(0, 0, 0, 0.15);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
@@ -87,8 +145,8 @@ body.light-theme .calendar-day-cell:hover:not(.empty) {
 }
 
 body.light-theme .content-screen {
-    background: rgba(244, 244, 247, 0.75);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(244, 244, 247, 0.85);
+    border-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
 
@@ -106,17 +164,17 @@ body.light-theme .profile-desc {
 body.light-theme .site-title {
     background-color: #eaeaea;
     border-color: #ddd;
-    color: #d85a70;
+    color: var(--accent-color);
 }
 
 a {
-    color: #ff8fa3;
+    color: var(--accent-color);
     text-decoration: none;
     transition: color 0.3s;
 }
 
 a:hover {
-    color: #ffb3c1;
+    color: var(--accent-hover);
 }
 
 /* ――― 浮遊型 フローティングステータスバー ――― */
@@ -126,23 +184,23 @@ a:hover {
     left: 50%;
     transform: translateX(-50%) translateY(0);
     width: 50vw;
-    min-width: 340px;
-    max-width: 620px;
+    min-width: 380px;
+    max-width: 650px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 14px;
-    background: rgba(20, 20, 26, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
     border-radius: 40px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
     z-index: 9999;
     opacity: 1;
     pointer-events: auto;
     
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .floating-status-bar.hidden {
@@ -159,8 +217,8 @@ a:hover {
     left: 50%;
     transform: translateX(-50%);
     width: 50vw;
-    min-width: 340px;
-    max-width: 620px;
+    min-width: 380px;
+    max-width: 650px;
     height: 3px;
     background: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
@@ -177,13 +235,20 @@ a:hover {
     opacity: 0.25;
 }
 
+/* 右側ボタンをまとめるグループ */
+.status-right-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .status-capsule {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 42px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--border-color);
     color: #ffffff;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -203,11 +268,10 @@ a:hover {
 
 .time-capsule:hover {
     background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.25);
+    border-color: var(--accent-color);
 }
 
 .status-time {
-    font-family: Roboto, -apple-system, sans-serif;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 0.5px;
@@ -221,9 +285,9 @@ a:hover {
     transform: translateX(-50%) translateY(-10px);
     width: 220px;
     padding: 14px;
-    background: rgba(20, 20, 26, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
@@ -235,7 +299,6 @@ a:hover {
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
     z-index: 10000;
-    font-family: Roboto, -apple-system, sans-serif;
 }
 
 .time-capsule::after {
@@ -307,11 +370,11 @@ a:hover {
 .calendar-day-cell.sat { color: #4dabf7; }
 
 .calendar-day-cell.is-today {
-    background-color: rgba(255, 143, 163, 0.25);
-    border: 2px solid #ff8fa3;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--accent-color);
     color: #ffffff;
     font-weight: 800;
-    box-shadow: 0 0 8px rgba(255, 143, 163, 0.4);
+    box-shadow: var(--glow-effect);
 }
 
 /* トースト通知 */
@@ -319,16 +382,16 @@ a:hover {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: rgba(20, 20, 26, 0.8);
-    border: 1px solid rgba(255, 143, 163, 0.5);
+    background: var(--ui-bg);
+    border: 1px solid var(--accent-color);
     color: #ffffff;
     padding: 10px 18px;
-    border-radius: 30px;
+    border-radius: var(--radius-card);
     font-size: 0.85rem;
     font-weight: bold;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), var(--glow-effect);
     opacity: 0;
     transform: translateY(10px);
     pointer-events: none;
@@ -353,8 +416,8 @@ a:hover {
 }
 
 .icon-btn:hover {
-    background: rgba(255, 143, 163, 0.25);
-    border-color: rgba(255, 143, 163, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
     transform: scale(1.08);
 }
 
@@ -428,11 +491,11 @@ a:hover {
     align-items: center;
     gap: 6px;
     padding: 12px 28px;
-    background: rgba(30, 30, 36, 0.75);
-    border: 1px solid rgba(255, 143, 163, 0.5);
-    border-radius: 30px;
+    background: var(--ui-bg);
+    border: 1px solid var(--accent-color);
+    border-radius: var(--radius-card);
     backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 143, 163, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), var(--glow-effect);
     transition: opacity 0.4s ease, transform 0.4s ease;
     animation: floatAnimation 2.5s infinite ease-in-out;
     opacity: 1;
@@ -448,8 +511,7 @@ a:hover {
 
 .scroll-indicator:hover {
     background: rgba(40, 36, 46, 0.9);
-    border-color: #ff8fa3;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 143, 163, 0.5);
+    border-color: var(--accent-hover);
 }
 
 .scroll-text {
@@ -461,7 +523,7 @@ a:hover {
 }
 
 .scroll-arrow {
-    color: #ff8fa3;
+    color: var(--accent-color);
     font-size: 1.1rem;
     animation: arrowBounce 1.5s infinite;
 }
@@ -489,13 +551,13 @@ a:hover {
     max-width: 1100px;
     padding: 40px;
     
-    background: rgba(22, 20, 26, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: var(--ui-bg);
+    border: 1px solid var(--border-color);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-radius: 28px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-    transition: background 0.4s ease, border-color 0.4s ease;
+    border-radius: var(--radius-main);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), var(--glow-effect);
+    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease;
 }
 
 .content-wrapper {
@@ -514,12 +576,13 @@ a:hover {
 
 .site-title {
     background-color: rgba(42, 37, 42, 0.8);
-    border: 1px solid #3d353d;
-    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
     padding: 10px 20px;
     font-size: 1.1rem;
-    color: #ff8fa3;
+    color: var(--accent-color);
     font-weight: bold;
+    transition: color 0.3s ease, border-radius 0.3s ease;
 }
 
 .container {
@@ -537,9 +600,9 @@ a:hover {
 
 .profile-card {
     width: 300px;
-    background-color: rgba(37, 34, 41, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
     padding: 24px;
     text-align: center;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
@@ -547,6 +610,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
 }
 
 .avatar-container {
@@ -555,8 +619,9 @@ a:hover {
     border-radius: 24px;
     margin: 0 auto 16px;
     overflow: hidden;
-    border: 2px solid #ff8fa3;
+    border: 2px solid var(--accent-color);
     flex-shrink: 0;
+    transition: border-color 0.3s;
 }
 
 .avatar-container img {
@@ -573,14 +638,15 @@ a:hover {
 
 .profile-id {
     font-size: 0.85rem;
-    color: #ff8fa3;
+    color: var(--accent-color);
     margin-bottom: 16px;
     letter-spacing: 1px;
+    transition: color 0.3s;
 }
 
 .profile-desc {
-    background-color: rgba(26, 23, 29, 0.7);
-    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: calc(var(--radius-card) / 2);
     padding: 14px;
     font-size: 0.85rem;
     line-height: 1.5;
@@ -590,14 +656,15 @@ a:hover {
 
 .gallery-section {
     flex-grow: 1;
-    background-color: rgba(37, 34, 41, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
     padding: 24px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
 }
 
 .section-title {
@@ -611,8 +678,9 @@ a:hover {
 
 .section-title::before {
     content: "|";
-    color: #ff8fa3;
+    color: var(--accent-color);
     font-weight: bold;
+    transition: color 0.3s;
 }
 
 .section-subtitle {
@@ -629,12 +697,12 @@ a:hover {
 
 .grid-item {
     background-color: #2d2933;
-    border: 1px solid #3d3745;
-    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    border-radius: calc(var(--radius-card) / 2);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, border-color 0.2s, border-radius 0.3s;
     background-size: cover;
     background-position: center;
     position: relative;
@@ -643,7 +711,7 @@ a:hover {
 
 .grid-item:hover {
     transform: translateY(-2px);
-    border-color: #ff8fa3;
+    border-color: var(--accent-color);
 }
 
 .item-content {
@@ -662,18 +730,19 @@ a:hover {
 }
 
 .item-link {
-    border-top: 1px solid #3d3745;
+    border-top: 1px solid var(--card-border);
     padding: 10px 16px;
     font-size: 0.8rem;
-    background-color: #28242e;
+    background-color: rgba(0, 0, 0, 0.4);
     text-align: center;
-    color: #ff8fa3;
+    color: var(--accent-color);
     z-index: 1;
+    transition: color 0.3s;
 }
 
 .grid-item:hover .item-link {
-    color: #ffb3c1;
-    background-color: #312b39;
+    color: var(--accent-hover);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
 /* Galleryカード背景画像 */
