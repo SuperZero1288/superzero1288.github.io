@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぜろくんでんせつ</title>
+    <!-- 公式フォント CDN 読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="style-default">
@@ -187,21 +191,20 @@
         let lastRenderedMonth = -1;
         let isHoveringStatusBar = false;
 
-        // 連打・木曜日判定モードの管理変数
         let clickCount = 0;
         let clickTimer = null;
         let isThursdayMode = false;
 
-        // 指定された8種類のUIデザインテーマ
+        // 本家Discord風を含む再調整済みテーマ定義
         const uiStyles = [
             { id: 'style-default', name: 'Default' },
-            { id: 'style-material', name: 'Google Material Design' },
-            { id: 'style-system24', name: 'system24 (Discord Mod)' },
-            { id: 'style-liquidglass', name: 'Apple LiquidGlass' },
-            { id: 'style-vrchat', name: 'VRChat UI' },
-            { id: 'style-fluent', name: 'Microsoft Fluent Design' },
-            { id: 'style-unity', name: 'Unity Engine' },
-            { id: 'style-steam', name: 'Steam Client' }
+            { id: 'style-material', name: 'Google Material You 3' },
+            { id: 'style-discord', name: 'Discord Official Dark' },
+            { id: 'style-liquidglass', name: 'Apple LiquidGlass / visionOS' },
+            { id: 'style-vrchat', name: 'VRChat Menu HUD' },
+            { id: 'style-fluent', name: 'Windows 11 Fluent Acrylic' },
+            { id: 'style-unity', name: 'Unity Editor Dark' },
+            { id: 'style-steam', name: 'Steam Desktop UI' }
         ];
         let currentStyleIndex = 0;
 
@@ -297,7 +300,6 @@
             }
         }
 
-        // 時計カプセルクリック処理
         timeCapsule.addEventListener('click', (e) => {
             clickCount++;
             
@@ -328,7 +330,6 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        /* ――― ステータスバー表示・非表示制御ロジック ――― */
         function hideStatusBarWithDelay(delayMs) {
             clearTimeout(hideTimeout);
             hideTimeout = setTimeout(() => {
@@ -361,13 +362,11 @@
             const scrollTop = snapContainer.scrollTop;
             const scrollRatio = Math.min(scrollTop / window.innerHeight, 1);
             
-            // 背景ぼかしと暗転制御
             const blurVal = scrollRatio * 16;
             blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
 
-            // スクロールダウン表記：100px以上スクロールしたら永久に非表示
             if (scrollTop > 100) {
                 scrollIndicator.classList.add('hidden');
             }
@@ -400,25 +399,17 @@
             }
         });
 
-        // ダーク/ライトテーマ切り替え
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             themeIcon.innerHTML = isLight ? SVG_SUN : SVG_MOON;
         });
 
-        // UIデザインテーマ切り替え処理
         uiStyleToggleBtn.addEventListener('click', () => {
-            // 現在のスタイルのクラスを削除
             document.body.classList.remove(uiStyles[currentStyleIndex].id);
-            
-            // インデックスを進める
             currentStyleIndex = (currentStyleIndex + 1) % uiStyles.length;
-            
-            // 新しいスタイルのクラスを追加
             const newStyle = uiStyles[currentStyleIndex];
             document.body.classList.add(newStyle.id);
-            
             showToast(`Theme: ${newStyle.name}`);
         });
     </script>
