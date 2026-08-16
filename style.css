@@ -32,17 +32,18 @@ body.style-material {
 
 /* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
 body.style-liquidglass {
-    --accent-color: #0a84ff;
-    --accent-hover: #64d2ff;
-    --ui-bg: rgba(255, 255, 255, 0.12);
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --border-color: rgba(255, 255, 255, 0.3);
-    --card-border: rgba(255, 255, 255, 0.2);
-    --radius-main: 36px;
-    --radius-card: 22px;
+    /* iOS 26 / Liquid Glass を意識したトークン */
+    --accent-color: #007aff;
+    --accent-hover: #0a84ff;
+    --ui-bg: rgba(248, 248, 250, 0.38);
+    --card-bg: rgba(255, 255, 255, 0.28);
+    --border-color: rgba(255, 255, 255, 0.55);
+    --card-border: rgba(255, 255, 255, 0.42);
+    --radius-main: 30px;
+    --radius-card: 20px;
     --radius-capsule: 9999px;
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    --glow-effect: 0 8px 30px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.55);
 }
 
 /* 4. VRChat ゲーム内 UI 風 (Steam風の落ち着いたダークブルー ＋ 角丸・ネオンSFパネル感) */
@@ -88,21 +89,6 @@ body.style-unity {
     --radius-capsule: 4px;
     --font-family: Inter, Arial, sans-serif;
     --glow-effect: none;
-}
-
-/* 7. Steam クライアント風 (Steam Dark Blue) */
-body.style-steam {
-    --accent-color: #66c0f4;
-    --accent-hover: #a4d007;
-    --ui-bg: rgba(23, 29, 37, 0.92);
-    --card-bg: rgba(27, 40, 56, 0.92);
-    --border-color: #2a475e;
-    --card-border: #1b2838;
-    --radius-main: 4px;
-    --radius-card: 3px;
-    --radius-capsule: 2px;
-    --font-family: 'Motiva Sans', Arial, sans-serif;
-    --glow-effect: 0 0 10px rgba(102, 192, 244, 0.2);
 }
 
 /* 全体のスタイル設定 */
@@ -806,6 +792,68 @@ a:hover {
 }
 #gallery-shader {
     background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
+}
+
+/* ――― Liquid Glass: 背景を透過させ、機能レイヤーとして浮かせる ――― */
+body.style-liquidglass .floating-status-bar,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .content-screen,
+body.style-liquidglass .profile-card,
+body.style-liquidglass .gallery-section,
+body.style-liquidglass .site-title,
+body.style-liquidglass .scroll-indicator,
+body.style-liquidglass .status-capsule {
+    background: linear-gradient(135deg, rgba(255,255,255,0.38), rgba(255,255,255,0.14));
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: var(--glow-effect);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+}
+
+body.style-liquidglass .floating-status-bar::before,
+body.style-liquidglass .content-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 42%);
+}
+
+body.style-liquidglass .floating-status-bar {
+    border-radius: 9999px;
+}
+
+body.style-liquidglass .status-capsule:hover,
+body.style-liquidglass .grid-item:hover {
+    background: rgba(255,255,255,0.32);
+    border-color: rgba(255,255,255,0.72);
+}
+
+body.style-liquidglass .grid-item {
+    background-color: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.35);
+}
+
+body.style-liquidglass .item-content {
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.28));
+}
+
+body.style-liquidglass .item-link {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.28);
+}
+
+body.style-liquidglass.light-theme {
+    --ui-bg: rgba(255,255,255,0.34);
+    --card-bg: rgba(255,255,255,0.25);
+    --border-color: rgba(255,255,255,0.72);
+    --card-border: rgba(255,255,255,0.55);
+}
+
+body.style-liquidglass .avatar-container {
+    border-color: rgba(255,255,255,0.7);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.18);
 }
 
 /* レスポンシブ調整 */
