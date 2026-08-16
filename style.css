@@ -1,4 +1,22 @@
-/* 全体のスタイル設定 */
+/* 時計カプセル (修正) */
+.time-capsule {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* 横幅を固定値にするぜ */
+    width: 120px; 
+    
+    padding: 0 16px;
+    border-radius: 21px;
+    cursor: pointer;
+    
+    /* これで数字がピクリとも動かなくなるぞ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+}/* 全体のスタイル設定 */
 * {
     box-sizing: border-box;
     margin: 0;
