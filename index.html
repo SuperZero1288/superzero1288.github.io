@@ -124,6 +124,7 @@
         const themeIcon = document.getElementById('themeIcon');
         
         let hideTimeout;
+        let indicatorTimeout;
         let is24Hour = true; // 24時間表記フラグ
 
         // リアルタイム時計表示更新
@@ -154,15 +155,24 @@
 
         // ステータスバーの表示制御
         function showStatusBar() {
+            clearTimeout(indicatorTimeout);
+            // 1. まず細いバーを即座に消す（ステータスバーが出る前に消す）
+            statusBarIndicator.classList.remove('visible');
+
+            // 2. ステータスバーを表示
             statusBar.classList.remove('hidden');
-            statusBarIndicator.classList.remove('visible'); // 細いバーを消す
             clearTimeout(hideTimeout);
 
             // ページの一番上（scrollY === 0）にいる時は自動で消さない
             if (window.scrollY > 0) {
                 hideTimeout = setTimeout(() => {
+                    // ステータスバーを隠す
                     statusBar.classList.add('hidden');
-                    statusBarIndicator.classList.add('visible'); // 細いバーを表示
+
+                    // 3. ステータスバーのスライド（0.35s）が完全に終わってから細いバーを表示
+                    indicatorTimeout = setTimeout(() => {
+                        statusBarIndicator.classList.add('visible');
+                    }, 350);
                 }, 5000);
             }
         }
@@ -185,8 +195,9 @@
         // バー自体をホバーしている間はタイマー停止
         statusBar.addEventListener('mouseenter', () => {
             clearTimeout(hideTimeout);
-            statusBar.classList.remove('hidden');
+            clearTimeout(indicatorTimeout);
             statusBarIndicator.classList.remove('visible');
+            statusBar.classList.remove('hidden');
         });
         statusBar.addEventListener('mouseleave', () => {
             showStatusBar();
