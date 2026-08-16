@@ -32,7 +32,6 @@ body.style-material {
 
 /* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
 body.style-liquidglass {
-    /* iOS 26 / Liquid Glass を意識したトークン */
     --accent-color: #007aff;
     --accent-hover: #0a84ff;
     --ui-bg: rgba(248, 248, 250, 0.38);
@@ -44,6 +43,22 @@ body.style-liquidglass {
     --radius-capsule: 9999px;
     --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     --glow-effect: 0 8px 30px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+/* LiquidGlass ライトテーマ */
+body.style-liquidglass.light-theme {
+    --ui-bg: rgba(255,255,255,0.34);
+    --card-bg: rgba(255,255,255,0.25);
+    --border-color: rgba(255,255,255,0.72);
+    --card-border: rgba(255,255,255,0.55);
+}
+
+/* LiquidGlass ダークテーマ */
+body.style-liquidglass:not(.light-theme) {
+    --ui-bg: rgba(255,255,255,0.09);
+    --card-bg: rgba(255,255,255,0.06);
+    --border-color: rgba(255,255,255,0.24);
+    --card-border: rgba(255,255,255,0.16);
 }
 
 /* 4. VRChat ゲーム内 UI 風 (Steam風の落ち着いたダークブルー ＋ 角丸・ネオンSFパネル感) */
