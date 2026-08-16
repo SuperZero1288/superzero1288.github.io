@@ -877,3 +877,29 @@ body.style-liquidglass .avatar-container {
         grid-template-columns: 1fr;
     }
 }
+
+/* Liquid Glass optical enhancement */
+body.style-liquidglass{--lg-blur:22px;--lg-saturation:185%;--lg-brightness:118%}
+body.style-liquidglass .content-screen,body.style-liquidglass .status-capsule,body.style-liquidglass .calendar-popup,body.style-liquidglass .toast-notification{background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.045) 50%,rgba(255,255,255,.26)) !important;-webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));border:1px solid rgba(255,255,255,.38)!important;box-shadow:0 1px 1px rgba(255,255,255,.55) inset,0 -1px 1px rgba(255,255,255,.12) inset,0 18px 55px rgba(0,0,0,.2),0 2px 12px rgba(255,255,255,.1)}
+body.style-liquidglass .content-screen::before,body.style-liquidglass .status-capsule::before,body.style-liquidglass .calendar-popup::before,body.style-liquidglass .toast-notification::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 80% at 10% 0%,rgba(255,255,255,.42),transparent 42%),radial-gradient(90% 100% at 100% 100%,rgba(255,255,255,.13),transparent 52%);mix-blend-mode:screen;opacity:.72}
+body.style-liquidglass .content-screen{box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,1px 0 rgba(255,140,200,.1) inset,-1px 0 rgba(100,180,255,.12) inset,0 25px 80px rgba(0,0,0,.24)}
+body.style-liquidglass .grid-item{background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.055) 48%,rgba(255,255,255,.13)) !important;-webkit-backdrop-filter:blur(14px) saturate(175%) brightness(115%);backdrop-filter:blur(14px) saturate(175%) brightness(115%);border:1px solid rgba(255,255,255,.3)!important;box-shadow:0 1px 0 rgba(255,255,255,.42) inset,0 8px 28px rgba(0,0,0,.12);overflow:hidden}
+body.style-liquidglass .grid-item::before{content:"";position:absolute;inset:-20%;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);transform:translateX(-35%);transition:transform .55s cubic-bezier(.2,.8,.2,1)}
+body.style-liquidglass .grid-item:hover::before{transform:translateX(35%)}
+body.style-liquidglass .avatar-container{border:1px solid rgba(255,255,255,.42)!important;box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 0 0 1px rgba(255,255,255,.08),0 12px 35px rgba(0,0,0,.2)}
+@media (prefers-reduced-motion:reduce){body.style-liquidglass .grid-item::before{transition:none}}
+
+
+/* Liquid Glass optical refraction */
+body.style-liquidglass .content-screen{position:relative;isolation:isolate;overflow:hidden;filter:url("#liquid-glass-distortion");}
+body.style-liquidglass .content-screen::after{content:"";position:absolute;inset:-3px;z-index:10;pointer-events:none;border-radius:inherit;background:radial-gradient(90% 70% at 15% 0%,rgba(255,255,255,.22),transparent 48%),radial-gradient(70% 90% at 100% 100%,rgba(255,255,255,.10),transparent 55%);border:1px solid rgba(255,255,255,.24);mix-blend-mode:screen;}
+body.style-liquidglass .content-screen,body.style-liquidglass .status-capsule,body.style-liquidglass .calendar-popup,body.style-liquidglass .toast-notification{-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(115%);backdrop-filter:blur(20px) saturate(180%) brightness(115%);}
+@media (prefers-reduced-motion:reduce){body.style-liquidglass .content-screen{filter:none;}}
+
+
+/* Fluent Design — floating status bar corner alignment */
+body.style-fluent .floating-status-bar .status-capsule,
+body.style-fluent .floating-status-bar .icon-btn,
+body.style-fluent .floating-status-bar .time-capsule {
+    border-radius: 8px;
+}
