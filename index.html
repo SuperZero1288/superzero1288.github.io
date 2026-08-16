@@ -7,35 +7,55 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="style-default">
+<svg class="liquid-glass-defs" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;">
+<defs>
+<filter id="liquid-glass-distortion" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+<feTurbulence type="fractalNoise" baseFrequency="0.018 0.024" numOctaves="2" seed="17" result="glassNoise"/>
+<feDisplacementMap in="SourceGraphic" in2="glassNoise" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="distortedGlass"/>
+<feGaussianBlur in="distortedGlass" stdDeviation="0.12" result="softGlass"/>
+<feComposite in="softGlass" in2="SourceGraphic" operator="over"/>
+</filter>
+</defs>
+</svg>
 
 <div class="floating-status-bar" id="statusBar">
-<button class="status-capsule icon-btn" id="starBtn" title="お気に入り"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path></svg></span></button>
+<button class="status-capsule icon-btn" id="starBtn" title="お気に入り">
+<span class="svg-icon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path></svg>
+</span>
+</button>
 
 <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
 <span class="status-time" id="statusTime">12:00</span>
 <div class="calendar-popup" id="calendarPopup">
 <div class="calendar-header" id="calendarHeader">2026.08</div>
-<div class="calendar-weekdays"><span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span></div>
+<div class="calendar-weekdays">
+<span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span>
+</div>
 <div class="calendar-days-grid" id="calendarDaysGrid"></div>
 </div>
 </div>
 
 <div class="status-right-group">
 <div class="theme-selector" id="themeSelector">
-    <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
-        <span class="svg-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 10.9967V7.9967H14V3.9967H10V7.9967H4V10.9967H20ZM21 12.9967V20.9967C21 21.549 20.5523 21.9967 20 21.9967H10V15.9967H8V21.9967H4C3.44772 21.9967 3 21.549 3 20.9967V12.9967H2V6.9967C2 6.44442 2.44772 5.9967 3 5.9967H8V2.9967C8 2.44442 8.44772 1.9967 9 1.9967H15C15.5523 1.9967 16 2.44442 16 2.9967V5.9967H21C21.5523 5.9967 22 6.44442 22 6.9967V12.9967H21Z"></path></svg>
-        </span>
-    </button>
+<button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
+<span class="svg-icon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 10.9967V7.9967H14V3.9967H10V7.9967H4V10.9967H20ZM21 12.9967V20.9967C21 21.549 20.5523 21.9967 20 21.9967H10V15.9967H8V21.9967H4C3.44772 21.9967 3 21.549 3 20.9967V12.9967H2V6.9967C2 6.44442 2.44772 5.9967 3 5.9967H8V2.9967C8 2.44442 8.44772 1.9967 9 1.9967H15C15.5523 1.9967 16 2.44442 16 2.9967V5.9967H21C21.5523 5.9967 22 6.44442 22 6.9967V12.9967H21Z"></path></svg>
+</span>
+</button>
 
-    <div class="theme-selector-popup" id="themeSelectorPopup">
-        <button class="theme-arrow" id="themePrevBtn" type="button" title="前のテーマ">‹</button>
-        <div class="theme-current-name" id="themeCurrentName">Default</div>
-        <button class="theme-arrow" id="themeNextBtn" type="button" title="次のテーマ">›</button>
-    </div>
+<div class="theme-selector-popup" id="themeSelectorPopup">
+<button class="theme-arrow" id="themePrevBtn" type="button" title="前のテーマ">‹</button>
+<div class="theme-current-name" id="themeCurrentName">Default</div>
+<button class="theme-arrow" id="themeNextBtn" type="button" title="次のテーマ">›</button>
+</div>
 </div>
 
-<button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え"><span class="svg-icon" id="themeIcon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 2.33869 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg></span></button>
+<button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え">
+<span class="svg-icon" id="themeIcon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>
+</span>
+</button>
 </div>
 </div>
 
@@ -49,19 +69,25 @@
 
 <div class="snap-container" id="snapContainer">
 <section class="snap-section hero-spacer" id="hero">
-<div class="scroll-indicator" id="scrollIndicator"><span class="scroll-text">SCROLL DOWN</span><span class="scroll-arrow">▼</span></div>
+<div class="scroll-indicator" id="scrollIndicator">
+<span class="scroll-text">SCROLL DOWN</span>
+<span class="scroll-arrow">▼</span>
+</div>
 </section>
 
 <section class="snap-section content-section-wrapper" id="main-content">
 <div class="content-screen">
 <div class="content-wrapper">
-<header class="header-nav"><div class="site-title">portfolio / ぜろくんでんせつ</div></header>
+<header class="header-nav">
+<div class="site-title">portfolio / ぜろくんでんせつ</div>
+</header>
 
 <main class="container">
 <div class="main-content-layout">
-
 <section class="profile-card">
-<div class="avatar-container"><img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン"></div>
+<div class="avatar-container">
+<img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
+</div>
 <h1 class="profile-name">ぜろくんでんせつ</h1>
 <p class="profile-id">ZErrrrrO</p>
 <div class="profile-desc">趣味でUnityをしている一般高校生！いろんなことをしたいです</div>
@@ -71,13 +97,20 @@
 <h2 class="section-title">リンクたち</h2>
 <p class="section-subtitle">リンク先は画像をクリック！</p>
 <div class="grid-container">
-<a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener"><div class="item-content">𝕏 Twitter</div><div class="item-link">にちじょ～</div></a>
-<a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener"><div class="item-content">VRChat</div><div class="item-link">フレンド申請お気軽に！</div></a>
-<a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener"><div class="item-content">🛍️ BOOTH</div><div class="item-link">Boothを見る</div></a>
-<a href="#" class="grid-item" id="gallery-shader"><div class="item-content">✨ 工事中～</div><div class="item-link">近日公開...！</div></a>
+<a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+<div class="item-content">𝕏 Twitter</div><div class="item-link">にちじょ～</div>
+</a>
+<a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+<div class="item-content">VRChat</div><div class="item-link">フレンド申請お気軽に！</div>
+</a>
+<a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+<div class="item-content">🛍️ BOOTH</div><div class="item-link">Boothを見る</div>
+</a>
+<a href="#" class="grid-item" id="gallery-shader">
+<div class="item-content">✨ 工事中～</div><div class="item-link">近日公開...！</div>
+</a>
 </div>
 </section>
-
 </div>
 </main>
 </div>
@@ -88,7 +121,9 @@
 <script>
 const SVG_SUN=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"></path></svg>`;
 const SVG_MOON=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>`;
+</script>
 
+<script>
 const statusBar=document.getElementById('statusBar');
 const statusBarIndicator=document.getElementById('statusBarIndicator');
 const statusTime=document.getElementById('statusTime');
@@ -103,32 +138,31 @@ const blurOverlay=document.getElementById('blurOverlay');
 const toast=document.getElementById('toast');
 const snapContainer=document.getElementById('snapContainer');
 const scrollIndicator=document.getElementById('scrollIndicator');
+const themeSelector=document.getElementById('themeSelector');
+const themeSelectorPopup=document.getElementById('themeSelectorPopup');
+const themePrevBtn=document.getElementById('themePrevBtn');
+const themeNextBtn=document.getElementById('themeNextBtn');
+const themeCurrentName=document.getElementById('themeCurrentName');
 
-let hideTimeout,indicatorTimeout,toastTimeout;
-let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
-let clickCount=0,clickTimer=null,isThursdayMode=false;
+let hideTimeout;
+let indicatorTimeout;
+let toastTimeout;
+let is24Hour=true;
+let lastRenderedMonth=-1;
+let isHoveringStatusBar=false;
+let clickCount=0;
+let clickTimer=null;
+let isThursdayMode=false;
 
-const uiStyles = [
-    { id:'style-default', name:'Default', light:true },
-    { id:'style-material', name:'Material', light:true },
-    { id:'style-liquidglass', name:'LiquidGlass', light:true },
-    { id:'style-fluent', name:'Fluent Design', light:true },
-    { id:'style-vrchat', name:'VRChat UI', light:false },
-    { id:'style-unity', name:'Unity Engine', light:false }
+const uiStyles=[
+{id:'style-default',name:'Default',light:true},
+{id:'style-material',name:'Material',light:true},
+{id:'style-liquidglass',name:'LiquidGlass',light:true},
+{id:'style-fluent',name:'Fluent Design',light:true},
+{id:'style-vrchat',name:'VRChat UI',light:false},
+{id:'style-unity',name:'Unity Engine',light:false}
 ];
-
-let currentStyleIndex = 0;
-
-function currentStyle(){return uiStyles[currentStyleIndex];}
-
-function updateThemeButton(){
-const light=document.body.classList.contains('light-theme');
-const supported=currentStyle().light;
-themeToggleBtn.disabled=!supported;
-themeToggleBtn.classList.toggle('disabled',!supported);
-themeToggleBtn.title=supported?'ダーク/ライト切り替え':'このテーマはライトモードに対応していません';
-themeIcon.innerHTML=light?SVG_SUN:SVG_MOON;
-}
+let currentStyleIndex=0;
 
 function showToast(text){
 toast.textContent=text;
@@ -141,22 +175,31 @@ calendarPopup.addEventListener('click',e=>e.stopPropagation());
 
 function updateTime(){
 const now=new Date();
-if(isThursdayMode){statusTime.textContent=now.getDay()===4?'はい':'いいえ';return;}
+if(isThursdayMode){
+statusTime.textContent=now.getDay()===4?'はい':'いいえ';
+return;
+}
 let hours=now.getHours();
 const minutes=String(now.getMinutes()).padStart(2,'0');
 if(is24Hour){
 statusTime.textContent=`${String(hours).padStart(2,'0')}:${minutes}`;
 }else{
 const ampm=hours>=12?'PM':'AM';
-hours=hours%12||12;
+hours=hours%12;
+hours=hours?hours:12;
 statusTime.textContent=`${ampm} ${hours}:${minutes}`;
 }
 const currentMonth=now.getMonth();
-if(lastRenderedMonth!==currentMonth){renderCalendar(now);lastRenderedMonth=currentMonth;}
+if(lastRenderedMonth!==currentMonth){
+renderCalendar(now);
+lastRenderedMonth=currentMonth;
+}
 }
 
 function renderCalendar(now){
-const year=now.getFullYear(),month=now.getMonth(),today=now.getDate();
+const year=now.getFullYear();
+const month=now.getMonth();
+const today=now.getDate();
 const monthStr=String(month+1).padStart(2,'0');
 calendarHeader.textContent=`${year}.${monthStr}`;
 calendarDaysGrid.innerHTML='';
@@ -178,9 +221,13 @@ if(dayOfWeek===0)dayCell.classList.add('sun');
 if(dayOfWeek===6)dayCell.classList.add('sat');
 if(day===today)dayCell.classList.add('is-today');
 dayCell.textContent=day;
-dayCell.addEventListener('click',()=>{
-const formattedDate=`${year}/${monthStr}/${String(day).padStart(2,'0')}`;
-navigator.clipboard.writeText(formattedDate).then(()=>showToast(`コピーしました: ${formattedDate}`)).catch(console.error);
+
+dayCell.addEventListener('click',e=>{
+const dStr=String(day).padStart(2,'0');
+const formattedDate=`${year}/${monthStr}/${dStr}`;
+navigator.clipboard.writeText(formattedDate).then(()=>{
+showToast(`コピーしました: ${formattedDate}`);
+}).catch(err=>console.error('コピーに失敗しました',err));
 });
 calendarDaysGrid.appendChild(dayCell);
 }
@@ -192,7 +239,9 @@ if(clickCount>=5){
 if(Math.random()<0.3){
 isThursdayMode=!isThursdayMode;
 showToast(isThursdayMode?'Is it Thursday...?':'時刻表示に戻りました');
-}else is24Hour=!is24Hour;
+}else{
+is24Hour=!is24Hour;
+}
 clickCount=0;
 clearTimeout(clickTimer);
 updateTime();
@@ -219,11 +268,13 @@ if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visi
 
 function checkStatusBarStateOnScroll(){
 clearTimeout(hideTimeout);
-if(snapContainer.scrollTop<window.innerHeight*.5){
+if(snapContainer.scrollTop<window.innerHeight*0.5){
 statusBar.classList.remove('hidden');
 clearTimeout(indicatorTimeout);
 statusBarIndicator.classList.remove('visible');
-}else if(!isHoveringStatusBar)hideStatusBarWithDelay(0);
+}else if(!isHoveringStatusBar){
+hideStatusBarWithDelay(0);
+}
 }
 
 checkStatusBarStateOnScroll();
@@ -234,13 +285,13 @@ const scrollRatio=Math.min(scrollTop/window.innerHeight,1);
 const blurVal=scrollRatio*16;
 blurOverlay.style.backdropFilter=`blur(${blurVal}px)`;
 blurOverlay.style.webkitBackdropFilter=`blur(${blurVal}px)`;
-blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*.4})`;
+blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*0.4})`;
 if(scrollTop>100)scrollIndicator.classList.add('hidden');
 checkStatusBarStateOnScroll();
 },{passive:true});
 
 window.addEventListener('mousemove',e=>{
-if(snapContainer.scrollTop>=window.innerHeight*.5&&e.clientY<=70){
+if(snapContainer.scrollTop>=window.innerHeight*0.5&&e.clientY<=70){
 clearTimeout(indicatorTimeout);
 statusBarIndicator.classList.remove('visible');
 statusBar.classList.remove('hidden');
@@ -257,18 +308,47 @@ statusBar.classList.remove('hidden');
 
 statusBar.addEventListener('mouseleave',()=>{
 isHoveringStatusBar=false;
-if(snapContainer.scrollTop>=window.innerHeight*.5)hideStatusBarWithDelay(600);
+if(snapContainer.scrollTop>=window.innerHeight*0.5)hideStatusBarWithDelay(600);
 });
+
+function updateThemeButtonState(){
+const style=uiStyles[currentStyleIndex];
+const isLight=document.body.classList.contains('light-theme');
+const canUseLight=style.light;
+
+themeToggleBtn.disabled=!canUseLight;
+themeToggleBtn.setAttribute('aria-disabled',String(!canUseLight));
+themeToggleBtn.title=canUseLight?'ダーク/ライト切り替え':'このテーマはダークモードのみ対応';
+
+if(isLight&&canUseLight){
+themeIcon.innerHTML=SVG_SUN;
+}else{
+themeIcon.innerHTML=SVG_MOON;
+}
+}
 
 themeToggleBtn.addEventListener('click',()=>{
-if(!currentStyle().light)return;
+const style=uiStyles[currentStyleIndex];
+if(!style.light){
+if(document.body.classList.contains('light-theme')){
+document.body.classList.remove('light-theme');
+updateThemeButtonState();
+}
+return;
+}
 document.body.classList.toggle('light-theme');
-updateThemeButton();
+updateThemeButtonState();
 });
 
-uiStyleToggleBtn.addEventListener('click',()=>{
-document.body.classList.remove(uiStyles[currentStyleIndex].id);
-currentStyleIndex=(currentStyleIndex+1)%uiStyles.length;
+function updateThemeSelector(){
+themeCurrentName.textContent=uiStyles[currentStyleIndex].name;
+updateThemeButtonState();
+}
+
+function applyTheme(index){
+const oldStyle=uiStyles[currentStyleIndex];
+document.body.classList.remove(oldStyle.id);
+currentStyleIndex=(index+uiStyles.length)%uiStyles.length;
 const newStyle=uiStyles[currentStyleIndex];
 document.body.classList.add(newStyle.id);
 
@@ -278,10 +358,27 @@ showToast(`${newStyle.name} はダークモードのみ対応`);
 }else{
 showToast(newStyle.name);
 }
-updateThemeButton();
+updateThemeSelector();
+}
+
+themePrevBtn.addEventListener('click',e=>{
+e.stopPropagation();
+applyTheme(currentStyleIndex-1);
 });
 
-updateThemeButton();
+themeNextBtn.addEventListener('click',e=>{
+e.stopPropagation();
+applyTheme(currentStyleIndex+1);
+});
+
+uiStyleToggleBtn.addEventListener('click',e=>{
+e.stopPropagation();
+applyTheme(currentStyleIndex+1);
+});
+
+themeSelectorPopup.addEventListener('click',e=>e.stopPropagation());
+
+updateThemeSelector();
 </script>
 </body>
 </html>
