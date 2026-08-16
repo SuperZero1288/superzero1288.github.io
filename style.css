@@ -34,8 +34,8 @@ body.style-material{
 body.style-liquidglass{
 --accent-color:#007aff;
 --accent-hover:#0a84ff;
---ui-bg:rgba(248,248,250,.38);
---card-bg:rgba(255,255,255,.28);
+--ui-bg:rgba(248,248,250,.30);
+--card-bg:rgba(255,255,255,.23);
 --border-color:rgba(255,255,255,.55);
 --card-border:rgba(255,255,255,.42);
 --radius-main:30px;
@@ -44,24 +44,24 @@ body.style-liquidglass{
 --font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
 --glow-effect:0 1px 4px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.20);
 --lg-blur:2px;
---lg-saturation:160%;
---lg-brightness:20%;
+--lg-saturation:165%;
+--lg-brightness:108%;
 }
 
 /* LiquidGlass ダーク */
 body.style-liquidglass:not(.light-theme){
---ui-bg:rgba(18,18,22,.17);
---card-bg:rgba(20,20,24,.12);
---border-color:rgba(255,255,255,.24);
---card-border:rgba(255,255,255,.17);
-}
-
-/* LiquidGlass ライト */
-body.style-liquidglass.light-theme{
 --ui-bg:rgba(18,18,22,.22);
 --card-bg:rgba(20,20,24,.16);
 --border-color:rgba(255,255,255,.28);
 --card-border:rgba(255,255,255,.22);
+}
+
+/* LiquidGlass ライト */
+body.style-liquidglass.light-theme{
+--ui-bg:rgba(255,255,255,.30);
+--card-bg:rgba(255,255,255,.20);
+--border-color:rgba(255,255,255,.68);
+--card-border:rgba(255,255,255,.48);
 }
 
 /* 4. Fluent */
@@ -846,7 +846,7 @@ body.style-liquidglass:not(.light-theme) .profile-card,
 body.style-liquidglass:not(.light-theme) .gallery-section,
 body.style-liquidglass:not(.light-theme) .site-title,
 body.style-liquidglass:not(.light-theme) .status-capsule{
-background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(255,255,255,.020));
+background:linear-gradient(100deg,rgba(255,255,255,.6),rgba(255,255,255,.018));
 border-color:rgba(255,255,255,.20);
 }
 
@@ -858,7 +858,7 @@ body.style-liquidglass.light-theme .profile-card,
 body.style-liquidglass.light-theme .gallery-section,
 body.style-liquidglass.light-theme .site-title,
 body.style-liquidglass.light-theme .status-capsule{
-background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.7));
+background:linear-gradient(100deg,rgba(255,255,255,.10),rgba(255,255,255,.9));
 border-color:rgba(255,255,255,.35);
 }
 
