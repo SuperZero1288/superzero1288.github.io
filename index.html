@@ -51,7 +51,7 @@
     <!-- バー格納時に出現する極細インジケーター -->
     <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
-    <!-- 背景固定 全画面スライドショー（オーバーレイで徐々にぼかし適用） -->
+    <!-- 背景固定 全画面スライドショー -->
     <div class="hero-slider" id="heroSlider">
         <div class="slides"></div>
         <div class="slides"></div>
@@ -70,74 +70,81 @@
         <div class="blur-overlay" id="blurOverlay"></div>
     </div>
 
-    <!-- ファーストビュー用の見えないスクロールエリア -->
-    <div class="hero-spacer">
-        <a href="#about" class="scroll-indicator">
-            <span class="scroll-text">SCROLL DOWN</span>
-            <span class="scroll-arrow">▼</span>
-        </a>
-    </div>
+    <!-- 全画面スライドコンテナ (Scroll Snap) -->
+    <div class="snap-container" id="snapContainer">
+        
+        <!-- Section 1: ファーストビュー -->
+        <section class="snap-section hero-spacer" id="hero">
+            <a href="#about" class="scroll-indicator">
+                <span class="scroll-text">SCROLL DOWN</span>
+                <span class="scroll-arrow">▼</span>
+            </a>
+        </section>
 
-    <!-- コンテンツ画面 (コンパクトなすりガラスウィンドウ風) -->
-    <div class="content-screen" id="about">
-        <div class="content-wrapper">
-            
-            <!-- ナビゲーションヘッダー -->
-            <header class="header-nav">
-                <div class="site-title">portfolio / ぜろくんでんせつ</div>
-                <nav class="nav-links">
-                    <a href="#about">About</a>
-                    <a href="#gallery">Gallery</a>
-                </nav>
-            </header>
+        <!-- Section 2: 中央配置のフローティングウィンドウ -->
+        <section class="snap-section content-section-wrapper" id="about">
+            <div class="content-screen">
+                <div class="content-wrapper">
+                    
+                    <!-- ナビゲーションヘッダー -->
+                    <header class="header-nav">
+                        <div class="site-title">portfolio / ぜろくんでんせつ</div>
+                        <nav class="nav-links">
+                            <a href="#about">About</a>
+                            <a href="#gallery">Gallery</a>
+                        </nav>
+                    </header>
 
-            <!-- メインコンテンツ -->
-            <main class="container">
-                
-                <div class="main-content-layout">
-                    <!-- 左側：プロフィール情報 (About) -->
-                    <section class="profile-card">
-                        <div class="avatar-container">
-                            <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
-                        </div>
-                        <h1 class="profile-name">ぜろくんでんせつ</h1>
-                        <p class="profile-id">ZErrrrrO</p>
-                        <div class="profile-desc">
-                            趣味でUnityをしている一般高校生！いろんなことをしたいです
-                        </div>
-                    </section>
-
-                    <!-- 右側：リンク一覧 (Gallery) -->
-                    <section class="gallery-section" id="gallery">
-                        <h2 class="section-title">リンクたち</h2>
-                        <p class="section-subtitle">リンク先は画像をクリック！</p>
+                    <!-- メインコンテンツ -->
+                    <main class="container">
                         
-                        <div class="grid-container">
-                            <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
-                                <div class="item-content">𝕏 Twitter</div>
-                                <div class="item-link">にちじょ～</div>
-                            </a>
-                            
-                            <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
-                                <div class="item-content">VRChat</div>
-                                <div class="item-link">フレンド申請お気軽に！</div>
-                            </a>
-                            
-                            <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
-                                <div class="item-content">🛍️ BOOTH</div>
-                                <div class="item-link">Boothを見る</div>
-                            </a>
-                            
-                            <a href="#" class="grid-item" id="gallery-shader">
-                                <div class="item-content">✨ 工事中～</div>
-                                <div class="item-link">近日公開...！</div>
-                            </a>
-                        </div>
-                    </section>
-                </div>
+                        <div class="main-content-layout">
+                            <!-- 左側：プロフィール情報 (About) -->
+                            <section class="profile-card">
+                                <div class="avatar-container">
+                                    <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
+                                </div>
+                                <h1 class="profile-name">ぜろくんでんせつ</h1>
+                                <p class="profile-id">ZErrrrrO</p>
+                                <div class="profile-desc">
+                                    趣味でUnityをしている一般高校生！いろんなことをしたいです
+                                </div>
+                            </section>
 
-            </main>
-        </div>
+                            <!-- 右側：リンク一覧 (Gallery) -->
+                            <section class="gallery-section" id="gallery">
+                                <h2 class="section-title">リンクたち</h2>
+                                <p class="section-subtitle">リンク先は画像をクリック！</p>
+                                
+                                <div class="grid-container">
+                                    <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+                                        <div class="item-content">𝕏 Twitter</div>
+                                        <div class="item-link">にちじょ～</div>
+                                    </a>
+                                    
+                                    <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+                                        <div class="item-content">VRChat</div>
+                                        <div class="item-link">フレンド申請お気軽に！</div>
+                                    </a>
+                                    
+                                    <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+                                        <div class="item-content">🛍️ BOOTH</div>
+                                        <div class="item-link">Boothを見る</div>
+                                    </a>
+                                    
+                                    <a href="#" class="grid-item" id="gallery-shader">
+                                        <div class="item-content">✨ 工事中～</div>
+                                        <div class="item-link">近日公開...！</div>
+                                    </a>
+                                </div>
+                            </section>
+                        </div>
+
+                    </main>
+                </div>
+            </div>
+        </section>
+
     </div>
 
     <!-- ステータスバー＆機能制御スクリプト -->
@@ -153,6 +160,7 @@
         const calendarDaysGrid = document.getElementById('calendarDaysGrid');
         const blurOverlay = document.getElementById('blurOverlay');
         const toast = document.getElementById('toast');
+        const snapContainer = document.getElementById('snapContainer');
         
         let hideTimeout;
         let indicatorTimeout;
@@ -260,7 +268,7 @@
             statusBar.classList.remove('hidden');
             clearTimeout(hideTimeout);
 
-            if (window.scrollY > 0) {
+            if (snapContainer.scrollTop > 0) {
                 hideTimeout = setTimeout(() => {
                     statusBar.classList.add('hidden');
 
@@ -273,12 +281,11 @@
 
         showStatusBar();
 
-        // スクロール時のぼかし＆バー制御
-        window.addEventListener('scroll', () => {
+        // スナップコンテナ内のスクロール量に応じた動的ぼかし
+        snapContainer.addEventListener('scroll', () => {
             showStatusBar();
 
-            // 1画面分のスクロール量を基準にして、背景を徐々にぼかす (最大16px)
-            const scrollRatio = Math.min(window.scrollY / window.innerHeight, 1);
+            const scrollRatio = Math.min(snapContainer.scrollTop / window.innerHeight, 1);
             const blurVal = scrollRatio * 16;
             blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
