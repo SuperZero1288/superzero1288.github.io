@@ -251,166 +251,154 @@
             id="main-content"
         >
 
-            <div class="content-screen">
+<div class="content-screen">
 
-                <!--
-                    Liquid Glass 背景屈折レイヤー
+    <!--
+        スライドショー背景を屈折させる専用レイヤー。
+        UIコンテンツより下に置く。
+    -->
+    <div
+        class="liquid-glass-background"
+        aria-hidden="true"
+    ></div>
 
-                    ここだけが backdrop-filter / SVG distortion の対象。
-                    content-wrapper 以下のUIにはフィルターを適用しない。
-                -->
-                <div
-                    class="liquid-glass-background"
-                    aria-hidden="true"
-                ></div>
-
-                <!--
-                    Liquid Glass の境界屈折専用レイヤー
-
-                    中央では透明、
-                    外周だけ背景を強く屈折させる。
-                -->
-                <div
-                    class="liquid-glass-edge"
-                    aria-hidden="true"
-                ></div>
+    <div
+        class="liquid-glass-edge"
+        aria-hidden="true"
+    ></div>
 
 
-                <!-- 実際のUI -->
-                <div class="content-wrapper">
+    <!-- UI本体
+         このレイヤーにはフィルターを一切適用しない -->
+    <div class="content-wrapper">
 
-                    <!-- ヘッダー -->
-                    <header class="header-nav">
+        <!-- ヘッダー -->
+        <header class="header-nav">
 
-                        <div class="site-title">
-                            portfolio / ぜろくんでんせつ
+            <div class="site-title">
+                portfolio / ぜろくんでんせつ
+            </div>
+
+        </header>
+
+
+            <!-- メイン -->
+            <main class="container">
+
+                <div class="main-content-layout">
+
+                    <!-- プロフィール -->
+                    <section class="profile-card">
+
+                        <div class="avatar-container">
+                            <img
+                                src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png"
+                                alt="アイコン"
+                            >
                         </div>
 
-                    </header>
+                        <h1 class="profile-name">
+                            ぜろくんでんせつ
+                        </h1>
+
+                        <p class="profile-id">
+                            ZErrrrrO
+                        </p>
+
+                        <div class="profile-desc">
+                            趣味でUnityをしている一般高校生！いろんなことをしたいです
+                        </div>
+
+                    </section>
 
 
-                    <!-- メイン -->
-                    <main class="container">
+                    <!-- リンク -->
+                    <section class="gallery-section">
 
-                        <div class="main-content-layout">
+                        <h2 class="section-title">
+                            リンクたち
+                        </h2>
 
-                            <!-- プロフィール -->
-                            <section class="profile-card">
+                        <p class="section-subtitle">
+                            リンク先は画像をクリック！
+                        </p>
 
-                                <div class="avatar-container">
-                                    <img
-                                        src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png"
-                                        alt="アイコン"
-                                    >
+                        <div class="grid-container">
+    
+                            <a
+                                href="https://x.com"
+                                class="grid-item"
+                                id="gallery-twitter"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <div class="item-content">
+                                    𝕏 Twitter
                                 </div>
 
-                                <h1 class="profile-name">
-                                    ぜろくんでんせつ
-                                </h1>
+                                <div class="item-link">
+                                    にちじょ～
+                                </div>
+                            </a>
 
-                                <p class="profile-id">
-                                    ZErrrrrO
-                                </p>
 
-                                <div class="profile-desc">
-                                    趣味でUnityをしている一般高校生！いろんなことをしたいです
+                            <a
+                                href="https://vrchat.com"
+                                class="grid-item"
+                                id="gallery-vrchat"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <div class="item-content">
+                                    VRChat
                                 </div>
 
-                            </section>
+                                <div class="item-link">
+                                    フレンド申請お気軽に！
+                                </div>
+                            </a>
 
 
-                            <!-- リンク -->
-                            <section class="gallery-section">
-
-                                <h2 class="section-title">
-                                    リンクたち
-                                </h2>
-
-                                <p class="section-subtitle">
-                                    リンク先は画像をクリック！
-                                </p>
-
-
-                                <div class="grid-container">
-
-                                    <a
-                                        href="https://x.com"
-                                        class="grid-item"
-                                        id="gallery-twitter"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-                                        <div class="item-content">
-                                            𝕏 Twitter
-                                        </div>
-
-                                        <div class="item-link">
-                                            にちじょ～
-                                        </div>
-                                    </a>
-
-
-                                    <a
-                                        href="https://vrchat.com"
-                                        class="grid-item"
-                                        id="gallery-vrchat"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-                                        <div class="item-content">
-                                            VRChat
-                                        </div>
-
-                                        <div class="item-link">
-                                            フレンド申請お気軽に！
-                                        </div>
-                                    </a>
-
-
-                                    <a
-                                        href="https://booth.pm"
-                                        class="grid-item"
-                                        id="gallery-booth"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-                                        <div class="item-content">
-                                            🛍️ BOOTH
-                                        </div>
-
-                                        <div class="item-link">
-                                            Boothを見る
-                                        </div>
-                                    </a>
-
-
-                                    <a
-                                        href="#"
-                                        class="grid-item"
-                                        id="gallery-shader"
-                                    >
-                                        <div class="item-content">
-                                            ✨ 工事中～
-                                        </div>
-
-                                        <div class="item-link">
-                                            近日公開...！
-                                        </div>
-                                    </a>
-
+                            <a
+                                href="https://booth.pm"
+                                class="grid-item"
+                                id="gallery-booth"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                <div class="item-content">
+                                    🛍️ BOOTH
                                 </div>
 
-                            </section>
+                                <div class="item-link">
+                                    Boothを見る
+                                </div>
+                            </a>
+
+
+                            <a
+                                href="#"
+                                class="grid-item"
+                                id="gallery-shader"
+                            >
+                                <div class="item-content">
+                                    ✨ 工事中～
+                                </div>
+
+                                <div class="item-link">
+                                    近日公開...！
+                                </div>
+                            </a>
 
                         </div>
 
-                    </main>
+                    </section>
 
                 </div>
 
-            </div>
+            </main>
 
-        </section>
+        </div>
 
     </div>
 
