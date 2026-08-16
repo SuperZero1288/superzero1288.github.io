@@ -10,7 +10,7 @@ html {
 }
 
 body {
-    background-color: #1e1e24;
+    background-color: #121215;
     color: #e0e0e6;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     overflow-x: hidden;
@@ -19,13 +19,13 @@ body {
 
 /* ライトテーマ設定 */
 body.light-theme {
-    background-color: #f4f4f7;
+    background-color: #e8e8ee;
     color: #2e2e38;
 }
 
 body.light-theme .floating-status-bar,
 body.light-theme .calendar-popup {
-    background: rgba(235, 235, 242, 0.65);
+    background: rgba(235, 235, 242, 0.7);
     border-color: rgba(0, 0, 0, 0.1);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
@@ -54,9 +54,14 @@ body.light-theme .calendar-day-cell:hover:not(.empty) {
     background: rgba(0, 0, 0, 0.08);
 }
 
+body.light-theme .content-screen {
+    background: rgba(244, 244, 247, 0.85);
+    box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.15);
+}
+
 body.light-theme .profile-card,
 body.light-theme .gallery-section {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9);
     border-color: #e0e0e8;
 }
 
@@ -122,7 +127,7 @@ a:hover {
     transition: transform 0.35s cubic-bezier(0.6, -0.28, 0.735, 0.045);
 }
 
-/* ――― バー非表示時に現れる半透明な極細ガイドバー ――― */
+/* バー非表示時に現れる半透明ガイドバー */
 .status-bar-indicator {
     position: fixed;
     top: 6px;
@@ -147,12 +152,12 @@ a:hover {
     opacity: 0.2;
 }
 
-/* ――― バーの内部要素共通設定 ――― */
+/* バーの内部要素共通設定 */
 .status-capsule {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 42px; /* 高さを42pxに統一 */
+    height: 42px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.12);
     color: #ffffff;
@@ -161,14 +166,13 @@ a:hover {
     user-select: none;
 }
 
-/* 時計カプセル (幅固定＆ホバー用相対配置) */
 .time-capsule {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 120px; /* 固定幅にして切り替え時のガタつき防止 */
+    width: 120px;
     height: 42px;
-    border-radius: 21px; /* 高さに合わせた完全カプセル丸み */
+    border-radius: 21px;
     cursor: pointer;
     font-variant-numeric: tabular-nums;
 }
@@ -186,7 +190,7 @@ a:hover {
     font-size: 0.95rem;
 }
 
-/* ――― カレンダーポップアップ（フローティングバーと同等のすりガラス仕様） ――― */
+/* カレンダーポップアップ */
 .calendar-popup {
     position: absolute;
     top: calc(100% + 22px);
@@ -194,15 +198,12 @@ a:hover {
     transform: translateX(-50%) translateY(-10px);
     width: 220px;
     padding: 14px;
-    
-    /* すりガラス効果(Frosted Glass Effect) */
     background: rgba(20, 20, 26, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -214,14 +215,13 @@ a:hover {
     font-family: Roboto, -apple-system, sans-serif;
 }
 
-/* ホバー時の橋渡し（カーソル移動時に消えないように透明な見えない壁を用意） */
 .time-capsule::after {
     content: '';
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
-    height: 25px; /* 隙間分の判定エリア */
+    height: 25px;
 }
 
 .time-capsule:hover .calendar-popup {
@@ -283,7 +283,6 @@ a:hover {
 .calendar-day-cell.sun { color: #ff6b6b; }
 .calendar-day-cell.sat { color: #4dabf7; }
 
-/* 本日の日にちを丸枠で囲む */
 .calendar-day-cell.is-today {
     background-color: rgba(255, 143, 163, 0.25);
     border: 2px solid #ff8fa3;
@@ -319,7 +318,6 @@ a:hover {
     transform: translateY(0);
 }
 
-/* アイコン専用正円ボタン (高さに合わせて 42px × 42px) */
 .icon-btn {
     width: 42px;
     height: 42px;
@@ -337,11 +335,14 @@ a:hover {
     transform: scale(1.08);
 }
 
-/* ――― 全画面スライドショーセクション ――― */
+/* ――― 【派手な固定背景】背景固定 全画面スライドショー ――― */
 .hero-slider {
-    position: relative;
+    position: fixed; /* 画面に完全固定 */
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
+    z-index: 1; /* 最背面 */
     overflow: hidden;
     background-color: #000;
 }
@@ -378,7 +379,16 @@ a:hover {
     100% { opacity: 0; }
 }
 
-/* ――― SCROLL DOWN インジケーター ――― */
+/* ファーストビュー用の見えない要素（SCROLL DOWNの枠確保） */
+.hero-spacer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* SCROLL DOWN インジケーター */
 .scroll-indicator {
     position: absolute;
     bottom: 30px;
@@ -397,6 +407,7 @@ a:hover {
     transition: all 0.3s ease;
     animation: floatAnimation 2.5s infinite ease-in-out;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .scroll-indicator:hover {
@@ -429,15 +440,25 @@ a:hover {
     50% { transform: translateY(5px); }
 }
 
-/* ――― コンテンツセクション ――― */
+/* ――― 【競り上がってくる】コンテンツセクション ――― */
 .content-screen {
+    position: relative;
+    z-index: 10; /* スライドショーの上に重ねる */
     width: 100vw;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px 20px;
+    padding: 80px 20px;
+    
+    /* 深みのある暗い背景ですりガラス＆大きな影（競り上がり強調） */
+    background: rgba(22, 20, 26, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px 32px 0 0; /* 上部の角を丸めてシートっぽく */
+    box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.8);
+    transition: background 0.4s ease;
 }
 
 .content-wrapper {
@@ -456,7 +477,7 @@ a:hover {
 }
 
 .site-title {
-    background-color: #2a252a;
+    background-color: rgba(42, 37, 42, 0.8);
     border: 1px solid #3d353d;
     border-radius: 8px;
     padding: 10px 20px;
@@ -490,12 +511,12 @@ a:hover {
 
 .profile-card {
     width: 320px;
-    background-color: #252229;
+    background-color: rgba(37, 34, 41, 0.85);
     border: 1px solid #312d36;
     border-radius: 12px;
     padding: 30px 24px;
     text-align: center;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -532,7 +553,7 @@ a:hover {
 }
 
 .profile-desc {
-    background-color: #1a171d;
+    background-color: rgba(26, 23, 29, 0.8);
     border-radius: 8px;
     padding: 14px;
     font-size: 0.85rem;
@@ -543,11 +564,11 @@ a:hover {
 
 .gallery-section {
     flex-grow: 1;
-    background-color: #252229;
+    background-color: rgba(37, 34, 41, 0.85);
     border: 1px solid #312d36;
     border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -651,7 +672,7 @@ a:hover {
     }
     .content-screen {
         height: auto;
-        padding: 20px 12px;
+        padding: 40px 12px;
     }
     .main-content-layout {
         flex-direction: column;
