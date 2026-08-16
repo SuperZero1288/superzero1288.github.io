@@ -28,6 +28,7 @@ body.style-default {
         sans-serif;
 
     --glow-effect: none;
+
 }
 
 
@@ -57,6 +58,7 @@ body.style-material {
 
     --glow-effect:
         0 4px 20px rgba(0, 0, 0, 0.25);
+
 }
 
 
@@ -66,34 +68,34 @@ body.style-material {
 
 body.style-liquidglass {
 
-    --accent-color: #007aff;
-    --accent-hover: #0a84ff;
+    --accent-color: #0a84ff;
+    --accent-hover: #64d2ff;
 
     /*
-        透明度を高める。
-        白い膜ではなく、背景を見せる。
+        かなり透明。
+        白い膜を極力なくす。
     */
-    --ui-bg: rgba(255, 255, 255, 0.035);
-    --card-bg: rgba(255, 255, 255, 0.025);
+    --ui-bg: rgba(255, 255, 255, 0.018);
+    --card-bg: rgba(255, 255, 255, 0.035);
 
     --border-color: rgba(255, 255, 255, 0.16);
     --card-border: rgba(255, 255, 255, 0.10);
 
-    --radius-main: 30px;
-    --radius-card: 20px;
+    --radius-main: 36px;
+    --radius-card: 22px;
     --radius-capsule: 9999px;
 
     --font-family:
         -apple-system,
         BlinkMacSystemFont,
-        'SF Pro Display',
         'SF Pro Text',
+        'SF Pro Display',
         'Helvetica Neue',
-        Arial,
         sans-serif;
 
     --glow-effect:
-        0 12px 40px rgba(0, 0, 0, 0.14);
+        0 20px 40px rgba(0, 0, 0, 0.18);
+
 }
 
 
@@ -123,6 +125,7 @@ body.style-vrchat {
 
     --glow-effect:
         0 0 15px rgba(102, 192, 244, 0.25);
+
 }
 
 
@@ -152,6 +155,7 @@ body.style-fluent {
 
     --glow-effect:
         0 8px 32px rgba(0, 0, 0, 0.36);
+
 }
 
 
@@ -180,11 +184,12 @@ body.style-unity {
         sans-serif;
 
     --glow-effect: none;
+
 }
 
 
 /* =========================================================
-   基本
+   全体
    ========================================================= */
 
 * {
@@ -209,7 +214,8 @@ body {
 
     color: #e0e0e6;
 
-    font-family: var(--font-family);
+    font-family:
+        var(--font-family);
 
     transition:
         background-color 0.4s ease,
@@ -230,12 +236,17 @@ body {
 
     overflow-y: scroll;
 
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
+    scroll-snap-type:
+        y mandatory;
 
-    position: relative;
+    scroll-behavior:
+        smooth;
 
-    z-index: 10;
+    position:
+        relative;
+
+    z-index:
+        10;
 
 }
 
@@ -245,10 +256,14 @@ body {
     width: 100vw;
     height: 100vh;
 
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
+    scroll-snap-align:
+        start;
 
-    position: relative;
+    scroll-snap-stop:
+        always;
+
+    position:
+        relative;
 
 }
 
@@ -259,23 +274,34 @@ body {
 
 .svg-icon {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
 
-    width: 18px;
-    height: 18px;
+    justify-content:
+        center;
+
+    width:
+        18px;
+
+    height:
+        18px;
 
 }
 
 
 .svg-icon svg {
 
-    width: 100%;
-    height: 100%;
+    width:
+        100%;
 
-    fill: currentColor;
+    height:
+        100%;
+
+    fill:
+        currentColor;
 
 }
 
@@ -286,9 +312,11 @@ body {
 
 a {
 
-    color: var(--accent-color);
+    color:
+        var(--accent-color);
 
-    text-decoration: none;
+    text-decoration:
+        none;
 
     transition:
         color 0.3s ease;
@@ -298,7 +326,8 @@ a {
 
 a:hover {
 
-    color: var(--accent-hover);
+    color:
+        var(--accent-hover);
 
 }
 
@@ -309,8 +338,11 @@ a:hover {
 
 body.light-theme {
 
-    background-color: #e8e8ee;
-    color: #2e2e38;
+    background-color:
+        #e8e8ee;
+
+    color:
+        #2e2e38;
 
 }
 
@@ -351,7 +383,8 @@ body.light-theme
     border-color:
         rgba(0, 0, 0, 0.08);
 
-    color: #2e2e38;
+    color:
+        #2e2e38;
 
 }
 
@@ -365,7 +398,8 @@ body.light-theme
 body.light-theme
 .calendar-day-cell {
 
-    color: #2e2e38;
+    color:
+        #2e2e38;
 
 }
 
@@ -373,7 +407,8 @@ body.light-theme
 body.light-theme
 .calendar-weekdays span {
 
-    color: #777;
+    color:
+        #777;
 
 }
 
@@ -450,26 +485,39 @@ body.light-theme
 
 .floating-status-bar {
 
-    position: fixed;
+    position:
+        fixed;
 
-    top: 16px;
-    left: 50%;
+    top:
+        16px;
+
+    left:
+        50%;
 
     transform:
         translateX(-50%)
         translateY(0);
 
-    width: 50vw;
+    width:
+        50vw;
 
-    min-width: 380px;
-    max-width: 650px;
+    min-width:
+        380px;
 
-    display: flex;
+    max-width:
+        650px;
 
-    align-items: center;
-    justify-content: space-between;
+    display:
+        flex;
 
-    padding: 8px 14px;
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    padding:
+        8px 14px;
 
     background:
         var(--ui-bg);
@@ -490,14 +538,18 @@ body.light-theme
         0 8px 32px rgba(0, 0, 0, 0.45),
         var(--glow-effect);
 
-    z-index: 9999;
+    z-index:
+        9999;
 
-    opacity: 1;
+    opacity:
+        1;
 
-    pointer-events: auto;
+    pointer-events:
+        auto;
 
     transition:
-        transform 0.3s cubic-bezier(
+        transform 0.3s
+        cubic-bezier(
             0.175,
             0.885,
             0.32,
@@ -517,34 +569,46 @@ body.light-theme
         translateX(-50%)
         translateY(-100px);
 
-    opacity: 0;
+    opacity:
+        0;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
 }
 
 
 .status-bar-indicator {
 
-    position: fixed;
+    position:
+        fixed;
 
-    top: 6px;
-    left: 50%;
+    top:
+        6px;
+
+    left:
+        50%;
 
     transform:
         translateX(-50%);
 
-    width: 50vw;
+    width:
+        50vw;
 
-    min-width: 380px;
-    max-width: 650px;
+    min-width:
+        380px;
 
-    height: 3px;
+    max-width:
+        650px;
+
+    height:
+        3px;
 
     background:
         rgba(255, 255, 255, 0.4);
 
-    border-radius: 2px;
+    border-radius:
+        2px;
 
     backdrop-filter:
         blur(4px);
@@ -552,11 +616,14 @@ body.light-theme
     -webkit-backdrop-filter:
         blur(4px);
 
-    z-index: 9998;
+    z-index:
+        9998;
 
-    opacity: 0;
+    opacity:
+        0;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     transition:
         opacity 0.25s ease;
@@ -566,30 +633,39 @@ body.light-theme
 
 .status-bar-indicator.visible {
 
-    opacity: 0.25;
+    opacity:
+        0.25;
 
 }
 
 
 .status-right-group {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 8px;
+    gap:
+        8px;
 
 }
 
 
 .status-capsule {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
-    justify-content: center;
+    align-items:
+        center;
 
-    height: 42px;
+    justify-content:
+        center;
+
+    height:
+        42px;
 
     background:
         rgba(255, 255, 255, 0.08);
@@ -600,32 +676,43 @@ body.light-theme
     border-radius:
         var(--radius-capsule);
 
-    color: #fff;
+    color:
+        #ffffff;
 
-    font-weight: 600;
+    font-weight:
+        600;
 
     transition:
         all 0.2s ease;
 
-    user-select: none;
+    user-select:
+        none;
 
 }
 
 
 .icon-btn {
 
-    width: 42px;
-    height: 42px;
+    width:
+        42px;
 
-    padding: 0;
+    height:
+        42px;
 
-    cursor: pointer;
+    padding:
+        0;
 
-    font-family: inherit;
+    cursor:
+        pointer;
 
-    font-size: 1rem;
+    font-family:
+        inherit;
 
-    flex-shrink: 0;
+    font-size:
+        1rem;
+
+    flex-shrink:
+        0;
 
 }
 
@@ -650,17 +737,23 @@ body.light-theme
 
 .time-capsule {
 
-    position: absolute;
+    position:
+        absolute;
 
-    left: 50%;
+    left:
+        50%;
 
     transform:
         translateX(-50%);
 
-    width: 120px;
-    height: 42px;
+    width:
+        120px;
 
-    cursor: pointer;
+    height:
+        42px;
+
+    cursor:
+        pointer;
 
     font-variant-numeric:
         tabular-nums;
@@ -681,9 +774,11 @@ body.light-theme
 
 .status-time {
 
-    font-weight: 700;
+    font-weight:
+        700;
 
-    color: #fff;
+    color:
+        #ffffff;
 
     letter-spacing:
         0.5px;
@@ -700,20 +795,24 @@ body.light-theme
 
 .calendar-popup {
 
-    position: absolute;
+    position:
+        absolute;
 
     top:
         calc(100% + 22px);
 
-    left: 50%;
+    left:
+        50%;
 
     transform:
         translateX(-50%)
         translateY(-10px);
 
-    width: 220px;
+    width:
+        220px;
 
-    padding: 14px;
+    padding:
+        14px;
 
     background:
         var(--ui-bg);
@@ -733,39 +832,54 @@ body.light-theme
     box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.45);
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
-    gap: 8px;
+    gap:
+        8px;
 
-    opacity: 0;
+    opacity:
+        0;
 
-    visibility: hidden;
+    visibility:
+        hidden;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     transition:
         opacity 0.3s ease,
         transform 0.3s ease,
         visibility 0.3s;
 
-    z-index: 10000;
+    z-index:
+        10000;
 
 }
 
 
 .time-capsule::after {
 
-    content: '';
+    content:
+        '';
 
-    position: absolute;
+    position:
+        absolute;
 
-    top: 100%;
-    left: 0;
+    top:
+        100%;
 
-    width: 100%;
-    height: 25px;
+    left:
+        0;
+
+    width:
+        100%;
+
+    height:
+        25px;
 
 }
 
@@ -773,11 +887,14 @@ body.light-theme
 .time-capsule:hover
 .calendar-popup {
 
-    opacity: 1;
+    opacity:
+        1;
 
-    visibility: visible;
+    visibility:
+        visible;
 
-    pointer-events: auto;
+    pointer-events:
+        auto;
 
     transform:
         translateX(-50%)
@@ -795,7 +912,7 @@ body.light-theme
         800;
 
     color:
-        #fff;
+        #ffffff;
 
     text-align:
         center;
@@ -830,12 +947,18 @@ body.light-theme
 
 
 .calendar-weekdays .sun {
-    color: #ff6b6b;
+
+    color:
+        #ff6b6b;
+
 }
 
 
 .calendar-weekdays .sat {
-    color: #4dabf7;
+
+    color:
+        #4dabf7;
+
 }
 
 
@@ -847,7 +970,8 @@ body.light-theme
     grid-template-columns:
         repeat(7, 1fr);
 
-    gap: 2px;
+    gap:
+        2px;
 
     text-align:
         center;
@@ -857,8 +981,11 @@ body.light-theme
 
 .calendar-day-cell {
 
-    width: 26px;
-    height: 26px;
+    width:
+        26px;
+
+    height:
+        26px;
 
     font-size:
         0.72rem;
@@ -906,12 +1033,18 @@ body.light-theme
 
 
 .calendar-day-cell.sun {
-    color: #ff6b6b;
+
+    color:
+        #ff6b6b;
+
 }
 
 
 .calendar-day-cell.sat {
-    color: #4dabf7;
+
+    color:
+        #4dabf7;
+
 }
 
 
@@ -924,7 +1057,7 @@ body.light-theme
         2px solid var(--accent-color);
 
     color:
-        #fff;
+        #ffffff;
 
     font-weight:
         800;
@@ -938,10 +1071,14 @@ body.light-theme
 
 .toast-notification {
 
-    position: fixed;
+    position:
+        fixed;
 
-    bottom: 24px;
-    right: 24px;
+    bottom:
+        24px;
+
+    right:
+        24px;
 
     background:
         var(--ui-bg);
@@ -950,7 +1087,7 @@ body.light-theme
         1px solid var(--accent-color);
 
     color:
-        #fff;
+        #ffffff;
 
     padding:
         10px 18px;
@@ -974,7 +1111,8 @@ body.light-theme
         0 4px 16px rgba(0, 0, 0, 0.5),
         var(--glow-effect);
 
-    opacity: 0;
+    opacity:
+        0;
 
     transform:
         translateY(10px);
@@ -994,7 +1132,8 @@ body.light-theme
 
 .toast-notification.show {
 
-    opacity: 1;
+    opacity:
+        1;
 
     transform:
         translateY(0);
@@ -1008,16 +1147,26 @@ body.light-theme
 
 .hero-slider {
 
-    position: fixed;
+    position:
+        fixed;
 
-    inset: 0;
+    top:
+        0;
 
-    width: 100vw;
-    height: 100vh;
+    left:
+        0;
 
-    z-index: 1;
+    width:
+        100vw;
 
-    overflow: hidden;
+    height:
+        100vh;
+
+    z-index:
+        1;
+
+    overflow:
+        hidden;
 
     background-color:
         #000;
@@ -1027,13 +1176,17 @@ body.light-theme
 
 .blur-overlay {
 
-    position: absolute;
+    position:
+        absolute;
 
-    inset: 0;
+    inset:
+        0;
 
-    z-index: 2;
+    z-index:
+        2;
 
-    pointer-events: none;
+    pointer-events:
+        none;
 
     transition:
         backdrop-filter 0.1s linear,
@@ -1044,12 +1197,17 @@ body.light-theme
 
 .slides {
 
-    position: absolute;
+    position:
+        absolute;
 
-    width: 100%;
-    height: 100%;
+    width:
+        100%;
 
-    opacity: 0;
+    height:
+        100%;
+
+    opacity:
+        0;
 
     animation:
         slideAnimation 52s infinite;
@@ -1064,105 +1222,215 @@ body.light-theme
 
 
 .slides:nth-child(1) {
-    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
-    animation-delay: 0s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'
+        );
+
+    animation-delay:
+        0s;
+
 }
 
 
 .slides:nth-child(2) {
-    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
-    animation-delay: 4s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'
+        );
+
+    animation-delay:
+        4s;
+
 }
 
 
 .slides:nth-child(3) {
-    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
-    animation-delay: 8s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'
+        );
+
+    animation-delay:
+        8s;
+
 }
 
 
 .slides:nth-child(4) {
-    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
-    animation-delay: 12s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/BHDtqs5P/image.png'
+        );
+
+    animation-delay:
+        12s;
+
 }
 
 
 .slides:nth-child(5) {
-    background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png');
-    animation-delay: 16s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'
+        );
+
+    animation-delay:
+        16s;
+
 }
 
 
 .slides:nth-child(6) {
-    background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png');
-    animation-delay: 20s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'
+        );
+
+    animation-delay:
+        20s;
+
 }
 
 
 .slides:nth-child(7) {
-    background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png');
-    animation-delay: 24s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'
+        );
+
+    animation-delay:
+        24s;
+
 }
 
 
 .slides:nth-child(8) {
-    background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png');
-    animation-delay: 28s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'
+        );
+
+    animation-delay:
+        28s;
+
 }
 
 
 .slides:nth-child(9) {
-    background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png');
-    animation-delay: 32s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'
+        );
+
+    animation-delay:
+        32s;
+
 }
 
 
 .slides:nth-child(10) {
-    background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png');
-    animation-delay: 36s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'
+        );
+
+    animation-delay:
+        36s;
+
 }
 
 
 .slides:nth-child(11) {
-    background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png');
-    animation-delay: 40s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'
+        );
+
+    animation-delay:
+        40s;
+
 }
 
 
 .slides:nth-child(12) {
-    background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png');
-    animation-delay: 44s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'
+        );
+
+    animation-delay:
+        44s;
+
 }
 
 
 .slides:nth-child(13) {
-    background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');
-    animation-delay: 48s;
+
+    background-image:
+        url(
+            'https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'
+        );
+
+    animation-delay:
+        48s;
+
 }
 
 
 @keyframes slideAnimation {
 
     0% {
-        opacity: 0;
-        transform: scale(1);
+
+        opacity:
+            0;
+
+        transform:
+            scale(1);
+
     }
 
     8% {
-        opacity: 1;
+
+        opacity:
+            1;
+
     }
 
     33% {
-        opacity: 1;
+
+        opacity:
+            1;
+
     }
 
     41% {
-        opacity: 0;
-        transform: scale(1.05);
+
+        opacity:
+            0;
+
+        transform:
+            scale(1.05);
+
     }
 
     100% {
-        opacity: 0;
+
+        opacity:
+            0;
+
     }
 
 }
@@ -1218,6 +1486,9 @@ body.light-theme
     backdrop-filter:
         blur(8px);
 
+    -webkit-backdrop-filter:
+        blur(8px);
+
     box-shadow:
         0 4px 20px rgba(0, 0, 0, 0.6),
         var(--glow-effect);
@@ -1249,7 +1520,7 @@ body.light-theme
 .scroll-text {
 
     color:
-        #fff;
+        #ffffff;
 
     font-size:
         1rem;
@@ -1284,13 +1555,17 @@ body.light-theme
 
     0%,
     100% {
+
         transform:
             translateY(0);
+
     }
 
     50% {
+
         transform:
             translateY(-12px);
+
     }
 
 }
@@ -1300,13 +1575,17 @@ body.light-theme
 
     0%,
     100% {
+
         transform:
             translateY(0);
+
     }
 
     50% {
+
         transform:
             translateY(5px);
+
     }
 
 }
@@ -1350,6 +1629,11 @@ body.light-theme
     overflow:
         hidden;
 
+    /*
+        Liquid GlassレイヤーとUIを
+        独立したスタッキングコンテキストにする。
+    */
+
     background:
         var(--ui-bg);
 
@@ -1372,14 +1656,13 @@ body.light-theme
 
 
 /* =========================================================
-   Liquid Glass Background Layers
+   Liquid Glass
    ========================================================= */
 
 /*
-    通常の透明ガラス。
+    基本背景。
 
-    ここには UI を置かない。
-    backdrop-filter はこのレイヤーだけ。
+    Liquid Glass以外では通常の透明背景。
 */
 
 .liquid-glass-background {
@@ -1400,28 +1683,19 @@ body.light-theme
         inherit;
 
     background:
-        rgba(255, 255, 255, 0.015);
-
-    /*
-        中央はほぼそのまま。
-        色だけ少し整える。
-    */
-    backdrop-filter:
-        saturate(125%)
-        brightness(102%);
-
-    -webkit-backdrop-filter:
-        saturate(125%)
-        brightness(102%);
+        transparent;
 
 }
 
 
 /*
-    ここが今回の本命。
+    =========================================================
+    Liquid Glass 屈折レイヤー
+    =========================================================
 
-    backdrop-filter の SVG distortion を
-    「ガラスの外周だけ」に限定する。
+    ここだけにSVG distortionを適用。
+
+    content-wrapperには絶対に適用しない。
 */
 
 .liquid-glass-edge {
@@ -1441,104 +1715,75 @@ body.light-theme
     border-radius:
         inherit;
 
-    /*
-        中央は透明。
-        外側に行くほど濃くなるマスク。
 
-        つまり、
-        「ふちだけ屈折」。
+    /*
+        中央：
+
+            完全透明
+
+        外側：
+
+            徐々に屈折
+
+        最外周：
+
+            強く屈折
     */
+
     -webkit-mask-image:
         radial-gradient(
             ellipse at center,
             transparent 0%,
-            transparent 56%,
-            rgba(0, 0, 0, 0.15) 64%,
-            rgba(0, 0, 0, 0.55) 74%,
-            #000 86%,
-            #000 100%
+            transparent 58%,
+            rgba(0, 0, 0, 0.08) 65%,
+            rgba(0, 0, 0, 0.30) 72%,
+            rgba(0, 0, 0, 0.70) 82%,
+            #000 94%
         );
 
     mask-image:
         radial-gradient(
             ellipse at center,
             transparent 0%,
-            transparent 56%,
-            rgba(0, 0, 0, 0.15) 64%,
-            rgba(0, 0, 0, 0.55) 74%,
-            #000 86%,
-            #000 100%
+            transparent 58%,
+            rgba(0, 0, 0, 0.08) 65%,
+            rgba(0, 0, 0, 0.30) 72%,
+            rgba(0, 0, 0, 0.70) 82%,
+            #000 94%
         );
 
+
     /*
-        背景のみをSVGで屈折。
-        content-wrapperには一切影響しない。
+        注意：
+
+        SVG filterはここだけ。
+
+        UIには絶対にかからない。
     */
+
     backdrop-filter:
-        url("#liquid-glass-distortion")
-        saturate(135%);
+        url("#liquid-glass-distortion");
 
     -webkit-backdrop-filter:
-        url("#liquid-glass-distortion")
-        saturate(135%);
+        url("#liquid-glass-distortion");
 
 }
 
 
 /*
-    境界線。
+    =========================================================
+    UI本体
+    =========================================================
 
-    白い膜ではなく、
-    ほんの少しだけ光を拾う。
-*/
+    z-indexを5にすることで、
 
-.content-screen::before {
+        背景
+        ↓
+        屈折
+        ↓
+        UI
 
-    content:
-        "";
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    z-index:
-        2;
-
-    pointer-events:
-        none;
-
-    border-radius:
-        inherit;
-
-    border:
-        1px solid rgba(
-            255,
-            255,
-            255,
-            0.15
-        );
-
-    /*
-        上側と角だけ少し明るくする。
-    */
-    background:
-        linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.055),
-            transparent 18%,
-            transparent 82%,
-            rgba(255, 255, 255, 0.025)
-        );
-
-}
-
-
-/*
-    UIは必ずここより上。
-
-    これが非常に重要。
+    の順番を保証。
 */
 
 .content-wrapper {
@@ -1564,6 +1809,25 @@ body.light-theme
 }
 
 
+/*
+    UI自身にはSVG filterを絶対に適用しない。
+*/
+
+.content-wrapper,
+.profile-card,
+.gallery-section,
+.grid-item,
+.avatar-container,
+.site-title,
+.item-content,
+.item-link {
+
+    filter:
+        none;
+
+}
+
+
 /* =========================================================
    Liquid Glass Theme
    ========================================================= */
@@ -1572,10 +1836,14 @@ body.style-liquidglass
 .content-screen {
 
     /*
-        中央のガラスはほぼ透明。
+        ガラス自体を極限まで透明に。
+
+        ここで白く塗ってしまうと
+        背景の屈折が見えなくなる。
     */
+
     background:
-        rgba(255, 255, 255, 0.018);
+        rgba(255, 255, 255, 0.012);
 
     border-color:
         rgba(255, 255, 255, 0.16);
@@ -1589,9 +1857,55 @@ body.style-liquidglass
 
 
 /*
-    Liquid Glass の子UI。
+    Liquid Glassの境界にだけ
+    ごく薄いハイライト。
+*/
 
-    UI自体は歪ませない。
+body.style-liquidglass
+.content-screen::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    z-index:
+        3;
+
+    pointer-events:
+        none;
+
+    border-radius:
+        inherit;
+
+    border:
+        1px solid rgba(
+            255,
+            255,
+            255,
+            0.14
+        );
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.045),
+            transparent 18%,
+            transparent 82%,
+            rgba(255, 255, 255, 0.018)
+        );
+
+}
+
+
+/*
+    Liquid Glassのカード。
+
+    カードそのものは歪ませない。
 */
 
 body.style-liquidglass
@@ -1604,75 +1918,27 @@ body.style-liquidglass
         rgba(255, 255, 255, 0.035);
 
     border-color:
-        rgba(255, 255, 255, 0.12);
+        rgba(255, 255, 255, 0.10);
 
     box-shadow:
         0 8px 28px rgba(0, 0, 0, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
 
 }
 
 
 /*
-    UIの文字・画像を守るため、
-    filter: url(...) はここには絶対に付けない。
+    カード画像も完全に通常描画。
 */
-
-body.style-liquidglass
-.profile-card,
-
-body.style-liquidglass
-.gallery-section,
-
-body.style-liquidglass
-.site-title,
-
-body.style-liquidglass
-.grid-item,
-
-body.style-liquidglass
-.avatar-container {
-
-    filter:
-        none;
-
-}
-
-
-/* ---------------------------------------------------------
-   Liquid Glass Site Title
-   --------------------------------------------------------- */
-
-body.style-liquidglass
-.site-title {
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    border-color:
-        rgba(255, 255, 255, 0.12);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-}
-
-
-/* ---------------------------------------------------------
-   Liquid Glass Cards
-   --------------------------------------------------------- */
 
 body.style-liquidglass
 .grid-item {
 
-    background:
-        rgba(255, 255, 255, 0.025);
+    filter:
+        none;
 
-    border-color:
-        rgba(255, 255, 255, 0.10);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transform-origin:
+        center;
 
 }
 
@@ -1680,58 +1946,11 @@ body.style-liquidglass
 body.style-liquidglass
 .grid-item:hover {
 
-    background:
-        rgba(255, 255, 255, 0.075);
+    background-color:
+        rgba(255, 255, 255, 0.035);
 
     border-color:
-        rgba(255, 255, 255, 0.22);
-
-}
-
-
-body.style-liquidglass
-.item-content {
-
-    background:
-        linear-gradient(
-            180deg,
-            rgba(0, 0, 0, 0.015),
-            rgba(0, 0, 0, 0.20)
-        );
-
-}
-
-
-body.style-liquidglass
-.item-link {
-
-    background:
-        rgba(255, 255, 255, 0.025);
-
-    border-color:
-        rgba(255, 255, 255, 0.10);
-
-}
-
-
-/* ---------------------------------------------------------
-   Avatar
-   --------------------------------------------------------- */
-
-body.style-liquidglass
-.avatar-container {
-
-    border:
-        1px solid rgba(
-            255,
-            255,
-            255,
-            0.22
-        );
-
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.15) inset,
-        0 8px 24px rgba(0, 0, 0, 0.14);
+        rgba(255, 255, 255, 0.20);
 
 }
 
@@ -1950,7 +2169,9 @@ body.style-liquidglass
         rgba(0, 0, 0, 0.30);
 
     border-radius:
-        calc(var(--radius-card) / 2);
+        calc(
+            var(--radius-card) / 2
+        );
 
     padding:
         14px;
@@ -2057,6 +2278,10 @@ body.style-liquidglass
 }
 
 
+/* =========================================================
+   Link Cards
+   ========================================================= */
+
 .grid-container {
 
     display:
@@ -2080,7 +2305,9 @@ body.style-liquidglass
         1px solid var(--card-border);
 
     border-radius:
-        calc(var(--radius-card) / 2);
+        calc(
+            var(--radius-card) / 2
+        );
 
     overflow:
         hidden;
@@ -2122,6 +2349,13 @@ body.style-liquidglass
 }
 
 
+/*
+    カード画像を持つ要素。
+
+    ここには backdrop-filter を
+    絶対に追加しない。
+*/
+
 .item-content {
 
     padding:
@@ -2134,7 +2368,7 @@ body.style-liquidglass
         0.9rem;
 
     color:
-        #fff;
+        #ffffff;
 
     flex-grow:
         1;
@@ -2158,7 +2392,12 @@ body.style-liquidglass
         bold;
 
     text-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.8);
+        0 1px 4px rgba(
+            0,
+            0,
+            0,
+            0.8
+        );
 
 }
 
@@ -2202,7 +2441,7 @@ body.style-liquidglass
 
 
 /* =========================================================
-   Gallery Background Images
+   Gallery Images
    ========================================================= */
 
 #gallery-twitter {
