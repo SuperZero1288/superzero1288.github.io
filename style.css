@@ -1,6 +1,6 @@
-/* ――― テーマ（デザイン言語）変数定義 ――― */
+/* ――― 各テーマの高度再現パラメータ定義 ――― */
 
-/* 1. デフォルト */
+/* 1. Default */
 body.style-default {
     --accent-color: #ff8fa3;
     --accent-hover: #ffb3c1;
@@ -12,104 +12,112 @@ body.style-default {
     --radius-card: 16px;
     --font-family: 'Helvetica Neue', Arial, sans-serif;
     --glow-effect: none;
+    --box-shadow-custom: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
-/* 2. Google Material Design (Material You 風) */
+/* 2. Google Material Design (Material You 3 / MD3 忠実再現) */
 body.style-material {
     --accent-color: #d0bcff;
     --accent-hover: #e8def8;
-    --ui-bg: rgba(29, 27, 32, 0.88);
-    --card-bg: rgba(33, 29, 39, 0.9);
-    --border-color: rgba(147, 143, 153, 0.2);
-    --card-border: rgba(147, 143, 153, 0.12);
-    --radius-main: 32px;
-    --radius-card: 24px;
-    --font-family: 'Roboto', 'Google Sans', sans-serif;
-    --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --ui-bg: rgba(29, 27, 32, 0.94);
+    --card-bg: rgba(43, 38, 51, 0.95);
+    --border-color: rgba(147, 143, 153, 0.3);
+    --card-border: transparent;
+    --radius-main: 36px;
+    --radius-card: 28px;
+    --font-family: 'Roboto', -apple-system, sans-serif;
+    --glow-effect: none;
+    --box-shadow-custom: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
-/* 3. system24 (Discord Mod Theme) */
-body.style-system24 {
+/* 3. Discord Official Dark (公式ダークテーマ忠実再現) */
+body.style-discord {
     --accent-color: #5865f2;
     --accent-hover: #4752c4;
-    --ui-bg: rgba(17, 18, 20, 0.92);
-    --card-bg: rgba(30, 31, 34, 0.92);
-    --border-color: rgba(255, 255, 255, 0.06);
+    --ui-bg: rgba(30, 31, 34, 0.96);
+    --card-bg: rgba(43, 45, 49, 0.96);
+    --border-color: rgba(255, 255, 255, 0.08);
     --card-border: rgba(255, 255, 255, 0.04);
-    --radius-main: 12px;
-    --radius-card: 8px;
-    --font-family: 'gg sans', 'Noto Sans', sans-serif;
-    --glow-effect: 0 8px 16px rgba(0, 0, 0, 0.4);
-}
-
-/* 4. Apple LiquidGlass (iOS/macOS すりガラス風) */
-body.style-liquidglass {
-    --accent-color: #0a84ff;
-    --accent-hover: #64d2ff;
-    --ui-bg: rgba(255, 255, 255, 0.12);
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --border-color: rgba(255, 255, 255, 0.3);
-    --card-border: rgba(255, 255, 255, 0.2);
-    --radius-main: 36px;
-    --radius-card: 22px;
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* 5. VRChat ゲーム内 UI 風 (ダークブルー系・SFパネル感) */
-body.style-vrchat {
-    --accent-color: #1fcae6;
-    --accent-hover: #6ee7b7;
-    --ui-bg: rgba(10, 20, 32, 0.85);
-    --card-bg: rgba(16, 32, 50, 0.85);
-    --border-color: #1fcae6;
-    --card-border: rgba(31, 202, 230, 0.4);
     --radius-main: 16px;
-    --radius-card: 10px;
-    --font-family: 'Segoe UI', Tahoma, sans-serif;
-    --glow-effect: 0 0 15px rgba(31, 202, 230, 0.35);
+    --radius-card: 8px;
+    --font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --glow-effect: none;
+    --box-shadow-custom: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
-/* 6. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
+/* 4. Apple LiquidGlass / visionOS (超高精度透明感＆浮遊感) */
+body.style-liquidglass {
+    --accent-color: #2997ff;
+    --accent-hover: #64d2ff;
+    --ui-bg: rgba(255, 255, 255, 0.15);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.45);
+    --card-border: rgba(255, 255, 255, 0.25);
+    --radius-main: 44px;
+    --radius-card: 26px;
+    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+    --glow-effect: 0 0 20px rgba(255, 255, 255, 0.15);
+    --box-shadow-custom: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* 5. VRChat Menu HUD (公式円形・ネオンシアン・パネル感再現) */
+body.style-vrchat {
+    --accent-color: #00d8ff;
+    --accent-hover: #71f5ff;
+    --ui-bg: rgba(8, 19, 28, 0.9);
+    --card-bg: rgba(13, 31, 45, 0.92);
+    --border-color: #00d8ff;
+    --card-border: rgba(0, 216, 255, 0.35);
+    --radius-main: 18px;
+    --radius-card: 12px;
+    --font-family: 'Segoe UI', Arial, sans-serif;
+    --glow-effect: 0 0 16px rgba(0, 216, 255, 0.5);
+    --box-shadow-custom: 0 0 25px rgba(0, 216, 255, 0.25);
+}
+
+/* 6. Windows 11 Fluent Design (Acrylic/Mica 再現) */
 body.style-fluent {
     --accent-color: #60cdff;
     --accent-hover: #99ebff;
-    --ui-bg: rgba(32, 32, 32, 0.75);
-    --card-bg: rgba(45, 45, 45, 0.8);
-    --border-color: rgba(255, 255, 255, 0.14);
+    --ui-bg: rgba(32, 32, 32, 0.82);
+    --card-bg: rgba(43, 43, 43, 0.85);
+    --border-color: rgba(255, 255, 255, 0.15);
     --card-border: rgba(255, 255, 255, 0.08);
     --radius-main: 8px;
     --radius-card: 6px;
-    --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
-    --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
+    --font-family: 'Segoe UI Variable Display', 'Segoe UI', sans-serif;
+    --glow-effect: none;
+    --box-shadow-custom: 0 16px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* 7. Unity ゲームエンジン風 (Editor Dark Theme) */
+/* 7. Unity Editor Dark (公式開発エディタUI 忠実再現) */
 body.style-unity {
     --accent-color: #2c5d88;
-    --accent-hover: #3a78b0;
-    --ui-bg: rgba(56, 56, 56, 0.95);
-    --card-bg: rgba(40, 40, 40, 0.95);
+    --accent-hover: #4a80b4;
+    --ui-bg: rgba(56, 56, 56, 0.98);
+    --card-bg: rgba(40, 40, 40, 0.98);
     --border-color: #232323;
     --card-border: #1a1a1a;
     --radius-main: 3px;
     --radius-card: 3px;
-    --font-family: Inter, Arial, sans-serif;
+    --font-family: 'Inter', Arial, sans-serif;
     --glow-effect: none;
+    --box-shadow-custom: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* 8. Steam クライアント風 (Steam Dark Blue) */
+/* 8. Steam Desktop UI (Steamクライアント公式デザイン再現) */
 body.style-steam {
     --accent-color: #66c0f4;
     --accent-hover: #a4d007;
-    --ui-bg: rgba(23, 29, 37, 0.92);
-    --card-bg: rgba(27, 40, 56, 0.92);
+    --ui-bg: rgba(23, 29, 37, 0.96);
+    --card-bg: rgba(30, 44, 60, 0.96);
     --border-color: #2a475e;
     --card-border: #1b2838;
     --radius-main: 4px;
     --radius-card: 3px;
     --font-family: 'Motiva Sans', Arial, sans-serif;
-    --glow-effect: 0 0 10px rgba(102, 192, 244, 0.2);
+    --glow-effect: 0 0 8px rgba(102, 192, 244, 0.3);
+    --box-shadow-custom: 0 12px 28px rgba(0, 0, 0, 0.6);
 }
 
 /* 全体のスタイル設定 */
@@ -171,7 +179,7 @@ body.light-theme {
 
 body.light-theme .floating-status-bar,
 body.light-theme .calendar-popup {
-    background: rgba(235, 235, 242, 0.85);
+    background: rgba(235, 235, 242, 0.88);
     border-color: rgba(0, 0, 0, 0.15);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
@@ -201,14 +209,14 @@ body.light-theme .calendar-day-cell:hover:not(.empty) {
 }
 
 body.light-theme .content-screen {
-    background: rgba(244, 244, 247, 0.85);
+    background: rgba(244, 244, 247, 0.88);
     border-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
 
 body.light-theme .profile-card,
 body.light-theme .gallery-section {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.88);
     border-color: #e0e0e8;
 }
 
@@ -251,12 +259,12 @@ a:hover {
     border-radius: var(--radius-main);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
+    box-shadow: var(--box-shadow-custom), var(--glow-effect);
     z-index: 9999;
     opacity: 1;
     pointer-events: auto;
     
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
 }
 
 .floating-status-bar.hidden {
@@ -291,7 +299,6 @@ a:hover {
     opacity: 0.25;
 }
 
-/* 右側ボタンをまとめるグループ */
 .status-right-group {
     display: flex;
     align-items: center;
@@ -346,7 +353,7 @@ a:hover {
     border-radius: var(--radius-card);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    box-shadow: var(--box-shadow-custom);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -447,7 +454,7 @@ a:hover {
     font-weight: bold;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), var(--glow-effect);
+    box-shadow: var(--box-shadow-custom), var(--glow-effect);
     opacity: 0;
     transform: translateY(10px);
     pointer-events: none;
@@ -488,7 +495,6 @@ a:hover {
     background-color: #000;
 }
 
-/* 背景ぼかしオーバーレイ */
 .blur-overlay {
     position: absolute;
     top: 0;
@@ -532,7 +538,6 @@ a:hover {
     100% { opacity: 0; }
 }
 
-/* Section 1: ファーストビューエリア */
 .hero-spacer {
     display: flex;
     justify-content: center;
@@ -550,14 +555,13 @@ a:hover {
     border: 1px solid var(--accent-color);
     border-radius: var(--radius-card);
     backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), var(--glow-effect);
+    box-shadow: var(--box-shadow-custom), var(--glow-effect);
     transition: opacity 0.4s ease, transform 0.4s ease;
     animation: floatAnimation 2.5s infinite ease-in-out;
     opacity: 1;
     pointer-events: auto;
 }
 
-/* スクロール時の非表示用スタイル */
 .scroll-indicator.hidden {
     opacity: 0 !important;
     pointer-events: none !important;
@@ -593,7 +597,6 @@ a:hover {
     50% { transform: translateY(5px); }
 }
 
-/* Section 2: 中央配置用の親ラッパー */
 .content-section-wrapper {
     display: flex;
     justify-content: center;
@@ -611,8 +614,8 @@ a:hover {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-main);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), var(--glow-effect);
-    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease;
+    box-shadow: var(--box-shadow-custom), var(--glow-effect);
+    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease, box-shadow 0.3s ease;
 }
 
 .content-wrapper {
@@ -630,7 +633,7 @@ a:hover {
 }
 
 .site-title {
-    background-color: rgba(42, 37, 42, 0.8);
+    background-color: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-card);
     padding: 10px 20px;
@@ -751,7 +754,7 @@ a:hover {
 }
 
 .grid-item {
-    background-color: #2d2933;
+    background-color: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--card-border);
     border-radius: calc(var(--radius-card) / 2);
     overflow: hidden;
@@ -800,7 +803,6 @@ a:hover {
     background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Galleryカード背景画像 */
 #gallery-twitter {
     background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
 }
@@ -814,7 +816,6 @@ a:hover {
     background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
 }
 
-/* レスポンシブ調整 */
 @media (max-width: 850px) {
     .floating-status-bar,
     .status-bar-indicator {
