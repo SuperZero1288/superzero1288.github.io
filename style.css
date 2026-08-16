@@ -41,6 +41,11 @@ body.style-liquidglass {
     --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
     --glow-effect: 0 8px 30px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.55);
 }
+/* LiquidGlass ダークテーマ */
+body.style-liquidglass:not(.light-theme) {
+    --ui-bg: rgba(255, 255, 255, 0.09);
+    --card-bg: rgba(255, 255, 255, 0.06);
+}
 /* 4. VRChat ゲーム内 UI 風 */
 body.style-vrchat {
     --accent-color: #42a8b8;
