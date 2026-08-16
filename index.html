@@ -257,7 +257,7 @@ updateThemeButton();
 uiStyleToggleBtn.addEventListener('click',()=>{
 document.body.classList.remove(uiStyles[currentStyleIndex].id);
 currentStyleIndex=(currentStyleIndex+1)%uiStyles.length;
-const newStyle=currentStyle();
+const newStyle=uiStyles[currentStyleIndex];
 document.body.classList.add(newStyle.id);
 
 if(!newStyle.light&&document.body.classList.contains('light-theme')){
