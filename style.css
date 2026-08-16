@@ -109,14 +109,6 @@ body.light-theme .site-title {
     color: #d85a70;
 }
 
-body.light-theme .nav-links a {
-    color: #666;
-}
-
-body.light-theme .nav-links a:hover {
-    color: #000;
-}
-
 a {
     color: #ff8fa3;
     text-decoration: none;
@@ -441,9 +433,17 @@ a:hover {
     border-radius: 30px;
     backdrop-filter: blur(8px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 143, 163, 0.2);
-    transition: all 0.3s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
     animation: floatAnimation 2.5s infinite ease-in-out;
-    cursor: pointer;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* スクロール時の非表示用スタイル */
+.scroll-indicator.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(15px);
 }
 
 .scroll-indicator:hover {
@@ -520,16 +520,6 @@ a:hover {
     font-size: 1.1rem;
     color: #ff8fa3;
     font-weight: bold;
-}
-
-.nav-links a {
-    color: #aaa;
-    margin-left: 20px;
-    font-size: 0.95rem;
-}
-
-.nav-links a:hover {
-    color: #fff;
 }
 
 .container {
