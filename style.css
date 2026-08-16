@@ -27,50 +27,86 @@ body.style-material {
     --font-family: 'Roboto', 'Google Sans', sans-serif;
     --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
-/* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
-body.style-liquidglass {
-    --accent-color: #0a84ff;
-    --accent-hover: #64d2ff;
-    --ui-bg: rgba(255, 255, 255, 0.12);
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --border-color: rgba(255, 255, 255, 0.3);
-    --card-border: rgba(255, 255, 255, 0.2);
-    --radius-main: 36px;
-    --radius-card: 22px;
-    --radius-capsule: 9999px;
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
+/* ――― Liquid Glass: 背景を透過させ、機能レイヤーとして浮かせる ――― */
+body.style-liquidglass .floating-status-bar,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .content-screen,
+body.style-liquidglass .profile-card,
+body.style-liquidglass .gallery-section,
+body.style-liquidglass .site-title,
+body.style-liquidglass .scroll-indicator,
+body.style-liquidglass .status-capsule {
+    background: linear-gradient(135deg, rgba(255,255,255,0.38), rgba(255,255,255,0.14));
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: var(--glow-effect);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
 }
 
-/* LiquidGlass ダークテーマ：透明感・ぼかし調整 */
-body.style-liquidglass:not(.light-theme) .content-screen,
-body.style-liquidglass:not(.light-theme) .profile-card,
-body.style-liquidglass:not(.light-theme) .gallery-section,
-body.style-liquidglass:not(.light-theme) .floating-status-bar {
-    backdrop-filter: blur(8px) saturate(115%);
-    -webkit-backdrop-filter: blur(8px) saturate(115%);
+body.style-liquidglass .floating-status-bar::before,
+body.style-liquidglass .content-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 42%);
 }
 
-/* ガラスの白っぽいハイライトを弱める */
-body.style-liquidglass:not(.light-theme) .content-screen {
-    border-color: rgba(255, 255, 255, 0.16);
-    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.24);
+body.style-liquidglass .floating-status-bar {
+    border-radius: 9999px;
 }
 
-body.style-liquidglass:not(.light-theme) .profile-card,
-body.style-liquidglass:not(.light-theme) .gallery-section {
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.20);
+body.style-liquidglass .status-capsule:hover,
+body.style-liquidglass .grid-item:hover {
+    background: rgba(255,255,255,0.32);
+    border-color: rgba(255,255,255,0.72);
 }
 
-/* LiquidGlassの白いカプセルも控えめに */
+body.style-liquidglass .grid-item {
+    background-color: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.35);
+}
+
+body.style-liquidglass .item-content {
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.28));
+}
+
+body.style-liquidglass .item-link {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.28);
+}
+
+/* LiquidGlass ライトテーマ */
+body.style-liquidglass.light-theme {
+    --ui-bg: rgba(255,255,255,0.34);
+    --card-bg: rgba(255,255,255,0.25);
+    --border-color: rgba(255,255,255,0.72);
+    --card-border: rgba(255,255,255,0.55);
+}
+
+body.style-liquidglass .avatar-container {
+    border-color: rgba(255,255,255,0.7);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* LiquidGlass ダークテーマ */
+body.style-liquidglass:not(.light-theme) {
+    --ui-bg: rgba(255,255,255,0.09);
+    --card-bg: rgba(255,255,255,0.06);
+}
+
+/* LiquidGlass ダークテーマ専用UI */
 body.style-liquidglass:not(.light-theme) .status-capsule {
-    background: rgba(255, 255, 255, 0.045);
-    border-color: rgba(255, 255, 255, 0.13);
+    background: rgba(255,255,255,0.055);
 }
 
 body.style-liquidglass:not(.light-theme) .time-capsule:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255,255,255,0.10);
+}
+
+body.style-liquidglass:not(.light-theme) .icon-btn:hover {
+    background: rgba(255,255,255,0.10);
 }
 /* 4. VRChat ゲーム内 UI 風 */
 body.style-vrchat {
