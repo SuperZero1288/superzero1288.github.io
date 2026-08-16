@@ -142,6 +142,7 @@
         const timeCapsule = document.getElementById('timeCapsule');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
+        const calendarPopup = document.getElementById('calendarPopup');
         const calendarHeader = document.getElementById('calendarHeader');
         const calendarDaysGrid = document.getElementById('calendarDaysGrid');
         const toast = document.getElementById('toast');
@@ -161,6 +162,11 @@
                 toast.classList.remove('show');
             }, 2000);
         }
+
+        // カレンダーポップアップ全体のクリックイベント伝播を防止（時計切り替えを発火させない）
+        calendarPopup.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         // リアルタイム時計更新＆月レンダー判定
         function updateTime() {
@@ -230,7 +236,6 @@
 
                 // 日付クリック時にYYYY/MM/DD形式でコピー
                 dayCell.addEventListener('click', (e) => {
-                    e.stopPropagation(); // カプセルの時計クリック（12h/24h切り替え）イベントを発火させない
                     const dStr = String(day).padStart(2, '0');
                     const formattedDate = `${year}/${monthStr}/${dStr}`;
 
