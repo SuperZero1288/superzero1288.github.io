@@ -11,13 +11,18 @@
     <!-- 浮遊型 フローティングステータスバー -->
     <div class="floating-status-bar" id="statusBar">
         
-        <!-- 時計が入ったカプセル (絶対中央配置 & クリック可能) -->
+        <!-- 左端配置：星アイコンボタン (機能未実装) -->
+        <button class="status-capsule icon-capsule-btn" id="starBtn" title="お気に入り">
+            <span>★</span>
+        </button>
+
+        <!-- 絶対中央配置：時計カプセル (クリックで12h/24h切り替え) -->
         <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
             <span class="status-time" id="statusTime">12:00</span>
         </div>
 
-        <!-- テーマ切り替え用のまん丸ボタン (右端配置) -->
-        <button class="status-capsule theme-capsule-btn" id="themeToggleBtn" title="テーマ切り替え">
+        <!-- 右端配置：テーマ切り替え用ボタン -->
+        <button class="status-capsule icon-capsule-btn" id="themeToggleBtn" title="テーマ切り替え">
             <span id="themeIcon">🌙</span>
         </button>
 
