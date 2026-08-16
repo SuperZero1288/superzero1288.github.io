@@ -263,7 +263,19 @@
         setInterval(updateTime, 1000);
 
         /* ――― ステータスバー表示・非表示制御ロジック ――― */
-        function checkStatusBarState() {
+        function hideStatusBarWithDelay(delayMs) {
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                statusBar.classList.add('hidden');
+                indicatorTimeout = setTimeout(() => {
+                    if (statusBar.classList.contains('hidden')) {
+                        statusBarIndicator.classList.add('visible');
+                    }
+                }, 350);
+            }, delayMs);
+        }
+
+        function checkStatusBarStateOnScroll() {
             clearTimeout(hideTimeout);
 
             // 画面スクロール量が半分未満（＝Section 1 スライドショー画面）
@@ -272,30 +284,15 @@
                 clearTimeout(indicatorTimeout);
                 statusBarIndicator.classList.remove('visible');
             } else {
-                // Section 2（ウィンドウ画面）の場合
+                // Section 2（ウィンドウ画面）へスライドした時は速攻（0秒）で隠す
                 if (!isHoveringStatusBar) {
-                    // カーソルがバーまたは上部にない場合は短時間（1.5秒）で非表示化
-                    hideTimeout = setTimeout(() => {
-                        statusBar.classList.add('hidden');
-                        indicatorTimeout = setTimeout(() => {
-                            if (statusBar.classList.contains('hidden')) {
-                                statusBarIndicator.classList.add('visible');
-                            }
-                        }, 350);
-                    }, 1500); // 消えるまでの時間を短縮 (1.5秒)
+                    hideStatusBarWithDelay(0);
                 }
             }
         }
 
-        function forceShowStatusBar() {
-            clearTimeout(indicatorTimeout);
-            statusBarIndicator.classList.remove('visible');
-            statusBar.classList.remove('hidden');
-            checkStatusBarState();
-        }
-
         // 初期表示チェック
-        checkStatusBarState();
+        checkStatusBarStateOnScroll();
 
         // スクロール時の挙動監視
         snapContainer.addEventListener('scroll', () => {
@@ -305,14 +302,16 @@
             blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
 
-            checkStatusBarState();
+            checkStatusBarStateOnScroll();
         }, { passive: true });
 
         // マウス位置の検出（画面上部70px以内に近づいた時だけ表示）
         window.addEventListener('mousemove', (e) => {
             if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
                 if (e.clientY <= 70) {
-                    forceShowStatusBar();
+                    clearTimeout(indicatorTimeout);
+                    statusBarIndicator.classList.remove('visible');
+                    statusBar.classList.remove('hidden');
                 }
             }
         });
@@ -327,7 +326,10 @@
 
         statusBar.addEventListener('mouseleave', () => {
             isHoveringStatusBar = false;
-            checkStatusBarState();
+            // カーソルから離した時は「ちょっと早め（0.6秒）」で非表示化
+            if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
+                hideStatusBarWithDelay(600);
+            }
         });
 
         themeToggleBtn.addEventListener('click', () => {
