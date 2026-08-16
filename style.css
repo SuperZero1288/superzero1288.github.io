@@ -8,7 +8,7 @@
 html, body {
     width: 100%;
     height: 100%;
-    overflow: hidden; /* ブラウザ全体の通常スクロールを禁止 */
+    overflow: hidden;
     background-color: #0f0f12;
     color: #e0e0e6;
     font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -20,7 +20,7 @@ html, body {
     width: 100vw;
     height: 100vh;
     overflow-y: scroll;
-    scroll-snap-type: y mandatory; /* 本のようにカチッと切り替わる設定 */
+    scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
     position: relative;
     z-index: 10;
@@ -29,8 +29,8 @@ html, body {
 .snap-section {
     width: 100vw;
     height: 100vh;
-    scroll-snap-align: start; /* 画面先頭に吸い付くようにピタッと停止 */
-    scroll-snap-stop: always; /* 途中移動を許さず必ず1画面ずつ停止 */
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
     position: relative;
 }
 
