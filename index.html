@@ -10,17 +10,19 @@
 
     <!-- 浮遊型 フローティングステータスバー -->
     <div class="floating-status-bar" id="statusBar">
-        <div class="status-chip">
+        
+        <!-- 時計が入ったカプセル -->
+        <div class="status-capsule time-capsule">
             <span class="status-icon">📱</span>
             <span class="status-time" id="statusTime">12:00</span>
         </div>
-        <div class="status-divider"></div>
-        <div class="status-actions">
-            <!-- 将来拡張できるテーマ切り替えボタン -->
-            <button class="theme-toggle-btn" id="themeToggleBtn" title="テーマ切り替え">
-                <span id="themeIcon">🌙</span>
-            </button>
-        </div>
+
+        <!-- テーマ切り替え用のカプセルボタン -->
+        <button class="status-capsule theme-capsule-btn" id="themeToggleBtn" title="テーマ切り替え">
+            <span id="themeIcon">🌙</span>
+            <span class="theme-label" id="themeLabel">Dark</span>
+        </button>
+
     </div>
 
     <!-- 全画面スライドショー (1画面目) -->
@@ -112,6 +114,7 @@
         const statusTime = document.getElementById('statusTime');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
+        const themeLabel = document.getElementById('themeLabel');
         let hideTimeout;
 
         // リアルタイム時計
@@ -159,6 +162,7 @@
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             themeIcon.textContent = isLight ? '☀️' : '🌙';
+            themeLabel.textContent = isLight ? 'Light' : 'Dark';
         });
     </script>
 </body>
