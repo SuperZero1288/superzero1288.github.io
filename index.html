@@ -19,6 +19,234 @@
         <!-- 絶対中央配置：時計カプセル (高さ42pxに統一) -->
         <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
             <span class="status-time" id="statusTime">12:00</span>
+            
+            <!-- カーソルホバー時に表示されるカレンダーポップアップ -->
+            <div class="calendar-popup" id="calendarPopup">
+                <div class="calendar-date" id="calendarDate">2026.08.16</div>
+                <div class="calendar-day" id="calendarDay">SUN</div>
+            </div>
+        </div>
+
+        <!-- 右端配置：テーマ切り替え用ボタン -->
+        <button class="status-capsule icon-btn" id="themeToggleBtn" title="テーマ切り替え">
+            <span id="themeIcon">🌙</span>
+        </button>
+
+    </div>
+
+    <!-- バー格納時に出現する極細インジケーター -->
+    <div class="status-bar-indicator" id="statusBarIndicator"></div>
+
+    <!-- 全画面スライドショー (1画面目) -->
+    <div class="hero-slider">
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <a href="#about" class="scroll-indicator">
+            <span class="scroll-text">SCROLL DOWN</span>
+            <span class="scroll-arrow">▼</span>
+        </a>
+    </div>
+
+    <!-- コンテンツ画面 (2画面目) -->
+    <div class="content-screen" id="about">
+        <div class="content-wrapper">
+            
+            <!-- ナビゲーションヘッダー -->
+            <header class="header-nav">
+                <div class="site-title">portfolio / ぜろくんでんせつ</div>
+                <nav class="nav-links">
+                    <a href="#about">About</a>
+                    <a href="#gallery">Gallery</a>
+                </nav>
+            </header>
+
+            <!-- メインコンテンツ -->
+            <main class="container">
+                
+                <div class="main-content-layout">
+                    <!-- 左側：プロフィール情報 (About) -->
+                    <section class="profile-card">
+                        <div class="avatar-container">
+                            <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
+                        </div>
+                        <h1 class="profile-name">ぜろくんでんせつ</h1>
+                        <p class="profile-id">ZErrrrrO</p>
+                        <div class="profile-desc">
+                            趣味でUnityをしている一般高校生！いろんなことをしたいです
+                        </div>
+                    </section>
+
+                    <!-- 右側：リンク一覧 (Gallery) -->
+                    <section class="gallery-section" id="gallery">
+                        <h2 class="section-title">リンクたち</h2>
+                        <p class="section-subtitle">リンク先は画像をクリック！</p>
+                        
+                        <div class="grid-container">
+                            <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+                                <div class="item-content">𝕏 Twitter</div>
+                                <div class="item-link">にちじょ～</div>
+                            </a>
+                            
+                            <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+                                <div class="item-content">VRChat</div>
+                                <div class="item-link">フレンド申請お気軽に！</div>
+                            </a>
+                            
+                            <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+                                <div class="item-content">🛍️ BOOTH</div>
+                                <div class="item-link">Boothを見る</div>
+                            </a>
+                            
+                            <a href="#" class="grid-item" id="gallery-shader">
+                                <div class="item-content">✨ 工事中～</div>
+                                <div class="item-link">近日公開...！</div>
+                            </a>
+                        </div>
+                    </section>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ステータスバー＆機能制御スクリプト -->
+    <script>
+        const statusBar = document.getElementById('statusBar');
+        const statusBarIndicator = document.getElementById('statusBarIndicator');
+        const statusTime = document.getElementById('statusTime');
+        const timeCapsule = document.getElementById('timeCapsule');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const calendarDate = document.getElementById('calendarDate');
+        const calendarDay = document.getElementById('calendarDay');
+        
+        let hideTimeout;
+        let indicatorTimeout;
+        let is24Hour = true; // 24時間表記フラグ
+
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+        // リアルタイム時計＆カレンダー表示更新
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            if (is24Hour) {
+                const hStr = String(hours).padStart(2, '0');
+                statusTime.textContent = `${hStr}:${minutes}`;
+            } else {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                statusTime.textContent = `${ampm} ${hours}:${minutes}`;
+            }
+
+            // カレンダー更新 (年.月.日)
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const date = String(now.getDate()).padStart(2, '0');
+            const dayName = days[now.getDay()];
+
+            calendarDate.textContent = `${year}.${month}.${date}`;
+            calendarDay.textContent = dayName;
+        }
+
+        // 時計クリックで12時間/24時間表記切り替え
+        timeCapsule.addEventListener('click', (e) => {
+            // カレンダー部分のクリック判定を考慮して制御
+            is24Hour = !is24Hour;
+            updateTime();
+        });
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // ステータスバーの表示制御
+        function showStatusBar() {
+            clearTimeout(indicatorTimeout);
+            statusBarIndicator.classList.remove('visible');
+
+            statusBar.classList.remove('hidden');
+            clearTimeout(hideTimeout);
+
+            if (window.scrollY > 0) {
+                hideTimeout = setTimeout(() => {
+                    statusBar.classList.add('hidden');
+
+                    indicatorTimeout = setTimeout(() => {
+                        statusBarIndicator.classList.add('visible');
+                    }, 350);
+                }, 5000);
+            }
+        }
+
+        // 初期表示
+        showStatusBar();
+
+        // スクロール時に表示・非表示判定
+        window.addEventListener('scroll', () => {
+            showStatusBar();
+        }, { passive: true });
+
+        // 画面上部70px以内にマウスが入った時に表示
+        window.addEventListener('mousemove', (e) => {
+            if (e.clientY <= 70) {
+                showStatusBar();
+            }
+        });
+
+        // バー自体をホバーしている間はタイマー停止
+        statusBar.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            clearTimeout(indicatorTimeout);
+            statusBarIndicator.classList.remove('visible');
+            statusBar.classList.remove('hidden');
+        });
+        statusBar.addEventListener('mouseleave', () => {
+            showStatusBar();
+        });
+
+        // テーマ切り替え機能（ダーク / ライト）
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeIcon.textContent = isLight ? '☀️' : '🌙';
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぜろくんでんせつ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 浮遊型 フローティングステータスバー -->
+    <div class="floating-status-bar" id="statusBar">
+        
+        <!-- 左端配置：星アイコンボタン -->
+        <button class="status-capsule icon-btn" id="starBtn" title="お気に入り">
+            <span>★</span>
+        </button>
+
+        <!-- 絶対中央配置：時計カプセル (高さ42pxに統一) -->
+        <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
+            <span class="status-time" id="statusTime">12:00</span>
         </div>
 
         <!-- 右端配置：テーマ切り替え用ボタン -->
