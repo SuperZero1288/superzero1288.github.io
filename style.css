@@ -1,6 +1,6 @@
 /* ――― テーマ（デザイン言語）変数定義 ――― */
 
-/* 1. スタンダード (デフォルト) */
+/* 1. デフォルト */
 body.style-default {
     --accent-color: #ff8fa3;
     --accent-hover: #ffb3c1;
@@ -14,46 +14,102 @@ body.style-default {
     --glow-effect: none;
 }
 
-/* 2. サイバーパンク (近未来・ネオン) */
-body.style-cyber {
-    --accent-color: #00ffcc;
-    --accent-hover: #00b3ff;
-    --ui-bg: rgba(10, 15, 28, 0.85);
-    --card-bg: rgba(15, 23, 42, 0.85);
-    --border-color: #00ffcc;
-    --card-border: #00b3ff;
-    --radius-main: 4px;
-    --radius-card: 2px;
-    --font-family: 'Courier New', Consolas, monospace;
-    --glow-effect: 0 0 12px rgba(0, 255, 204, 0.4);
-}
-
-/* 3. フロストガラス (超透明感・エレガント) */
-body.style-glass {
-    --accent-color: #a5b4fc;
-    --accent-hover: #c7d2fe;
-    --ui-bg: rgba(255, 255, 255, 0.1);
-    --card-bg: rgba(255, 255, 255, 0.08);
-    --border-color: rgba(255, 255, 255, 0.35);
-    --card-border: rgba(255, 255, 255, 0.25);
-    --radius-main: 40px;
+/* 2. Google Material Design (Material You 風) */
+body.style-material {
+    --accent-color: #d0bcff;
+    --accent-hover: #e8def8;
+    --ui-bg: rgba(29, 27, 32, 0.88);
+    --card-bg: rgba(33, 29, 39, 0.9);
+    --border-color: rgba(147, 143, 153, 0.2);
+    --card-border: rgba(147, 143, 153, 0.12);
+    --radius-main: 32px;
     --radius-card: 24px;
-    --font-family: 'SF Pro Display', -apple-system, sans-serif;
-    --glow-effect: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    --font-family: 'Roboto', 'Google Sans', sans-serif;
+    --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-/* 4. レトロピクセル (90年代PC・ドット風) */
-body.style-retro {
-    --accent-color: #ffcc00;
-    --accent-hover: #ffee55;
-    --ui-bg: #111111;
-    --card-bg: #222222;
-    --border-color: #ffffff;
-    --card-border: #888888;
-    --radius-main: 0px;
-    --radius-card: 0px;
-    --font-family: 'Impact', 'Arial Black', sans-serif;
+/* 3. system24 (Discord Mod Theme) */
+body.style-system24 {
+    --accent-color: #5865f2;
+    --accent-hover: #4752c4;
+    --ui-bg: rgba(17, 18, 20, 0.92);
+    --card-bg: rgba(30, 31, 34, 0.92);
+    --border-color: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.04);
+    --radius-main: 12px;
+    --radius-card: 8px;
+    --font-family: 'gg sans', 'Noto Sans', sans-serif;
+    --glow-effect: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* 4. Apple LiquidGlass (iOS/macOS すりガラス風) */
+body.style-liquidglass {
+    --accent-color: #0a84ff;
+    --accent-hover: #64d2ff;
+    --ui-bg: rgba(255, 255, 255, 0.12);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --border-color: rgba(255, 255, 255, 0.3);
+    --card-border: rgba(255, 255, 255, 0.2);
+    --radius-main: 36px;
+    --radius-card: 22px;
+    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* 5. VRChat ゲーム内 UI 風 (ダークブルー系・SFパネル感) */
+body.style-vrchat {
+    --accent-color: #1fcae6;
+    --accent-hover: #6ee7b7;
+    --ui-bg: rgba(10, 20, 32, 0.85);
+    --card-bg: rgba(16, 32, 50, 0.85);
+    --border-color: #1fcae6;
+    --card-border: rgba(31, 202, 230, 0.4);
+    --radius-main: 16px;
+    --radius-card: 10px;
+    --font-family: 'Segoe UI', Tahoma, sans-serif;
+    --glow-effect: 0 0 15px rgba(31, 202, 230, 0.35);
+}
+
+/* 6. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
+body.style-fluent {
+    --accent-color: #60cdff;
+    --accent-hover: #99ebff;
+    --ui-bg: rgba(32, 32, 32, 0.75);
+    --card-bg: rgba(45, 45, 45, 0.8);
+    --border-color: rgba(255, 255, 255, 0.14);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --radius-main: 8px;
+    --radius-card: 6px;
+    --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
+    --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
+}
+
+/* 7. Unity ゲームエンジン風 (Editor Dark Theme) */
+body.style-unity {
+    --accent-color: #2c5d88;
+    --accent-hover: #3a78b0;
+    --ui-bg: rgba(56, 56, 56, 0.95);
+    --card-bg: rgba(40, 40, 40, 0.95);
+    --border-color: #232323;
+    --card-border: #1a1a1a;
+    --radius-main: 3px;
+    --radius-card: 3px;
+    --font-family: Inter, Arial, sans-serif;
     --glow-effect: none;
+}
+
+/* 8. Steam クライアント風 (Steam Dark Blue) */
+body.style-steam {
+    --accent-color: #66c0f4;
+    --accent-hover: #a4d007;
+    --ui-bg: rgba(23, 29, 37, 0.92);
+    --card-bg: rgba(27, 40, 56, 0.92);
+    --border-color: #2a475e;
+    --card-border: #1b2838;
+    --radius-main: 4px;
+    --radius-card: 3px;
+    --font-family: 'Motiva Sans', Arial, sans-serif;
+    --glow-effect: 0 0 10px rgba(102, 192, 244, 0.2);
 }
 
 /* 全体のスタイル設定 */
@@ -192,7 +248,7 @@ a:hover {
     padding: 8px 14px;
     background: var(--ui-bg);
     border: 1px solid var(--border-color);
-    border-radius: 40px;
+    border-radius: var(--radius-main);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
@@ -200,7 +256,7 @@ a:hover {
     opacity: 1;
     pointer-events: auto;
     
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
 }
 
 .floating-status-bar.hidden {
@@ -249,6 +305,7 @@ a:hover {
     height: 42px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-color);
+    border-radius: var(--radius-card);
     color: #ffffff;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -261,7 +318,6 @@ a:hover {
     transform: translateX(-50%);
     width: 120px;
     height: 42px;
-    border-radius: 21px;
     cursor: pointer;
     font-variant-numeric: tabular-nums;
 }
@@ -407,7 +463,6 @@ a:hover {
 .icon-btn {
     width: 42px;
     height: 42px;
-    border-radius: 50%;
     padding: 0;
     cursor: pointer;
     font-family: inherit;
@@ -616,12 +671,12 @@ a:hover {
 .avatar-container {
     width: 90px;
     height: 90px;
-    border-radius: 24px;
+    border-radius: var(--radius-card);
     margin: 0 auto 16px;
     overflow: hidden;
     border: 2px solid var(--accent-color);
     flex-shrink: 0;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, border-radius 0.3s;
 }
 
 .avatar-container img {
