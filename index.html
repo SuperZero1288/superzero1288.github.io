@@ -17,7 +17,7 @@
         </button>
 
         <!-- 絶対中央配置：時計カプセル -->
-        <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
+        <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
             <span class="status-time" id="statusTime">12:00</span>
             
             <!-- カーソルホバー時に表示されるリアルカレンダーポップアップ -->
@@ -169,6 +169,11 @@
         let lastRenderedMonth = -1;
         let isHoveringStatusBar = false;
 
+        // 連打・木曜日判定モードの管理変数
+        let clickCount = 0;
+        let clickTimer = null;
+        let isThursdayMode = false;
+
         function showToast(text) {
             toast.textContent = text;
             toast.classList.add('show');
@@ -184,6 +189,15 @@
 
         function updateTime() {
             const now = new Date();
+            
+            // 木曜日判定モードが有効な場合
+            if (isThursdayMode) {
+                // getDay(): 0が日曜、4が木曜
+                const isThursday = now.getDay() === 4;
+                statusTime.textContent = isThursday ? 'はい' : 'いいえ';
+                return;
+            }
+
             let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
             
@@ -254,8 +268,36 @@
             }
         }
 
+        // 時計カプセルクリック処理
         timeCapsule.addEventListener('click', (e) => {
-            is24Hour = !is24Hour;
+            clickCount++;
+            
+            // 0.8秒以内に5回以上連打された場合
+            if (clickCount >= 5) {
+                // 30%の確率で発動
+                if (Math.random() < 0.3) {
+                    isThursdayMode = !isThursdayMode;
+                    showToast(isThursdayMode ? 'Is it Thursday...?' : '時刻表示に戻りました');
+                } else {
+                    // 外れた場合でも12h/24h切り替えを行う
+                    is24Hour = !is24Hour;
+                }
+                clickCount = 0;
+                clearTimeout(clickTimer);
+                updateTime();
+                return;
+            }
+
+            // 連打カウントのリセットタイマー
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 800);
+
+            // 通常のクリック（木曜日モード時は何もしない/モードオフ時のみ時間フォーマット切替）
+            if (!isThursdayMode) {
+                is24Hour = !is24Hour;
+            }
             updateTime();
         });
 
@@ -278,23 +320,19 @@
         function checkStatusBarStateOnScroll() {
             clearTimeout(hideTimeout);
 
-            // 画面スクロール量が半分未満（＝Section 1 スライドショー画面）
             if (snapContainer.scrollTop < window.innerHeight * 0.5) {
                 statusBar.classList.remove('hidden');
                 clearTimeout(indicatorTimeout);
                 statusBarIndicator.classList.remove('visible');
             } else {
-                // Section 2（ウィンドウ画面）へスライドした時は速攻（0秒）で隠す
                 if (!isHoveringStatusBar) {
                     hideStatusBarWithDelay(0);
                 }
             }
         }
 
-        // 初期表示チェック
         checkStatusBarStateOnScroll();
 
-        // スクロール時の挙動監視
         snapContainer.addEventListener('scroll', () => {
             const scrollRatio = Math.min(snapContainer.scrollTop / window.innerHeight, 1);
             const blurVal = scrollRatio * 16;
@@ -305,7 +343,6 @@
             checkStatusBarStateOnScroll();
         }, { passive: true });
 
-        // マウス位置の検出（画面上部70px以内に近づいた時だけ表示）
         window.addEventListener('mousemove', (e) => {
             if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
                 if (e.clientY <= 70) {
@@ -326,7 +363,6 @@
 
         statusBar.addEventListener('mouseleave', () => {
             isHoveringStatusBar = false;
-            // カーソルから離した時は「ちょっと早め（0.6秒）」で非表示化
             if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
                 hideStatusBarWithDelay(600);
             }
