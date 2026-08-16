@@ -76,167 +76,168 @@ const uiStyles=[
 {id:'style-fluent',name:'Microsoft Fluent Design',light:true},
 {id:'style-unity',name:'Unity Engine',light:false}
 ];
+
 let currentStyleIndex=0;
 
-function isLightSupported(){return uiStyles[currentStyleIndex].light;}
+function isLightSupported(){return uiStyles[currentStyleIndex].light}
 
 function updateThemeToggleAvailability(){
-    const supported=isLightSupported();
-    themeToggleBtn.disabled=!supported;
-    themeToggleBtn.classList.toggle('disabled',!supported);
-    themeToggleBtn.setAttribute('aria-disabled',String(!supported));
-    themeToggleBtn.title=supported?'ダーク/ライト切り替え':'このテーマではライトモードを使用できません';
-    if(!supported&&document.body.classList.contains('light-theme')){
-        document.body.classList.remove('light-theme');
-        themeIcon.innerHTML=SVG_MOON;
-    }
+const supported=isLightSupported();
+themeToggleBtn.disabled=!supported;
+themeToggleBtn.classList.toggle('disabled',!supported);
+themeToggleBtn.setAttribute('aria-disabled',String(!supported));
+themeToggleBtn.title=supported?'ダーク/ライト切り替え':'このテーマではライトモードを使用できません';
+if(!supported&&document.body.classList.contains('light-theme')){
+document.body.classList.remove('light-theme');
+themeIcon.innerHTML=SVG_MOON;
+}
 }
 
 function showToast(text){
-    toast.textContent=text;
-    toast.classList.add('show');
-    clearTimeout(toastTimeout);
-    toastTimeout=setTimeout(()=>toast.classList.remove('show'),2000);
+toast.textContent=text;
+toast.classList.add('show');
+clearTimeout(toastTimeout);
+toastTimeout=setTimeout(()=>toast.classList.remove('show'),2000);
 }
 
 calendarPopup.addEventListener('click',e=>e.stopPropagation());
 
 function updateTime(){
-    const now=new Date();
-    if(isThursdayMode){
-        statusTime.textContent=now.getDay()===4?'はい':'いいえ';
-        return;
-    }
-    let hours=now.getHours();
-    const minutes=String(now.getMinutes()).padStart(2,'0');
-    if(is24Hour){
-        statusTime.textContent=`${String(hours).padStart(2,'0')}:${minutes}`;
-    }else{
-        const ampm=hours>=12?'PM':'AM';
-        hours=hours%12;
-        hours=hours?hours:12;
-        statusTime.textContent=`${ampm} ${hours}:${minutes}`;
-    }
-    const currentMonth=now.getMonth();
-    if(lastRenderedMonth!==currentMonth){
-        renderCalendar(now);
-        lastRenderedMonth=currentMonth;
-    }
+const now=new Date();
+if(isThursdayMode){
+statusTime.textContent=now.getDay()===4?'はい':'いいえ';
+return;
+}
+let hours=now.getHours();
+const minutes=String(now.getMinutes()).padStart(2,'0');
+if(is24Hour){
+statusTime.textContent=`${String(hours).padStart(2,'0')}:${minutes}`;
+}else{
+const ampm=hours>=12?'PM':'AM';
+hours=hours%12;
+hours=hours?hours:12;
+statusTime.textContent=`${ampm} ${hours}:${minutes}`;
+}
+const currentMonth=now.getMonth();
+if(lastRenderedMonth!==currentMonth){
+renderCalendar(now);
+lastRenderedMonth=currentMonth;
+}
 }
 
 function renderCalendar(now){
-    const year=now.getFullYear(),month=now.getMonth(),today=now.getDate(),monthStr=String(month+1).padStart(2,'0');
-    calendarHeader.textContent=`${year}.${monthStr}`;
-    calendarDaysGrid.innerHTML='';
-    const firstDayIndex=new Date(year,month,1).getDay(),totalDays=new Date(year,month+1,0).getDate();
-    for(let i=0;i<firstDayIndex;i++){
-        const emptyCell=document.createElement('div');
-        emptyCell.className='calendar-day-cell empty';
-        calendarDaysGrid.appendChild(emptyCell);
-    }
-    for(let day=1;day<=totalDays;day++){
-        const dayCell=document.createElement('div');
-        dayCell.className='calendar-day-cell';
-        const cellDate=new Date(year,month,day),dayOfWeek=cellDate.getDay();
-        if(dayOfWeek===0)dayCell.classList.add('sun');
-        if(dayOfWeek===6)dayCell.classList.add('sat');
-        if(day===today)dayCell.classList.add('is-today');
-        dayCell.textContent=day;
-        dayCell.addEventListener('click',e=>{
-            const dStr=String(day).padStart(2,'0'),formattedDate=`${year}/${monthStr}/${dStr}`;
-            navigator.clipboard.writeText(formattedDate).then(()=>showToast(`コピーしました: ${formattedDate}`)).catch(err=>console.error('コピーに失敗しました',err));
-        });
-        calendarDaysGrid.appendChild(dayCell);
-    }
+const year=now.getFullYear(),month=now.getMonth(),today=now.getDate(),monthStr=String(month+1).padStart(2,'0');
+calendarHeader.textContent=`${year}.${monthStr}`;
+calendarDaysGrid.innerHTML='';
+const firstDayIndex=new Date(year,month,1).getDay(),totalDays=new Date(year,month+1,0).getDate();
+for(let i=0;i<firstDayIndex;i++){
+const emptyCell=document.createElement('div');
+emptyCell.className='calendar-day-cell empty';
+calendarDaysGrid.appendChild(emptyCell);
+}
+for(let day=1;day<=totalDays;day++){
+const dayCell=document.createElement('div');
+dayCell.className='calendar-day-cell';
+const cellDate=new Date(year,month,day),dayOfWeek=cellDate.getDay();
+if(dayOfWeek===0)dayCell.classList.add('sun');
+if(dayOfWeek===6)dayCell.classList.add('sat');
+if(day===today)dayCell.classList.add('is-today');
+dayCell.textContent=day;
+dayCell.addEventListener('click',e=>{
+const dStr=String(day).padStart(2,'0'),formattedDate=`${year}/${monthStr}/${dStr}`;
+navigator.clipboard.writeText(formattedDate).then(()=>showToast(`コピーしました: ${formattedDate}`)).catch(err=>console.error('コピーに失敗しました',err));
+});
+calendarDaysGrid.appendChild(dayCell);
+}
 }
 
 timeCapsule.addEventListener('click',e=>{
-    clickCount++;
-    if(clickCount>=5){
-        if(Math.random()<0.3){
-            isThursdayMode=!isThursdayMode;
-            showToast(isThursdayMode?'Is it Thursday...?':'時刻表示に戻りました');
-        }else is24Hour=!is24Hour;
-        clickCount=0;
-        clearTimeout(clickTimer);
-        updateTime();
-        return;
-    }
-    clearTimeout(clickTimer);
-    clickTimer=setTimeout(()=>clickCount=0,800);
-    if(!isThursdayMode)is24Hour=!is24Hour;
-    updateTime();
+clickCount++;
+if(clickCount>=5){
+if(Math.random()<0.3){
+isThursdayMode=!isThursdayMode;
+showToast(isThursdayMode?'Is it Thursday...?':'時刻表示に戻りました');
+}else is24Hour=!is24Hour;
+clickCount=0;
+clearTimeout(clickTimer);
+updateTime();
+return;
+}
+clearTimeout(clickTimer);
+clickTimer=setTimeout(()=>clickCount=0,800);
+if(!isThursdayMode)is24Hour=!is24Hour;
+updateTime();
 });
 
 updateTime();
 setInterval(updateTime,1000);
 
 function hideStatusBarWithDelay(delayMs){
-    clearTimeout(hideTimeout);
-    hideTimeout=setTimeout(()=>{
-        statusBar.classList.add('hidden');
-        indicatorTimeout=setTimeout(()=>{
-            if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visible');
-        },350);
-    },delayMs);
+clearTimeout(hideTimeout);
+hideTimeout=setTimeout(()=>{
+statusBar.classList.add('hidden');
+indicatorTimeout=setTimeout(()=>{
+if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visible');
+},350);
+},delayMs);
 }
 
 function checkStatusBarStateOnScroll(){
-    clearTimeout(hideTimeout);
-    if(snapContainer.scrollTop<window.innerHeight*0.5){
-        statusBar.classList.remove('hidden');
-        clearTimeout(indicatorTimeout);
-        statusBarIndicator.classList.remove('visible');
-    }else if(!isHoveringStatusBar)hideStatusBarWithDelay(0);
+clearTimeout(hideTimeout);
+if(snapContainer.scrollTop<window.innerHeight*0.5){
+statusBar.classList.remove('hidden');
+clearTimeout(indicatorTimeout);
+statusBarIndicator.classList.remove('visible');
+}else if(!isHoveringStatusBar)hideStatusBarWithDelay(0);
 }
 
 checkStatusBarStateOnScroll();
 
 snapContainer.addEventListener('scroll',()=>{
-    const scrollTop=snapContainer.scrollTop,scrollRatio=Math.min(scrollTop/window.innerHeight,1);
-    const blurVal=scrollRatio*16;
-    blurOverlay.style.backdropFilter=`blur(${blurVal}px)`;
-    blurOverlay.style.webkitBackdropFilter=`blur(${blurVal}px)`;
-    blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*0.4})`;
-    if(scrollTop>100)scrollIndicator.classList.add('hidden');
-    checkStatusBarStateOnScroll();
+const scrollTop=snapContainer.scrollTop,scrollRatio=Math.min(scrollTop/window.innerHeight,1);
+const blurVal=scrollRatio*12;
+blurOverlay.style.backdropFilter=`blur(${blurVal}px)`;
+blurOverlay.style.webkitBackdropFilter=`blur(${blurVal}px)`;
+blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*0.4})`;
+if(scrollTop>100)scrollIndicator.classList.add('hidden');
+checkStatusBarStateOnScroll();
 },{passive:true});
 
 window.addEventListener('mousemove',e=>{
-    if(snapContainer.scrollTop>=window.innerHeight*0.5&&e.clientY<=70){
-        clearTimeout(indicatorTimeout);
-        statusBarIndicator.classList.remove('visible');
-        statusBar.classList.remove('hidden');
-    }
+if(snapContainer.scrollTop>=window.innerHeight*0.5&&e.clientY<=70){
+clearTimeout(indicatorTimeout);
+statusBarIndicator.classList.remove('visible');
+statusBar.classList.remove('hidden');
+}
 });
 
 statusBar.addEventListener('mouseenter',()=>{
-    isHoveringStatusBar=true;
-    clearTimeout(hideTimeout);
-    clearTimeout(indicatorTimeout);
-    statusBarIndicator.classList.remove('visible');
-    statusBar.classList.remove('hidden');
+isHoveringStatusBar=true;
+clearTimeout(hideTimeout);
+clearTimeout(indicatorTimeout);
+statusBarIndicator.classList.remove('visible');
+statusBar.classList.remove('hidden');
 });
 
 statusBar.addEventListener('mouseleave',()=>{
-    isHoveringStatusBar=false;
-    if(snapContainer.scrollTop>=window.innerHeight*0.5)hideStatusBarWithDelay(600);
+isHoveringStatusBar=false;
+if(snapContainer.scrollTop>=window.innerHeight*0.5)hideStatusBarWithDelay(600);
 });
 
 themeToggleBtn.addEventListener('click',()=>{
-    if(!isLightSupported())return;
-    document.body.classList.toggle('light-theme');
-    const isLight=document.body.classList.contains('light-theme');
-    themeIcon.innerHTML=isLight?SVG_SUN:SVG_MOON;
+if(!isLightSupported())return;
+document.body.classList.toggle('light-theme');
+const isLight=document.body.classList.contains('light-theme');
+themeIcon.innerHTML=isLight?SVG_SUN:SVG_MOON;
 });
 
 uiStyleToggleBtn.addEventListener('click',()=>{
-    document.body.classList.remove(uiStyles[currentStyleIndex].id);
-    currentStyleIndex=(currentStyleIndex+1)%uiStyles.length;
-    const newStyle=uiStyles[currentStyleIndex];
-    document.body.classList.add(newStyle.id);
-    updateThemeToggleAvailability();
-    showToast(`Theme: ${newStyle.name}`);
+document.body.classList.remove(uiStyles[currentStyleIndex].id);
+currentStyleIndex=(currentStyleIndex+1)%uiStyles.length;
+const newStyle=uiStyles[currentStyleIndex];
+document.body.classList.add(newStyle.id);
+updateThemeToggleAvailability();
+showToast(`Theme: ${newStyle.name}`);
 });
 
 updateThemeToggleAvailability();
