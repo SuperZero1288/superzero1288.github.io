@@ -1660,917 +1660,460 @@ body.light-theme
    ========================================================= */
 
 /*
-    基本背景。
+ * LiquidGlassは「透明な素材」として見せる。
+ *
+ * 強すぎるblurや白いオーバーレイは避け、
+ * 背景の色・光・写真がそのまま透けることを優先する。
+ */
+body.style-liquidglass {
+    --lg-blur: 6px;
+    --lg-saturation: 155%;
+    --lg-brightness: 105%;
 
-    Liquid Glass以外では通常の透明背景。
-*/
+    --lg-surface: rgba(255, 255, 255, 0.075);
+    --lg-surface-strong: rgba(255, 255, 255, 0.11);
 
-.liquid-glass-background {
+    --lg-border: rgba(255, 255, 255, 0.42);
+    --lg-border-soft: rgba(255, 255, 255, 0.28);
 
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    z-index:
-        0;
-
-    pointer-events:
-        none;
-
-    border-radius:
-        inherit;
-
-    background:
-        transparent;
-
+    --lg-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 
-/*
-    =========================================================
-    Liquid Glass 屈折レイヤー
-    =========================================================
+/* ---------------------------------------------------------
+   LiquidGlass 共通サーフェス
+   --------------------------------------------------------- */
 
-    ここだけにSVG distortionを適用。
+body.style-liquidglass .floating-status-bar,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .content-screen,
+body.style-liquidglass .profile-card,
+body.style-liquidglass .gallery-section,
+body.style-liquidglass .site-title,
+body.style-liquidglass .scroll-indicator,
+body.style-liquidglass .status-capsule,
+body.style-liquidglass .toast-notification {
 
-    content-wrapperには絶対に適用しない。
-*/
-
-.liquid-glass-edge {
-
-    position:
-        absolute;
-
-    inset:
-        0;
-
-    z-index:
-        1;
-
-    pointer-events:
-        none;
-
-    border-radius:
-        inherit;
-
-
-    /*
-        中央：
-
-            完全透明
-
-        外側：
-
-            徐々に屈折
-
-        最外周：
-
-            強く屈折
-    */
-
-    -webkit-mask-image:
-        radial-gradient(
-            ellipse at center,
-            transparent 0%,
-            transparent 58%,
-            rgba(0, 0, 0, 0.08) 65%,
-            rgba(0, 0, 0, 0.30) 72%,
-            rgba(0, 0, 0, 0.70) 82%,
-            #000 94%
-        );
-
-    mask-image:
-        radial-gradient(
-            ellipse at center,
-            transparent 0%,
-            transparent 58%,
-            rgba(0, 0, 0, 0.08) 65%,
-            rgba(0, 0, 0, 0.30) 72%,
-            rgba(0, 0, 0, 0.70) 82%,
-            #000 94%
-        );
-
-
-    /*
-        注意：
-
-        SVG filterはここだけ。
-
-        UIには絶対にかからない。
-    */
-
-    backdrop-filter:
-        url("#liquid-glass-distortion");
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.105),
+            rgba(255, 255, 255, 0.035) 52%,
+            rgba(255, 255, 255, 0.075)
+        ) !important;
 
     -webkit-backdrop-filter:
-        url("#liquid-glass-distortion");
+        blur(var(--lg-blur))
+        saturate(var(--lg-saturation))
+        brightness(var(--lg-brightness));
 
+    backdrop-filter:
+        blur(var(--lg-blur))
+        saturate(var(--lg-saturation))
+        brightness(var(--lg-brightness));
+
+    box-shadow: var(--lg-shadow);
 }
 
 
-/*
-    =========================================================
-    UI本体
-    =========================================================
+/* ---------------------------------------------------------
+   LiquidGlassの境界線
+   ---------------------------------------------------------
 
-    z-indexを5にすることで、
+   border-colorだけでは他のテーマ用ルールに負ける場合が
+   あるため、ここではborderそのものを明示する。
+ */
 
-        背景
-        ↓
-        屈折
-        ↓
-        UI
+body.style-liquidglass .floating-status-bar,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .content-screen,
+body.style-liquidglass .profile-card,
+body.style-liquidglass .gallery-section,
+body.style-liquidglass .site-title,
+body.style-liquidglass .scroll-indicator,
+body.style-liquidglass .status-capsule,
+body.style-liquidglass .toast-notification {
 
-    の順番を保証。
-*/
-
-.content-wrapper {
-
-    position:
-        relative;
-
-    z-index:
-        5;
-
-    width:
-        100%;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    gap:
-        24px;
-
+    border: 1px solid var(--lg-border) !important;
 }
 
 
-/*
-    UI自身にはSVG filterを絶対に適用しない。
-*/
+/* ---------------------------------------------------------
+   フローティングバー
+   --------------------------------------------------------- */
 
-.content-wrapper,
-.profile-card,
-.gallery-section,
-.grid-item,
-.avatar-container,
-.site-title,
-.item-content,
-.item-link {
-
-    filter:
-        none;
-
+body.style-liquidglass .floating-status-bar {
+    border-radius: 9999px;
 }
 
 
-/* =========================================================
-   Liquid Glass Theme
-   ========================================================= */
+/* ---------------------------------------------------------
+   ボタン
+   --------------------------------------------------------- */
 
-body.style-liquidglass
-.content-screen {
+body.style-liquidglass .status-capsule {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.10),
+            rgba(255, 255, 255, 0.035)
+        ) !important;
 
-    /*
-        ガラス自体を極限まで透明に。
+    border: 1px solid var(--lg-border-soft) !important;
+}
 
-        ここで白く塗ってしまうと
-        背景の屈折が見えなくなる。
-    */
+body.style-liquidglass .status-capsule:hover,
+body.style-liquidglass .icon-btn:hover {
 
     background:
-        rgba(255, 255, 255, 0.012);
+        rgba(255, 255, 255, 0.145) !important;
 
     border-color:
-        rgba(255, 255, 255, 0.16);
-
-    box-shadow:
-        0 18px 55px rgba(0, 0, 0, 0.16),
-        inset 0 1px 0 rgba(255, 255, 255, 0.10),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.025);
-
+        rgba(255, 255, 255, 0.58) !important;
 }
 
 
-/*
-    Liquid Glassの境界にだけ
-    ごく薄いハイライト。
-*/
+/* ---------------------------------------------------------
+   Content Window
+   --------------------------------------------------------- */
 
-body.style-liquidglass
-.content-screen::before {
+body.style-liquidglass .content-screen {
 
-    content:
-        "";
+    /*
+     * 重要：
+     * content-screenそのものにはSVG distortion filterを
+     * 適用しない。
+     *
+     * これによって文字・画像・カードまで歪む問題を防ぐ。
+     */
+    filter: none !important;
 
-    position:
-        absolute;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.095),
+            rgba(255, 255, 255, 0.025) 55%,
+            rgba(255, 255, 255, 0.075)
+        ) !important;
 
-    inset:
-        0;
+    border: 1px solid rgba(255, 255, 255, 0.40) !important;
 
-    z-index:
-        3;
+    box-shadow:
+        0 20px 65px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
 
-    pointer-events:
-        none;
 
-    border-radius:
-        inherit;
+/* ---------------------------------------------------------
+   Content Window 上部の薄いハイライト
+   --------------------------------------------------------- */
 
-    border:
-        1px solid rgba(
-            255,
-            255,
-            255,
-            0.14
-        );
+body.style-liquidglass .content-screen::before {
+
+    content: '';
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    pointer-events: none;
 
     background:
         linear-gradient(
             180deg,
-            rgba(255, 255, 255, 0.045),
-            transparent 18%,
-            transparent 82%,
-            rgba(255, 255, 255, 0.018)
+            rgba(255, 255, 255, 0.10),
+            transparent 28%
         );
 
+    opacity: 0.55;
 }
 
 
-/*
-    Liquid Glassのカード。
+/* ---------------------------------------------------------
+   Profile / Gallery
+   --------------------------------------------------------- */
 
-    カードそのものは歪ませない。
-*/
-
-body.style-liquidglass
-.profile-card,
-
-body.style-liquidglass
-.gallery-section {
+body.style-liquidglass .profile-card,
+body.style-liquidglass .gallery-section {
 
     background:
-        rgba(255, 255, 255, 0.035);
+        rgba(255, 255, 255, 0.055) !important;
 
-    border-color:
-        rgba(255, 255, 255, 0.10);
+    border:
+        1px solid rgba(255, 255, 255, 0.30) !important;
+}
+
+
+/* ---------------------------------------------------------
+   Site Title
+   --------------------------------------------------------- */
+
+body.style-liquidglass .site-title {
+
+    background:
+        rgba(255, 255, 255, 0.075) !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.34) !important;
+}
+
+
+/* ---------------------------------------------------------
+   Gallery Cards
+   ---------------------------------------------------------
+
+   ここは特に重要。
+
+   カードそのものにはLiquidGlassのblurを強く掛けない。
+   背景画像をそのまま見せ、カードの表面だけを薄く
+   ガラス化する。
+
+   これにより以前発生した
+   「カード画像がとんでもなく歪む」
+   問題も避ける。
+ */
+
+body.style-liquidglass .grid-item {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025) 52%,
+            rgba(255, 255, 255, 0.065)
+        ) !important;
+
+    /*
+     * カード画像を歪ませない。
+     */
+    filter: none !important;
+
+    /*
+     * 強いbackdrop blurも使わない。
+     */
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+
+    /*
+     * 縁取りを確実に表示。
+     */
+    border:
+        1px solid rgba(255, 255, 255, 0.34) !important;
 
     box-shadow:
-        0 8px 28px rgba(0, 0, 0, 0.10),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        inset 0 1px 0 rgba(255, 255, 255, 0.20),
+        0 8px 28px rgba(0, 0, 0, 0.13);
 
+    overflow: hidden;
 }
 
 
-/*
-    カード画像も完全に通常描画。
-*/
+/* カードホバー */
 
-body.style-liquidglass
-.grid-item {
-
-    filter:
-        none;
-
-    transform-origin:
-        center;
-
-}
-
-
-body.style-liquidglass
-.grid-item:hover {
-
-    background-color:
-        rgba(255, 255, 255, 0.035);
+body.style-liquidglass .grid-item:hover {
 
     border-color:
-        rgba(255, 255, 255, 0.20);
-
-}
-
-
-/* =========================================================
-   Header
-   ========================================================= */
-
-.header-nav {
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        center;
-
-    width:
-        100%;
-
-}
-
-
-.site-title {
-
-    background-color:
-        rgba(42, 37, 42, 0.80);
-
-    border:
-        1px solid var(--border-color);
-
-    border-radius:
-        var(--radius-card);
-
-    padding:
-        10px 20px;
-
-    font-size:
-        1.1rem;
-
-    color:
-        var(--accent-color);
-
-    font-weight:
-        bold;
-
-    transition:
-        color 0.3s ease,
-        border-radius 0.3s ease;
-
-}
-
-
-/* =========================================================
-   Main Layout
-   ========================================================= */
-
-.container {
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    width:
-        100%;
-
-    gap:
-        16px;
-
-}
-
-
-.main-content-layout {
-
-    display:
-        flex;
-
-    gap:
-        24px;
-
-    align-items:
-        stretch;
-
-}
-
-
-/* =========================================================
-   Profile
-   ========================================================= */
-
-.profile-card {
-
-    width:
-        300px;
-
-    background-color:
-        var(--card-bg);
-
-    border:
-        1px solid var(--card-border);
-
-    border-radius:
-        var(--radius-card);
-
-    padding:
-        24px;
-
-    text-align:
-        center;
+        rgba(255, 255, 255, 0.62) !important;
 
     box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.20);
-
-    flex-shrink:
-        0;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    justify-content:
-        center;
-
-    transition:
-        background-color 0.3s,
-        border-color 0.3s,
-        border-radius 0.3s;
-
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 12px 34px rgba(0, 0, 0, 0.18);
 }
 
 
-.avatar-container {
+/* ---------------------------------------------------------
+   Card Content
+   --------------------------------------------------------- */
 
-    width:
-        90px;
+body.style-liquidglass .item-content {
 
-    height:
-        90px;
-
-    border-radius:
-        var(--radius-card);
-
-    margin:
-        0 auto 16px;
-
-    overflow:
-        hidden;
-
-    border:
-        2px solid var(--accent-color);
-
-    flex-shrink:
-        0;
-
-    transition:
-        border-color 0.3s,
-        border-radius 0.3s;
-
+    background:
+        linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.025),
+            rgba(0, 0, 0, 0.30)
+        ) !important;
 }
 
 
-.avatar-container img {
+body.style-liquidglass .item-link {
 
-    width:
-        100%;
-
-    height:
-        100%;
-
-    object-fit:
-        cover;
-
-}
-
-
-.profile-name {
-
-    font-size:
-        1.3rem;
-
-    font-weight:
-        bold;
-
-    margin-bottom:
-        4px;
-
-}
-
-
-.profile-id {
-
-    font-size:
-        0.85rem;
-
-    color:
-        var(--accent-color);
-
-    margin-bottom:
-        16px;
-
-    letter-spacing:
-        1px;
-
-}
-
-
-.profile-desc {
-
-    background-color:
-        rgba(0, 0, 0, 0.30);
-
-    border-radius:
-        calc(
-            var(--radius-card) / 2
-        );
-
-    padding:
-        14px;
-
-    font-size:
-        0.85rem;
-
-    line-height:
-        1.5;
-
-    text-align:
-        left;
-
-    color:
-        #c0c0c8;
-
-}
-
-
-/* =========================================================
-   Gallery
-   ========================================================= */
-
-.gallery-section {
-
-    flex-grow:
-        1;
-
-    background-color:
-        var(--card-bg);
-
-    border:
-        1px solid var(--card-border);
-
-    border-radius:
-        var(--radius-card);
-
-    padding:
-        24px;
-
-    box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.20);
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    justify-content:
-        center;
-
-}
-
-
-.section-title {
-
-    font-size:
-        1.2rem;
-
-    font-weight:
-        bold;
-
-    margin-bottom:
-        4px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    gap:
-        8px;
-
-}
-
-
-.section-title::before {
-
-    content:
-        "|";
-
-    color:
-        var(--accent-color);
-
-    font-weight:
-        bold;
-
-}
-
-
-.section-subtitle {
-
-    font-size:
-        0.8rem;
-
-    color:
-        #888;
-
-    margin-bottom:
-        16px;
-
-}
-
-
-/* =========================================================
-   Link Cards
-   ========================================================= */
-
-.grid-container {
-
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap:
-        12px;
-
-}
-
-
-.grid-item {
-
-    background-color:
-        #2d2933;
-
-    border:
-        1px solid var(--card-border);
-
-    border-radius:
-        calc(
-            var(--radius-card) / 2
-        );
-
-    overflow:
-        hidden;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    transition:
-        transform 0.2s,
-        border-color 0.2s,
-        border-radius 0.3s;
-
-    background-size:
-        cover;
-
-    background-position:
-        center;
-
-    position:
-        relative;
-
-    text-decoration:
-        none;
-
-}
-
-
-.grid-item:hover {
-
-    transform:
-        translateY(-2px);
-
-    border-color:
-        var(--accent-color);
-
-}
-
-
-/*
-    カード画像を持つ要素。
-
-    ここには backdrop-filter を
-    絶対に追加しない。
-*/
-
-.item-content {
-
-    padding:
-        40px 16px;
-
-    text-align:
-        center;
-
-    font-size:
-        0.9rem;
-
-    color:
-        #ffffff;
-
-    flex-grow:
-        1;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    gap:
-        8px;
-
-    background-color:
-        rgba(0, 0, 0, 0.55);
-
-    font-weight:
-        bold;
-
-    text-shadow:
-        0 1px 4px rgba(
-            0,
-            0,
-            0,
-            0.8
-        );
-
-}
-
-
-.item-link {
+    background:
+        rgba(255, 255, 255, 0.055) !important;
 
     border-top:
-        1px solid var(--card-border);
-
-    padding:
-        10px 16px;
-
-    font-size:
-        0.8rem;
-
-    background-color:
-        rgba(0, 0, 0, 0.40);
-
-    text-align:
-        center;
-
-    color:
-        var(--accent-color);
-
-    z-index:
-        1;
-
+        1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
 
-.grid-item:hover
-.item-link {
+/* ---------------------------------------------------------
+   Avatar
+   --------------------------------------------------------- */
 
-    color:
-        var(--accent-hover);
+body.style-liquidglass .avatar-container {
 
-    background-color:
-        rgba(0, 0, 0, 0.60);
-
-}
-
-
-/* =========================================================
-   Gallery Images
-   ========================================================= */
-
-#gallery-twitter {
-
-    background-image:
-        url(
-            'https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'
-        );
-
-}
-
-
-#gallery-vrchat {
-
-    background-image:
-        url(
-            'https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'
-        );
-
-}
-
-
-#gallery-booth {
-
-    background-image:
-        url(
-            'https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'
-        );
-
-}
-
-
-#gallery-shader {
-
-    background-image:
-        url(
-            'https://i.ibb.co/BHDtqs5P/image.png'
-        );
-
-}
-
-
-/* =========================================================
-   Fluent Design
-   ========================================================= */
-
-body.style-fluent
-.floating-status-bar
-.status-capsule,
-
-body.style-fluent
-.floating-status-bar
-.icon-btn,
-
-body.style-fluent
-.floating-status-bar
-.time-capsule {
-
-    border-radius:
-        8px;
-
-}
-
-
-/* =========================================================
-   Liquid Glass Floating Bar
-   ========================================================= */
-
-body.style-liquidglass
-.floating-status-bar {
-
-    background:
-        rgba(255, 255, 255, 0.035);
-
-    border-color:
-        rgba(255, 255, 255, 0.14);
+    border:
+        1px solid rgba(255, 255, 255, 0.55) !important;
 
     box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.14),
-        inset 0 1px 0 rgba(255, 255, 255, 0.10);
-
+        0 1px 0 rgba(255, 255, 255, 0.30) inset,
+        0 0 0 1px rgba(255, 255, 255, 0.06),
+        0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
 
-body.style-liquidglass
-.status-capsule {
+/* ---------------------------------------------------------
+   Scroll Indicator
+   --------------------------------------------------------- */
+
+body.style-liquidglass .scroll-indicator {
 
     background:
-        rgba(255, 255, 255, 0.035);
+        rgba(255, 255, 255, 0.075) !important;
 
-    border-color:
-        rgba(255, 255, 255, 0.12);
+    border:
+        1px solid rgba(255, 255, 255, 0.38) !important;
 
+    backdrop-filter:
+        blur(5px)
+        saturate(150%);
+
+    -webkit-backdrop-filter:
+        blur(5px)
+        saturate(150%);
 }
 
 
-body.style-liquidglass
-.status-capsule:hover {
+/* ---------------------------------------------------------
+   Calendar
+   --------------------------------------------------------- */
+
+body.style-liquidglass .calendar-popup {
 
     background:
-        rgba(255, 255, 255, 0.08);
+        rgba(255, 255, 255, 0.085) !important;
 
-    border-color:
-        rgba(255, 255, 255, 0.22);
-
+    border:
+        1px solid rgba(255, 255, 255, 0.38) !important;
 }
 
 
-/* =========================================================
+/* ---------------------------------------------------------
+   Toast
+   --------------------------------------------------------- */
+
+body.style-liquidglass .toast-notification {
+
+    background:
+        rgba(255, 255, 255, 0.09) !important;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.40) !important;
+}
+
+
+/* ---------------------------------------------------------
+   古いLiquidGlass用疑似要素をリセット
+   ---------------------------------------------------------
+
+   以前の強い白い光が残らないようにする。
+ */
+
+body.style-liquidglass .floating-status-bar::before,
+body.style-liquidglass .content-screen::before,
+body.style-liquidglass .content-screen::after,
+body.style-liquidglass .status-capsule::before,
+body.style-liquidglass .calendar-popup::before,
+body.style-liquidglass .toast-notification::before {
+
+    pointer-events: none;
+}
+
+
+/* Content screenの前面にあった強い光を無効化 */
+
+body.style-liquidglass .content-screen::after {
+
+    content: none !important;
+}
+
+
+/* ---------------------------------------------------------
+   Fluent Design
+   ---------------------------------------------------------
+
+   Windows 11風の角丸をフローティングバーの各ボタンにも
+   適用する。
+ */
+
+body.style-fluent .floating-status-bar .status-capsule,
+body.style-fluent .floating-status-bar .icon-btn,
+body.style-fluent .floating-status-bar .time-capsule {
+
+    border-radius: 8px;
+}
+
+
+/* Fluentのカード境界線も確実に表示 */
+
+body.style-fluent .grid-item,
+body.style-fluent .profile-card,
+body.style-fluent .gallery-section {
+
+    border:
+        1px solid var(--card-border) !important;
+}
+
+
+/* ---------------------------------------------------------
+   全テーマ共通：カード境界線を保護
+   ---------------------------------------------------------
+
+   LiquidGlass以外のテーマでも、後段のスタイルによって
+   borderが消えないようにする。
+ */
+
+body.style-default .grid-item,
+body.style-material .grid-item,
+body.style-vrchat .grid-item,
+body.style-fluent .grid-item,
+body.style-unity .grid-item {
+
+    border:
+        1px solid var(--card-border) !important;
+}
+
+
+/* カード内のリンク区切り線も保護 */
+
+body.style-default .item-link,
+body.style-material .item-link,
+body.style-vrchat .item-link,
+body.style-fluent .item-link,
+body.style-unity .item-link {
+
+    border-top:
+        1px solid var(--card-border) !important;
+}
+
+
+/* ---------------------------------------------------------
    Reduced Motion
-   ========================================================= */
+   --------------------------------------------------------- */
 
-@media (
-    prefers-reduced-motion: reduce
-) {
+@media (prefers-reduced-motion: reduce) {
 
-    body.style-liquidglass
-    .liquid-glass-edge {
-
-        backdrop-filter:
-            none;
-
-        -webkit-backdrop-filter:
-            none;
-
+    body.style-liquidglass .grid-item::before {
+        transition: none;
     }
 
+    body.style-liquidglass .content-screen {
+        filter: none !important;
+    }
 }
-
 
 /* =========================================================
    Responsive
