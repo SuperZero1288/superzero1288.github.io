@@ -8,17 +8,18 @@
 </head>
 <body>
 
-    <!-- Android風 ステータスバー -->
-    <div class="android-status-bar" id="statusBar">
-        <div class="status-left">
+    <!-- 浮遊型 フローティングステータスバー -->
+    <div class="floating-status-bar" id="statusBar">
+        <div class="status-chip">
+            <span class="status-icon">📱</span>
             <span class="status-time" id="statusTime">12:00</span>
-            <span class="status-icon">💬</span>
-            <span class="status-icon">🎮</span>
         </div>
-        <div class="status-right">
-            <span class="status-icon">📶</span>
-            <span class="status-icon">🛜</span>
-            <span class="status-icon">🔋 85%</span>
+        <div class="status-divider"></div>
+        <div class="status-actions">
+            <!-- 将来拡張できるテーマ切り替えボタン -->
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="テーマ切り替え">
+                <span id="themeIcon">🌙</span>
+            </button>
         </div>
     </div>
 
@@ -105,13 +106,15 @@
         </div>
     </div>
 
-    <!-- ステータスバー制御スクリプト -->
+    <!-- ステータスバー＆テーマ切り替え制御スクリプト -->
     <script>
         const statusBar = document.getElementById('statusBar');
         const statusTime = document.getElementById('statusTime');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
         let hideTimeout;
 
-        // 時計のリアルタイム更新機能だぞ？
+        // リアルタイム時計
         function updateTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -121,7 +124,7 @@
         updateTime();
         setInterval(updateTime, 1000);
 
-        // バーを表示して5秒後に消す制御だぞ？
+        // 5秒後の自動隠蔽制御
         function showStatusBar() {
             statusBar.classList.remove('hidden');
             clearTimeout(hideTimeout);
@@ -130,17 +133,32 @@
             }, 5000);
         }
 
-        // 初回表示＆タイマー開始だぞ？
         showStatusBar();
 
-        // スクロール時に再表示
+        // スクロール時に表示
         window.addEventListener('scroll', showStatusBar, { passive: true });
 
-        // 画面上部（50px以内）にマウスが近づいた時に再表示
+        // 画面上部70px以内にマウスが入った時に表示
         window.addEventListener('mousemove', (e) => {
-            if (e.clientY <= 50) {
+            if (e.clientY <= 70) {
                 showStatusBar();
             }
+        });
+
+        // バー自体をホバーしている間はタイマー停止
+        statusBar.addEventListener('mouseenter', () => {
+            clearTimeout(hideTimeout);
+            statusBar.classList.remove('hidden');
+        });
+        statusBar.addEventListener('mouseleave', () => {
+            showStatusBar();
+        });
+
+        // テーマ切り替え機能（ダーク / ライト）
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeIcon.textContent = isLight ? '☀️' : '🌙';
         });
     </script>
 </body>
