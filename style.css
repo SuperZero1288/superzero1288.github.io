@@ -47,6 +47,17 @@ body.style-liquidglass:not(.light-theme) {
     --ui-bg: rgba(20, 20, 24, 0.18);
     --card-bg: rgba(20, 20, 24, 0.12);
 }
+/* LiquidGlass ダークテーマ専用のUI上書き */
+body.style-liquidglass:not(.light-theme) .status-capsule {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+body.style-liquidglass:not(.light-theme) .time-capsule:hover {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+body.style-liquidglass:not(.light-theme) .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.10);
 /* 4. VRChat ゲーム内 UI 風 */
 body.style-vrchat {
     --accent-color: #42a8b8;
