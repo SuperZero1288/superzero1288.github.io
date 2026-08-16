@@ -6,1309 +6,362 @@
     <title>ぜろくんでんせつ</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body class="style-default">
-
-    <!-- =====================================================
-         浮遊型フローティングステータスバー
-         ===================================================== -->
-
+    <!-- 浮遊型 フローティングステータスバー -->
     <div class="floating-status-bar" id="statusBar">
-
-        <!-- 左端：星アイコン -->
-        <button
-            class="status-capsule icon-btn"
-            id="starBtn"
-            title="お気に入り"
-        >
-            <span class="svg-icon">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path>
-                </svg>
-            </span>
+        <!-- 左端配置：星アイコンボタン -->
+        <button class="status-capsule icon-btn" id="starBtn" title="お気に入り">
+            <span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path></svg></span>
         </button>
 
-
-        <!-- 中央：時計 -->
-        <div
-            class="status-capsule time-capsule"
-            id="timeCapsule"
-            title="クリックで12h/24h切り替え（連打で...？）"
-        >
-
-            <span
-                class="status-time"
-                id="statusTime"
-            >
-                12:00
-            </span>
-
-
-            <!-- カレンダー -->
-            <div
-                class="calendar-popup"
-                id="calendarPopup"
-            >
-
-                <div
-                    class="calendar-header"
-                    id="calendarHeader"
-                >
-                    2026.08
-                </div>
-
-
+        <!-- 絶対中央配置：時計カプセル -->
+        <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
+            <span class="status-time" id="statusTime">12:00</span>
+            <!-- カーソルホバー時に表示されるリアルカレンダーポップアップ -->
+            <div class="calendar-popup" id="calendarPopup">
+                <div class="calendar-header" id="calendarHeader">2026.08</div>
                 <div class="calendar-weekdays">
-
-                    <span class="sun">
-                        日
-                    </span>
-
-                    <span>
-                        月
-                    </span>
-
-                    <span>
-                        火
-                    </span>
-
-                    <span>
-                        水
-                    </span>
-
-                    <span>
-                        木
-                    </span>
-
-                    <span>
-                        金
-                    </span>
-
-                    <span class="sat">
-                        土
-                    </span>
-
+                    <span class="sun">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span class="sat">土</span>
                 </div>
-
-
-                <div
-                    class="calendar-days-grid"
-                    id="calendarDaysGrid"
-                >
-                    <!-- JSで生成 -->
+                <div class="calendar-days-grid" id="calendarDaysGrid">
+                    <!-- JSで動的に日付セルが生成されます -->
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- 右側 -->
+        <!-- 右端エリア：UIデザインテーマ切り替えボタン ＋ ダーク/ライト切替ボタン -->
         <div class="status-right-group">
-
-            <!-- UIテーマ変更 -->
-            <button
-                class="status-capsule icon-btn"
-                id="uiStyleToggleBtn"
-                title="UIデザイン切り替え"
-            >
-
-                <span class="svg-icon">
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                    >
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                    </svg>
-
-                </span>
-
+            <!-- UIデザイン切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
+                <span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></span>
             </button>
 
-
-            <!-- ダーク / ライト -->
-            <button
-                class="status-capsule icon-btn"
-                id="themeToggleBtn"
-                title="ダーク/ライト切り替え"
-            >
-
-                <span
-                    class="svg-icon"
-                    id="themeIcon"
-                >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                    >
-                        <path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path>
-                    </svg>
-
-                </span>
-
+            <!-- ダーク/ライト切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え">
+                <span class="svg-icon" id="themeIcon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg></span>
             </button>
-
         </div>
-
     </div>
 
+    <!-- コピー完了通知トースト -->
+    <div class="toast-notification" id="toast">コピーしました！</div>
 
-    <!-- =====================================================
-         コピー通知
-         ===================================================== -->
+    <!-- バー格納時に出現する極細インジケーター -->
+    <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
-    <div
-        class="toast-notification"
-        id="toast"
-    >
-        コピーしました！
+    <!-- 背景固定 全画面スライドショー -->
+    <div class="hero-slider" id="heroSlider">
+        <div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div><div class="slides"></div>
+        <!-- 動的ぼかし用レイヤー -->
+        <div class="blur-overlay" id="blurOverlay"></div>
     </div>
 
-
-    <!-- =====================================================
-         ステータスバー格納インジケーター
-         ===================================================== -->
-
-    <div
-        class="status-bar-indicator"
-        id="statusBarIndicator"
-    ></div>
-
-
-    <!-- =====================================================
-         背景固定 全画面スライドショー
-         ===================================================== -->
-
-    <div
-        class="hero-slider"
-        id="heroSlider"
-    >
-
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-        <div class="slides"></div>
-
-
-        <!-- スクロール時のぼかし・暗転 -->
-        <div
-            class="blur-overlay"
-            id="blurOverlay"
-        ></div>
-
-    </div>
-
-
-    <!-- =====================================================
-         全画面スクロールコンテナ
-         ===================================================== -->
-
-    <div
-        class="snap-container"
-        id="snapContainer"
-    >
-
-
-        <!-- =================================================
-             ファーストビュー
-             ================================================= -->
-
-        <section
-            class="snap-section hero-spacer"
-            id="hero"
-        >
-
-            <div
-                class="scroll-indicator"
-                id="scrollIndicator"
-            >
-
-                <span class="scroll-text">
-                    SCROLL DOWN
-                </span>
-
-                <span class="scroll-arrow">
-                    ▼
-                </span>
-
+    <!-- 全画面スライドコンテナ (Scroll Snap) -->
+    <div class="snap-container" id="snapContainer">
+        <!-- Section 1: ファーストビュー -->
+        <section class="snap-section hero-spacer" id="hero">
+            <div class="scroll-indicator" id="scrollIndicator">
+                <span class="scroll-text">SCROLL DOWN</span><span class="scroll-arrow">▼</span>
             </div>
-
         </section>
 
-
-        <!-- =================================================
-             メインコンテンツ
-             ================================================= -->
-
-        <section
-            class="snap-section content-section-wrapper"
-            id="main-content"
-        >
-
+        <!-- Section 2: 中央配置のフローティングウィンドウ -->
+        <section class="snap-section content-section-wrapper" id="main-content">
             <div class="content-screen">
-
-
-                <!--
-                    =================================================
-                    Liquid Glass 背景レイヤー
-
-                    ここには文字・画像・カードを入れない。
-
-                    このレイヤーは背景スライドショーを
-                    ガラス越しに見せるためだけに使用する。
-                    =================================================
-                -->
-
-                <div
-                    class="liquid-glass-background"
-                    aria-hidden="true"
-                ></div>
-
-
-                <!--
-                    =================================================
-                    Liquid Glass 屈折レイヤー
-
-                    UIより下。
-
-                    中央は透明。
-                    外周だけ背景を強く屈折させる。
-                    =================================================
-                -->
-
-                <div
-                    class="liquid-glass-edge"
-                    aria-hidden="true"
-                ></div>
-
-
-                <!--
-                    =================================================
-                    UI本体
-
-                    このレイヤーには
-                    SVG filter を絶対に適用しない。
-                    =================================================
-                -->
-
                 <div class="content-wrapper">
-
-
-                    <!-- ヘッダー -->
+                    <!-- ナビゲーションヘッダー -->
                     <header class="header-nav">
-
-                        <div class="site-title">
-                            portfolio / ぜろくんでんせつ
-                        </div>
-
+                        <div class="site-title">portfolio / ぜろくんでんせつ</div>
                     </header>
-
 
                     <!-- メインコンテンツ -->
                     <main class="container">
-
                         <div class="main-content-layout">
-
-
-                            <!-- =================================================
-                                 プロフィール
-                                 ================================================= -->
-
+                            <!-- 左側：プロフィール情報 -->
                             <section class="profile-card">
-
                                 <div class="avatar-container">
-
-                                    <img
-                                        src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png"
-                                        alt="アイコン"
-                                    >
-
+                                    <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
                                 </div>
-
-
-                                <h1 class="profile-name">
-                                    ぜろくんでんせつ
-                                </h1>
-
-
-                                <p class="profile-id">
-                                    ZErrrrrO
-                                </p>
-
-
-                                <div class="profile-desc">
-                                    趣味でUnityをしている一般高校生！いろんなことをしたいです
-                                </div>
-
+                                <h1 class="profile-name">ぜろくんでんせつ</h1>
+                                <p class="profile-id">ZErrrrrO</p>
+                                <div class="profile-desc">趣味でUnityをしている一般高校生！いろんなことをしたいです</div>
                             </section>
 
-
-                            <!-- =================================================
-                                 リンク一覧
-                                 ================================================= -->
-
+                            <!-- 右側：リンク一覧 -->
                             <section class="gallery-section">
-
-
-                                <h2 class="section-title">
-                                    リンクたち
-                                </h2>
-
-
-                                <p class="section-subtitle">
-                                    リンク先は画像をクリック！
-                                </p>
-
-
+                                <h2 class="section-title">リンクたち</h2>
+                                <p class="section-subtitle">リンク先は画像をクリック！</p>
                                 <div class="grid-container">
-
-
-                                    <!-- Twitter -->
-                                    <a
-                                        href="https://x.com"
-                                        class="grid-item"
-                                        id="gallery-twitter"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-
-                                        <div class="item-content">
-                                            𝕏 Twitter
-                                        </div>
-
-                                        <div class="item-link">
-                                            にちじょ～
-                                        </div>
-
+                                    <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+                                        <div class="item-content">𝕏 Twitter</div><div class="item-link">にちじょ～</div>
                                     </a>
-
-
-                                    <!-- VRChat -->
-                                    <a
-                                        href="https://vrchat.com"
-                                        class="grid-item"
-                                        id="gallery-vrchat"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-
-                                        <div class="item-content">
-                                            VRChat
-                                        </div>
-
-                                        <div class="item-link">
-                                            フレンド申請お気軽に！
-                                        </div>
-
+                                    <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+                                        <div class="item-content">VRChat</div><div class="item-link">フレンド申請お気軽に！</div>
                                     </a>
-
-
-                                    <!-- BOOTH -->
-                                    <a
-                                        href="https://booth.pm"
-                                        class="grid-item"
-                                        id="gallery-booth"
-                                        target="_blank"
-                                        rel="noopener"
-                                    >
-
-                                        <div class="item-content">
-                                            🛍️ BOOTH
-                                        </div>
-
-                                        <div class="item-link">
-                                            Boothを見る
-                                        </div>
-
+                                    <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+                                        <div class="item-content">🛍️ BOOTH</div><div class="item-link">Boothを見る</div>
                                     </a>
-
-
-                                    <!-- Shader -->
-                                    <a
-                                        href="#"
-                                        class="grid-item"
-                                        id="gallery-shader"
-                                    >
-
-                                        <div class="item-content">
-                                            ✨ 工事中～
-                                        </div>
-
-                                        <div class="item-link">
-                                            近日公開...！
-                                        </div>
-
+                                    <a href="#" class="grid-item" id="gallery-shader">
+                                        <div class="item-content">✨ 工事中～</div><div class="item-link">近日公開...！</div>
                                     </a>
-
-
                                 </div>
-
                             </section>
-
                         </div>
-
                     </main>
-
                 </div>
-
             </div>
-
         </section>
-
     </div>
 
-
-    <!-- =====================================================
-         SVGアイコン
-         ===================================================== -->
-
+    <!-- SVGアイコンの定義データ -->
     <script>
-
-        const SVG_SUN = `
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-            >
-                <path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"/>
-            </svg>
-        `;
-
-
-        const SVG_MOON = `
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-            >
-                <path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"/>
-            </svg>
-        `;
-
+        const SVG_SUN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"></path></svg>`;
+        const SVG_MOON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>`;
     </script>
 
-
-    <!-- =====================================================
-         機能制御
-         ===================================================== -->
-
+    <!-- ステータスバー＆機能制御スクリプト -->
     <script>
-
-        const statusBar =
-            document.getElementById('statusBar');
-
-        const statusBarIndicator =
-            document.getElementById('statusBarIndicator');
-
-        const statusTime =
-            document.getElementById('statusTime');
-
-        const timeCapsule =
-            document.getElementById('timeCapsule');
-
-        const themeToggleBtn =
-            document.getElementById('themeToggleBtn');
-
-        const uiStyleToggleBtn =
-            document.getElementById('uiStyleToggleBtn');
-
-        const themeIcon =
-            document.getElementById('themeIcon');
-
-        const calendarPopup =
-            document.getElementById('calendarPopup');
-
-        const calendarHeader =
-            document.getElementById('calendarHeader');
-
-        const calendarDaysGrid =
-            document.getElementById('calendarDaysGrid');
-
-        const blurOverlay =
-            document.getElementById('blurOverlay');
-
-        const toast =
-            document.getElementById('toast');
-
-        const snapContainer =
-            document.getElementById('snapContainer');
-
-        const scrollIndicator =
-            document.getElementById('scrollIndicator');
-
+        const statusBar = document.getElementById('statusBar');
+        const statusBarIndicator = document.getElementById('statusBarIndicator');
+        const statusTime = document.getElementById('statusTime');
+        const timeCapsule = document.getElementById('timeCapsule');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const uiStyleToggleBtn = document.getElementById('uiStyleToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const calendarPopup = document.getElementById('calendarPopup');
+        const calendarHeader = document.getElementById('calendarHeader');
+        const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+        const blurOverlay = document.getElementById('blurOverlay');
+        const toast = document.getElementById('toast');
+        const snapContainer = document.getElementById('snapContainer');
+        const scrollIndicator = document.getElementById('scrollIndicator');
 
         let hideTimeout;
         let indicatorTimeout;
         let toastTimeout;
-
         let is24Hour = true;
         let lastRenderedMonth = -1;
         let isHoveringStatusBar = false;
 
+        // 連打・木曜日判定モードの管理変数
         let clickCount = 0;
         let clickTimer = null;
         let isThursdayMode = false;
 
-
-        /* =====================================================
-           UIテーマ
-
-           Steamは完全に削除。
-           ===================================================== */
-
+        // UIデザインテーマ一覧（Steam削除）
         const uiStyles = [
-
-            {
-                id: 'style-default',
-                name: 'Default'
-            },
-
-            {
-                id: 'style-material',
-                name: 'Google Material Design'
-            },
-
-            {
-                id: 'style-liquidglass',
-                name: 'Apple LiquidGlass'
-            },
-
-            {
-                id: 'style-vrchat',
-                name: 'VRChat UI'
-            },
-
-            {
-                id: 'style-fluent',
-                name: 'Microsoft Fluent Design'
-            },
-
-            {
-                id: 'style-unity',
-                name: 'Unity Engine'
-            }
-
+            { id: 'style-default', name: 'Default' },
+            { id: 'style-material', name: 'Google Material Design' },
+            { id: 'style-liquidglass', name: 'Apple LiquidGlass' },
+            { id: 'style-vrchat', name: 'VRChat UI' },
+            { id: 'style-fluent', name: 'Microsoft Fluent Design' },
+            { id: 'style-unity', name: 'Unity Engine' }
         ];
-
-
         let currentStyleIndex = 0;
 
-
-        /* =====================================================
-           Toast
-           ===================================================== */
-
         function showToast(text) {
-
-            toast.textContent =
-                text;
-
-            toast.classList.add(
-                'show'
-            );
-
-            clearTimeout(
-                toastTimeout
-            );
-
-            toastTimeout =
-                setTimeout(() => {
-
-                    toast.classList.remove(
-                        'show'
-                    );
-
-                }, 2000);
-
+            toast.textContent = text;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
         }
 
-
-        /* =====================================================
-           カレンダー
-           ===================================================== */
-
-        calendarPopup.addEventListener(
-            'click',
-            (e) => {
-
-                e.stopPropagation();
-
-            }
-        );
-
+        calendarPopup.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         function updateTime() {
-
-            const now =
-                new Date();
-
+            const now = new Date();
 
             if (isThursdayMode) {
-
-                const isThursday =
-                    now.getDay() === 4;
-
-                statusTime.textContent =
-                    isThursday
-                        ? 'はい'
-                        : 'いいえ';
-
+                const isThursday = now.getDay() === 4;
+                statusTime.textContent = isThursday ? 'はい' : 'いいえ';
                 return;
-
             }
 
-
-            let hours =
-                now.getHours();
-
-            const minutes =
-                String(
-                    now.getMinutes()
-                ).padStart(2, '0');
-
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
 
             if (is24Hour) {
-
-                const hStr =
-                    String(hours)
-                        .padStart(2, '0');
-
-                statusTime.textContent =
-                    `${hStr}:${minutes}`;
-
+                const hStr = String(hours).padStart(2, '0');
+                statusTime.textContent = `${hStr}:${minutes}`;
             } else {
-
-                const ampm =
-                    hours >= 12
-                        ? 'PM'
-                        : 'AM';
-
-                hours =
-                    hours % 12;
-
-                hours =
-                    hours
-                        ? hours
-                        : 12;
-
-                statusTime.textContent =
-                    `${ampm} ${hours}:${minutes}`;
-
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                statusTime.textContent = `${ampm} ${hours}:${minutes}`;
             }
 
-
-            const currentMonth =
-                now.getMonth();
-
-
-            if (
-                lastRenderedMonth !==
-                currentMonth
-            ) {
-
-                renderCalendar(
-                    now
-                );
-
-                lastRenderedMonth =
-                    currentMonth;
-
+            const currentMonth = now.getMonth();
+            if (lastRenderedMonth !== currentMonth) {
+                renderCalendar(now);
+                lastRenderedMonth = currentMonth;
             }
-
         }
-
 
         function renderCalendar(now) {
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+            const monthStr = String(month + 1).padStart(2, '0');
 
-            const year =
-                now.getFullYear();
+            calendarHeader.textContent = `${year}.${monthStr}`;
+            calendarDaysGrid.innerHTML = '';
 
-            const month =
-                now.getMonth();
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
 
-            const today =
-                now.getDate();
-
-
-            const monthStr =
-                String(month + 1)
-                    .padStart(2, '0');
-
-
-            calendarHeader.textContent =
-                `${year}.${monthStr}`;
-
-
-            calendarDaysGrid.innerHTML =
-                '';
-
-
-            const firstDayIndex =
-                new Date(
-                    year,
-                    month,
-                    1
-                ).getDay();
-
-
-            const totalDays =
-                new Date(
-                    year,
-                    month + 1,
-                    0
-                ).getDate();
-
-
-            for (
-                let i = 0;
-                i < firstDayIndex;
-                i++
-            ) {
-
-                const emptyCell =
-                    document.createElement(
-                        'div'
-                    );
-
-                emptyCell.className =
-                    'calendar-day-cell empty';
-
-                calendarDaysGrid.appendChild(
-                    emptyCell
-                );
-
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day-cell empty';
+                calendarDaysGrid.appendChild(emptyCell);
             }
 
+            for (let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day-cell';
 
-            for (
-                let day = 1;
-                day <= totalDays;
-                day++
-            ) {
+                const cellDate = new Date(year, month, day);
+                const dayOfWeek = cellDate.getDay();
 
-                const dayCell =
-                    document.createElement(
-                        'div'
-                    );
+                if (dayOfWeek === 0) dayCell.classList.add('sun');
+                if (dayOfWeek === 6) dayCell.classList.add('sat');
+                if (day === today) dayCell.classList.add('is-today');
 
-                dayCell.className =
-                    'calendar-day-cell';
+                dayCell.textContent = day;
 
+                dayCell.addEventListener('click', (e) => {
+                    const dStr = String(day).padStart(2, '0');
+                    const formattedDate = `${year}/${monthStr}/${dStr}`;
 
-                const cellDate =
-                    new Date(
-                        year,
-                        month,
-                        day
-                    );
+                    navigator.clipboard.writeText(formattedDate).then(() => {
+                        showToast(`コピーしました: ${formattedDate}`);
+                    }).catch(err => {
+                        console.error('コピーに失敗しました', err);
+                    });
+                });
 
-                const dayOfWeek =
-                    cellDate.getDay();
-
-
-                if (dayOfWeek === 0) {
-
-                    dayCell.classList.add(
-                        'sun'
-                    );
-
-                }
-
-
-                if (dayOfWeek === 6) {
-
-                    dayCell.classList.add(
-                        'sat'
-                    );
-
-                }
-
-
-                if (day === today) {
-
-                    dayCell.classList.add(
-                        'is-today'
-                    );
-
-                }
-
-
-                dayCell.textContent =
-                    day;
-
-
-                dayCell.addEventListener(
-                    'click',
-                    () => {
-
-                        const dStr =
-                            String(day)
-                                .padStart(
-                                    2,
-                                    '0'
-                                );
-
-
-                        const formattedDate =
-                            `${year}/${monthStr}/${dStr}`;
-
-
-                        navigator.clipboard
-                            .writeText(
-                                formattedDate
-                            )
-                            .then(() => {
-
-                                showToast(
-                                    `コピーしました: ${formattedDate}`
-                                );
-
-                            })
-                            .catch(err => {
-
-                                console.error(
-                                    'コピーに失敗しました',
-                                    err
-                                );
-
-                            });
-
-                    }
-                );
-
-
-                calendarDaysGrid.appendChild(
-                    dayCell
-                );
-
+                calendarDaysGrid.appendChild(dayCell);
             }
-
         }
 
+        // 時計カプセルクリック処理
+        timeCapsule.addEventListener('click', (e) => {
+            clickCount++;
 
-        /* =====================================================
-           時計クリック
-           ===================================================== */
-
-        timeCapsule.addEventListener(
-            'click',
-            () => {
-
-                clickCount++;
-
-
-                if (clickCount >= 5) {
-
-                    if (
-                        Math.random() < 0.3
-                    ) {
-
-                        isThursdayMode =
-                            !isThursdayMode;
-
-
-                        showToast(
-                            isThursdayMode
-                                ? 'Is it Thursday...?'
-                                : '時刻表示に戻りました'
-                        );
-
-                    } else {
-
-                        is24Hour =
-                            !is24Hour;
-
-                    }
-
-
-                    clickCount =
-                        0;
-
-                    clearTimeout(
-                        clickTimer
-                    );
-
-                    updateTime();
-
-                    return;
-
+            if (clickCount >= 5) {
+                if (Math.random() < 0.3) {
+                    isThursdayMode = !isThursdayMode;
+                    showToast(isThursdayMode ? 'Is it Thursday...?' : '時刻表示に戻りました');
+                } else {
+                    is24Hour = !is24Hour;
                 }
 
-
-                clearTimeout(
-                    clickTimer
-                );
-
-
-                clickTimer =
-                    setTimeout(
-                        () => {
-
-                            clickCount =
-                                0;
-
-                        },
-                        800
-                    );
-
-
-                if (!isThursdayMode) {
-
-                    is24Hour =
-                        !is24Hour;
-
-                }
-
-
+                clickCount = 0;
+                clearTimeout(clickTimer);
                 updateTime();
-
+                return;
             }
-        );
 
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 800);
+
+            if (!isThursdayMode) {
+                is24Hour = !is24Hour;
+            }
+
+            updateTime();
+        });
 
         updateTime();
+        setInterval(updateTime, 1000);
 
-
-        setInterval(
-            updateTime,
-            1000
-        );
-
-
-        /* =====================================================
-           ステータスバー表示 / 非表示
-           ===================================================== */
-
-        function hideStatusBarWithDelay(
-            delayMs
-        ) {
-
-            clearTimeout(
-                hideTimeout
-            );
-
-
-            hideTimeout =
-                setTimeout(
-                    () => {
-
-                        statusBar.classList.add(
-                            'hidden'
-                        );
-
-
-                        indicatorTimeout =
-                            setTimeout(
-                                () => {
-
-                                    if (
-                                        statusBar.classList.contains(
-                                            'hidden'
-                                        )
-                                    ) {
-
-                                        statusBarIndicator.classList.add(
-                                            'visible'
-                                        );
-
-                                    }
-
-                                },
-                                350
-                            );
-
-                    },
-                    delayMs
-                );
-
+        /* ――― ステータスバー表示・非表示制御ロジック ――― */
+        function hideStatusBarWithDelay(delayMs) {
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                statusBar.classList.add('hidden');
+                indicatorTimeout = setTimeout(() => {
+                    if (statusBar.classList.contains('hidden')) {
+                        statusBarIndicator.classList.add('visible');
+                    }
+                }, 350);
+            }, delayMs);
         }
-
 
         function checkStatusBarStateOnScroll() {
+            clearTimeout(hideTimeout);
 
-            clearTimeout(
-                hideTimeout
-            );
-
-
-            if (
-                snapContainer.scrollTop <
-                window.innerHeight * 0.5
-            ) {
-
-                statusBar.classList.remove(
-                    'hidden'
-                );
-
-                clearTimeout(
-                    indicatorTimeout
-                );
-
-                statusBarIndicator.classList.remove(
-                    'visible'
-                );
-
-            } else {
-
-                if (
-                    !isHoveringStatusBar
-                ) {
-
-                    hideStatusBarWithDelay(
-                        0
-                    );
-
-                }
-
+            if (snapContainer.scrollTop < window.innerHeight * 0.5) {
+                statusBar.classList.remove('hidden');
+                clearTimeout(indicatorTimeout);
+                statusBarIndicator.classList.remove('visible');
+            } else if (!isHoveringStatusBar) {
+                hideStatusBarWithDelay(0);
             }
-
         }
-
 
         checkStatusBarStateOnScroll();
 
+        snapContainer.addEventListener('scroll', () => {
+            const scrollTop = snapContainer.scrollTop;
+            const scrollRatio = Math.min(scrollTop / window.innerHeight, 1);
 
-        /* =====================================================
-           スクロール
-           ===================================================== */
+            // 背景ぼかしと暗転制御
+            const blurVal = scrollRatio * 16;
+            blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
 
-        snapContainer.addEventListener(
-            'scroll',
-            () => {
+            // スクロールダウン表記：100px以上スクロールしたら永久に非表示
+            if (scrollTop > 100) scrollIndicator.classList.add('hidden');
 
-                const scrollTop =
-                    snapContainer.scrollTop;
+            checkStatusBarStateOnScroll();
+        }, { passive: true });
 
-
-                const scrollRatio =
-                    Math.min(
-                        scrollTop /
-                        window.innerHeight,
-                        1
-                    );
-
-
-                /*
-                    従来のスクロールぼかし。
-
-                    これは背景スライドショー上に
-                    置かれているので、UIカードを直接
-                    歪ませるものではない。
-                */
-
-                const blurVal =
-                    scrollRatio * 16;
-
-
-                blurOverlay.style.backdropFilter =
-                    `blur(${blurVal}px)`;
-
-
-                blurOverlay.style.webkitBackdropFilter =
-                    `blur(${blurVal}px)`;
-
-
-                blurOverlay.style.backgroundColor =
-                    `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
-
-
-                if (
-                    scrollTop > 100
-                ) {
-
-                    scrollIndicator.classList.add(
-                        'hidden'
-                    );
-
+        window.addEventListener('mousemove', (e) => {
+            if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
+                if (e.clientY <= 70) {
+                    clearTimeout(indicatorTimeout);
+                    statusBarIndicator.classList.remove('visible');
+                    statusBar.classList.remove('hidden');
                 }
-
-
-                checkStatusBarStateOnScroll();
-
-            },
-            {
-                passive: true
             }
-        );
+        });
 
+        statusBar.addEventListener('mouseenter', () => {
+            isHoveringStatusBar = true;
+            clearTimeout(hideTimeout);
+            clearTimeout(indicatorTimeout);
+            statusBarIndicator.classList.remove('visible');
+            statusBar.classList.remove('hidden');
+        });
 
-        /* =====================================================
-           上端にマウスを持っていった時
-           ===================================================== */
+        statusBar.addEventListener('mouseleave', () => {
+            isHoveringStatusBar = false;
+            if (snapContainer.scrollTop >= window.innerHeight * 0.5) hideStatusBarWithDelay(600);
+        });
 
-        window.addEventListener(
-            'mousemove',
-            (e) => {
+        // ダーク/ライトテーマ切り替え
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeIcon.innerHTML = isLight ? SVG_SUN : SVG_MOON;
+        });
 
-                if (
-                    snapContainer.scrollTop >=
-                    window.innerHeight * 0.5
-                ) {
+        // UIデザインテーマ切り替え処理
+        uiStyleToggleBtn.addEventListener('click', () => {
+            document.body.classList.remove(uiStyles[currentStyleIndex].id);
+            currentStyleIndex = (currentStyleIndex + 1) % uiStyles.length;
 
-                    if (
-                        e.clientY <= 70
-                    ) {
-
-                        clearTimeout(
-                            indicatorTimeout
-                        );
-
-                        statusBarIndicator.classList.remove(
-                            'visible'
-                        );
-
-                        statusBar.classList.remove(
-                            'hidden'
-                        );
-
-                    }
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           ステータスバー hover
-           ===================================================== */
-
-        statusBar.addEventListener(
-            'mouseenter',
-            () => {
-
-                isHoveringStatusBar =
-                    true;
-
-                clearTimeout(
-                    hideTimeout
-                );
-
-                clearTimeout(
-                    indicatorTimeout
-                );
-
-                statusBarIndicator.classList.remove(
-                    'visible'
-                );
-
-                statusBar.classList.remove(
-                    'hidden'
-                );
-
-            }
-        );
-
-
-        statusBar.addEventListener(
-            'mouseleave',
-            () => {
-
-                isHoveringStatusBar =
-                    false;
-
-
-                if (
-                    snapContainer.scrollTop >=
-                    window.innerHeight * 0.5
-                ) {
-
-                    hideStatusBarWithDelay(
-                        600
-                    );
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           ダーク / ライト
-           ===================================================== */
-
-        themeToggleBtn.addEventListener(
-            'click',
-            () => {
-
-                document.body.classList.toggle(
-                    'light-theme'
-                );
-
-
-                const isLight =
-                    document.body.classList.contains(
-                        'light-theme'
-                    );
-
-
-                themeIcon.innerHTML =
-                    isLight
-                        ? SVG_SUN
-                        : SVG_MOON;
-
-            }
-        );
-
-
-        /* =====================================================
-           UIテーマ切り替え
-           ===================================================== */
-
-        uiStyleToggleBtn.addEventListener(
-            'click',
-            () => {
-
-                document.body.classList.remove(
-                    uiStyles[
-                        currentStyleIndex
-                    ].id
-                );
-
-
-                currentStyleIndex =
-                    (
-                        currentStyleIndex + 1
-                    ) %
-                    uiStyles.length;
-
-
-                const newStyle =
-                    uiStyles[
-                        currentStyleIndex
-                    ];
-
-
-                document.body.classList.add(
-                    newStyle.id
-                );
-
-
-                showToast(
-                    `Theme: ${newStyle.name}`
-                );
-
-            }
-        );
-
+            const newStyle = uiStyles[currentStyleIndex];
+            document.body.classList.add(newStyle.id);
+            showToast(`Theme: ${newStyle.name}`);
+        });
     </script>
-
 </body>
 </html>
