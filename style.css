@@ -10,7 +10,7 @@ body.style-default {
     --card-border: rgba(255, 255, 255, 0.1);
     --radius-main: 28px;
     --radius-card: 16px;
-    --radius-capsule: 9999px;
+    --radius-capsule: 9999px; /* ボタンとカプセルを完全なまん丸に設定 */
     --font-family: 'Helvetica Neue', Arial, sans-serif;
     --glow-effect: none;
 }
@@ -32,6 +32,7 @@ body.style-material {
 
 /* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
 body.style-liquidglass {
+    /* iOS 26 / Liquid Glass を意識したトークン */
     --accent-color: #007aff;
     --accent-hover: #0a84ff;
     --ui-bg: rgba(248, 248, 250, 0.38);
@@ -45,7 +46,7 @@ body.style-liquidglass {
     --glow-effect: 0 8px 30px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.55);
 }
 
-/* 4. VRChat ゲーム内 UI 風 */
+/* 4. VRChat ゲーム内 UI 風 (Steam風の落ち着いたダークブルー ＋ 角丸・ネオンSFパネル感) */
 body.style-vrchat {
     --accent-color: #66c0f4;
     --accent-hover: #1fcae6;
@@ -60,7 +61,7 @@ body.style-vrchat {
     --glow-effect: 0 0 15px rgba(102, 192, 244, 0.25);
 }
 
-/* 5. Microsoft Fluent Design */
+/* 5. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
 body.style-fluent {
     --accent-color: #60cdff;
     --accent-hover: #99ebff;
@@ -75,7 +76,7 @@ body.style-fluent {
     --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
 }
 
-/* 6. Unity ゲームエンジン風 */
+/* 6. Unity ゲームエンジン風 (Editor Dark Theme) */
 body.style-unity {
     --accent-color: #2c5d88;
     --accent-hover: #3a78b0;
@@ -107,7 +108,7 @@ html, body {
     transition: background-color 0.4s ease, color 0.4s ease, font-family 0.3s ease;
 }
 
-/* スライドコンテナ */
+/* スライド（ページ切り替え）コンテナ */
 .snap-container {
     width: 100vw;
     height: 100vh;
@@ -233,6 +234,7 @@ a:hover {
     z-index: 9999;
     opacity: 1;
     pointer-events: auto;
+    
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
 }
 
@@ -240,6 +242,7 @@ a:hover {
     transform: translateX(-50%) translateY(-100px);
     opacity: 0;
     pointer-events: none;
+    
     transition: transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.3s ease;
 }
 
@@ -259,6 +262,7 @@ a:hover {
     z-index: 9998;
     opacity: 0;
     pointer-events: none;
+    
     transition: opacity 0.25s ease;
 }
 
@@ -280,7 +284,7 @@ a:hover {
     height: 42px;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-capsule, var(--radius-card));
+    border-radius: var(--radius-capsule, var(--radius-card)); /* カプセル用に指定、フォールバックでcardを使用 */
     color: #ffffff;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -309,7 +313,6 @@ a:hover {
     font-size: 0.95rem;
 }
 
-/* カレンダーポップアップ */
 .calendar-popup {
     position: absolute;
     top: calc(100% + 22px);
@@ -463,181 +466,6 @@ a:hover {
     transform: scale(1.08);
 }
 
-
-/* =========================================================
-   テーマ選択ポップアップ
-   カレンダーと同じ「親要素:hover」で表示する方式
-   ========================================================= */
-
-.theme-capsule-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-/*
- * ボタンからポップアップまでの隙間を
- * マウスが移動できるようにする透明なブリッジ。
- */
-.theme-capsule-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 240px;
-    height: 25px;
-    pointer-events: auto;
-}
-
-/* ポップアップ本体 */
-.theme-popup {
-    position: absolute;
-    top: calc(100% + 22px);
-    right: 0;
-
-    width: 240px;
-    min-height: 58px;
-    padding: 7px 8px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.45),
-        var(--glow-effect);
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transform: translateY(-10px);
-
-    transition:
-        opacity 0.3s ease,
-        transform 0.3s ease,
-        visibility 0.3s ease;
-
-    z-index: 10000;
-}
-
-/*
- * ここがカレンダーと同じ仕組み。
- *
- * theme-capsule-wrapper の中にマウスがある限り
- * ポップアップを表示する。
- */
-.theme-capsule-wrapper:hover .theme-popup {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-
-/* 左右矢印 */
-.theme-popup-arrow {
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: 0;
-    border-radius: var(--radius-capsule, var(--radius-card));
-
-    background: transparent;
-    color: inherit;
-
-    font-family: inherit;
-    font-size: 2rem;
-    font-weight: 400;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.1s ease;
-}
-
-.theme-popup-arrow:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: var(--accent-color);
-}
-
-.theme-popup-arrow:active {
-    transform: scale(0.9);
-}
-
-/* 現在のテーマ名 */
-.theme-popup-name {
-    flex: 1;
-    min-width: 0;
-
-    text-align: center;
-
-    color: inherit;
-    font-size: 0.8rem;
-    font-weight: 700;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* ライトテーマ */
-body.light-theme .theme-popup {
-    background: rgba(235, 235, 242, 0.85);
-    border-color: rgba(0, 0, 0, 0.15);
-    color: #2e2e38;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .theme-popup-arrow:hover {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-/* LiquidGlass */
-body.style-liquidglass .theme-popup {
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.25),
-        rgba(255, 255, 255, 0.06)
-    );
-
-    border-color: rgba(255, 255, 255, 0.4);
-
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-
-    box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-body.style-liquidglass.light-theme .theme-popup {
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.34),
-        rgba(255, 255, 255, 0.10)
-    );
-
-    border-color: rgba(255, 255, 255, 0.62);
-}
-
-
 /* ――― 背景固定 全画面スライドショー ――― */
 .hero-slider {
     position: fixed;
@@ -650,6 +478,7 @@ body.style-liquidglass.light-theme .theme-popup {
     background-color: #000;
 }
 
+/* 背景ぼかしオーバーレイ */
 .blur-overlay {
     position: absolute;
     top: 0;
@@ -760,7 +589,7 @@ body.style-liquidglass.light-theme .theme-popup {
     }
 }
 
-/* Section 1 */
+/* Section 1: ファーストビューエリア */
 .hero-spacer {
     display: flex;
     justify-content: center;
@@ -785,6 +614,7 @@ body.style-liquidglass.light-theme .theme-popup {
     pointer-events: auto;
 }
 
+/* スクロール時の非表示用スタイル */
 .scroll-indicator.hidden {
     opacity: 0 !important;
     pointer-events: none !important;
@@ -830,19 +660,19 @@ body.style-liquidglass.light-theme .theme-popup {
     }
 }
 
-/* Section 2 */
+/* Section 2: 中央配置用の親ラッパー */
 .content-section-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* コンテンツウィンドウ */
+/* ――― 【画面中央固定】コンテンツウィンドウ ――― */
 .content-screen {
     width: 90vw;
     max-width: 1100px;
     padding: 40px;
-
+    
     background: var(--ui-bg);
     border: 1px solid var(--border-color);
     backdrop-filter: blur(12px);
@@ -1016,7 +846,7 @@ body.style-liquidglass.light-theme .theme-popup {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background-color: rgba(0, 0, 0, 0.55);
+    background-color: rgba(0, 0, 0, 0.55); 
     font-weight: bold;
     text-shadow: 0 1px 4px rgba(0,0,0,0.8);
 }
@@ -1054,9 +884,7 @@ body.style-liquidglass.light-theme .theme-popup {
     background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
 }
 
-
-/* ――― Liquid Glass ――― */
-
+/* ――― Liquid Glass: 背景を透過させ、機能レイヤーとして浮かせる ――― */
 body.style-liquidglass .floating-status-bar,
 body.style-liquidglass .calendar-popup,
 body.style-liquidglass .content-screen,
@@ -1065,15 +893,9 @@ body.style-liquidglass .gallery-section,
 body.style-liquidglass .site-title,
 body.style-liquidglass .scroll-indicator,
 body.style-liquidglass .status-capsule {
-    background: linear-gradient(
-        135deg,
-        rgba(255,255,255,0.38),
-        rgba(255,255,255,0.14)
-    );
-
+    background: linear-gradient(135deg, rgba(255,255,255,0.38), rgba(255,255,255,0.14));
     border-color: rgba(255,255,255,0.5);
     box-shadow: var(--glow-effect);
-
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     backdrop-filter: blur(24px) saturate(180%);
 }
@@ -1085,11 +907,7 @@ body.style-liquidglass .content-screen::before {
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0.22),
-        transparent 42%
-    );
+    background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 42%);
 }
 
 body.style-liquidglass .floating-status-bar {
@@ -1108,11 +926,7 @@ body.style-liquidglass .grid-item {
 }
 
 body.style-liquidglass .item-content {
-    background: linear-gradient(
-        180deg,
-        rgba(0,0,0,0.05),
-        rgba(0,0,0,0.28)
-    );
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.28));
 }
 
 body.style-liquidglass .item-link {
@@ -1129,217 +943,10 @@ body.style-liquidglass.light-theme {
 
 body.style-liquidglass .avatar-container {
     border-color: rgba(255,255,255,0.7);
-    box-shadow:
-        0 0 0 4px rgba(255,255,255,0.12),
-        0 8px 24px rgba(0,0,0,0.18);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.18);
 }
 
-
-/* ――― Liquid Glass optical enhancement ――― */
-
-body.style-liquidglass {
-    --lg-blur: 22px;
-    --lg-saturation: 185%;
-    --lg-brightness: 118%;
-}
-
-body.style-liquidglass .content-screen,
-body.style-liquidglass .status-capsule,
-body.style-liquidglass .calendar-popup,
-body.style-liquidglass .toast-notification {
-    background: linear-gradient(
-        135deg,
-        rgba(255,255,255,.34),
-        rgba(255,255,255,.045) 50%,
-        rgba(255,255,255,.26)
-    ) !important;
-
-    -webkit-backdrop-filter:
-        blur(var(--lg-blur))
-        saturate(var(--lg-saturation))
-        brightness(var(--lg-brightness));
-
-    backdrop-filter:
-        blur(var(--lg-blur))
-        saturate(var(--lg-saturation))
-        brightness(var(--lg-brightness));
-
-    border: 1px solid rgba(255,255,255,.38) !important;
-
-    box-shadow:
-        0 1px 1px rgba(255,255,255,.55) inset,
-        0 -1px 1px rgba(255,255,255,.12) inset,
-        0 18px 55px rgba(0,0,0,.2),
-        0 2px 12px rgba(255,255,255,.1);
-}
-
-body.style-liquidglass .content-screen::before,
-body.style-liquidglass .status-capsule::before,
-body.style-liquidglass .calendar-popup::before,
-body.style-liquidglass .toast-notification::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            120% 80% at 10% 0%,
-            rgba(255,255,255,.42),
-            transparent 42%
-        ),
-        radial-gradient(
-            90% 100% at 100% 100%,
-            rgba(255,255,255,.13),
-            transparent 52%
-        );
-
-    mix-blend-mode: screen;
-    opacity: .72;
-}
-
-body.style-liquidglass .content-screen {
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,.1) inset,
-        1px 0 rgba(255,140,200,.1) inset,
-        -1px 0 rgba(100,180,255,.12) inset,
-        0 25px 80px rgba(0,0,0,.24);
-}
-
-body.style-liquidglass .grid-item {
-    background: linear-gradient(
-        145deg,
-        rgba(255,255,255,.2),
-        rgba(255,255,255,.055) 48%,
-        rgba(255,255,255,.13)
-    ) !important;
-
-    -webkit-backdrop-filter:
-        blur(14px)
-        saturate(175%)
-        brightness(115%);
-
-    backdrop-filter:
-        blur(14px)
-        saturate(175%)
-        brightness(115%);
-
-    border: 1px solid rgba(255,255,255,.3) !important;
-
-    box-shadow:
-        0 1px 0 rgba(255,255,255,.42) inset,
-        0 8px 28px rgba(0,0,0,.12);
-
-    overflow: hidden;
-}
-
-body.style-liquidglass .grid-item::before {
-    content: "";
-    position: absolute;
-    inset: -20%;
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            110deg,
-            transparent 30%,
-            rgba(255,255,255,.16) 46%,
-            transparent 62%
-        );
-
-    transform: translateX(-35%);
-
-    transition:
-        transform .55s cubic-bezier(.2,.8,.2,1);
-}
-
-body.style-liquidglass .grid-item:hover::before {
-    transform: translateX(35%);
-}
-
-body.style-liquidglass .avatar-container {
-    border: 1px solid rgba(255,255,255,.42) !important;
-
-    box-shadow:
-        0 1px 0 rgba(255,255,255,.55) inset,
-        0 0 0 1px rgba(255,255,255,.08),
-        0 12px 35px rgba(0,0,0,.2);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    body.style-liquidglass .grid-item::before {
-        transition: none;
-    }
-}
-
-
-/* ――― Liquid Glass optical refraction ――― */
-
-body.style-liquidglass .content-screen {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    filter: url("#liquid-glass-distortion");
-}
-
-body.style-liquidglass .content-screen::after {
-    content: "";
-    position: absolute;
-    inset: -3px;
-    z-index: 10;
-    pointer-events: none;
-    border-radius: inherit;
-
-    background:
-        radial-gradient(
-            90% 70% at 15% 0%,
-            rgba(255,255,255,.22),
-            transparent 48%
-        ),
-        radial-gradient(
-            70% 90% at 100% 100%,
-            rgba(255,255,255,.10),
-            transparent 55%
-        );
-
-    border: 1px solid rgba(255,255,255,.24);
-    mix-blend-mode: screen;
-}
-
-body.style-liquidglass .content-screen,
-body.style-liquidglass .status-capsule,
-body.style-liquidglass .calendar-popup,
-body.style-liquidglass .toast-notification {
-    -webkit-backdrop-filter:
-        blur(20px)
-        saturate(180%)
-        brightness(115%);
-
-    backdrop-filter:
-        blur(20px)
-        saturate(180%)
-        brightness(115%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    body.style-liquidglass .content-screen {
-        filter: none;
-    }
-}
-
-
-/* ――― Fluent Design ――― */
-
-body.style-fluent .floating-status-bar .status-capsule,
-body.style-fluent .floating-status-bar .icon-btn,
-body.style-fluent .floating-status-bar .time-capsule {
-    border-radius: 8px;
-}
-
-
-/* ――― レスポンシブ調整 ――― */
-
+/* レスポンシブ調整 */
 @media (max-width: 850px) {
     .floating-status-bar,
     .status-bar-indicator {
@@ -1363,9 +970,115 @@ body.style-fluent .floating-status-bar .time-capsule {
     .grid-container {
         grid-template-columns: 1fr;
     }
+}
 
-    .theme-popup {
-        right: -4px;
-        width: 220px;
+/* Liquid Glass optical enhancement */
+body.style-liquidglass {
+    --lg-blur: 22px;
+    --lg-saturation: 185%;
+    --lg-brightness: 118%;
+}
+
+body.style-liquidglass .content-screen,
+body.style-liquidglass .status-capsule,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .toast-notification {
+    background: linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,255,255,.045) 50%, rgba(255,255,255,.26)) !important;
+    -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));
+    backdrop-filter: blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));
+    border: 1px solid rgba(255,255,255,.38) !important;
+    box-shadow: 0 1px 1px rgba(255,255,255,.55) inset, 0 -1px 1px rgba(255,255,255,.12) inset, 0 18px 55px rgba(0,0,0,.2), 0 2px 12px rgba(255,255,255,.1);
+}
+
+body.style-liquidglass .content-screen::before,
+body.style-liquidglass .status-capsule::before,
+body.style-liquidglass .calendar-popup::before,
+body.style-liquidglass .toast-notification::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(120% 80% at 10% 0%,rgba(255,255,255,.42),transparent 42%), radial-gradient(90% 100% at 100% 100%,rgba(255,255,255,.13),transparent 52%);
+    mix-blend-mode: screen;
+    opacity: .72;
+}
+
+body.style-liquidglass .content-screen {
+    box-shadow: 0 0 0 1px rgba(255,255,255,.1) inset, 1px 0 rgba(255,140,200,.1) inset, -1px 0 rgba(100,180,255,.12) inset, 0 25px 80px rgba(0,0,0,.24);
+}
+
+body.style-liquidglass .grid-item {
+    background: linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.055) 48%,rgba(255,255,255,.13)) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(175%) brightness(115%);
+    backdrop-filter: blur(14px) saturate(175%) brightness(115%);
+    border: 1px solid rgba(255,255,255,.3) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,.42) inset, 0 8px 28px rgba(0,0,0,.12);
+    overflow: hidden;
+}
+
+body.style-liquidglass .grid-item::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    pointer-events: none;
+    background: linear-gradient(110deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);
+    transform: translateX(-35%);
+    transition: transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+body.style-liquidglass .grid-item:hover::before {
+    transform: translateX(35%);
+}
+
+body.style-liquidglass .avatar-container {
+    border: 1px solid rgba(255,255,255,.42) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,.55) inset, 0 0 0 1px rgba(255,255,255,.08), 0 12px 35px rgba(0,0,0,.2);
+}
+
+@media (prefers-reduced-motion:reduce) {
+    body.style-liquidglass .grid-item::before {
+        transition: none;
     }
+}
+
+/* Liquid Glass optical refraction */
+body.style-liquidglass .content-screen {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    filter: url("#liquid-glass-distortion");
+}
+
+body.style-liquidglass .content-screen::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    z-index: 10;
+    pointer-events: none;
+    border-radius: inherit;
+    background: radial-gradient(90% 70% at 15% 0%,rgba(255,255,255,.22),transparent 48%), radial-gradient(70% 90% at 100% 100%,rgba(255,255,255,.10),transparent 55%);
+    border: 1px solid rgba(255,255,255,.24);
+    mix-blend-mode: screen;
+}
+
+body.style-liquidglass .content-screen,
+body.style-liquidglass .status-capsule,
+body.style-liquidglass .calendar-popup,
+body.style-liquidglass .toast-notification {
+    -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(115%);
+    backdrop-filter: blur(20px) saturate(180%) brightness(115%);
+}
+
+@media (prefers-reduced-motion:reduce) {
+    body.style-liquidglass .content-screen {
+        filter: none;
+    }
+}
+
+/* Fluent Design — floating status bar corner alignment */
+body.style-fluent .floating-status-bar .status-capsule,
+body.style-fluent .floating-status-bar .icon-btn,
+body.style-fluent .floating-status-bar .time-capsule {
+    border-radius: 8px;
 }
