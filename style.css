@@ -42,22 +42,35 @@ body.style-liquidglass {
     --glow-effect: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* LiquidGlass ダークテーマ */
-body.style-liquidglass:not(.light-theme) {
-    --ui-bg: rgba(20, 20, 24, 0.18);
-    --card-bg: rgba(20, 20, 24, 0.12);
+/* LiquidGlass ダークテーマ：透明感・ぼかし調整 */
+body.style-liquidglass:not(.light-theme) .content-screen,
+body.style-liquidglass:not(.light-theme) .profile-card,
+body.style-liquidglass:not(.light-theme) .gallery-section,
+body.style-liquidglass:not(.light-theme) .floating-status-bar {
+    backdrop-filter: blur(8px) saturate(115%);
+    -webkit-backdrop-filter: blur(8px) saturate(115%);
 }
-/* LiquidGlass ダークテーマ専用のUI上書き */
+
+/* ガラスの白っぽいハイライトを弱める */
+body.style-liquidglass:not(.light-theme) .content-screen {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, 0.24);
+}
+
+body.style-liquidglass:not(.light-theme) .profile-card,
+body.style-liquidglass:not(.light-theme) .gallery-section {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.20);
+}
+
+/* LiquidGlassの白いカプセルも控えめに */
 body.style-liquidglass:not(.light-theme) .status-capsule {
-    background: rgba(255, 255, 255, 0.055);
+    background: rgba(255, 255, 255, 0.045);
+    border-color: rgba(255, 255, 255, 0.13);
 }
 
 body.style-liquidglass:not(.light-theme) .time-capsule:hover {
-    background: rgba(255, 255, 255, 0.10);
-}
-
-body.style-liquidglass:not(.light-theme) .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.08);
 }
 /* 4. VRChat ゲーム内 UI 風 */
 body.style-vrchat {
