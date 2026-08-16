@@ -1,905 +1,435 @@
-/* ――― テーマ（デザイン言語）変数定義 ――― */
-
-/* 1. デフォルト */
-body.style-default {
-    --accent-color: #ff8fa3;
-    --accent-hover: #ffb3c1;
-    --ui-bg: rgba(22, 20, 26, 0.65);
-    --card-bg: rgba(37, 34, 41, 0.75);
-    --border-color: rgba(255, 255, 255, 0.18);
-    --card-border: rgba(255, 255, 255, 0.1);
-    --radius-main: 28px;
-    --radius-card: 16px;
-    --radius-capsule: 9999px; /* ボタンとカプセルを完全なまん丸に設定 */
-    --font-family: 'Helvetica Neue', Arial, sans-serif;
-    --glow-effect: none;
-}
-
-/* 2. Google Material Design (Material You 風) */
-body.style-material {
-    --accent-color: #d0bcff;
-    --accent-hover: #e8def8;
-    --ui-bg: rgba(29, 27, 32, 0.88);
-    --card-bg: rgba(33, 29, 39, 0.9);
-    --border-color: rgba(147, 143, 153, 0.2);
-    --card-border: rgba(147, 143, 153, 0.12);
-    --radius-main: 32px;
-    --radius-card: 24px;
-    --radius-capsule: 9999px;
-    --font-family: 'Roboto', 'Google Sans', sans-serif;
-    --glow-effect: 0 4px 20px rgba(0, 0, 0, 0.25);
-}
-
-/* 3. Apple LiquidGlass (iOS/macOS すりガラス風) */
-body.style-liquidglass {
-    /* iOS 26 / Liquid Glass を意識したトークン */
-    --accent-color: #007aff;
-    --accent-hover: #0a84ff;
-    --ui-bg: rgba(248, 248, 250, 0.38);
-    --card-bg: rgba(255, 255, 255, 0.28);
-    --border-color: rgba(255, 255, 255, 0.55);
-    --card-border: rgba(255, 255, 255, 0.42);
-    --radius-main: 30px;
-    --radius-card: 20px;
-    --radius-capsule: 9999px;
-    --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-    --glow-effect: 0 8px 30px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255,255,255,0.55);
-}
-
-/* 4. VRChat ゲーム内 UI 風 (Steam風の落ち着いたダークブルー ＋ 角丸・ネオンSFパネル感) */
-body.style-vrchat {
-    --accent-color: #66c0f4;
-    --accent-hover: #1fcae6;
-    --ui-bg: rgba(23, 29, 37, 0.88);
-    --card-bg: rgba(27, 40, 56, 0.90);
-    --border-color: #2a475e;
-    --card-border: rgba(102, 192, 244, 0.3);
-    --radius-main: 24px;
-    --radius-card: 16px;
-    --radius-capsule: 9999px;
-    --font-family: 'Segoe UI', Tahoma, sans-serif;
-    --glow-effect: 0 0 15px rgba(102, 192, 244, 0.25);
-}
-
-/* 5. Microsoft Fluent Design (Windows 11 Mica/Acrylic 風) */
-body.style-fluent {
-    --accent-color: #60cdff;
-    --accent-hover: #99ebff;
-    --ui-bg: rgba(32, 32, 32, 0.75);
-    --card-bg: rgba(45, 45, 45, 0.8);
-    --border-color: rgba(255, 255, 255, 0.14);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --radius-main: 8px;
-    --radius-card: 6px;
-    --radius-capsule: 9999px;
-    --font-family: 'Segoe UI Variable Text', 'Segoe UI', sans-serif;
-    --glow-effect: 0 8px 32px rgba(0, 0, 0, 0.36);
-}
-
-/* 6. Unity ゲームエンジン風 (Editor Dark Theme) */
-body.style-unity {
-    --accent-color: #2c5d88;
-    --accent-hover: #3a78b0;
-    --ui-bg: rgba(56, 56, 56, 0.95);
-    --card-bg: rgba(40, 40, 40, 0.95);
-    --border-color: #232323;
-    --card-border: #1a1a1a;
-    --radius-main: 3px;
-    --radius-card: 3px;
-    --radius-capsule: 4px;
-    --font-family: Inter, Arial, sans-serif;
-    --glow-effect: none;
-}
-
-/* 全体のスタイル設定 */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #0f0f12;
-    color: #e0e0e6;
-    font-family: var(--font-family);
-    transition: background-color 0.4s ease, color 0.4s ease, font-family 0.3s ease;
-}
-
-/* スライド（ページ切り替え）コンテナ */
-.snap-container {
-    width: 100vw;
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    position: relative;
-    z-index: 10;
-}
-
-.snap-section {
-    width: 100vw;
-    height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    position: relative;
-}
-
-/* SVGアイコン共通設定 */
-.svg-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-}
-
-.svg-icon svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-}
-
-/* ライトテーマ設定 */
-body.light-theme {
-    background-color: #e8e8ee;
-    color: #2e2e38;
-}
-
-body.light-theme .floating-status-bar,
-body.light-theme .calendar-popup {
-    background: rgba(235, 235, 242, 0.85);
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .status-bar-indicator {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-body.light-theme .status-capsule {
-    background: rgba(255, 255, 255, 0.85);
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #2e2e38;
-}
-
-body.light-theme .status-time,
-body.light-theme .calendar-header,
-body.light-theme .calendar-day-cell {
-    color: #2e2e38;
-}
-
-body.light-theme .calendar-weekdays span {
-    color: #777;
-}
-
-body.light-theme .calendar-day-cell:hover:not(.empty) {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-body.light-theme .content-screen {
-    background: rgba(244, 244, 247, 0.85);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-}
-
-body.light-theme .profile-card,
-body.light-theme .gallery-section {
-    background-color: rgba(255, 255, 255, 0.85);
-    border-color: #e0e0e8;
-}
-
-body.light-theme .profile-desc {
-    background-color: #f0f0f5;
-    color: #4a4a5a;
-}
-
-body.light-theme .site-title {
-    background-color: #eaeaea;
-    border-color: #ddd;
-    color: var(--accent-color);
-}
-
-a {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-
-a:hover {
-    color: var(--accent-hover);
-}
-
-/* ――― 浮遊型 フローティングステータスバー ――― */
-.floating-status-bar {
-    position: fixed;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%) translateY(0);
-    width: 50vw;
-    min-width: 380px;
-    max-width: 650px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 14px;
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-main);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), var(--glow-effect);
-    z-index: 9999;
-    opacity: 1;
-    pointer-events: auto;
-    
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease;
-}
-
-.floating-status-bar.hidden {
-    transform: translateX(-50%) translateY(-100px);
-    opacity: 0;
-    pointer-events: none;
-    
-    transition: transform 0.3s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.3s ease;
-}
-
-.status-bar-indicator {
-    position: fixed;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50vw;
-    min-width: 380px;
-    max-width: 650px;
-    height: 3px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 2px;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 9998;
-    opacity: 0;
-    pointer-events: none;
-    
-    transition: opacity 0.25s ease;
-}
-
-.status-bar-indicator.visible {
-    opacity: 0.25;
-}
-
-/* 右側ボタンをまとめるグループ */
-.status-right-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.status-capsule {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 42px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-capsule, var(--radius-card)); /* カプセル用に指定、フォールバックでcardを使用 */
-    color: #ffffff;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    user-select: none;
-}
-
-.time-capsule {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 42px;
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-}
-
-.time-capsule:hover {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: var(--accent-color);
-}
-
-.status-time {
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.5px;
-    font-size: 0.95rem;
-}
-
-.calendar-popup {
-    position: absolute;
-    top: calc(100% + 22px);
-    left: 50%;
-    transform: translateX(-50%) translateY(-10px);
-    width: 220px;
-    padding: 14px;
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    z-index: 10000;
-}
-
-.time-capsule::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 25px;
-}
-
-.time-capsule:hover .calendar-popup {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
-}
-
-.calendar-header {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: #ffffff;
-    text-align: center;
-    letter-spacing: 1px;
-    padding-bottom: 2px;
-}
-
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #aaa;
-}
-
-.calendar-weekdays .sun { color: #ff6b6b; }
-.calendar-weekdays .sat { color: #4dabf7; }
-
-.calendar-days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-    text-align: center;
-}
-
-.calendar-day-cell {
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #e0e0e6;
-    margin: 0 auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.calendar-day-cell:hover:not(.empty) {
-    background: rgba(255, 255, 255, 0.18);
-    transform: scale(1.1);
-}
-
-.calendar-day-cell.sun { color: #ff6b6b; }
-.calendar-day-cell.sat { color: #4dabf7; }
-
-.calendar-day-cell.is-today {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 2px solid var(--accent-color);
-    color: #ffffff;
-    font-weight: 800;
-    box-shadow: var(--glow-effect);
-}
-
-/* トースト通知 */
-.toast-notification {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--ui-bg);
-    border: 1px solid var(--accent-color);
-    color: #ffffff;
-    padding: 10px 18px;
-    border-radius: var(--radius-card);
-    font-size: 0.85rem;
-    font-weight: bold;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), var(--glow-effect);
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10001;
-}
-
-.toast-notification.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.icon-btn {
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 1rem;
-    flex-shrink: 0;
-    border-radius: var(--radius-capsule, var(--radius-card));
-}
-
-.icon-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: var(--accent-color);
-    transform: scale(1.08);
-}
-
-/* ――― 背景固定 全画面スライドショー ――― */
-.hero-slider {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    overflow: hidden;
-    background-color: #000;
-}
-
-/* 背景ぼかしオーバーレイ */
-.blur-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    pointer-events: none;
-    transition: backdrop-filter 0.1s linear, background-color 0.1s linear;
-}
-
-.slides {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    animation: slideAnimation 52s infinite;
-    background-size: cover;
-    background-position: center;
-}
-
-.slides:nth-child(1) { background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png'); animation-delay: 0s; }
-.slides:nth-child(2) { background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png'); animation-delay: 4s; }
-.slides:nth-child(3) { background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png'); animation-delay: 8s; }
-.slides:nth-child(4) { background-image: url('https://i.ibb.co/BHDtqs5P/image.png'); animation-delay: 12s; }
-.slides:nth-child(5) { background-image: url('https://i.ibb.co/rKNH2hb5/VRChat-2026-02-26-23-20-32-426-3840x2160.png'); animation-delay: 16s; }
-.slides:nth-child(6) { background-image: url('https://i.ibb.co/G47yb8Mq/VRChat-2025-09-26-00-27-26-253-2560x1440.png'); animation-delay: 20s; }
-.slides:nth-child(7) { background-image: url('https://i.ibb.co/Q74ckwNy/VRChat-2026-07-19-17-45-05-911-3840x2160.png'); animation-delay: 24s; }
-.slides:nth-child(8) { background-image: url('https://i.ibb.co/WNKSZk1B/VRChat-2026-01-11-03-01-38-442-3840x2160.png'); animation-delay: 28s; }
-.slides:nth-child(9) { background-image: url('https://i.ibb.co/mn63Zg8/VRChat-2026-01-11-04-04-47-732-3840x2160.png'); animation-delay: 32s; }
-.slides:nth-child(10) { background-image: url('https://i.ibb.co/0yfGgzsB/VRChat-2026-07-19-17-50-28-540-3840x2160.png'); animation-delay: 36s; }
-.slides:nth-child(11) { background-image: url('https://i.ibb.co/21nbC1g6/VRChat-2025-10-30-18-13-44-326-2560x1440.png'); animation-delay: 40s; }
-.slides:nth-child(12) { background-image: url('https://i.ibb.co/x8HqptsV/VRChat-2025-10-04-02-36-04-052-2560x1440.png'); animation-delay: 44s; }
-.slides:nth-child(13) { background-image: url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png'); animation-delay: 48s; }
-
-@keyframes slideAnimation {
-    0% { opacity: 0; transform: scale(1); }
-    8% { opacity: 1; }
-    33% { opacity: 1; }
-    41% { opacity: 0; transform: scale(1.05); }
-    100% { opacity: 0; }
-}
-
-/* Section 1: ファーストビューエリア */
-.hero-spacer {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 30px;
-}
-
-.scroll-indicator {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 28px;
-    background: var(--ui-bg);
-    border: 1px solid var(--accent-color);
-    border-radius: var(--radius-card);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), var(--glow-effect);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    animation: floatAnimation 2.5s infinite ease-in-out;
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* スクロール時の非表示用スタイル */
-.scroll-indicator.hidden {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(15px);
-}
-
-.scroll-indicator:hover {
-    background: rgba(40, 36, 46, 0.9);
-    border-color: var(--accent-hover);
-}
-
-.scroll-text {
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 3px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
-}
-
-.scroll-arrow {
-    color: var(--accent-color);
-    font-size: 1.1rem;
-    animation: arrowBounce 1.5s infinite;
-}
-
-@keyframes floatAnimation {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-@keyframes arrowBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-}
-
-/* Section 2: 中央配置用の親ラッパー */
-.content-section-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* ――― 【画面中央固定】コンテンツウィンドウ ――― */
-.content-screen {
-    width: 90vw;
-    max-width: 1100px;
-    padding: 40px;
-    
-    background: var(--ui-bg);
-    border: 1px solid var(--border-color);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: var(--radius-main);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), var(--glow-effect);
-    transition: background 0.4s ease, border-color 0.4s ease, border-radius 0.3s ease;
-}
-
-.content-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.header-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.site-title {
-    background-color: rgba(42, 37, 42, 0.8);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-card);
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    color: var(--accent-color);
-    font-weight: bold;
-    transition: color 0.3s ease, border-radius 0.3s ease;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 16px;
-}
-
-.main-content-layout {
-    display: flex;
-    gap: 24px;
-    align-items: stretch;
-}
-
-.profile-card {
-    width: 300px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 24px;
-    text-align: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
-}
-
-.avatar-container {
-    width: 90px;
-    height: 90px;
-    border-radius: var(--radius-card);
-    margin: 0 auto 16px;
-    overflow: hidden;
-    border: 2px solid var(--accent-color);
-    flex-shrink: 0;
-    transition: border-color 0.3s, border-radius 0.3s;
-}
-
-.avatar-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-name {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.profile-id {
-    font-size: 0.85rem;
-    color: var(--accent-color);
-    margin-bottom: 16px;
-    letter-spacing: 1px;
-    transition: color 0.3s;
-}
-
-.profile-desc {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: calc(var(--radius-card) / 2);
-    padding: 14px;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    text-align: left;
-    color: #c0c0c8;
-}
-
-.gallery-section {
-    flex-grow: 1;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-card);
-    padding: 24px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: background-color 0.3s, border-color 0.3s, border-radius 0.3s;
-}
-
-.section-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.section-title::before {
-    content: "|";
-    color: var(--accent-color);
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.section-subtitle {
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 16px;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.grid-item {
-    background-color: #2d2933;
-    border: 1px solid var(--card-border);
-    border-radius: calc(var(--radius-card) / 2);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, border-color 0.2s, border-radius 0.3s;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    text-decoration: none;
-}
-
-.grid-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--accent-color);
-}
-
-.item-content {
-    padding: 40px 16px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #ffffff;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: rgba(0, 0, 0, 0.55); 
-    font-weight: bold;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-}
-
-.item-link {
-    border-top: 1px solid var(--card-border);
-    padding: 10px 16px;
-    font-size: 0.8rem;
-    background-color: rgba(0, 0, 0, 0.4);
-    text-align: center;
-    color: var(--accent-color);
-    z-index: 1;
-    transition: color 0.3s;
-}
-
-.grid-item:hover .item-link {
-    color: var(--accent-hover);
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Galleryカード背景画像 */
-#gallery-twitter {
-    background-image: url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png');
-}
-#gallery-vrchat {
-    background-image: url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png');
-}
-#gallery-booth {
-    background-image: url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png');
-}
-#gallery-shader {
-    background-image: url('https://i.ibb.co/BHDtqs5P/image.png');
-}
-
-/* ――― Liquid Glass: 背景を透過させ、機能レイヤーとして浮かせる ――― */
-body.style-liquidglass .floating-status-bar,
-body.style-liquidglass .calendar-popup,
-body.style-liquidglass .content-screen,
-body.style-liquidglass .profile-card,
-body.style-liquidglass .gallery-section,
-body.style-liquidglass .site-title,
-body.style-liquidglass .scroll-indicator,
-body.style-liquidglass .status-capsule {
-    background: linear-gradient(135deg, rgba(255,255,255,0.38), rgba(255,255,255,0.14));
-    border-color: rgba(255,255,255,0.5);
-    box-shadow: var(--glow-effect);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-}
-
-body.style-liquidglass .floating-status-bar::before,
-body.style-liquidglass .content-screen::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 42%);
-}
-
-body.style-liquidglass .floating-status-bar {
-    border-radius: 9999px;
-}
-
-body.style-liquidglass .status-capsule:hover,
-body.style-liquidglass .grid-item:hover {
-    background: rgba(255,255,255,0.32);
-    border-color: rgba(255,255,255,0.72);
-}
-
-body.style-liquidglass .grid-item {
-    background-color: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.35);
-}
-
-body.style-liquidglass .item-content {
-    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.28));
-}
-
-body.style-liquidglass .item-link {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.28);
-}
-
-body.style-liquidglass.light-theme {
-    --ui-bg: rgba(255,255,255,0.34);
-    --card-bg: rgba(255,255,255,0.25);
-    --border-color: rgba(255,255,255,0.72);
-    --card-border: rgba(255,255,255,0.55);
-}
-
-body.style-liquidglass .avatar-container {
-    border-color: rgba(255,255,255,0.7);
-    box-shadow: 0 0 0 4px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.18);
-}
-
-/* レスポンシブ調整 */
-@media (max-width: 850px) {
-    .floating-status-bar,
-    .status-bar-indicator {
-        width: 80vw;
-    }
-    .content-screen {
-        width: 95vw;
-        padding: 20px 12px;
-    }
-    .main-content-layout {
-        flex-direction: column;
-        align-items: center;
-    }
-    .profile-card {
-        width: 100%;
-    }
-    .grid-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Liquid Glass optical enhancement */
-body.style-liquidglass{--lg-blur:22px;--lg-saturation:185%;--lg-brightness:118%}
-body.style-liquidglass .content-screen,body.style-liquidglass .status-capsule,body.style-liquidglass .calendar-popup,body.style-liquidglass .toast-notification{background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.045) 50%,rgba(255,255,255,.26)) !important;-webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-saturation)) brightness(var(--lg-brightness));border:1px solid rgba(255,255,255,.38)!important;box-shadow:0 1px 1px rgba(255,255,255,.55) inset,0 -1px 1px rgba(255,255,255,.12) inset,0 18px 55px rgba(0,0,0,.2),0 2px 12px rgba(255,255,255,.1)}
-body.style-liquidglass .content-screen::before,body.style-liquidglass .status-capsule::before,body.style-liquidglass .calendar-popup::before,body.style-liquidglass .toast-notification::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(120% 80% at 10% 0%,rgba(255,255,255,.42),transparent 42%),radial-gradient(90% 100% at 100% 100%,rgba(255,255,255,.13),transparent 52%);mix-blend-mode:screen;opacity:.72}
-body.style-liquidglass .content-screen{box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,1px 0 rgba(255,140,200,.1) inset,-1px 0 rgba(100,180,255,.12) inset,0 25px 80px rgba(0,0,0,.24)}
-body.style-liquidglass .grid-item{background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.055) 48%,rgba(255,255,255,.13)) !important;-webkit-backdrop-filter:blur(14px) saturate(175%) brightness(115%);backdrop-filter:blur(14px) saturate(175%) brightness(115%);border:1px solid rgba(255,255,255,.3)!important;box-shadow:0 1px 0 rgba(255,255,255,.42) inset,0 8px 28px rgba(0,0,0,.12);overflow:hidden}
-body.style-liquidglass .grid-item::before{content:"";position:absolute;inset:-20%;pointer-events:none;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);transform:translateX(-35%);transition:transform .55s cubic-bezier(.2,.8,.2,1)}
-body.style-liquidglass .grid-item:hover::before{transform:translateX(35%)}
-body.style-liquidglass .avatar-container{border:1px solid rgba(255,255,255,.42)!important;box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 0 0 1px rgba(255,255,255,.08),0 12px 35px rgba(0,0,0,.2)}
-@media (prefers-reduced-motion:reduce){body.style-liquidglass .grid-item::before{transition:none}}
-
-
-/* Liquid Glass optical refraction */
-body.style-liquidglass .content-screen{position:relative;isolation:isolate;overflow:hidden;filter:url("#liquid-glass-distortion");}
-body.style-liquidglass .content-screen::after{content:"";position:absolute;inset:-3px;z-index:10;pointer-events:none;border-radius:inherit;background:radial-gradient(90% 70% at 15% 0%,rgba(255,255,255,.22),transparent 48%),radial-gradient(70% 90% at 100% 100%,rgba(255,255,255,.10),transparent 55%);border:1px solid rgba(255,255,255,.24);mix-blend-mode:screen;}
-body.style-liquidglass .content-screen,body.style-liquidglass .status-capsule,body.style-liquidglass .calendar-popup,body.style-liquidglass .toast-notification{-webkit-backdrop-filter:blur(20px) saturate(180%) brightness(115%);backdrop-filter:blur(20px) saturate(180%) brightness(115%);}
-@media (prefers-reduced-motion:reduce){body.style-liquidglass .content-screen{filter:none;}}
-
-
-/* Fluent Design — floating status bar corner alignment */
-body.style-fluent .floating-status-bar .status-capsule,
-body.style-fluent .floating-status-bar .icon-btn,
-body.style-fluent .floating-status-bar .time-capsule {
-    border-radius: 8px;
-}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ぜろくんでんせつ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="style-default">
+    <svg class="liquid-glass-defs" aria-hidden="true" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;">
+        <defs>
+            <filter id="liquid-glass-distortion" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.018 0.024" numOctaves="2" seed="17" result="glassNoise"/>
+                <feDisplacementMap in="SourceGraphic" in2="glassNoise" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="distortedGlass"/>
+                <feGaussianBlur in="distortedGlass" stdDeviation="0.12" result="softGlass"/>
+                <feComposite in="softGlass" in2="SourceGraphic" operator="over"/>
+            </filter>
+        </defs>
+    </svg>
+
+
+    <!-- 浮遊型 フローティングステータスバー -->
+    <div class="floating-status-bar" id="statusBar">
+        
+        <!-- 左端配置：星アイコンボタン -->
+        <button class="status-capsule icon-btn" id="starBtn" title="お気に入り">
+            <span class="svg-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path></svg>
+            </span>
+        </button>
+
+        <!-- 絶対中央配置：時計カプセル -->
+        <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
+            <span class="status-time" id="statusTime">12:00</span>
+            
+            <!-- カーソルホバー時に表示されるリアルカレンダーポップアップ -->
+            <div class="calendar-popup" id="calendarPopup">
+                <div class="calendar-header" id="calendarHeader">2026.08</div>
+                <div class="calendar-weekdays">
+                    <span class="sun">日</span>
+                    <span>月</span>
+                    <span>火</span>
+                    <span>水</span>
+                    <span>木</span>
+                    <span>金</span>
+                    <span class="sat">土</span>
+                </div>
+                <div class="calendar-days-grid" id="calendarDaysGrid">
+                    <!-- JSで動的に日付セルが生成されます -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 右端エリア：UIデザインテーマ切り替えボタン ＋ ダーク/ライト切替ボタン -->
+        <div class="status-right-group">
+            <!-- UIデザイン切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
+                <span class="svg-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </span>
+            </button>
+
+            <!-- ダーク/ライト切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え">
+                <span class="svg-icon" id="themeIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>
+                </span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- コピー完了通知トースト -->
+    <div class="toast-notification" id="toast">コピーしました！</div>
+
+    <!-- バー格納時に出現する極細インジケーター -->
+    <div class="status-bar-indicator" id="statusBarIndicator"></div>
+
+    <!-- 背景固定 全画面スライドショー -->
+    <div class="hero-slider" id="heroSlider">
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <div class="slides"></div>
+        <!-- 動的ぼかし用レイヤー -->
+        <div class="blur-overlay" id="blurOverlay"></div>
+    </div>
+
+    <!-- 全画面スライドコンテナ (Scroll Snap) -->
+    <div class="snap-container" id="snapContainer">
+        
+        <!-- Section 1: ファーストビュー -->
+        <section class="snap-section hero-spacer" id="hero">
+            <div class="scroll-indicator" id="scrollIndicator">
+                <span class="scroll-text">SCROLL DOWN</span>
+                <span class="scroll-arrow">▼</span>
+            </div>
+        </section>
+
+        <!-- Section 2: 中央配置のフローティングウィンドウ -->
+        <section class="snap-section content-section-wrapper" id="main-content">
+            <div class="content-screen">
+                <div class="content-wrapper">
+                    
+                    <!-- ナビゲーションヘッダー -->
+                    <header class="header-nav">
+                        <div class="site-title">portfolio / ぜろくんでんせつ</div>
+                    </header>
+
+                    <!-- メインコンテンツ -->
+                    <main class="container">
+                        
+                        <div class="main-content-layout">
+                            <!-- 左側：プロフィール情報 -->
+                            <section class="profile-card">
+                                <div class="avatar-container">
+                                    <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
+                                </div>
+                                <h1 class="profile-name">ぜろくんでんせつ</h1>
+                                <p class="profile-id">ZErrrrrO</p>
+                                <div class="profile-desc">
+                                    趣味でUnityをしている一般高校生！いろんなことをしたいです
+                                </div>
+                            </section>
+
+                            <!-- 右側：リンク一覧 -->
+                            <section class="gallery-section">
+                                <h2 class="section-title">リンクたち</h2>
+                                <p class="section-subtitle">リンク先は画像をクリック！</p>
+                                
+                                <div class="grid-container">
+                                    <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+                                        <div class="item-content">𝕏 Twitter</div>
+                                        <div class="item-link">にちじょ～</div>
+                                    </a>
+                                    
+                                    <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+                                        <div class="item-content">VRChat</div>
+                                        <div class="item-link">フレンド申請お気軽に！</div>
+                                    </a>
+                                    
+                                    <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+                                        <div class="item-content">🛍️ BOOTH</div>
+                                        <div class="item-link">Boothを見る</div>
+                                    </a>
+                                    
+                                    <a href="#" class="grid-item" id="gallery-shader">
+                                        <div class="item-content">✨ 工事中～</div>
+                                        <div class="item-link">近日公開...！</div>
+                                    </a>
+                                </div>
+                            </section>
+                        </div>
+
+                    </main>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- SVGアイコンの定義データ -->
+    <script>
+        const SVG_SUN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 15.3137 15.3137 18 12 18ZM11 1H13V4H11V1ZM11 20H13V23H11V20ZM3.51472 4.92893L4.92893 3.51472L7.05025 5.63604L5.63604 7.05025L3.51472 4.92893ZM16.9497 18.364L18.364 16.9497L20.4853 19.0711L19.0711 20.4853L16.9497 18.364ZM19.0711 3.51472L20.4853 4.92893L18.364 7.05025L16.9497 5.63604L19.0711 3.51472ZM5.63604 16.9497L7.05025 18.364L4.92893 20.4853L3.51472 19.0711L5.63604 16.9497ZM23 11V13H20V11H23ZM4 11V13H1V11H4Z"></path></svg>`;
+        const SVG_MOON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>`;
+    </script>
+
+    <!-- ステータスバー＆機能制御スクリプト -->
+    <script>
+        const statusBar = document.getElementById('statusBar');
+        const statusBarIndicator = document.getElementById('statusBarIndicator');
+        const statusTime = document.getElementById('statusTime');
+        const timeCapsule = document.getElementById('timeCapsule');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const uiStyleToggleBtn = document.getElementById('uiStyleToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const calendarPopup = document.getElementById('calendarPopup');
+        const calendarHeader = document.getElementById('calendarHeader');
+        const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+        const blurOverlay = document.getElementById('blurOverlay');
+        const toast = document.getElementById('toast');
+        const snapContainer = document.getElementById('snapContainer');
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        
+        let hideTimeout;
+        let indicatorTimeout;
+        let toastTimeout;
+        let is24Hour = true;
+        let lastRenderedMonth = -1;
+        let isHoveringStatusBar = false;
+
+        // 連打・木曜日判定モードの管理変数
+        let clickCount = 0;
+        let clickTimer = null;
+        let isThursdayMode = false;
+
+        // UIデザインテーマ一覧（system24削除・VRChatテーマ更新）
+        const uiStyles = [
+            { id: 'style-default', name: 'Default' },
+            { id: 'style-material', name: 'Google Material Design' },
+            { id: 'style-liquidglass', name: 'Apple LiquidGlass' },
+            { id: 'style-vrchat', name: 'VRChat UI' },
+            { id: 'style-fluent', name: 'Microsoft Fluent Design' },
+            { id: 'style-unity', name: 'Unity Engine' }
+        ];
+        let currentStyleIndex = 0;
+
+        function showToast(text) {
+            toast.textContent = text;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        calendarPopup.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        function updateTime() {
+            const now = new Date();
+            
+            if (isThursdayMode) {
+                const isThursday = now.getDay() === 4;
+                statusTime.textContent = isThursday ? 'はい' : 'いいえ';
+                return;
+            }
+
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            if (is24Hour) {
+                const hStr = String(hours).padStart(2, '0');
+                statusTime.textContent = `${hStr}:${minutes}`;
+            } else {
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                statusTime.textContent = `${ampm} ${hours}:${minutes}`;
+            }
+
+            const currentMonth = now.getMonth();
+            if (lastRenderedMonth !== currentMonth) {
+                renderCalendar(now);
+                lastRenderedMonth = currentMonth;
+            }
+        }
+
+        function renderCalendar(now) {
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+
+            const monthStr = String(month + 1).padStart(2, '0');
+            calendarHeader.textContent = `${year}.${monthStr}`;
+
+            calendarDaysGrid.innerHTML = '';
+
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day-cell empty';
+                calendarDaysGrid.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day-cell';
+                
+                const cellDate = new Date(year, month, day);
+                const dayOfWeek = cellDate.getDay();
+
+                if (dayOfWeek === 0) dayCell.classList.add('sun');
+                if (dayOfWeek === 6) dayCell.classList.add('sat');
+
+                if (day === today) {
+                    dayCell.classList.add('is-today');
+                }
+
+                dayCell.textContent = day;
+
+                dayCell.addEventListener('click', (e) => {
+                    const dStr = String(day).padStart(2, '0');
+                    const formattedDate = `${year}/${monthStr}/${dStr}`;
+
+                    navigator.clipboard.writeText(formattedDate).then(() => {
+                        showToast(`コピーしました: ${formattedDate}`);
+                    }).catch(err => {
+                        console.error('コピーに失敗しました', err);
+                    });
+                });
+
+                calendarDaysGrid.appendChild(dayCell);
+            }
+        }
+
+        // 時計カプセルクリック処理
+        timeCapsule.addEventListener('click', (e) => {
+            clickCount++;
+            
+            if (clickCount >= 5) {
+                if (Math.random() < 0.3) {
+                    isThursdayMode = !isThursdayMode;
+                    showToast(isThursdayMode ? 'Is it Thursday...?' : '時刻表示に戻りました');
+                } else {
+                    is24Hour = !is24Hour;
+                }
+                clickCount = 0;
+                clearTimeout(clickTimer);
+                updateTime();
+                return;
+            }
+
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+            }, 800);
+
+            if (!isThursdayMode) {
+                is24Hour = !is24Hour;
+            }
+            updateTime();
+        });
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        /* ――― ステータスバー表示・非表示制御ロジック ――― */
+        function hideStatusBarWithDelay(delayMs) {
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                statusBar.classList.add('hidden');
+                indicatorTimeout = setTimeout(() => {
+                    if (statusBar.classList.contains('hidden')) {
+                        statusBarIndicator.classList.add('visible');
+                    }
+                }, 350);
+            }, delayMs);
+        }
+
+        function checkStatusBarStateOnScroll() {
+            clearTimeout(hideTimeout);
+
+            if (snapContainer.scrollTop < window.innerHeight * 0.5) {
+                statusBar.classList.remove('hidden');
+                clearTimeout(indicatorTimeout);
+                statusBarIndicator.classList.remove('visible');
+            } else {
+                if (!isHoveringStatusBar) {
+                    hideStatusBarWithDelay(0);
+                }
+            }
+        }
+
+        checkStatusBarStateOnScroll();
+
+        snapContainer.addEventListener('scroll', () => {
+            const scrollTop = snapContainer.scrollTop;
+            const scrollRatio = Math.min(scrollTop / window.innerHeight, 1);
+            
+            // 背景ぼかしと暗転制御
+            const blurVal = scrollRatio * 16;
+            blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
+            blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
+
+            // スクロールダウン表記：100px以上スクロールしたら永久に非表示
+            if (scrollTop > 100) {
+                scrollIndicator.classList.add('hidden');
+            }
+
+            checkStatusBarStateOnScroll();
+        }, { passive: true });
+
+        window.addEventListener('mousemove', (e) => {
+            if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
+                if (e.clientY <= 70) {
+                    clearTimeout(indicatorTimeout);
+                    statusBarIndicator.classList.remove('visible');
+                    statusBar.classList.remove('hidden');
+                }
+            }
+        });
+
+        statusBar.addEventListener('mouseenter', () => {
+            isHoveringStatusBar = true;
+            clearTimeout(hideTimeout);
+            clearTimeout(indicatorTimeout);
+            statusBarIndicator.classList.remove('visible');
+            statusBar.classList.remove('hidden');
+        });
+
+        statusBar.addEventListener('mouseleave', () => {
+            isHoveringStatusBar = false;
+            if (snapContainer.scrollTop >= window.innerHeight * 0.5) {
+                hideStatusBarWithDelay(600);
+            }
+        });
+
+        // ダーク/ライトテーマ切り替え
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            themeIcon.innerHTML = isLight ? SVG_SUN : SVG_MOON;
+        });
+
+        // UIデザインテーマ切り替え処理
+        uiStyleToggleBtn.addEventListener('click', () => {
+            // 現在のスタイルのクラスを削除
+            document.body.classList.remove(uiStyles[currentStyleIndex].id);
+            
+            // インデックスを進める
+            currentStyleIndex = (currentStyleIndex + 1) % uiStyles.length;
+            
+            // 新しいスタイルのクラスを追加
+            const newStyle = uiStyles[currentStyleIndex];
+            document.body.classList.add(newStyle.id);
+            
+            showToast(`Theme: ${newStyle.name}`);
+        });
+    </script>
+</body>
+</html>
