@@ -26,6 +26,48 @@ a:hover {
     color: #ffb3c1;
 }
 
+/* ――― Android風 ステータスバー ――― */
+.android-status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 0.75rem;
+    color: #ffffff;
+    z-index: 9999;
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    pointer-events: none;
+    font-family: Roboto, -apple-system, sans-serif;
+}
+
+.android-status-bar.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.status-left, .status-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-time {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.status-icon {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
 /* ――― 全画面スライドショーセクション ――― */
 .hero-slider {
     position: relative;
