@@ -8,6 +8,20 @@
 </head>
 <body>
 
+    <!-- Android風 ステータスバー -->
+    <div class="android-status-bar" id="statusBar">
+        <div class="status-left">
+            <span class="status-time" id="statusTime">12:00</span>
+            <span class="status-icon">💬</span>
+            <span class="status-icon">🎮</span>
+        </div>
+        <div class="status-right">
+            <span class="status-icon">📶</span>
+            <span class="status-icon">🛜</span>
+            <span class="status-icon">🔋 85%</span>
+        </div>
+    </div>
+
     <!-- 全画面スライドショー (1画面目) -->
     <div class="hero-slider">
         <div class="slides"></div>
@@ -91,5 +105,43 @@
         </div>
     </div>
 
+    <!-- ステータスバー制御スクリプト -->
+    <script>
+        const statusBar = document.getElementById('statusBar');
+        const statusTime = document.getElementById('statusTime');
+        let hideTimeout;
+
+        // 時計のリアルタイム更新機能だぞ？
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            statusTime.textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // バーを表示して5秒後に消す制御だぞ？
+        function showStatusBar() {
+            statusBar.classList.remove('hidden');
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                statusBar.classList.add('hidden');
+            }, 5000);
+        }
+
+        // 初回表示＆タイマー開始だぞ？
+        showStatusBar();
+
+        // スクロール時に再表示
+        window.addEventListener('scroll', showStatusBar, { passive: true });
+
+        // 画面上部（50px以内）にマウスが近づいた時に再表示
+        window.addEventListener('mousemove', (e) => {
+            if (e.clientY <= 50) {
+                showStatusBar();
+            }
+        });
+    </script>
 </body>
 </html>
