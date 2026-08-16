@@ -14,6 +14,38 @@ body {
     color: #e0e0e6;
     font-family: 'Helvetica Neue', Arial, sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ライトテーマ設定 */
+body.light-theme {
+    background-color: #f4f4f7;
+    color: #2e2e38;
+}
+
+body.light-theme .profile-card,
+body.light-theme .gallery-section {
+    background-color: #ffffff;
+    border-color: #e0e0e8;
+}
+
+body.light-theme .profile-desc {
+    background-color: #f0f0f5;
+    color: #4a4a5a;
+}
+
+body.light-theme .site-title {
+    background-color: #eaeaea;
+    border-color: #ddd;
+    color: #d85a70;
+}
+
+body.light-theme .nav-links a {
+    color: #666;
+}
+
+body.light-theme .nav-links a:hover {
+    color: #000;
 }
 
 a {
@@ -26,46 +58,76 @@ a:hover {
     color: #ffb3c1;
 }
 
-/* ――― Android風 ステータスバー ――― */
-.android-status-bar {
+/* ――― 浮遊型 フローティングステータスバー ――― */
+.floating-status-bar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 28px;
-    background-color: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(8px);
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 16px;
-    font-size: 0.75rem;
-    color: #ffffff;
+    gap: 12px;
+    padding: 6px 18px;
+    background: rgba(25, 25, 30, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 12px rgba(255, 143, 163, 0.15);
     z-index: 9999;
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    pointer-events: none;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
     font-family: Roboto, -apple-system, sans-serif;
+    pointer-events: auto;
 }
 
-.android-status-bar.hidden {
-    transform: translateY(-100%);
+.floating-status-bar.hidden {
+    transform: translate(-50%, -80px);
     opacity: 0;
+    pointer-events: none;
 }
 
-.status-left, .status-right {
+.status-chip {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.status-time {
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    gap: 8px;
 }
 
 .status-icon {
-    font-size: 0.7rem;
-    opacity: 0.9;
+    font-size: 0.85rem;
+}
+
+.status-time {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.status-divider {
+    width: 1px;
+    height: 14px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.status-actions {
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 2px 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.2);
 }
 
 /* ――― 全画面スライドショーセクション ――― */
@@ -109,7 +171,7 @@ a:hover {
     100% { opacity: 0; }
 }
 
-/* ――― 強化された SCROLL DOWN インジケーター ――― */
+/* ――― SCROLL DOWN インジケーター ――― */
 .scroll-indicator {
     position: absolute;
     bottom: 30px;
