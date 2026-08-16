@@ -28,6 +28,9 @@
 
     </div>
 
+    <!-- バー格納時に出現する極細インジケーター（フェード効果付き） -->
+    <div class="status-bar-indicator" id="statusBarIndicator"></div>
+
     <!-- 全画面スライドショー (1画面目) -->
     <div class="hero-slider">
         <div class="slides"></div>
@@ -114,6 +117,7 @@
     <!-- ステータスバー＆機能制御スクリプト -->
     <script>
         const statusBar = document.getElementById('statusBar');
+        const statusBarIndicator = document.getElementById('statusBarIndicator');
         const statusTime = document.getElementById('statusTime');
         const timeCapsule = document.getElementById('timeCapsule');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -151,12 +155,14 @@
         // ステータスバーの表示制御
         function showStatusBar() {
             statusBar.classList.remove('hidden');
+            statusBarIndicator.classList.remove('visible'); // 細いバーを消す
             clearTimeout(hideTimeout);
 
             // ページの一番上（scrollY === 0）にいる時は自動で消さない
             if (window.scrollY > 0) {
                 hideTimeout = setTimeout(() => {
                     statusBar.classList.add('hidden');
+                    statusBarIndicator.classList.add('visible'); // 細いバーを表示
                 }, 5000);
             }
         }
@@ -180,6 +186,7 @@
         statusBar.addEventListener('mouseenter', () => {
             clearTimeout(hideTimeout);
             statusBar.classList.remove('hidden');
+            statusBarIndicator.classList.remove('visible');
         });
         statusBar.addEventListener('mouseleave', () => {
             showStatusBar();
