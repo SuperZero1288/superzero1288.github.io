@@ -20,10 +20,21 @@
         <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え">
             <span class="status-time" id="statusTime">12:00</span>
             
-            <!-- カーソルホバー時に表示されるカレンダーポップアップ -->
+            <!-- カーソルホバー時に表示されるリアルカレンダーポップアップ -->
             <div class="calendar-popup" id="calendarPopup">
-                <div class="calendar-date" id="calendarDate">2026.08.16</div>
-                <div class="calendar-day" id="calendarDay">SUN</div>
+                <div class="calendar-header" id="calendarHeader">2026.08</div>
+                <div class="calendar-weekdays">
+                    <span class="sun">日</span>
+                    <span>月</span>
+                    <span>火</span>
+                    <span>水</span>
+                    <span>木</span>
+                    <span>金</span>
+                    <span class="sat">土</span>
+                </div>
+                <div class="calendar-days-grid" id="calendarDaysGrid">
+                    <!-- JSで動的に日付セルが生成されます -->
+                </div>
             </div>
         </div>
 
@@ -128,16 +139,15 @@
         const timeCapsule = document.getElementById('timeCapsule');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
-        const calendarDate = document.getElementById('calendarDate');
-        const calendarDay = document.getElementById('calendarDay');
+        const calendarHeader = document.getElementById('calendarHeader');
+        const calendarDaysGrid = document.getElementById('calendarDaysGrid');
         
         let hideTimeout;
         let indicatorTimeout;
         let is24Hour = true; // 24時間表記フラグ
+        let lastRenderedMonth = -1;
 
-        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
-        // リアルタイム時計＆カレンダー表示更新
+        // リアルタイム時計更新＆月レンダー判定
         function updateTime() {
             const now = new Date();
             let hours = now.getHours();
@@ -153,19 +163,61 @@
                 statusTime.textContent = `${ampm} ${hours}:${minutes}`;
             }
 
-            // カレンダー更新 (年.月.日)
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const date = String(now.getDate()).padStart(2, '0');
-            const dayName = days[now.getDay()];
+            // 月が変わったら、または初回レンダー時にカレンダー生成
+            const currentMonth = now.getMonth();
+            if (lastRenderedMonth !== currentMonth) {
+                renderCalendar(now);
+                lastRenderedMonth = currentMonth;
+            }
+        }
 
-            calendarDate.textContent = `${year}.${month}.${date}`;
-            calendarDay.textContent = dayName;
+        // 月カレンダーの生成ロジック
+        function renderCalendar(now) {
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+
+            // ヘッダー (年.月)
+            const monthStr = String(month + 1).padStart(2, '0');
+            calendarHeader.textContent = `${year}.${monthStr}`;
+
+            calendarDaysGrid.innerHTML = '';
+
+            // 当月1日の曜日 (0: 日曜日 ～ 6: 土曜日)
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            // 当月の最終日
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            // 1日より前の空セル
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-day-cell empty';
+                calendarDaysGrid.appendChild(emptyCell);
+            }
+
+            // 日付セルの作成
+            for (let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'calendar-day-cell';
+                
+                const cellDate = new Date(year, month, day);
+                const dayOfWeek = cellDate.getDay();
+
+                if (dayOfWeek === 0) dayCell.classList.add('sun');
+                if (dayOfWeek === 6) dayCell.classList.add('sat');
+
+                // 本日の判定（丸枠付与）
+                if (day === today) {
+                    dayCell.classList.add('is-today');
+                }
+
+                dayCell.textContent = day;
+                calendarDaysGrid.appendChild(dayCell);
+            }
         }
 
         // 時計クリックで12時間/24時間表記切り替え
         timeCapsule.addEventListener('click', (e) => {
-            // カレンダー部分のクリック判定を考慮して制御
             is24Hour = !is24Hour;
             updateTime();
         });
