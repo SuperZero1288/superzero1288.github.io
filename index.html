@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ぜろくんでんせつ</title>
-    <!-- この読み込みタグが「半角英数字」で一言一句違わず書かれているか確認するんだぞ？ -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,7 +26,7 @@
         <div class="scroll-indicator">SCROLL DOWN ▼</div>
     </div>
 
-    <!-- コンテンツ画面 (完全中央揃えの2画面目) -->
+    <!-- コンテンツ画面 (2画面目) -->
     <div class="content-screen" id="about">
         <div class="content-wrapper">
             
@@ -44,10 +43,9 @@
             <!-- メインコンテンツ -->
             <main class="container">
                 
-                <div class="main-content-layout" id="gallery">
+                <div class="main-content-layout">
                     <!-- 左側：プロフィール情報 (About) -->
                     <section class="profile-card">
-                        <!-- 🐱をimgタグに変更したぞ？ここにアイコン用の画像URLを入れるんだな？ -->
                         <div class="avatar-container">
                             <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
                         </div>
@@ -59,31 +57,30 @@
                     </section>
 
                     <!-- 右側：リンク一覧 (Gallery) -->
-                    <section class="gallery-section">
+                    <section class="gallery-section" id="gallery">
                         <h2 class="section-title">リンクたち</h2>
                         <p class="section-subtitle">リンク先は画像をクリック！</p>
                         
                         <div class="grid-container">
-                            <!-- 各アイテムに画像指定用の id を追加したぞ？ -->
-                            <div class="grid-item" id="gallery-github">
-                                <div class="item-content">🐙 Twitter(旧𝕏)</div>
-                                <a href="https://x.com" class="item-link" target="_blank">にちじょ～</a>
-                            </div>
+                            <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
+                                <div class="item-content">𝕏 Twitter</div>
+                                <div class="item-link">にちじょ～</div>
+                            </a>
                             
-                            <div class="grid-item" id="gallery-twitter">
-                                <div class="item-content">VRChatプロフィール</div>
-                                <a href="https://vrchat.com" class="item-link" target="_blank">フレンド申請お気軽に！</a>
-                            </div>
+                            <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
+                                <div class="item-content">VRChat</div>
+                                <div class="item-link">フレンド申請お気軽に！</div>
+                            </a>
                             
-                            <div class="grid-item" id="gallery-vrchat">
-                                <div class="item-content">📸 BOOTH</div>
-                                <a href="https://booth.pm" class="item-link" target="_blank">Boothを見る</a>
-                            </div>
+                            <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
+                                <div class="item-content">🛍️ BOOTH</div>
+                                <div class="item-link">Boothを見る</div>
+                            </a>
                             
-                            <div class="grid-item" id="gallery-shader">
+                            <a href="#" class="grid-item" id="gallery-shader">
                                 <div class="item-content">✨ 工事中～</div>
-                                <a href="#" class="item-link" target="_blank">近日公開...！</a>
-                            </div>
+                                <div class="item-link">近日公開...！</div>
+                            </a>
                         </div>
                     </section>
                 </div>
@@ -96,11 +93,11 @@
                     <div class="activities-list">
                         <div class="activity-card">
                             <span class="activity-date">2026.02</span>
-                            <span class="activity-text">VRChat RNGプロジェクトのUIをTextMeshProへ移行完了だぞ？</span>
+                            <span class="activity-text">VRChat RNGプロジェクトのUIをTextMeshProへ移行完了</span>
                         </div>
                         <div class="activity-card">
                             <span class="activity-date">2026.01</span>
-                            <span class="activity-text">ポートフォリオ用ウェブサイトのレイウルートをリニューアルしたぞ？</span>
+                            <span class="activity-text">ポートフォリオ用ウェブサイトのレイアウトをリニューアル</span>
                         </div>
                     </div>
                 </section>
