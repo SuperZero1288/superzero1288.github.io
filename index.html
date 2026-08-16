@@ -18,10 +18,8 @@
         </defs>
     </svg>
 
-
     <!-- 浮遊型 フローティングステータスバー -->
     <div class="floating-status-bar" id="statusBar">
-        
         <!-- 左端配置：星アイコンボタン -->
         <button class="status-capsule icon-btn" id="starBtn" title="お気に入り">
             <span class="svg-icon">
@@ -32,7 +30,7 @@
         <!-- 絶対中央配置：時計カプセル -->
         <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
             <span class="status-time" id="statusTime">12:00</span>
-            
+
             <!-- カーソルホバー時に表示されるリアルカレンダーポップアップ -->
             <div class="calendar-popup" id="calendarPopup">
                 <div class="calendar-header" id="calendarHeader">2026.08</div>
@@ -53,19 +51,12 @@
 
         <!-- 右端エリア：UIデザインテーマ切り替えボタン ＋ ダーク/ライト切替ボタン -->
         <div class="status-right-group">
-            <!-- UIデザイン切り替え用ボタン＋テーマ選択ポップアップ -->
-            <div class="theme-capsule-wrapper">
-                <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
-                    <span class="svg-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 10.9967V7.9967H14V3.9967H10V7.9967H4V10.9967H20ZM21 12.9967V20.9967C21 21.549 20.5523 21.9967 20 21.9967H10V15.9967H8V21.9967H4C3.44772 21.9967 3 21.549 3 20.9967V12.9967H2V6.9967C2 6.44442 2.44772 5.9967 3 5.9967H8V2.9967C8 2.44442 8.44772 1.9967 9 1.9967H15C15.5523 1.9967 16 2.44442 16 2.9967V5.9967H21C21.5523 5.9967 22 6.44442 22 6.9967V12.9967H21Z"></path></svg>
-                    </span>
-                </button>
-                <div class="theme-popup" id="themePopup">
-                    <button class="theme-popup-arrow" id="themePrevBtn" type="button" aria-label="前のテーマ">‹</button>
-                    <div class="theme-popup-name" id="themePopupName">Default</div>
-                    <button class="theme-popup-arrow" id="themeNextBtn" type="button" aria-label="次のテーマ">›</button>
-                </div>
-            </div>
+            <!-- UIデザイン切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
+                <span class="svg-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </span>
+            </button>
 
             <!-- ダーク/ライト切り替え用ボタン -->
             <button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え">
@@ -74,7 +65,6 @@
                 </span>
             </button>
         </div>
-
     </div>
 
     <!-- コピー完了通知トースト -->
@@ -104,7 +94,7 @@
 
     <!-- 全画面スライドコンテナ (Scroll Snap) -->
     <div class="snap-container" id="snapContainer">
-        
+
         <!-- Section 1: ファーストビュー -->
         <section class="snap-section hero-spacer" id="hero">
             <div class="scroll-indicator" id="scrollIndicator">
@@ -117,7 +107,7 @@
         <section class="snap-section content-section-wrapper" id="main-content">
             <div class="content-screen">
                 <div class="content-wrapper">
-                    
+
                     <!-- ナビゲーションヘッダー -->
                     <header class="header-nav">
                         <div class="site-title">portfolio / ぜろくんでんせつ</div>
@@ -125,7 +115,7 @@
 
                     <!-- メインコンテンツ -->
                     <main class="container">
-                        
+
                         <div class="main-content-layout">
                             <!-- 左側：プロフィール情報 -->
                             <section class="profile-card">
@@ -143,23 +133,23 @@
                             <section class="gallery-section">
                                 <h2 class="section-title">リンクたち</h2>
                                 <p class="section-subtitle">リンク先は画像をクリック！</p>
-                                
+
                                 <div class="grid-container">
                                     <a href="https://x.com" class="grid-item" id="gallery-twitter" target="_blank" rel="noopener">
                                         <div class="item-content">𝕏 Twitter</div>
                                         <div class="item-link">にちじょ～</div>
                                     </a>
-                                    
+
                                     <a href="https://vrchat.com" class="grid-item" id="gallery-vrchat" target="_blank" rel="noopener">
                                         <div class="item-content">VRChat</div>
                                         <div class="item-link">フレンド申請お気軽に！</div>
                                     </a>
-                                    
+
                                     <a href="https://booth.pm" class="grid-item" id="gallery-booth" target="_blank" rel="noopener">
                                         <div class="item-content">🛍️ BOOTH</div>
                                         <div class="item-link">Boothを見る</div>
                                     </a>
-                                    
+
                                     <a href="#" class="grid-item" id="gallery-shader">
                                         <div class="item-content">✨ 工事中～</div>
                                         <div class="item-link">近日公開...！</div>
@@ -197,7 +187,7 @@
         const toast = document.getElementById('toast');
         const snapContainer = document.getElementById('snapContainer');
         const scrollIndicator = document.getElementById('scrollIndicator');
-        
+
         let hideTimeout;
         let indicatorTimeout;
         let toastTimeout;
@@ -215,8 +205,8 @@
             { id: 'style-default', name: 'Default' },
             { id: 'style-material', name: 'Google Material Design' },
             { id: 'style-liquidglass', name: 'Apple LiquidGlass' },
-            { id: 'style-fluent', name: 'Fluent Design' },
             { id: 'style-vrchat', name: 'VRChat UI' },
+            { id: 'style-fluent', name: 'Microsoft Fluent Design' },
             { id: 'style-unity', name: 'Unity Engine' }
         ];
         let currentStyleIndex = 0;
@@ -236,7 +226,7 @@
 
         function updateTime() {
             const now = new Date();
-            
+
             if (isThursdayMode) {
                 const isThursday = now.getDay() === 4;
                 statusTime.textContent = isThursday ? 'はい' : 'いいえ';
@@ -245,7 +235,7 @@
 
             let hours = now.getHours();
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            
+
             if (is24Hour) {
                 const hStr = String(hours).padStart(2, '0');
                 statusTime.textContent = `${hStr}:${minutes}`;
@@ -285,7 +275,7 @@
             for (let day = 1; day <= totalDays; day++) {
                 const dayCell = document.createElement('div');
                 dayCell.className = 'calendar-day-cell';
-                
+
                 const cellDate = new Date(year, month, day);
                 const dayOfWeek = cellDate.getDay();
 
@@ -316,7 +306,7 @@
         // 時計カプセルクリック処理
         timeCapsule.addEventListener('click', (e) => {
             clickCount++;
-            
+
             if (clickCount >= 5) {
                 if (Math.random() < 0.3) {
                     isThursdayMode = !isThursdayMode;
@@ -376,7 +366,7 @@
         snapContainer.addEventListener('scroll', () => {
             const scrollTop = snapContainer.scrollTop;
             const scrollRatio = Math.min(scrollTop / window.innerHeight, 1);
-            
+
             // 背景ぼかしと暗転制御
             const blurVal = scrollRatio * 16;
             blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
@@ -423,39 +413,20 @@
             themeIcon.innerHTML = isLight ? SVG_SUN : SVG_MOON;
         });
 
-        const themePopup = document.getElementById('themePopup');
-        const themePopupName = document.getElementById('themePopupName');
-        const themePrevBtn = document.getElementById('themePrevBtn');
-        const themeNextBtn = document.getElementById('themeNextBtn');
-
-        function updateThemePopup() {
-            themePopupName.textContent = uiStyles[currentStyleIndex].name;
-        }
-
-        function applyStyle(index) {
+        // UIデザインテーマ切り替え処理
+        uiStyleToggleBtn.addEventListener('click', () => {
+            // 現在のスタイルのクラスを削除
             document.body.classList.remove(uiStyles[currentStyleIndex].id);
-            currentStyleIndex = (index + uiStyles.length) % uiStyles.length;
+
+            // インデックスを進める
+            currentStyleIndex = (currentStyleIndex + 1) % uiStyles.length;
+
+            // 新しいスタイルのクラスを追加
             const newStyle = uiStyles[currentStyleIndex];
             document.body.classList.add(newStyle.id);
-            updateThemePopup();
-            showToast(newStyle.name);
-        }
 
-        uiStyleToggleBtn.addEventListener('click', () => {
-            applyStyle(currentStyleIndex + 1);
+            showToast(`Theme: ${newStyle.name}`);
         });
-
-        themePrevBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            applyStyle(currentStyleIndex - 1);
-        });
-
-        themeNextBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            applyStyle(currentStyleIndex + 1);
-        });
-
-        updateThemePopup();
     </script>
 </body>
 </html>
