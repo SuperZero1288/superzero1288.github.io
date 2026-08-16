@@ -42,8 +42,8 @@ body.style-liquidglass{
 --radius-card:20px;
 --radius-capsule:9999px;
 --font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',Arial,sans-serif;
---glow-effect:0 8px 30px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.55);
---lg-blur:14px;
+--glow-effect:0 3px 8px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.55);
+--lg-blur:3px;
 --lg-saturation:165%;
 --lg-brightness:108%;
 }
