@@ -79,31 +79,27 @@
         
         <!-- Section 1: ファーストビュー -->
         <section class="snap-section hero-spacer" id="hero">
-            <a href="#about" class="scroll-indicator">
+            <div class="scroll-indicator" id="scrollIndicator">
                 <span class="scroll-text">SCROLL DOWN</span>
                 <span class="scroll-arrow">▼</span>
-            </a>
+            </div>
         </section>
 
         <!-- Section 2: 中央配置のフローティングウィンドウ -->
-        <section class="snap-section content-section-wrapper" id="about">
+        <section class="snap-section content-section-wrapper" id="main-content">
             <div class="content-screen">
                 <div class="content-wrapper">
                     
                     <!-- ナビゲーションヘッダー -->
                     <header class="header-nav">
                         <div class="site-title">portfolio / ぜろくんでんせつ</div>
-                        <nav class="nav-links">
-                            <a href="#about">About</a>
-                            <a href="#gallery">Gallery</a>
-                        </nav>
                     </header>
 
                     <!-- メインコンテンツ -->
                     <main class="container">
                         
                         <div class="main-content-layout">
-                            <!-- 左側：プロフィール情報 (About) -->
+                            <!-- 左側：プロフィール情報 -->
                             <section class="profile-card">
                                 <div class="avatar-container">
                                     <img src="https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png" alt="アイコン">
@@ -115,8 +111,8 @@
                                 </div>
                             </section>
 
-                            <!-- 右側：リンク一覧 (Gallery) -->
-                            <section class="gallery-section" id="gallery">
+                            <!-- 右側：リンク一覧 -->
+                            <section class="gallery-section">
                                 <h2 class="section-title">リンクたち</h2>
                                 <p class="section-subtitle">リンク先は画像をクリック！</p>
                                 
@@ -171,6 +167,7 @@
         const blurOverlay = document.getElementById('blurOverlay');
         const toast = document.getElementById('toast');
         const snapContainer = document.getElementById('snapContainer');
+        const scrollIndicator = document.getElementById('scrollIndicator');
         
         let hideTimeout;
         let indicatorTimeout;
@@ -200,7 +197,6 @@
         function updateTime() {
             const now = new Date();
             
-            // 木曜日判定モードが有効な場合
             if (isThursdayMode) {
                 const isThursday = now.getDay() === 4;
                 statusTime.textContent = isThursday ? 'はい' : 'いいえ';
@@ -338,11 +334,19 @@
         checkStatusBarStateOnScroll();
 
         snapContainer.addEventListener('scroll', () => {
-            const scrollRatio = Math.min(snapContainer.scrollTop / window.innerHeight, 1);
+            const scrollTop = snapContainer.scrollTop;
+            const scrollRatio = Math.min(scrollTop / window.innerHeight, 1);
+            
+            // 背景ぼかしと暗転制御
             const blurVal = scrollRatio * 16;
             blurOverlay.style.backdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.webkitBackdropFilter = `blur(${blurVal}px)`;
             blurOverlay.style.backgroundColor = `rgba(0, 0, 0, ${scrollRatio * 0.4})`;
+
+            // スクロールダウン表記：100px以上スクロールしたら永久に非表示
+            if (scrollTop > 100) {
+                scrollIndicator.classList.add('hidden');
+            }
 
             checkStatusBarStateOnScroll();
         }, { passive: true });
