@@ -6,7 +6,7 @@
     <title>ぜろくんでんせつ</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="style-default">
 
     <!-- 浮遊型 フローティングステータスバー -->
     <div class="floating-status-bar" id="statusBar">
@@ -40,12 +40,22 @@
             </div>
         </div>
 
-        <!-- 右端配置：テーマ切り替え用ボタン -->
-        <button class="status-capsule icon-btn" id="themeToggleBtn" title="テーマ切り替え">
-            <span class="svg-icon" id="themeIcon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>
-            </span>
-        </button>
+        <!-- 右端エリア：UIデザインテーマ切り替えボタン ＋ ダーク/ライト切替ボタン -->
+        <div class="status-right-group">
+            <!-- 追加：UIデザイン切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="uiStyleToggleBtn" title="UIデザイン切り替え">
+                <span class="svg-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                </span>
+            </button>
+
+            <!-- 既存：ダーク/ライト切り替え用ボタン -->
+            <button class="status-capsule icon-btn" id="themeToggleBtn" title="ダーク/ライト切り替え">
+                <span class="svg-icon" id="themeIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.3807 2.01886C9.91573 3.38768 9 5.3369 9 7.49999C9 11.6421 12.3579 15 16.5 15C18.6631 15 20.6123 14.0843 21.9811 12.6193C21.6613 17.8537 17.3149 22 12 22C6.47715 22 2 17.5228 2 12C2 6.68514 6.14629 2.33869 11.3807 2.01886Z"></path></svg>
+                </span>
+            </button>
+        </div>
 
     </div>
 
@@ -160,6 +170,7 @@
         const statusTime = document.getElementById('statusTime');
         const timeCapsule = document.getElementById('timeCapsule');
         const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const uiStyleToggleBtn = document.getElementById('uiStyleToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
         const calendarPopup = document.getElementById('calendarPopup');
         const calendarHeader = document.getElementById('calendarHeader');
@@ -180,6 +191,15 @@
         let clickCount = 0;
         let clickTimer = null;
         let isThursdayMode = false;
+
+        // UIデザインテーマ一覧（スタイルの種類）
+        const uiStyles = [
+            { id: 'style-default', name: 'Standard' },
+            { id: 'style-cyber', name: 'Cyberpunk' },
+            { id: 'style-glass', name: 'Frosted Glass' },
+            { id: 'style-retro', name: 'Retro Pixel' }
+        ];
+        let currentStyleIndex = 0;
 
         function showToast(text) {
             toast.textContent = text;
@@ -376,10 +396,26 @@
             }
         });
 
+        // ダーク/ライトテーマ切り替え
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
             themeIcon.innerHTML = isLight ? SVG_SUN : SVG_MOON;
+        });
+
+        // UIデザインテーマ切り替え処理
+        uiStyleToggleBtn.addEventListener('click', () => {
+            // 現在のスタイルのクラスを削除
+            document.body.classList.remove(uiStyles[currentStyleIndex].id);
+            
+            // インデックスを進める
+            currentStyleIndex = (currentStyleIndex + 1) % uiStyles.length;
+            
+            // 新しいスタイルのクラスを追加
+            const newStyle = uiStyles[currentStyleIndex];
+            document.body.classList.add(newStyle.id);
+            
+            showToast(`Theme: ${newStyle.name}`);
         });
     </script>
 </body>
