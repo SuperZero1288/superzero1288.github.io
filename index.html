@@ -42,13 +42,6 @@
 <div class="blur-overlay" id="blurOverlay"></div>
 </div>
 
-<button class="edge-card-trigger edge-card-trigger-left" id="deviceCardTrigger" type="button" aria-label="左端へカーソルを近づけるか、ここを押して端末情報を開く" aria-controls="deviceCard" aria-expanded="false">
-<span class="edge-trigger-chevron" aria-hidden="true"></span><span class="edge-trigger-chevron" aria-hidden="true"></span>
-</button>
-<button class="edge-card-trigger edge-card-trigger-right" id="navigationCardTrigger" type="button" aria-label="右端へカーソルを近づけるか、ここを押して追加リンクを開く" aria-controls="navigationCard" aria-expanded="false">
-<span class="edge-trigger-chevron" aria-hidden="true"></span><span class="edge-trigger-chevron" aria-hidden="true"></span>
-</button>
-
 <div class="edge-card-scrim" id="edgeCardScrim"></div>
 <aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
@@ -171,8 +164,6 @@ const deviceCard=document.getElementById('deviceCard');
 const navigationCard=document.getElementById('navigationCard');
 const edgeCardScrim=document.getElementById('edgeCardScrim');
 const deviceInfoList=document.getElementById('deviceInfoList');
-const deviceCardTrigger=document.getElementById('deviceCardTrigger');
-const navigationCardTrigger=document.getElementById('navigationCardTrigger');
 
 let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
@@ -421,8 +412,6 @@ const open=item===card;
 item.classList.toggle('is-open',open);
 item.setAttribute('aria-hidden',String(!open));
 });
-deviceCardTrigger.setAttribute('aria-expanded',String(card===deviceCard));
-navigationCardTrigger.setAttribute('aria-expanded',String(card===navigationCard));
 openEdgeCard=card;
 edgeCardScrim.classList.toggle('is-visible',Boolean(card));
 document.body.classList.toggle('edge-card-open',Boolean(card));
@@ -431,22 +420,28 @@ document.body.classList.toggle('edge-card-open',Boolean(card));
 function closeEdgeCards(){setEdgeCard(null);}
 document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
 edgeCardScrim.addEventListener('click',closeEdgeCards);
-deviceCardTrigger.addEventListener('click',()=>setEdgeCard(deviceCard));
-navigationCardTrigger.addEventListener('click',()=>setEdgeCard(navigationCard));
-
 window.addEventListener('pointermove',event=>{
 if(event.pointerType==='touch'||snapContainer.scrollTop>window.innerHeight*.35)return;
-if(event.clientX<=48)setEdgeCard(deviceCard);
-else if(event.clientX>=window.innerWidth-48)setEdgeCard(navigationCard);
-else if(openEdgeCard&&!openEdgeCard.contains(event.target)){
+const activationDistance=34;
+const revealDistance=160;
+const leftDistance=event.clientX;
+const rightDistance=window.innerWidth-event.clientX;
+if(!openEdgeCard){
+const leftProgress=Math.max(0,Math.min(1,(revealDistance-leftDistance)/(revealDistance-activationDistance)));
+const rightProgress=Math.max(0,Math.min(1,(revealDistance-rightDistance)/(revealDistance-activationDistance)));
+deviceCard.style.setProperty('--edge-peek',`${20+leftProgress*72}px`);
+navigationCard.style.setProperty('--edge-peek',`${20+rightProgress*72}px`);
+if(leftDistance<=activationDistance)setEdgeCard(deviceCard);
+else if(rightDistance<=activationDistance)setEdgeCard(navigationCard);
+}else if(!openEdgeCard.contains(event.target)){
 clearTimeout(edgeCloseTimer);
-edgeCloseTimer=setTimeout(closeEdgeCards,500);
+edgeCloseTimer=setTimeout(closeEdgeCards,180);
 }
 },{passive:true});
 
 [deviceCard,navigationCard].forEach(card=>{
 card.addEventListener('pointerenter',()=>clearTimeout(edgeCloseTimer));
-card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(closeEdgeCards,120);});
+card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(()=>{closeEdgeCards();card.style.setProperty('--edge-peek','20px');},180);});
 });
 
 let touchStartX=0,touchStartY=0;

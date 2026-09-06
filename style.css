@@ -518,42 +518,6 @@ background-position:center
 .slides:nth-child(13){background-image:url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');animation-delay:48s}
 
 /* スライドショー左右の情報カード */
-.edge-card-trigger{
-position:fixed;
-top:50%;
-z-index:30;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-gap:5px;
-width:25px;
-height:104px;
-padding:0;
-background:linear-gradient(90deg,color-mix(in srgb,var(--accent-color) 20%,transparent),color-mix(in srgb,var(--accent-color) 4%,transparent));
-border:1px solid color-mix(in srgb,var(--accent-color) 34%,transparent);
-backdrop-filter:blur(14px);
--webkit-backdrop-filter:blur(14px);
-box-shadow:0 0 24px color-mix(in srgb,var(--accent-color) 14%,transparent),inset 0 0 12px color-mix(in srgb,var(--accent-color) 10%,transparent);
-cursor:pointer;
-opacity:.58;
-overflow:hidden;
-transition:width .32s cubic-bezier(.22,1,.36,1),transform .32s,opacity .25s,border-color .25s,visibility .25s
-}
-
-.edge-card-trigger::before{content:"";position:absolute;inset:18% 0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent-color) 42%,transparent),transparent);filter:blur(7px);animation:edgeGlow 2.8s ease-in-out infinite}
-.edge-card-trigger-left{left:0;transform:translateY(-50%);border-left:0;border-radius:0 18px 18px 0}
-.edge-card-trigger-right{right:0;transform:translateY(-50%);border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(-90deg,color-mix(in srgb,var(--accent-color) 20%,transparent),color-mix(in srgb,var(--accent-color) 4%,transparent))}
-.edge-card-trigger:hover{width:34px;opacity:1;border-color:color-mix(in srgb,var(--accent-color) 70%,transparent)}
-.edge-trigger-chevron{position:relative;width:8px;height:8px;border-top:1.5px solid var(--accent-color);border-right:1.5px solid var(--accent-color);filter:drop-shadow(0 0 4px var(--accent-color));animation:edgeInvite 1.8s ease-in-out infinite}
-.edge-trigger-chevron:nth-child(2){animation-delay:.16s}
-.edge-card-trigger-left .edge-trigger-chevron{transform:rotate(45deg)}
-.edge-card-trigger-right .edge-trigger-chevron{transform:rotate(-135deg)}
-body.edge-card-open .edge-card-trigger,body.edge-hints-hidden .edge-card-trigger{opacity:0;visibility:hidden;pointer-events:none}
-
-@keyframes edgeGlow{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:.85;transform:scaleY(1)}}
-@keyframes edgeInvite{0%,100%{opacity:.28}50%{opacity:1}}
-
 .edge-card{
 position:fixed;
 top:18px;
@@ -569,15 +533,16 @@ border-radius:var(--radius-card);
 box-shadow:0 20px 70px rgba(0,0,0,.55),var(--glow-effect);
 backdrop-filter:blur(24px);
 -webkit-backdrop-filter:blur(24px);
-opacity:0;
-visibility:hidden;
+opacity:1;
+visibility:visible;
 pointer-events:none;
 transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .25s ease,visibility .25s
 }
 
-.edge-card-left{left:18px;transform:translateX(-115%)}
-.edge-card-right{right:18px;transform:translateX(115%)}
+.edge-card-left{left:0;transform:translateX(calc(-100% + var(--edge-peek,20px)));border-left:0}
+.edge-card-right{right:0;transform:translateX(calc(100% - var(--edge-peek,20px)));border-right:0}
 .edge-card.is-open{transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto}
+body.edge-hints-hidden .edge-card:not(.is-open){opacity:0;visibility:hidden}
 
 .edge-card-close{
 display:none;
@@ -636,7 +601,6 @@ transition:opacity .25s,visibility .25s
 .edge-card-scrim.is-visible{opacity:1;visibility:visible;pointer-events:auto}
 
 body.light-theme .edge-card{background:rgba(244,244,247,.9)}
-body.light-theme .edge-card-trigger{background:linear-gradient(90deg,color-mix(in srgb,var(--accent-color) 14%,transparent),rgba(255,255,255,.5))}
 body.light-theme .edge-link-list>a,body.light-theme .edge-link-disabled{background:#f0f0f5}
 body.style-liquidglass .edge-card{background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.05));border-color:rgba(255,255,255,.38)}
 body.style-fluent .edge-card,body.style-fluent .edge-link-list>a,body.style-fluent .edge-link-disabled{border-radius:8px}
@@ -1250,11 +1214,6 @@ body.style-unity .theme-toggle-disabled{}
 .status-bar-indicator{display:none}
 body.edge-card-open .floating-status-bar{transform:translateX(-50%) translateY(-100px)!important;opacity:0!important;pointer-events:none!important}
 .hero-spacer{padding-bottom:max(96px,calc(env(safe-area-inset-bottom) + 72px))}
-.edge-card-trigger{top:52%;width:18px;height:88px;gap:6px}
-.edge-card-trigger-left{transform:translateY(-50%)}
-.edge-card-trigger-right{transform:translateY(-50%)}
-.edge-card-trigger:hover{width:23px}
-.edge-trigger-chevron{width:7px;height:7px}
 .content-screen{border-radius:24px}
 .note-panel,.future-panel{padding:18px}
 .updates-heading-row{align-items:center}
@@ -1265,8 +1224,8 @@ body.edge-card-open .floating-status-bar{transform:translateX(-50%) translateY(-
 .grid-item .item-content{padding:32px 10px}
 .edge-card{top:0;bottom:0;width:min(88vw,390px);max-height:none;border-radius:0;padding:78px 22px 24px}
 .edge-card-close{display:block}
-.edge-card-left{left:0;transform:translateX(-105%)}
-.edge-card-right{right:0;transform:translateX(105%)}
+.edge-card-left{left:0;transform:translateX(calc(-100% + 20px))}
+.edge-card-right{right:0;transform:translateX(calc(100% - 20px))}
 .edge-card.is-open{transform:translateX(0)}
 .edge-card-close{top:18px}
 }
