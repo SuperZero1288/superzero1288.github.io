@@ -639,7 +639,7 @@ transition:color .3s ease,border-radius .3s ease
 display:flex;
 flex-direction:column;
 width:100%;
-gap:16px
+gap:24px
 }
 
 .main-content-layout{
@@ -722,7 +722,8 @@ transition:background-color .3s,border-color .3s,border-radius .3s
 display:grid;
 grid-template-columns:minmax(0,1fr) minmax(0,1fr);
 gap:0;
-margin-top:24px;
+min-height:430px;
+margin-top:0;
 background-color:var(--card-bg);
 border:1px solid var(--card-border);
 border-radius:var(--radius-card);
@@ -734,7 +735,9 @@ transition:background-color .3s,border-color .3s,border-radius .3s
 .note-panel,
 .future-panel{
 min-width:0;
-padding:24px
+padding:24px;
+display:flex;
+flex-direction:column
 }
 
 .future-panel{
@@ -767,7 +770,9 @@ background:rgba(255,255,255,.1)
 
 .note-articles{
 display:grid;
-gap:10px
+grid-template-rows:repeat(3,minmax(96px,1fr));
+gap:12px;
+flex:1
 }
 
 .note-article{
@@ -828,8 +833,10 @@ color:var(--accent-color)
 .future-actions{
 display:grid;
 grid-template-columns:repeat(3,minmax(0,1fr));
-gap:10px;
-margin-top:auto
+grid-template-rows:repeat(2,minmax(96px,1fr));
+gap:12px;
+margin-top:auto;
+flex:1
 }
 
 .future-action{
@@ -880,7 +887,7 @@ margin-bottom:16px
 
 .grid-container{
 display:grid;
-grid-template-columns:repeat(2,1fr);
+grid-template-columns:repeat(3,minmax(0,1fr));
 gap:12px
 }
 
@@ -938,6 +945,8 @@ background-color:rgba(0,0,0,.6)
 #gallery-vrchat{background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png')}
 #gallery-booth{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
 #gallery-shader{background-image:url('https://i.ibb.co/BHDtqs5P/image.png')}
+#gallery-coming-2{background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png')}
+#gallery-coming-3{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
 
 /* LiquidGlass */
 body.style-liquidglass .floating-status-bar,
@@ -1100,11 +1109,11 @@ body.style-unity .theme-toggle-disabled{}
 .content-screen{width:95vw;padding:20px 12px}
 .main-content-layout{flex-direction:column;align-items:center}
 .profile-card{width:100%}
-.grid-container{grid-template-columns:1fr}
-.updates-card{grid-template-columns:1fr}
+.grid-container{grid-template-columns:repeat(2,minmax(0,1fr))}
+.updates-card{grid-template-columns:1fr;min-height:0}
 .future-panel{border-left:0;border-top:1px solid var(--card-border)}
-.future-actions{grid-template-columns:1fr}
-.future-action{min-height:64px;flex-direction:row;align-items:center}
+.future-actions{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(72px,1fr))}
+.future-action{min-height:72px;flex-direction:row;align-items:center}
 .note-article-thumb{width:104px}
 .theme-selector-popup{right:-50px}
 }
@@ -1118,13 +1127,21 @@ body.style-unity .theme-toggle-disabled{}
 .note-article{min-height:86px}
 .note-article-thumb{width:88px;min-height:86px}
 .note-article-copy{padding:10px}
+.grid-item .item-content{padding:32px 10px}
 }
 
 /* 自動生成される記事ページ */
-body.article-page{
+html.article-document{
 height:auto;
 min-height:100%;
-overflow:auto;
+overflow-x:hidden;
+overflow-y:auto
+}
+
+body.article-page{
+height:auto;
+min-height:100vh;
+overflow:visible;
 background:#0f0f12
 }
 

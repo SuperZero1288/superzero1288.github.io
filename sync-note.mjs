@@ -213,7 +213,7 @@ function articleDocument(article, bodyHtml, coverPath) {
   const backdropStyle = coverPath ? ` style="background-image:url('${escapeAttribute(coverPath)}')"` : '';
 
   return `<!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="article-document">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
