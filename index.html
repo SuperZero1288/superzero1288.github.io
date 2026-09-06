@@ -43,10 +43,10 @@
 </div>
 
 <button class="edge-card-trigger edge-card-trigger-left" id="deviceCardTrigger" type="button" aria-label="左端へカーソルを近づけるか、ここを押して端末情報を開く" aria-controls="deviceCard" aria-expanded="false">
-<span class="edge-trigger-arrow">→</span><span class="edge-trigger-desktop">端末情報</span><span class="edge-trigger-mobile">SWIPE</span>
+<span class="edge-trigger-chevron" aria-hidden="true"></span><span class="edge-trigger-chevron" aria-hidden="true"></span>
 </button>
 <button class="edge-card-trigger edge-card-trigger-right" id="navigationCardTrigger" type="button" aria-label="右端へカーソルを近づけるか、ここを押して追加リンクを開く" aria-controls="navigationCard" aria-expanded="false">
-<span class="edge-trigger-desktop">もっと見る</span><span class="edge-trigger-mobile">SWIPE</span><span class="edge-trigger-arrow">←</span>
+<span class="edge-trigger-chevron" aria-hidden="true"></span><span class="edge-trigger-chevron" aria-hidden="true"></span>
 </button>
 
 <div class="edge-card-scrim" id="edgeCardScrim"></div>
@@ -464,6 +464,22 @@ if(Math.abs(deltaX)<60||Math.abs(deltaX)<Math.abs(deltaY))return;
 if(deltaX>0)setEdgeCard(deviceCard);
 else setEdgeCard(navigationCard);
 },{passive:true});
+
+[deviceCard,navigationCard].forEach(card=>{
+let cardTouchX=0,cardTouchY=0;
+card.addEventListener('touchstart',event=>{
+const touch=event.changedTouches[0];
+cardTouchX=touch.clientX;
+cardTouchY=touch.clientY;
+},{passive:true});
+card.addEventListener('touchend',event=>{
+const touch=event.changedTouches[0];
+const deltaX=touch.clientX-cardTouchX;
+const deltaY=touch.clientY-cardTouchY;
+if(Math.abs(deltaX)<55||Math.abs(deltaX)<Math.abs(deltaY))return;
+if((card===deviceCard&&deltaX<0)||(card===navigationCard&&deltaX>0))closeEdgeCards();
+},{passive:true});
+});
 
 window.addEventListener('resize',renderDeviceInfo,{passive:true});
 window.addEventListener('online',renderDeviceInfo);
