@@ -1288,3 +1288,224 @@ font-weight:700
 @media(prefers-reduced-motion:reduce){
 body.style-liquidglass .content-screen{filter:none}
 }
+
+/* 404 */
+body.error-page{
+overflow:auto;
+min-height:100vh;
+background:
+radial-gradient(circle at 20% 15%,color-mix(in srgb,var(--accent-color) 22%,transparent),transparent 32rem),
+radial-gradient(circle at 80% 85%,rgba(112,80,180,.18),transparent 35rem),
+#0f0f12
+}
+
+/* 全ページ共通ローディング */
+html.site-is-loading,html.site-is-loading body{overflow:hidden!important}
+
+.site-loader{
+--loader-progress:0%;
+position:fixed;
+inset:0;
+z-index:99999;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:18px;
+padding:24px;
+background:#0f0f12;
+color:#f2eff5;
+opacity:1;
+visibility:visible;
+transition:opacity .55s ease,visibility .55s ease
+}
+
+.site-loader::before{
+content:"";
+position:absolute;
+inset:0;
+background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--accent-color,#ff8fa3) 22%,transparent),transparent 34rem);
+animation:loader-breathe 1.8s ease-in-out infinite
+}
+
+.site-loader-mark,.site-loader-progress,.site-loader-status{position:relative;z-index:1}
+
+.site-loader-mark{
+font-size:clamp(2.4rem,8vw,4.4rem);
+font-weight:900;
+letter-spacing:-.09em
+}
+
+.site-loader-mark span{color:var(--accent-color,#ff8fa3)}
+
+.site-loader-progress{
+width:min(280px,70vw);
+height:3px;
+overflow:hidden;
+border-radius:999px;
+background:rgba(255,255,255,.13)
+}
+
+.site-loader-progress::after{
+content:"";
+display:block;
+width:var(--loader-progress);
+height:100%;
+border-radius:inherit;
+background:var(--accent-color,#ff8fa3);
+box-shadow:0 0 18px var(--accent-color,#ff8fa3);
+transition:width .25s ease
+}
+
+.site-loader-status{
+font:700 .7rem/1.4 SFMono-Regular,Consolas,monospace;
+letter-spacing:.16em;
+color:#a9a5af
+}
+
+.site-loader.is-complete{opacity:0;visibility:hidden;pointer-events:none}
+
+@keyframes loader-breathe{50%{opacity:.55;transform:scale(1.04)}}
+
+@media(prefers-reduced-motion:reduce){
+.site-loader::before{animation:none}
+.site-loader,.site-loader-progress::after{transition:none}
+}
+
+body.error-page.light-theme{
+background:
+radial-gradient(circle at 20% 15%,color-mix(in srgb,var(--accent-color) 22%,transparent),transparent 32rem),
+radial-gradient(circle at 80% 85%,rgba(112,80,180,.13),transparent 35rem),
+#e8e8ee
+}
+
+.error-status-bar{z-index:20}
+.error-location{font-size:.72rem;font-weight:800;letter-spacing:.12em;white-space:nowrap}
+
+.error-stage{
+position:relative;
+display:grid;
+place-items:center;
+width:100%;
+min-height:100vh;
+padding:96px 20px 48px
+}
+
+.error-stage::before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+opacity:.32;
+background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+background-size:42px 42px;
+mask-image:linear-gradient(to bottom,black,transparent 85%)
+}
+
+.error-card{
+position:relative;
+width:min(760px,100%);
+padding:clamp(30px,7vw,72px);
+text-align:center;
+background:var(--ui-bg);
+border:1px solid var(--border-color);
+border-radius:var(--radius-main);
+box-shadow:0 24px 90px rgba(0,0,0,.42),var(--glow-effect);
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px)
+}
+
+.error-code{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:.04em;
+font-size:clamp(6rem,24vw,12rem);
+font-weight:900;
+line-height:.75;
+letter-spacing:-.1em;
+color:var(--accent-color);
+text-shadow:0 0 42px color-mix(in srgb,var(--accent-color) 30%,transparent)
+}
+
+.error-zero{
+display:inline-grid;
+place-items:center;
+width:.72em;
+height:.72em;
+margin:0 .04em;
+font-size:.78em;
+border:.1em solid currentColor;
+border-radius:50%;
+color:transparent;
+box-shadow:inset 0 0 0 .04em color-mix(in srgb,var(--accent-color) 28%,transparent),0 0 32px color-mix(in srgb,var(--accent-color) 20%,transparent)
+}
+
+.error-eyebrow{
+margin-top:clamp(30px,6vw,52px);
+color:var(--accent-color);
+font-size:.75rem;
+font-weight:800;
+letter-spacing:.18em
+}
+
+.error-card h1{
+max-width:590px;
+margin:14px auto 0;
+font-size:clamp(1.65rem,4.5vw,2.8rem);
+line-height:1.3;
+letter-spacing:-.035em
+}
+
+.error-message{
+max-width:570px;
+margin:20px auto 0;
+font-size:1rem;
+line-height:1.9;
+color:#b8b4c0
+}
+
+body.light-theme .error-message{color:#616170}
+
+.error-actions{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:12px;
+margin-top:34px
+}
+
+.error-primary,.error-secondary{
+min-width:170px;
+padding:13px 20px;
+border:1px solid var(--accent-color);
+border-radius:var(--radius-capsule);
+font:700 .9rem/1 var(--font-family);
+cursor:pointer;
+transition:transform .2s,background-color .2s,color .2s
+}
+
+.error-primary{background:var(--accent-color);color:#17131b}
+.error-primary:hover{background:var(--accent-hover);color:#17131b;transform:translateY(-2px)}
+.error-secondary{background:transparent;color:var(--accent-color)}
+.error-secondary:hover{background:color-mix(in srgb,var(--accent-color) 12%,transparent);transform:translateY(-2px)}
+.error-path{margin-top:30px;color:#77727f;font:600 .72rem/1.5 SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+
+body.style-material .error-card{box-shadow:0 8px 28px rgba(0,0,0,.3)}
+body.style-material .error-primary,body.style-material .error-secondary{text-transform:uppercase;letter-spacing:.06em}
+body.style-liquidglass .error-card{background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.045));border-color:rgba(255,255,255,.38)}
+body.style-fluent .error-card{border-radius:8px;border-top-color:color-mix(in srgb,var(--accent-color) 65%,transparent)}
+body.style-fluent .error-primary,body.style-fluent .error-secondary{border-radius:5px}
+body.style-vrchat .error-card{border-width:2px;box-shadow:0 0 0 1px rgba(0,0,0,.7),0 0 32px rgba(102,192,244,.2)}
+body.style-vrchat .error-eyebrow::before{content:"SYSTEM // ";color:#fff}
+body.style-unity .error-card{border-radius:3px;box-shadow:inset 0 1px #626262,0 16px 55px rgba(0,0,0,.45)}
+body.style-unity .error-code{text-shadow:none}
+body.style-unity .error-primary,body.style-unity .error-secondary{border-radius:3px}
+
+@media(max-width:520px){
+.error-stage{padding:88px 12px 28px}
+.error-card{padding:34px 20px}
+.error-status-bar .error-location{display:none}
+.error-actions{flex-direction:column}
+.error-primary,.error-secondary{width:100%}
+}

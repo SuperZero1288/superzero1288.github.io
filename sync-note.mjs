@@ -283,8 +283,14 @@ function articleDocument(article, bodyHtml, coverPath) {
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
 <link rel="stylesheet" href="../style.css">
+<script src="../site-loader.js" defer></script>
 </head>
 <body class="style-default article-page">
+<div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
+<div class="site-loader-mark">Z<span>/</span>0</div>
+<div class="site-loader-progress"></div>
+<p class="site-loader-status">LOADING ASSETS</p>
+</div>
 <div class="article-backdrop"${backdropStyle}></div>
 <main class="article-shell">
 <article class="article-card">
