@@ -42,6 +42,26 @@
 <div class="blur-overlay" id="blurOverlay"></div>
 </div>
 
+<div class="edge-card-scrim" id="edgeCardScrim"></div>
+<aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
+<button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
+<p class="edge-card-kicker">LOCAL STATUS</p>
+<h2 id="device-card-title">この端末について</h2>
+<div class="device-info-list" id="deviceInfoList"></div>
+<p class="edge-card-note">ブラウザが公開している情報だけを、この端末内で表示しています。</p>
+</aside>
+
+<aside class="edge-card edge-card-right" id="navigationCard" aria-labelledby="navigation-card-title" aria-hidden="true">
+<button class="edge-card-close" type="button" data-close-edge-card aria-label="リンクメニューを閉じる">×</button>
+<p class="edge-card-kicker">EXPANSION PORTS</p>
+<h2 id="navigation-card-title">もっと見る</h2>
+<nav class="edge-link-list" aria-label="拡張ページ">
+<a href="/blog-list/">ブログ記事一覧<span>すべての記事を見る →</span></a>
+<a href="/vrchat-assets/">VRChat向けアセット<span>配布ページへ →</span></a>
+<span class="edge-link-disabled">COMING SOON<span>次の拡張を準備中</span></span>
+</nav>
+</aside>
+
 <div class="snap-container" id="snapContainer">
 <section class="snap-section hero-spacer" id="hero">
 <div class="scroll-indicator" id="scrollIndicator"><span class="scroll-text">SCROLL DOWN</span><span class="scroll-arrow">▼</span></div>
@@ -139,6 +159,11 @@ const blurOverlay=document.getElementById('blurOverlay');
 const toast=document.getElementById('toast');
 const snapContainer=document.getElementById('snapContainer');
 const scrollIndicator=document.getElementById('scrollIndicator');
+const hero=document.getElementById('hero');
+const deviceCard=document.getElementById('deviceCard');
+const navigationCard=document.getElementById('navigationCard');
+const edgeCardScrim=document.getElementById('edgeCardScrim');
+const deviceInfoList=document.getElementById('deviceInfoList');
 
 let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
@@ -318,6 +343,93 @@ updateThemeButton();
 });
 
 updateThemeButton();
+
+function browserName(){
+const ua=navigator.userAgent;
+if(/Edg\//.test(ua))return'Microsoft Edge';
+if(/Firefox\//.test(ua))return'Mozilla Firefox';
+if(/Chrome\//.test(ua))return'Google Chrome';
+if(/Safari\//.test(ua))return'Safari';
+return'不明なブラウザ';
+}
+
+function osName(){
+const ua=navigator.userAgent;
+if(/Windows NT/.test(ua))return'Windows';
+if(/Android/.test(ua))return'Android';
+if(/iPhone|iPad|iPod/.test(ua))return'iOS / iPadOS';
+if(/Mac OS X/.test(ua))return'macOS';
+if(/Linux/.test(ua))return'Linux';
+return'不明';
+}
+
+function renderDeviceInfo(){
+const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+const rows=[
+['OS',osName()],
+['ブラウザ',browserName()],
+['画面',`${screen.width} × ${screen.height}`],
+['表示領域',`${window.innerWidth} × ${window.innerHeight}`],
+['言語',navigator.language||'不明'],
+['タッチ',navigator.maxTouchPoints>0?`${navigator.maxTouchPoints}点対応`:'非対応'],
+['通信',connection?.effectiveType?connection.effectiveType.toUpperCase():(navigator.onLine?'オンライン':'オフライン')],
+['時刻帯',Intl.DateTimeFormat().resolvedOptions().timeZone||'不明']
+];
+deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+}
+
+let openEdgeCard=null;
+let edgeCloseTimer;
+function setEdgeCard(card){
+clearTimeout(edgeCloseTimer);
+[deviceCard,navigationCard].forEach(item=>{
+const open=item===card;
+item.classList.toggle('is-open',open);
+item.setAttribute('aria-hidden',String(!open));
+});
+openEdgeCard=card;
+edgeCardScrim.classList.toggle('is-visible',Boolean(card));
+}
+
+function closeEdgeCards(){setEdgeCard(null);}
+document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
+edgeCardScrim.addEventListener('click',closeEdgeCards);
+
+window.addEventListener('pointermove',event=>{
+if(event.pointerType==='touch'||snapContainer.scrollTop>window.innerHeight*.35)return;
+if(event.clientX<=48)setEdgeCard(deviceCard);
+else if(event.clientX>=window.innerWidth-48)setEdgeCard(navigationCard);
+else if(openEdgeCard&&!openEdgeCard.contains(event.target)){
+clearTimeout(edgeCloseTimer);
+edgeCloseTimer=setTimeout(closeEdgeCards,500);
+}
+},{passive:true});
+
+[deviceCard,navigationCard].forEach(card=>{
+card.addEventListener('pointerenter',()=>clearTimeout(edgeCloseTimer));
+card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(closeEdgeCards,350);});
+});
+
+let touchStartX=0,touchStartY=0;
+hero.addEventListener('touchstart',event=>{
+const touch=event.changedTouches[0];
+touchStartX=touch.clientX;
+touchStartY=touch.clientY;
+},{passive:true});
+
+hero.addEventListener('touchend',event=>{
+const touch=event.changedTouches[0];
+const deltaX=touch.clientX-touchStartX;
+const deltaY=touch.clientY-touchStartY;
+if(Math.abs(deltaX)<60||Math.abs(deltaX)<Math.abs(deltaY))return;
+if(deltaX>0)setEdgeCard(deviceCard);
+else setEdgeCard(navigationCard);
+},{passive:true});
+
+window.addEventListener('resize',renderDeviceInfo,{passive:true});
+window.addEventListener('online',renderDeviceInfo);
+window.addEventListener('offline',renderDeviceInfo);
+renderDeviceInfo();
 </script>
 </body>
 </html>

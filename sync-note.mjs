@@ -284,6 +284,7 @@ function articleDocument(article, bodyHtml, coverPath) {
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
 <link rel="stylesheet" href="../style.css">
 <script src="../site-loader.js" defer></script>
+<script src="../page-bar.js" defer></script>
 </head>
 <body class="style-default article-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
