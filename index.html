@@ -42,6 +42,13 @@
 <div class="blur-overlay" id="blurOverlay"></div>
 </div>
 
+<button class="edge-card-trigger edge-card-trigger-left" id="deviceCardTrigger" type="button" aria-label="左端へカーソルを近づけるか、ここを押して端末情報を開く" aria-controls="deviceCard" aria-expanded="false">
+<span class="edge-trigger-arrow">→</span><span class="edge-trigger-desktop">端末情報</span><span class="edge-trigger-mobile">SWIPE</span>
+</button>
+<button class="edge-card-trigger edge-card-trigger-right" id="navigationCardTrigger" type="button" aria-label="右端へカーソルを近づけるか、ここを押して追加リンクを開く" aria-controls="navigationCard" aria-expanded="false">
+<span class="edge-trigger-desktop">もっと見る</span><span class="edge-trigger-mobile">SWIPE</span><span class="edge-trigger-arrow">←</span>
+</button>
+
 <div class="edge-card-scrim" id="edgeCardScrim"></div>
 <aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
@@ -164,6 +171,8 @@ const deviceCard=document.getElementById('deviceCard');
 const navigationCard=document.getElementById('navigationCard');
 const edgeCardScrim=document.getElementById('edgeCardScrim');
 const deviceInfoList=document.getElementById('deviceInfoList');
+const deviceCardTrigger=document.getElementById('deviceCardTrigger');
+const navigationCardTrigger=document.getElementById('navigationCardTrigger');
 
 let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
@@ -181,6 +190,22 @@ const uiStyles=[
 let currentStyleIndex=0;
 
 function currentStyle(){return uiStyles[currentStyleIndex];}
+
+function restoreAppearance(){
+try{
+const saved=JSON.parse(localStorage.getItem('zero-site-appearance')||'{}');
+const savedIndex=uiStyles.findIndex(style=>style.id===saved.style);
+if(savedIndex>=0)currentStyleIndex=savedIndex;
+document.body.classList.remove(...uiStyles.map(style=>style.id),'light-theme');
+document.body.classList.add(currentStyle().id);
+if(saved.light&&currentStyle().light)document.body.classList.add('light-theme');
+}catch(error){console.warn('表示設定を復元できませんでした',error);}
+}
+
+function saveAppearance(){
+try{localStorage.setItem('zero-site-appearance',JSON.stringify({style:currentStyle().id,light:document.body.classList.contains('light-theme')}));}
+catch(error){console.warn('表示設定を保存できませんでした',error);}
+}
 
 function updateThemeButton(){
 const light=document.body.classList.contains('light-theme');
@@ -280,6 +305,12 @@ if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visi
 
 function checkStatusBarStateOnScroll(){
 clearTimeout(hideTimeout);
+document.body.classList.toggle('edge-hints-hidden',snapContainer.scrollTop>window.innerHeight*.35);
+if(matchMedia('(max-width:520px)').matches){
+statusBar.classList.remove('hidden');
+statusBarIndicator.classList.remove('visible');
+return;
+}
 if(snapContainer.scrollTop<window.innerHeight*.5){
 statusBar.classList.remove('hidden');
 clearTimeout(indicatorTimeout);
@@ -324,6 +355,7 @@ if(snapContainer.scrollTop>=window.innerHeight*.5)hideStatusBarWithDelay(600);
 themeToggleBtn.addEventListener('click',()=>{
 if(!currentStyle().light)return;
 document.body.classList.toggle('light-theme');
+saveAppearance();
 updateThemeButton();
 });
 
@@ -339,9 +371,11 @@ showToast(`${newStyle.name} はダークモードのみ対応`);
 }else{
 showToast(newStyle.name);
 }
+saveAppearance();
 updateThemeButton();
 });
 
+restoreAppearance();
 updateThemeButton();
 
 function browserName(){
@@ -387,13 +421,18 @@ const open=item===card;
 item.classList.toggle('is-open',open);
 item.setAttribute('aria-hidden',String(!open));
 });
+deviceCardTrigger.setAttribute('aria-expanded',String(card===deviceCard));
+navigationCardTrigger.setAttribute('aria-expanded',String(card===navigationCard));
 openEdgeCard=card;
 edgeCardScrim.classList.toggle('is-visible',Boolean(card));
+document.body.classList.toggle('edge-card-open',Boolean(card));
 }
 
 function closeEdgeCards(){setEdgeCard(null);}
 document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
 edgeCardScrim.addEventListener('click',closeEdgeCards);
+deviceCardTrigger.addEventListener('click',()=>setEdgeCard(deviceCard));
+navigationCardTrigger.addEventListener('click',()=>setEdgeCard(navigationCard));
 
 window.addEventListener('pointermove',event=>{
 if(event.pointerType==='touch'||snapContainer.scrollTop>window.innerHeight*.35)return;
@@ -407,7 +446,7 @@ edgeCloseTimer=setTimeout(closeEdgeCards,500);
 
 [deviceCard,navigationCard].forEach(card=>{
 card.addEventListener('pointerenter',()=>clearTimeout(edgeCloseTimer));
-card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(closeEdgeCards,350);});
+card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(closeEdgeCards,120);});
 });
 
 let touchStartX=0,touchStartY=0;
