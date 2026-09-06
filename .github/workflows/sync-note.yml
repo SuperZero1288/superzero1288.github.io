@@ -38,6 +38,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html blog/
-          git commit -m "note記事を自動同期 [skip ci]"
+          git add index.html blog/ assets/
+          git commit -m "プロフィール画像とnote記事を自動同期 [skip ci]"
           git push
