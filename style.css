@@ -518,12 +518,41 @@ background-position:center
 .slides:nth-child(13){background-image:url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');animation-delay:48s}
 
 /* スライドショー左右の情報カード */
+:root{--edge-card-width:min(390px,calc(100vw - 36px))}
+
+.edge-wing-tab{
+position:fixed;
+top:18px;
+bottom:18px;
+z-index:39;
+width:48px;
+padding:0;
+border:1px solid color-mix(in srgb,var(--border-color) 72%,#000);
+background:color-mix(in srgb,var(--ui-bg) 78%,#05070b);
+box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 0 24px rgba(0,0,0,.22);
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
+cursor:pointer;
+transition:transform .38s cubic-bezier(.22,1,.36,1),background .25s,border-color .25s,opacity .25s,visibility .25s
+}
+.edge-wing-tab-left{left:0;border-left:0;border-radius:0 var(--radius-card) var(--radius-card) 0}
+.edge-wing-tab-right{right:0;border-right:0;border-radius:var(--radius-card) 0 0 var(--radius-card)}
+.edge-wing-tab span,.edge-wing-tab span::before,.edge-wing-tab span::after{position:absolute;left:50%;width:4px;height:4px;border-radius:50%;background:var(--accent-color);box-shadow:0 0 8px color-mix(in srgb,var(--accent-color) 70%,transparent);content:""}
+.edge-wing-tab span{top:50%;transform:translate(-50%,-50%)}
+.edge-wing-tab span::before{top:-11px;transform:translateX(-50%)}
+.edge-wing-tab span::after{top:11px;transform:translateX(-50%)}
+.edge-wing-tab:hover{background:color-mix(in srgb,var(--ui-bg) 68%,var(--accent-color));border-color:var(--accent-color)}
+.edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) - 12px))}
+.edge-wing-tab-right.is-open{transform:translateX(calc(12px - var(--edge-card-width)))}
+body.edge-card-open .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
+body.edge-hints-hidden .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
+
 .edge-card{
 position:fixed;
 top:18px;
 bottom:18px;
 z-index:40;
-width:min(390px,calc(100vw - 36px));
+width:var(--edge-card-width);
 max-height:none;
 overflow:auto;
 padding:34px 28px 28px;
@@ -533,16 +562,15 @@ border-radius:var(--radius-card);
 box-shadow:0 20px 70px rgba(0,0,0,.55),var(--glow-effect);
 backdrop-filter:blur(24px);
 -webkit-backdrop-filter:blur(24px);
-opacity:1;
-visibility:visible;
+opacity:0;
+visibility:hidden;
 pointer-events:none;
 transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .25s ease,visibility .25s
 }
 
-.edge-card-left{left:0;transform:translateX(calc(-100% + var(--edge-peek,20px)));border-left:0}
-.edge-card-right{right:0;transform:translateX(calc(100% - var(--edge-peek,20px)));border-right:0}
+.edge-card-left{left:18px;transform:translateX(-115%)}
+.edge-card-right{right:18px;transform:translateX(115%)}
 .edge-card.is-open{transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto}
-body.edge-hints-hidden .edge-card:not(.is-open){opacity:0;visibility:hidden}
 
 .edge-card-close{
 display:none;
@@ -1209,6 +1237,7 @@ body.style-unity .theme-toggle-disabled{}
 }
 
 @media(max-width:520px){
+:root{--edge-card-width:min(88vw,390px)}
 .floating-status-bar,.status-bar-indicator{width:calc(100vw - 24px);min-width:0}
 .floating-status-bar.hidden{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
 .status-bar-indicator{display:none}
@@ -1224,10 +1253,13 @@ body.edge-card-open .floating-status-bar{transform:translateX(-50%) translateY(-
 .grid-item .item-content{padding:32px 10px}
 .edge-card{top:0;bottom:0;width:min(88vw,390px);max-height:none;border-radius:0;padding:78px 22px 24px}
 .edge-card-close{display:block}
-.edge-card-left{left:0;transform:translateX(calc(-100% + 20px))}
-.edge-card-right{right:0;transform:translateX(calc(100% - 20px))}
+.edge-card-left{left:0;transform:translateX(-105%)}
+.edge-card-right{right:0;transform:translateX(105%)}
 .edge-card.is-open{transform:translateX(0)}
 .edge-card-close{top:18px}
+.edge-wing-tab{top:0;bottom:0;width:34px;border-radius:0}
+.edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) - 10px))}
+.edge-wing-tab-right.is-open{transform:translateX(calc(10px - var(--edge-card-width)))}
 }
 
 /* 自動生成される記事ページ */

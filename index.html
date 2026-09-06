@@ -43,6 +43,7 @@
 </div>
 
 <div class="edge-card-scrim" id="edgeCardScrim"></div>
+<button class="edge-wing-tab edge-wing-tab-left" id="deviceWingTab" type="button" aria-label="端末情報カードを開く" aria-controls="deviceCard" aria-expanded="false"><span aria-hidden="true"></span></button>
 <aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
 <p class="edge-card-kicker">LOCAL STATUS</p>
@@ -51,6 +52,7 @@
 <p class="edge-card-note">ブラウザが公開している情報だけを、この端末内で表示しています。</p>
 </aside>
 
+<button class="edge-wing-tab edge-wing-tab-right" id="navigationWingTab" type="button" aria-label="追加リンクカードを開く" aria-controls="navigationCard" aria-expanded="false"><span aria-hidden="true"></span></button>
 <aside class="edge-card edge-card-right" id="navigationCard" aria-labelledby="navigation-card-title" aria-hidden="true">
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="リンクメニューを閉じる">×</button>
 <p class="edge-card-kicker">EXPANSION PORTS</p>
@@ -164,6 +166,8 @@ const deviceCard=document.getElementById('deviceCard');
 const navigationCard=document.getElementById('navigationCard');
 const edgeCardScrim=document.getElementById('edgeCardScrim');
 const deviceInfoList=document.getElementById('deviceInfoList');
+const deviceWingTab=document.getElementById('deviceWingTab');
+const navigationWingTab=document.getElementById('navigationWingTab');
 
 let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
@@ -404,14 +408,18 @@ deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${
 }
 
 let openEdgeCard=null;
-let edgeCloseTimer;
 function setEdgeCard(card){
-clearTimeout(edgeCloseTimer);
 [deviceCard,navigationCard].forEach(item=>{
 const open=item===card;
 item.classList.toggle('is-open',open);
 item.setAttribute('aria-hidden',String(!open));
 });
+deviceWingTab.classList.toggle('is-open',card===deviceCard);
+navigationWingTab.classList.toggle('is-open',card===navigationCard);
+deviceWingTab.setAttribute('aria-expanded',String(card===deviceCard));
+navigationWingTab.setAttribute('aria-expanded',String(card===navigationCard));
+deviceWingTab.setAttribute('aria-label',card===deviceCard?'端末情報カードを閉じる':'端末情報カードを開く');
+navigationWingTab.setAttribute('aria-label',card===navigationCard?'追加リンクカードを閉じる':'追加リンクカードを開く');
 openEdgeCard=card;
 edgeCardScrim.classList.toggle('is-visible',Boolean(card));
 document.body.classList.toggle('edge-card-open',Boolean(card));
@@ -420,29 +428,8 @@ document.body.classList.toggle('edge-card-open',Boolean(card));
 function closeEdgeCards(){setEdgeCard(null);}
 document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
 edgeCardScrim.addEventListener('click',closeEdgeCards);
-window.addEventListener('pointermove',event=>{
-if(event.pointerType==='touch'||snapContainer.scrollTop>window.innerHeight*.35)return;
-const activationDistance=34;
-const revealDistance=160;
-const leftDistance=event.clientX;
-const rightDistance=window.innerWidth-event.clientX;
-if(!openEdgeCard){
-const leftProgress=Math.max(0,Math.min(1,(revealDistance-leftDistance)/(revealDistance-activationDistance)));
-const rightProgress=Math.max(0,Math.min(1,(revealDistance-rightDistance)/(revealDistance-activationDistance)));
-deviceCard.style.setProperty('--edge-peek',`${20+leftProgress*72}px`);
-navigationCard.style.setProperty('--edge-peek',`${20+rightProgress*72}px`);
-if(leftDistance<=activationDistance)setEdgeCard(deviceCard);
-else if(rightDistance<=activationDistance)setEdgeCard(navigationCard);
-}else if(!openEdgeCard.contains(event.target)){
-clearTimeout(edgeCloseTimer);
-edgeCloseTimer=setTimeout(closeEdgeCards,180);
-}
-},{passive:true});
-
-[deviceCard,navigationCard].forEach(card=>{
-card.addEventListener('pointerenter',()=>clearTimeout(edgeCloseTimer));
-card.addEventListener('pointerleave',()=>{if(matchMedia('(hover:hover)').matches)edgeCloseTimer=setTimeout(()=>{closeEdgeCards();card.style.setProperty('--edge-peek','20px');},180);});
-});
+deviceWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===deviceCard?null:deviceCard));
+navigationWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===navigationCard?null:navigationCard));
 
 let touchStartX=0,touchStartY=0;
 hero.addEventListener('touchstart',event=>{
