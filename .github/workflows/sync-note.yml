@@ -1,0 +1,43 @@
+name: note記事を同期
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-note
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: サイトを取得
+        uses: actions/checkout@v4
+
+      - name: Node.jsを準備
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: note記事を取得
+        run: node sync-note.mjs
+        env:
+          NOTE_PROFILE_URL: https://note.com/zerrrrro_1288
+
+      - name: 更新を保存
+        shell: bash
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "更新はありません"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html blog/
+          git commit -m "note記事を自動同期 [skip ci]"
+          git push
