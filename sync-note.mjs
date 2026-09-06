@@ -7,6 +7,32 @@ const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const noteProfileUrl = (process.env.NOTE_PROFILE_URL || 'https://note.com/zerrrrro_1288').replace(/\/$/, '');
 const rssUrl = `${noteProfileUrl}/rss`;
 const maxHomeArticles = 3;
+const browserUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36';
+const socialProfiles = [
+  {
+    name: 'X',
+    pageUrl: 'https://x.com/ZErrrrrO_VRC',
+    destination: 'social-x.jpg',
+    findImage: extractMetaImage,
+  },
+  {
+    name: 'BOOTH',
+    pageUrl: 'https://zerrrrro.booth.pm/items',
+    destination: 'social-booth.jpg',
+    findImage: (html) => decodeEntities(html.match(/https:\/\/booth\.pximg\.net\/c\/128x128\/users\/[^"'<> )]+/i)?.[0] || ''),
+  },
+  {
+    name: 'VRChat',
+    pageUrl: 'https://vrchat.com/home/user/usr_5c9a7a29-fe11-4162-9ae3-9774f0e129a6',
+    destination: 'social-vrchat.png',
+    findImage: extractMetaImage,
+  },
+  {
+    name: 'GitHub',
+    imageUrl: 'https://github.com/SuperZero1288.png?size=460',
+    destination: 'social-github.png',
+  },
+];
 
 const decodeEntities = (value = '') => value
   .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
@@ -26,6 +52,42 @@ const escapeHtml = (value = '') => value
   .replace(/'/g, '&#39;');
 
 const escapeAttribute = escapeHtml;
+
+function extractMetaImage(html) {
+  for (const key of ['og:image', 'twitter:image']) {
+    const propertyFirst = html.match(new RegExp(`<meta[^>]+(?:property|name)=["']${key}["'][^>]+content=["']([^"']+)["']`, 'i'));
+    const contentFirst = html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["']${key}["']`, 'i'));
+    const image = propertyFirst?.[1] || contentFirst?.[1];
+    if (image) return decodeEntities(image);
+  }
+  return '';
+}
+
+async function syncSocialImages() {
+  const assetsDirectory = path.join(projectRoot, 'assets');
+  await mkdir(assetsDirectory, { recursive: true });
+
+  for (const profile of socialProfiles) {
+    try {
+      let imageUrl = profile.imageUrl;
+      if (!imageUrl) {
+        const html = await fetchText(profile.pageUrl, browserUserAgent);
+        imageUrl = profile.findImage(html);
+      }
+      if (!imageUrl) throw new Error('公開プロフィール画像が見つかりませんでした');
+
+      const response = await fetch(imageUrl, { headers: { 'User-Agent': browserUserAgent } });
+      if (!response.ok) throw new Error(`画像の取得に失敗しました (${response.status})`);
+      if (!(response.headers.get('content-type') || '').startsWith('image/')) {
+        throw new Error('取得結果が画像ではありませんでした');
+      }
+      await writeFile(path.join(assetsDirectory, profile.destination), Buffer.from(await response.arrayBuffer()));
+      console.log(`プロフィール画像を更新: ${profile.name}`);
+    } catch (error) {
+      console.warn(`プロフィール画像を更新できませんでした (${profile.name}): ${error.message}`);
+    }
+  }
+}
 
 function textFromHtml(value = '') {
   return decodeEntities(value.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ' '))
@@ -53,10 +115,10 @@ function parseRss(xml) {
   }).filter((article) => article.title && article.sourceUrl);
 }
 
-async function fetchText(url) {
+async function fetchText(url, userAgent = 'zero-portfolio-note-sync/1.0 (+GitHub Actions)') {
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'zero-portfolio-note-sync/1.0 (+GitHub Actions)',
+      'User-Agent': userAgent,
       Accept: 'text/html,application/xml;q=0.9,*/*;q=0.8',
     },
   });
@@ -304,6 +366,7 @@ async function syncArticle(article) {
 }
 
 async function main() {
+  await syncSocialImages();
   const rss = await fetchText(rssUrl);
   const articles = parseRss(rss);
   if (!articles.length) throw new Error('公開記事がRSSに見つかりませんでした');

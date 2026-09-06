@@ -13,6 +13,7 @@ GitHub Actionsの `note記事を同期` が6時間ごとに公開記事を確認
 - 記事内画像と見出し画像を `blog/assets/` へ保存
 - `blog/記事ID.html` にサイト内記事ページを生成
 - トップページのnote欄を最新3件に更新
+- X・BOOTH・VRChat・GitHubの公開プロフィール画像を更新
 
 無料版noteの公開画面を読み取る非公式方式です。note側のHTML構造が変わった場合は、`sync-note.mjs` の調整が必要になることがあります。
 

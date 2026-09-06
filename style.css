@@ -941,12 +941,12 @@ color:var(--accent-hover);
 background-color:rgba(0,0,0,.6)
 }
 
-#gallery-twitter{background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png')}
-#gallery-vrchat{background-image:url('https://i.ibb.co/rRgCdcHk/VRChat-2026-03-18-22-42-04-583-1920x1080.png')}
-#gallery-booth{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
+#gallery-twitter{background-image:url('assets/social-x.jpg')}
+#gallery-booth{background-image:url('assets/social-booth.jpg')}
+#gallery-vrchat{background-image:url('assets/social-vrchat.png')}
+#gallery-github{background-image:url('assets/social-github.png')}
 #gallery-shader{background-image:url('https://i.ibb.co/BHDtqs5P/image.png')}
 #gallery-coming-2{background-image:url('https://i.ibb.co/9m91DfG7/VRChat-2026-07-19-17-49-16-440-3840x2160.png')}
-#gallery-coming-3{background-image:url('https://i.ibb.co/Pz1wJ961/VRChat-2026-03-18-22-44-46-734-1920x1080.png')}
 
 /* LiquidGlass */
 body.style-liquidglass .floating-status-bar,
