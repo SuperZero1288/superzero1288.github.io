@@ -518,14 +518,17 @@ background-position:center
 .slides:nth-child(13){background-image:url('https://i.ibb.co/NdTVv68m/VRChat-2026-07-19-17-48-01-748-3840x2160.png');animation-delay:48s}
 
 /* スライドショー左右の情報カード */
-:root{--edge-card-width:min(390px,calc(100vw - 36px))}
+:root{
+--edge-card-width:min(390px,calc(100vw - 36px));
+--wing-tab-width:clamp(36px,calc(48px + 3vw - 5.333vh),64px)
+}
 
 .edge-wing-tab{
 position:fixed;
 top:18px;
 bottom:18px;
 z-index:39;
-width:48px;
+width:var(--wing-tab-width);
 padding:0;
 border:1px solid color-mix(in srgb,var(--border-color) 72%,#000);
 background:color-mix(in srgb,var(--ui-bg) 78%,#05070b);
@@ -533,7 +536,7 @@ box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 0 24px rgba(0,0,0,.22);
 backdrop-filter:blur(20px);
 -webkit-backdrop-filter:blur(20px);
 cursor:pointer;
-transition:transform .38s cubic-bezier(.22,1,.36,1),background .25s,border-color .25s,opacity .25s,visibility .25s
+transition:transform .38s cubic-bezier(.22,1,.36,1),background .25s,border-color .25s,opacity .65s ease,visibility .65s
 }
 .edge-wing-tab-left{left:0;border-left:0;border-radius:0 var(--radius-card) var(--radius-card) 0}
 .edge-wing-tab-right{right:0;border-right:0;border-radius:var(--radius-card) 0 0 var(--radius-card)}
@@ -546,6 +549,7 @@ transition:transform .38s cubic-bezier(.22,1,.36,1),background .25s,border-color
 .edge-wing-tab-right.is-open{transform:translateX(calc(12px - var(--edge-card-width)))}
 body.edge-card-open .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
 body.edge-hints-hidden .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
+body.wing-tabs-idle .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
 
 .edge-card{
 position:fixed;
@@ -562,15 +566,15 @@ border-radius:var(--radius-card);
 box-shadow:0 20px 70px rgba(0,0,0,.55),var(--glow-effect);
 backdrop-filter:blur(24px);
 -webkit-backdrop-filter:blur(24px);
-opacity:0;
+opacity:1;
 visibility:hidden;
 pointer-events:none;
-transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .25s ease,visibility .25s
+transition:transform .38s cubic-bezier(.22,1,.36,1),visibility 0s linear .38s
 }
 
 .edge-card-left{left:18px;transform:translateX(-115%)}
 .edge-card-right{right:18px;transform:translateX(115%)}
-.edge-card.is-open{transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto}
+.edge-card.is-open{transform:translateX(0);visibility:visible;pointer-events:auto;transition-delay:0s}
 
 .edge-card-close{
 display:none;
@@ -655,16 +659,16 @@ padding-bottom:30px
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:6px;
-padding:12px 28px;
-background:var(--ui-bg);
-border:1px solid var(--accent-color);
+gap:3px;
+padding:9px 16px 7px;
+background:color-mix(in srgb,var(--ui-bg) 78%,transparent);
+border:1px solid color-mix(in srgb,var(--border-color) 70%,transparent);
 border-radius:var(--radius-card);
 backdrop-filter:blur(8px);
-box-shadow:0 4px 20px rgba(0,0,0,.6),var(--glow-effect);
+box-shadow:0 4px 16px rgba(0,0,0,.28);
 transition:opacity .4s ease,transform .4s ease;
-animation:floatAnimation 2.5s infinite ease-in-out;
-opacity:1;
+animation:floatAnimation 3.4s infinite ease-in-out;
+opacity:.72;
 pointer-events:auto
 }
 
@@ -675,27 +679,31 @@ transform:translateY(15px)
 }
 
 .scroll-indicator:hover{
-background:rgba(40,36,46,.9);
-border-color:var(--accent-hover)
+opacity:1;
+border-color:var(--accent-color)
 }
 
 .scroll-text{
 color:#fff;
-font-size:1rem;
-font-weight:800;
-letter-spacing:3px;
-text-shadow:0 2px 4px rgba(0,0,0,.9)
+font-size:.78rem;
+font-weight:650;
+line-height:1.45;
+letter-spacing:.08em;
+text-align:center;
+text-shadow:0 1px 3px rgba(0,0,0,.55)
 }
+.scroll-text>span{display:block;color:color-mix(in srgb,currentColor 68%,transparent);font-size:.75rem;font-weight:500;letter-spacing:.04em}
+.scroll-text-mobile{display:none}
 
 .scroll-arrow{
 color:var(--accent-color);
-font-size:1.1rem;
+font-size:.85rem;
 animation:arrowBounce 1.5s infinite
 }
 
 @keyframes floatAnimation{
 0%,100%{transform:translateY(0)}
-50%{transform:translateY(-12px)}
+50%{transform:translateY(-4px)}
 }
 
 @keyframes arrowBounce{
@@ -1257,9 +1265,10 @@ body.edge-card-open .floating-status-bar{transform:translateX(-50%) translateY(-
 .edge-card-right{right:0;transform:translateX(105%)}
 .edge-card.is-open{transform:translateX(0)}
 .edge-card-close{top:18px}
-.edge-wing-tab{top:0;bottom:0;width:34px;border-radius:0}
-.edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) - 10px))}
-.edge-wing-tab-right.is-open{transform:translateX(calc(10px - var(--edge-card-width)))}
+.edge-wing-tab{display:none!important}
+.scroll-text-desktop{display:none}
+.scroll-text-mobile{display:block}
+.scroll-indicator{max-width:210px;padding:8px 14px 6px}
 }
 
 /* 自動生成される記事ページ */

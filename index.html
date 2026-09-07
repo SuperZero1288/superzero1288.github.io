@@ -66,7 +66,11 @@
 
 <div class="snap-container" id="snapContainer">
 <section class="snap-section hero-spacer" id="hero">
-<div class="scroll-indicator" id="scrollIndicator"><span class="scroll-text">SCROLL DOWN</span><span class="scroll-arrow">▼</span></div>
+<div class="scroll-indicator" id="scrollIndicator">
+<span class="scroll-text scroll-text-desktop">左右のタブをクリック<span>またはスクロールダウン</span></span>
+<span class="scroll-text scroll-text-mobile">左右にスワイプ<span>またはスクロールダウン</span></span>
+<span class="scroll-arrow" aria-hidden="true">⌄</span>
+</div>
 </section>
 
 <section class="snap-section content-section-wrapper" id="main-content">
@@ -408,6 +412,15 @@ deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${
 }
 
 let openEdgeCard=null;
+let wingTabHideTimer;
+
+function showWingTabsTemporarily(){
+if(matchMedia('(max-width:520px)').matches)return;
+document.body.classList.remove('wing-tabs-idle');
+clearTimeout(wingTabHideTimer);
+if(!openEdgeCard)wingTabHideTimer=setTimeout(()=>document.body.classList.add('wing-tabs-idle'),3600);
+}
+
 function setEdgeCard(card){
 [deviceCard,navigationCard].forEach(item=>{
 const open=item===card;
@@ -423,13 +436,23 @@ navigationWingTab.setAttribute('aria-label',card===navigationCard?'追加リン�
 openEdgeCard=card;
 edgeCardScrim.classList.toggle('is-visible',Boolean(card));
 document.body.classList.toggle('edge-card-open',Boolean(card));
+if(card){
+document.body.classList.remove('wing-tabs-idle');
+clearTimeout(wingTabHideTimer);
+}else showWingTabsTemporarily();
 }
 
 function closeEdgeCards(){setEdgeCard(null);}
 document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
 edgeCardScrim.addEventListener('click',closeEdgeCards);
-deviceWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===deviceCard?null:deviceCard));
-navigationWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===navigationCard?null:navigationCard));
+deviceWingTab.addEventListener('click',()=>{showWingTabsTemporarily();setEdgeCard(openEdgeCard===deviceCard?null:deviceCard);});
+navigationWingTab.addEventListener('click',()=>{showWingTabsTemporarily();setEdgeCard(openEdgeCard===navigationCard?null:navigationCard);});
+
+window.addEventListener('pointermove',event=>{
+if(event.pointerType==='touch'||openEdgeCard)return;
+if(event.clientX<120||event.clientX>window.innerWidth-120)showWingTabsTemporarily();
+},{passive:true});
+showWingTabsTemporarily();
 
 let touchStartX=0,touchStartY=0;
 hero.addEventListener('touchstart',event=>{
