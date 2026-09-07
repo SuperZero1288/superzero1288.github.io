@@ -6,13 +6,24 @@ import { fileURLToPath } from 'node:url';
 const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 const noteProfileUrl = (process.env.NOTE_PROFILE_URL || 'https://note.com/zerrrrro_1288').replace(/\/$/, '');
 const rssUrl = `${noteProfileUrl}/rss`;
+const youtubeChannelUrl = 'https://www.youtube.com/@ZErrrrrO_VRC';
+const youtubeFeedUrl = process.env.YOUTUBE_FEED_URL || 'https://www.youtube.com/feeds/videos.xml?channel_id=UCNmVWvED9bw_QJMNL2s1Erg';
+const githubReposUrl = 'https://api.github.com/users/SuperZero1288/repos?sort=updated&per_page=6';
 const maxHomeArticles = 3;
+const maxYoutubeVideos = 3;
+const maxGithubRepositories = 3;
 const browserUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36';
 const socialProfiles = [
   {
     name: 'X',
     pageUrl: 'https://x.com/ZErrrrrO_VRC',
     destination: 'social-x.jpg',
+    findImage: extractMetaImage,
+  },
+  {
+    name: 'YouTube',
+    pageUrl: youtubeChannelUrl,
+    destination: 'social-youtube.jpg',
     findImage: extractMetaImage,
   },
   {
@@ -115,6 +126,21 @@ function parseRss(xml) {
   }).filter((article) => article.title && article.sourceUrl);
 }
 
+function parseYouTubeFeed(xml) {
+  return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/gi)].map(([, entry]) => {
+    const linkTag = entry.match(/<link\b(?=[^>]*\brel=(?:"alternate"|'alternate'))[^>]*>/i)?.[0] || '';
+    const thumbnailTag = entry.match(/<media:thumbnail\b[^>]*>/i)?.[0] || '';
+    const videoId = readTag(entry, 'yt:videoId');
+    return {
+      id: videoId,
+      title: textFromHtml(readTag(entry, 'title')),
+      publishedAt: readTag(entry, 'published'),
+      sourceUrl: getAttribute(linkTag, 'href') || (videoId ? `https://www.youtube.com/watch?v=${videoId}` : ''),
+      thumbnail: getAttribute(thumbnailTag, 'url') || (videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : ''),
+    };
+  }).filter((video) => video.title && video.sourceUrl);
+}
+
 async function fetchText(url, userAgent = 'zero-portfolio-note-sync/1.0 (+GitHub Actions)') {
   const response = await fetch(url, {
     headers: {
@@ -124,6 +150,17 @@ async function fetchText(url, userAgent = 'zero-portfolio-note-sync/1.0 (+GitHub
   });
   if (!response.ok) throw new Error(`${url} の取得に失敗しました (${response.status})`);
   return response.text();
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'zero-portfolio-sync/1.0 (+GitHub Actions)',
+      Accept: 'application/vnd.github+json',
+    },
+  });
+  if (!response.ok) throw new Error(`${url} の取得に失敗しました (${response.status})`);
+  return response.json();
 }
 
 function extractArticleBody(html) {
@@ -345,6 +382,28 @@ async function updateHomePage(articles) {
   await writeFile(indexPath, next);
 }
 
+async function updateLatestLinksData(youtubeVideos, githubRepositories) {
+  const outputPath = path.join(projectRoot, 'blog', 'latest-links.json');
+  let previous = {};
+  try {
+    previous = JSON.parse(await readFile(outputPath, 'utf8'));
+  } catch {
+    // 初回同期では空のデータから作成します。
+  }
+
+  const data = {
+    youtubeVideos: (youtubeVideos ?? previous.youtubeVideos ?? []).slice(0, maxYoutubeVideos),
+    githubRepositories: (githubRepositories ?? previous.githubRepositories ?? []).slice(0, maxGithubRepositories).map((repository) => ({
+      name: repository.name,
+      html_url: repository.html_url,
+      description: repository.description,
+      pushed_at: repository.pushed_at,
+      language: repository.language,
+    })),
+  };
+  await writeFile(outputPath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
 async function syncArticle(article) {
   try {
     const html = await fetchText(article.sourceUrl);
@@ -378,9 +437,25 @@ async function main() {
   const articles = parseRss(rss);
   if (!articles.length) throw new Error('公開記事がRSSに見つかりませんでした');
 
+  let youtubeVideos = null;
+  try {
+    youtubeVideos = parseYouTubeFeed(await fetchText(youtubeFeedUrl));
+  } catch (error) {
+    console.warn(`YouTubeの更新情報を取得できませんでした: ${error.message}`);
+  }
+
+  let githubRepositories = null;
+  try {
+    const repositories = await fetchJson(githubReposUrl);
+    githubRepositories = repositories.filter((repository) => !repository.fork && !repository.archived);
+  } catch (error) {
+    console.warn(`GitHubの更新情報を取得できませんでした: ${error.message}`);
+  }
+
   const synced = [];
   for (const article of articles) synced.push(await syncArticle(article));
   await updateHomePage(synced);
+  await updateLatestLinksData(youtubeVideos, githubRepositories);
   await writeFile(
     path.join(projectRoot, 'blog', 'articles.json'),
     `${JSON.stringify(synced.map(({ coverPath, generated, ...article }) => ({ ...article, coverPath, generated })), null, 2)}\n`,
