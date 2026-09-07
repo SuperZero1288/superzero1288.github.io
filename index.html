@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css?v=20260907-wing2">
+<link rel="stylesheet" href="style.css?v=20260907-wing3">
 <script src="site-loader.js" defer></script>
 </head>
 <body class="style-default wing-tabs-idle">
@@ -177,6 +177,8 @@ const navigationWingTab=document.getElementById('navigationWingTab');
 let hideTimeout,indicatorTimeout,toastTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
 let clickCount=0,clickTimer=null,isThursdayMode=false;
+let openEdgeCard=null,wingTabHideTimer=null,edgeCardClosingTimer=null;
+const EDGE_CARD_MOTION_MS=420;
 
 const uiStyles=[
 {id:'style-default',name:'Default',light:true},
@@ -303,8 +305,23 @@ if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visi
 },delayMs);
 }
 
+function isHeroInteractionActive(){return snapContainer.scrollTop<=100;}
+
+function updateEdgeInteractionState(){
+const active=isHeroInteractionActive();
+document.body.classList.toggle('edge-interactions-disabled',!active);
+scrollIndicator.classList.toggle('hidden',!active);
+if(!active){
+document.body.classList.add('wing-tabs-idle');
+clearTimeout(wingTabHideTimer);
+wingTabHideTimer=null;
+if(openEdgeCard)setEdgeCard(null,{hideTabsImmediately:true});
+}
+}
+
 function checkStatusBarStateOnScroll(){
 clearTimeout(hideTimeout);
+updateEdgeInteractionState();
 if(matchMedia('(max-width:520px)').matches){
 statusBar.classList.remove('hidden');
 statusBarIndicator.classList.remove('visible');
@@ -410,22 +427,29 @@ const rows=[
 deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
 }
 
-let openEdgeCard=null;
-let wingTabHideTimer;
-
 function revealWingTabs(){
-if(matchMedia('(max-width:520px)').matches)return;
+if(matchMedia('(max-width:520px)').matches||!isHeroInteractionActive()||document.body.classList.contains('edge-card-closing'))return;
 document.body.classList.remove('wing-tabs-idle');
 clearTimeout(wingTabHideTimer);
+wingTabHideTimer=null;
 }
 
-function scheduleWingTabsHide(delay=900){
-if(matchMedia('(max-width:520px)').matches||openEdgeCard)return;
-clearTimeout(wingTabHideTimer);
-wingTabHideTimer=setTimeout(()=>document.body.classList.add('wing-tabs-idle'),delay);
+function scheduleWingTabsHide(delay=150){
+if(matchMedia('(max-width:520px)').matches||openEdgeCard||!isHeroInteractionActive()||document.body.classList.contains('edge-card-closing')||wingTabHideTimer!==null)return;
+wingTabHideTimer=setTimeout(()=>{
+document.body.classList.add('wing-tabs-idle');
+wingTabHideTimer=null;
+},delay);
 }
 
-function setEdgeCard(card){
+function setEdgeCard(card,{hideTabsImmediately=false}={}){
+if(card&&!isHeroInteractionActive())return;
+const previousCard=openEdgeCard;
+const closingTab=previousCard===deviceCard?deviceWingTab:previousCard===navigationCard?navigationWingTab:null;
+clearTimeout(edgeCardClosingTimer);
+edgeCardClosingTimer=null;
+document.body.classList.remove('edge-card-closing');
+[deviceWingTab,navigationWingTab].forEach(tab=>tab.classList.remove('is-closing'));
 [deviceCard,navigationCard].forEach(item=>{
 const open=item===card;
 item.classList.toggle('is-open',open);
@@ -443,7 +467,19 @@ document.body.classList.toggle('edge-card-open',Boolean(card));
 if(card){
 document.body.classList.remove('wing-tabs-idle');
 clearTimeout(wingTabHideTimer);
-}else scheduleWingTabsHide(1400);
+wingTabHideTimer=null;
+}else if(closingTab&&!hideTabsImmediately){
+document.body.classList.add('edge-card-closing');
+closingTab.classList.add('is-closing');
+edgeCardClosingTimer=setTimeout(()=>{
+closingTab.classList.remove('is-closing');
+document.body.classList.remove('edge-card-closing');
+document.body.classList.add('wing-tabs-idle');
+edgeCardClosingTimer=null;
+},EDGE_CARD_MOTION_MS);
+}else{
+document.body.classList.add('wing-tabs-idle');
+}
 }
 
 function closeEdgeCards(){setEdgeCard(null);}
@@ -461,12 +497,17 @@ window.addEventListener('pointerleave',()=>scheduleWingTabsHide(),{passive:true}
 
 let guideInteractionCount=0;
 let guideInteractionLocked=false;
+let guideInteractionStartedAt=0;
 let lastWheelDirection=0;
 let lastWheelTime=0;
 
 function recordGuideInteraction(){
 if(guideInteractionLocked)return;
-guideInteractionCount+=1;
+const now=performance.now();
+if(!guideInteractionStartedAt||now-guideInteractionStartedAt>8000){
+guideInteractionStartedAt=now;
+guideInteractionCount=1;
+}else guideInteractionCount+=1;
 if(guideInteractionCount<10)return;
 guideInteractionLocked=true;
 scrollIndicator.classList.add('is-bored');
@@ -492,7 +533,7 @@ document.addEventListener('touchend',event=>{
 const touch=event.changedTouches[0];
 const deltaX=touch.clientX-guideTouchStartX;
 const deltaY=touch.clientY-guideTouchStartY;
-if(Math.max(Math.abs(deltaX),Math.abs(deltaY))>=55)recordGuideInteraction();
+if(Math.abs(deltaY)>=55&&Math.abs(deltaY)>Math.abs(deltaX))recordGuideInteraction();
 },{passive:true});
 
 let touchStartX=0,touchStartY=0;
@@ -506,7 +547,7 @@ hero.addEventListener('touchend',event=>{
 const touch=event.changedTouches[0];
 const deltaX=touch.clientX-touchStartX;
 const deltaY=touch.clientY-touchStartY;
-if(Math.abs(deltaX)<60||Math.abs(deltaX)<Math.abs(deltaY))return;
+if(!isHeroInteractionActive()||Math.abs(deltaX)<60||Math.abs(deltaX)<Math.abs(deltaY))return;
 if(deltaX>0)setEdgeCard(deviceCard);
 else setEdgeCard(navigationCard);
 },{passive:true});

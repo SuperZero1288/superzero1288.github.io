@@ -525,7 +525,8 @@ background-position:center
 --wing-tab-overlap-half:16px;
 --edge-card-inset:18px;
 --edge-motion-duration:.42s;
---edge-motion-easing:cubic-bezier(.22,1,.36,1)
+--edge-motion-easing:cubic-bezier(.22,1,.36,1);
+--wing-tab-fade-duration:1s
 }
 
 .edge-wing-tab{
@@ -542,7 +543,7 @@ backdrop-filter:blur(20px);
 -webkit-backdrop-filter:blur(20px);
 cursor:pointer;
 will-change:transform;
-transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .45s ease,visibility 0s
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .24s ease-out,visibility 0s
 }
 .edge-wing-tab-left{left:calc(0px - var(--wing-tab-overlap));border-left:0;border-radius:0 var(--radius-card) var(--radius-card) 0}
 .edge-wing-tab-right{right:calc(0px - var(--wing-tab-overlap));border-right:0;border-radius:var(--radius-card) 0 0 var(--radius-card)}
@@ -555,8 +556,15 @@ transition:transform var(--edge-motion-duration) var(--edge-motion-easing),backg
 .edge-wing-tab:hover{background:color-mix(in srgb,var(--ui-bg) 68%,var(--accent-color));border-color:var(--accent-color)}
 .edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) + var(--edge-card-inset)))}
 .edge-wing-tab-right.is-open{transform:translateX(calc(0px - var(--edge-card-width) - var(--edge-card-inset)))}
-body.edge-card-open .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
-body.wing-tabs-idle .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none;transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .45s ease,visibility 0s linear .45s}
+body.edge-card-open .edge-wing-tab:not(.is-open),
+body.edge-card-closing .edge-wing-tab:not(.is-closing),
+body.wing-tabs-idle .edge-wing-tab:not(.is-open):not(.is-closing){
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity var(--wing-tab-fade-duration) ease,visibility 0s linear var(--wing-tab-fade-duration)
+}
+body.edge-interactions-disabled .edge-wing-tab{opacity:0;visibility:hidden;pointer-events:none;transition:none}
 
 .edge-card{
 position:fixed;
@@ -687,6 +695,11 @@ pointer-events:auto
 .scroll-indicator:hover{
 opacity:1;
 border-color:var(--accent-color)
+}
+
+.scroll-indicator.hidden{
+opacity:0!important;
+pointer-events:none!important
 }
 
 .scroll-text{
