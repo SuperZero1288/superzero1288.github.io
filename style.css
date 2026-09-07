@@ -520,15 +520,20 @@ background-position:center
 /* スライドショー左右の情報カード */
 :root{
 --edge-card-width:min(390px,calc(100vw - 36px));
---wing-tab-width:clamp(36px,calc(48px + 3vw - 5.333vh),64px)
+--wing-tab-width:clamp(36px,calc(48px + 3vw - 5.333vh),64px);
+--wing-tab-overlap:32px;
+--wing-tab-overlap-half:16px;
+--edge-card-inset:18px;
+--edge-motion-duration:.42s;
+--edge-motion-easing:cubic-bezier(.22,1,.36,1)
 }
 
 .edge-wing-tab{
 position:fixed;
-top:18px;
-bottom:18px;
+top:var(--edge-card-inset);
+bottom:var(--edge-card-inset);
 z-index:39;
-width:var(--wing-tab-width);
+width:calc(var(--wing-tab-width) + var(--wing-tab-overlap));
 padding:0;
 border:1px solid color-mix(in srgb,var(--border-color) 72%,#000);
 background:color-mix(in srgb,var(--ui-bg) 78%,#05070b);
@@ -536,25 +541,27 @@ box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 0 24px rgba(0,0,0,.22);
 backdrop-filter:blur(20px);
 -webkit-backdrop-filter:blur(20px);
 cursor:pointer;
-transition:transform .38s cubic-bezier(.22,1,.36,1),background .25s,border-color .25s,opacity .65s ease,visibility .65s
+will-change:transform;
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .45s ease,visibility 0s
 }
-.edge-wing-tab-left{left:0;border-left:0;border-radius:0 var(--radius-card) var(--radius-card) 0}
-.edge-wing-tab-right{right:0;border-right:0;border-radius:var(--radius-card) 0 0 var(--radius-card)}
+.edge-wing-tab-left{left:calc(0px - var(--wing-tab-overlap));border-left:0;border-radius:0 var(--radius-card) var(--radius-card) 0}
+.edge-wing-tab-right{right:calc(0px - var(--wing-tab-overlap));border-right:0;border-radius:var(--radius-card) 0 0 var(--radius-card)}
 .edge-wing-tab span,.edge-wing-tab span::before,.edge-wing-tab span::after{position:absolute;left:50%;width:4px;height:4px;border-radius:50%;background:var(--accent-color);box-shadow:0 0 8px color-mix(in srgb,var(--accent-color) 70%,transparent);content:""}
 .edge-wing-tab span{top:50%;transform:translate(-50%,-50%)}
+.edge-wing-tab-left span{left:calc(50% + var(--wing-tab-overlap-half))}
+.edge-wing-tab-right span{left:calc(50% - var(--wing-tab-overlap-half))}
 .edge-wing-tab span::before{top:-11px;transform:translateX(-50%)}
 .edge-wing-tab span::after{top:11px;transform:translateX(-50%)}
 .edge-wing-tab:hover{background:color-mix(in srgb,var(--ui-bg) 68%,var(--accent-color));border-color:var(--accent-color)}
-.edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) - 12px))}
-.edge-wing-tab-right.is-open{transform:translateX(calc(12px - var(--edge-card-width)))}
+.edge-wing-tab-left.is-open{transform:translateX(calc(var(--edge-card-width) + var(--edge-card-inset)))}
+.edge-wing-tab-right.is-open{transform:translateX(calc(0px - var(--edge-card-width) - var(--edge-card-inset)))}
 body.edge-card-open .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
-body.edge-hints-hidden .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
-body.wing-tabs-idle .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none}
+body.wing-tabs-idle .edge-wing-tab:not(.is-open){opacity:0;visibility:hidden;pointer-events:none;transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .45s ease,visibility 0s linear .45s}
 
 .edge-card{
 position:fixed;
-top:18px;
-bottom:18px;
+top:var(--edge-card-inset);
+bottom:var(--edge-card-inset);
 z-index:40;
 width:var(--edge-card-width);
 max-height:none;
@@ -569,11 +576,12 @@ backdrop-filter:blur(24px);
 opacity:1;
 visibility:hidden;
 pointer-events:none;
-transition:transform .38s cubic-bezier(.22,1,.36,1),visibility 0s linear .38s
+will-change:transform;
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),visibility 0s linear var(--edge-motion-duration)
 }
 
-.edge-card-left{left:18px;transform:translateX(-115%)}
-.edge-card-right{right:18px;transform:translateX(115%)}
+.edge-card-left{left:var(--edge-card-inset);transform:translateX(calc(-100% - var(--edge-card-inset)))}
+.edge-card-right{right:var(--edge-card-inset);transform:translateX(calc(100% + var(--edge-card-inset)))}
 .edge-card.is-open{transform:translateX(0);visibility:visible;pointer-events:auto;transition-delay:0s}
 
 .edge-card-close{
@@ -656,6 +664,10 @@ padding-bottom:30px
 }
 
 .scroll-indicator{
+position:fixed;
+left:50%;
+bottom:max(30px,env(safe-area-inset-bottom));
+z-index:30;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -670,12 +682,6 @@ transition:opacity .4s ease,transform .4s ease;
 animation:floatAnimation 3.4s infinite ease-in-out;
 opacity:.72;
 pointer-events:auto
-}
-
-.scroll-indicator.hidden{
-opacity:0!important;
-pointer-events:none!important;
-transform:translateY(15px)
 }
 
 .scroll-indicator:hover{
@@ -694,6 +700,9 @@ text-shadow:0 1px 3px rgba(0,0,0,.55)
 }
 .scroll-text>span{display:block;color:color-mix(in srgb,currentColor 68%,transparent);font-size:.75rem;font-weight:500;letter-spacing:.04em}
 .scroll-text-mobile{display:none}
+.scroll-bored-text{display:none;color:#fff;font-size:.82rem;font-weight:700;letter-spacing:.08em;text-shadow:0 1px 3px rgba(0,0,0,.55)}
+.scroll-indicator.is-bored .scroll-text,.scroll-indicator.is-bored .scroll-arrow{display:none}
+.scroll-indicator.is-bored .scroll-bored-text{display:block}
 
 .scroll-arrow{
 color:var(--accent-color);
@@ -702,8 +711,8 @@ animation:arrowBounce 1.5s infinite
 }
 
 @keyframes floatAnimation{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-4px)}
+0%,100%{transform:translateX(-50%) translateY(0)}
+50%{transform:translateX(-50%) translateY(-4px)}
 }
 
 @keyframes arrowBounce{

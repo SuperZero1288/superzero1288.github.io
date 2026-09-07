@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20260907-wing2">
 <script src="site-loader.js" defer></script>
 </head>
-<body class="style-default">
+<body class="style-default wing-tabs-idle">
 
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
 <div class="site-loader-mark">Z<span>/</span>0</div>
@@ -66,10 +66,11 @@
 
 <div class="snap-container" id="snapContainer">
 <section class="snap-section hero-spacer" id="hero">
-<div class="scroll-indicator" id="scrollIndicator">
+<div class="scroll-indicator" id="scrollIndicator" aria-live="polite">
 <span class="scroll-text scroll-text-desktop">左右のタブをクリック<span>またはスクロールダウン</span></span>
 <span class="scroll-text scroll-text-mobile">左右にスワイプ<span>またはスクロールダウン</span></span>
 <span class="scroll-arrow" aria-hidden="true">⌄</span>
+<span class="scroll-bored-text">ひまなの？</span>
 </div>
 </section>
 
@@ -304,7 +305,6 @@ if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visi
 
 function checkStatusBarStateOnScroll(){
 clearTimeout(hideTimeout);
-document.body.classList.toggle('edge-hints-hidden',snapContainer.scrollTop>window.innerHeight*.35);
 if(matchMedia('(max-width:520px)').matches){
 statusBar.classList.remove('hidden');
 statusBarIndicator.classList.remove('visible');
@@ -326,7 +326,6 @@ const blurVal=scrollRatio*16;
 blurOverlay.style.backdropFilter=`blur(${blurVal}px)`;
 blurOverlay.style.webkitBackdropFilter=`blur(${blurVal}px)`;
 blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*.4})`;
-if(scrollTop>100)scrollIndicator.classList.add('hidden');
 checkStatusBarStateOnScroll();
 },{passive:true});
 
@@ -414,11 +413,16 @@ deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${
 let openEdgeCard=null;
 let wingTabHideTimer;
 
-function showWingTabsTemporarily(){
+function revealWingTabs(){
 if(matchMedia('(max-width:520px)').matches)return;
 document.body.classList.remove('wing-tabs-idle');
 clearTimeout(wingTabHideTimer);
-if(!openEdgeCard)wingTabHideTimer=setTimeout(()=>document.body.classList.add('wing-tabs-idle'),3600);
+}
+
+function scheduleWingTabsHide(delay=900){
+if(matchMedia('(max-width:520px)').matches||openEdgeCard)return;
+clearTimeout(wingTabHideTimer);
+wingTabHideTimer=setTimeout(()=>document.body.classList.add('wing-tabs-idle'),delay);
 }
 
 function setEdgeCard(card){
@@ -439,20 +443,57 @@ document.body.classList.toggle('edge-card-open',Boolean(card));
 if(card){
 document.body.classList.remove('wing-tabs-idle');
 clearTimeout(wingTabHideTimer);
-}else showWingTabsTemporarily();
+}else scheduleWingTabsHide(1400);
 }
 
 function closeEdgeCards(){setEdgeCard(null);}
 document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEventListener('click',closeEdgeCards));
 edgeCardScrim.addEventListener('click',closeEdgeCards);
-deviceWingTab.addEventListener('click',()=>{showWingTabsTemporarily();setEdgeCard(openEdgeCard===deviceCard?null:deviceCard);});
-navigationWingTab.addEventListener('click',()=>{showWingTabsTemporarily();setEdgeCard(openEdgeCard===navigationCard?null:navigationCard);});
+deviceWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===deviceCard?null:deviceCard));
+navigationWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===navigationCard?null:navigationCard));
 
 window.addEventListener('pointermove',event=>{
 if(event.pointerType==='touch'||openEdgeCard)return;
-if(event.clientX<120||event.clientX>window.innerWidth-120)showWingTabsTemporarily();
+if(event.clientX<120||event.clientX>window.innerWidth-120)revealWingTabs();
+else scheduleWingTabsHide();
 },{passive:true});
-showWingTabsTemporarily();
+window.addEventListener('pointerleave',()=>scheduleWingTabsHide(),{passive:true});
+
+let guideInteractionCount=0;
+let guideInteractionLocked=false;
+let lastWheelDirection=0;
+let lastWheelTime=0;
+
+function recordGuideInteraction(){
+if(guideInteractionLocked)return;
+guideInteractionCount+=1;
+if(guideInteractionCount<10)return;
+guideInteractionLocked=true;
+scrollIndicator.classList.add('is-bored');
+scrollIndicator.setAttribute('aria-label','ひまなの？');
+}
+
+snapContainer.addEventListener('wheel',event=>{
+if(Math.abs(event.deltaY)<8)return;
+const direction=Math.sign(event.deltaY);
+const now=performance.now();
+if(direction!==lastWheelDirection||now-lastWheelTime>220)recordGuideInteraction();
+lastWheelDirection=direction;
+lastWheelTime=now;
+},{passive:true});
+
+let guideTouchStartX=0,guideTouchStartY=0;
+document.addEventListener('touchstart',event=>{
+const touch=event.changedTouches[0];
+guideTouchStartX=touch.clientX;
+guideTouchStartY=touch.clientY;
+},{passive:true});
+document.addEventListener('touchend',event=>{
+const touch=event.changedTouches[0];
+const deltaX=touch.clientX-guideTouchStartX;
+const deltaY=touch.clientY-guideTouchStartY;
+if(Math.max(Math.abs(deltaX),Math.abs(deltaY))>=55)recordGuideInteraction();
+},{passive:true});
 
 let touchStartX=0,touchStartY=0;
 hero.addEventListener('touchstart',event=>{
