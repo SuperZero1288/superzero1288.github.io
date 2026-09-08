@@ -319,15 +319,16 @@ function articleDocument(article, bodyHtml, coverPath) {
 <title>${title} | ぜろくんでんせつ</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../style.css?v=20260908-loader3">
 <script src="../site-loader.js" defer></script>
 <script src="../page-bar.js" defer></script>
 </head>
 <body class="style-default article-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
-<div class="site-loader-mark">Z<span>/</span>0</div>
-<div class="site-loader-progress"></div>
-<p class="site-loader-status">LOADING ASSETS</p>
+<div class="site-loader-content">
+<div class="site-loader-meta"><p class="site-loader-status">ページを準備中</p><span class="site-loader-percent">0%</span></div>
+<div class="site-loader-progress" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+</div>
 </div>
 <div class="article-backdrop"${backdropStyle}></div>
 <main class="article-shell">

@@ -5,27 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <title>404 / ぜろくんでんせつ</title>
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css?v=20260908-loader3">
 <script src="/site-loader.js" defer></script>
 <script src="/page-bar.js" defer></script>
 </head>
 <body class="style-default error-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
-<div class="site-loader-mark">Z<span>/</span>0</div>
-<div class="site-loader-progress"></div>
-<p class="site-loader-status">LOADING ASSETS</p>
+<div class="site-loader-content">
+<div class="site-loader-meta"><p class="site-loader-status">ページを準備中</p><span class="site-loader-percent">0%</span></div>
+<div class="site-loader-progress" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+</div>
 </div>
 <main class="error-stage">
 <section class="error-card" aria-labelledby="error-title">
 <div class="error-code" aria-hidden="true"><span>4</span><span class="error-zero">0</span><span>4</span></div>
-<p class="error-eyebrow" data-style-label>DEFAULT INTERFACE</p>
 <h1 id="error-title">このページは、まだ存在しないみたいです。</h1>
-<p class="error-message">リンクが変わったか、これから作られるページかもしれません。迷子ついでにテーマを切り替えて遊んでいきませんか？</p>
+<p class="error-message">リンクが変わったか、これから作られるページかもしれません。</p>
 <div class="error-actions">
 <a class="error-primary" href="/">トップページへ戻る</a>
 <button class="error-secondary" type="button" id="historyBack">ひとつ前へ戻る</button>
 </div>
-<p class="error-path" id="errorPath"></p>
 </section>
 </main>
 
@@ -35,7 +34,6 @@ document.getElementById('historyBack').addEventListener('click',()=>{
   else location.href='/';
 });
 
-document.getElementById('errorPath').textContent=`REQUESTED: ${location.pathname}`;
 </script>
 </body>
 </html>
