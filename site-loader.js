@@ -9,6 +9,69 @@
   const minimumVisibleMs = 320;
   const maximumWaitMs = 15000;
 
+  const wait = (duration) => new Promise((resolve) => setTimeout(resolve, duration));
+
+  const createTransitionLoader = () => {
+    const transitionLoader = document.createElement('div');
+    transitionLoader.className = 'site-loader';
+    transitionLoader.setAttribute('role', 'status');
+    transitionLoader.setAttribute('aria-live', 'polite');
+    transitionLoader.setAttribute('aria-label', '設定を適用しています');
+    transitionLoader.innerHTML = `
+      <div class="site-loader-content">
+        <div class="site-loader-meta"><p class="site-loader-status">設定を準備中</p><span class="site-loader-percent">0%</span></div>
+        <div class="site-loader-progress" role="progressbar" aria-label="設定変更の進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>`;
+    return transitionLoader;
+  };
+
+  let transitionQueue = Promise.resolve();
+  const playTransition = (label = '設定を適用しています', action = () => {}) => {
+    const run = async () => {
+      const transitionLoader = createTransitionLoader();
+      const transitionProgress = transitionLoader.querySelector('.site-loader-progress');
+      const transitionStatus = transitionLoader.querySelector('.site-loader-status');
+      const transitionPercent = transitionLoader.querySelector('.site-loader-percent');
+      const setProgress = (value, text) => {
+        transitionProgress.style.setProperty('--loader-progress', `${value}%`);
+        transitionProgress.setAttribute('aria-valuenow', String(value));
+        transitionPercent.textContent = `${value}%`;
+        if (text) transitionStatus.textContent = text;
+      };
+
+      document.documentElement.classList.add('site-is-loading');
+      document.body.appendChild(transitionLoader);
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      setProgress(22, '設定を読み込んでいます');
+      await wait(140);
+      setProgress(58, label);
+
+      let result;
+      let actionError;
+      try {
+        result = await action();
+      } catch (error) {
+        actionError = error;
+      }
+
+      setProgress(86, '表示を更新しています');
+      await wait(180);
+      setProgress(100, '変更を適用しました');
+      await wait(180);
+      transitionLoader.classList.add('is-complete');
+      document.documentElement.classList.remove('site-is-loading');
+      await wait(400);
+      transitionLoader.remove();
+      if (actionError) throw actionError;
+      return result;
+    };
+
+    transitionQueue = transitionQueue.then(run, run);
+    return transitionQueue;
+  };
+
+  window.zeroSiteLoader = { playTransition };
+
   document.documentElement.classList.add('site-is-loading');
 
   const inlineImageUrls = [...document.images].map((image) => image.currentSrc || image.src);

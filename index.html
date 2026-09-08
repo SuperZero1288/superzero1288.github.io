@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css?v=20260908-loader3">
-<script src="site-loader.js" defer></script>
+<link rel="stylesheet" href="style.css?v=20260909-desktop4">
+<script src="site-loader.js?v=20260909-desktop2" defer></script>
 </head>
 <body class="style-default wing-tabs-idle">
 
@@ -47,10 +47,33 @@
 <button class="edge-wing-tab edge-wing-tab-left" id="deviceWingTab" type="button" aria-label="端末情報カードを開く" aria-controls="deviceCard" aria-expanded="false"><span aria-hidden="true"></span></button>
 <aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
+<section class="app-launcher edge-subcard" aria-labelledby="app-launcher-title">
+<p class="edge-card-kicker">APPLICATION</p>
+<div class="app-launcher-heading">
+<h2 id="app-launcher-title">アプリ</h2>
+<span>1 / 9</span>
+</div>
+<div class="app-launcher-grid">
+<button class="app-launcher-item app-launcher-terminal" type="button" data-launch-app="terminal" aria-label="ターミナルを開く">
+<span class="app-launcher-icon" aria-hidden="true"><b>&gt;</b><i>_</i></span>
+<span>ターミナル</span>
+</button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">02</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">03</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">04</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">05</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">06</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">07</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">08</span></button>
+<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">09</span></button>
+</div>
+</section>
+<section class="device-details edge-subcard" aria-labelledby="device-card-title">
 <p class="edge-card-kicker">LOCAL STATUS</p>
 <h2 id="device-card-title">この端末について</h2>
 <div class="device-info-list" id="deviceInfoList"></div>
 <p class="edge-card-note">ブラウザが公開している情報だけを、この端末内で表示しています。</p>
+</section>
 </aside>
 
 <button class="edge-wing-tab edge-wing-tab-right" id="navigationWingTab" type="button" aria-label="追加リンクカードを開く" aria-controls="navigationCard" aria-expanded="false"><span aria-hidden="true"></span></button>
@@ -209,6 +232,39 @@ if(saved.light&&currentStyle().light)document.body.classList.add('light-theme');
 function saveAppearance(){
 try{localStorage.setItem('zero-site-appearance',JSON.stringify({style:currentStyle().id,light:document.body.classList.contains('light-theme')}));}
 catch(error){console.warn('表示設定を保存できませんでした',error);}
+}
+
+function applyStyle(styleId,{notify=true}={}){
+const nextIndex=uiStyles.findIndex(style=>style.id===styleId);
+if(nextIndex<0)return false;
+document.body.classList.remove(...uiStyles.map(style=>style.id));
+currentStyleIndex=nextIndex;
+document.body.classList.add(currentStyle().id);
+if(!currentStyle().light&&document.body.classList.contains('light-theme'))document.body.classList.remove('light-theme');
+saveAppearance();
+updateThemeButton();
+if(notify)showToast(currentStyle().light?currentStyle().name:`${currentStyle().name} はダークモードのみ対応`);
+window.dispatchEvent(new CustomEvent('zero:appearancechange',{detail:getAppearanceState()}));
+return true;
+}
+
+function applyColorMode(mode,{notify=true}={}){
+if(mode==='toggle')mode=document.body.classList.contains('light-theme')?'dark':'light';
+if(mode!=='dark'&&mode!=='light')return false;
+if(mode==='light'&&!currentStyle().light){
+if(notify)showToast(`${currentStyle().name} はダークモードのみ対応`);
+return false;
+}
+document.body.classList.toggle('light-theme',mode==='light');
+saveAppearance();
+updateThemeButton();
+if(notify)showToast(mode==='light'?'ライトモード':'ダークモード');
+window.dispatchEvent(new CustomEvent('zero:appearancechange',{detail:getAppearanceState()}));
+return true;
+}
+
+function getAppearanceState(){
+return{style:currentStyle().id,name:currentStyle().name,light:document.body.classList.contains('light-theme'),supportsLight:currentStyle().light};
 }
 
 function updateThemeButton(){
@@ -371,25 +427,12 @@ if(snapContainer.scrollTop>=window.innerHeight*.5)hideStatusBarWithDelay(600);
 
 themeToggleBtn.addEventListener('click',()=>{
 if(!currentStyle().light)return;
-document.body.classList.toggle('light-theme');
-saveAppearance();
-updateThemeButton();
+applyColorMode('toggle',{notify:false});
 });
 
 uiStyleToggleBtn.addEventListener('click',()=>{
-document.body.classList.remove(uiStyles[currentStyleIndex].id);
-currentStyleIndex=(currentStyleIndex+1)%uiStyles.length;
-const newStyle=uiStyles[currentStyleIndex];
-document.body.classList.add(newStyle.id);
-
-if(!newStyle.light&&document.body.classList.contains('light-theme')){
-document.body.classList.remove('light-theme');
-showToast(`${newStyle.name} はダークモードのみ対応`);
-}else{
-showToast(newStyle.name);
-}
-saveAppearance();
-updateThemeButton();
+const nextStyle=uiStyles[(currentStyleIndex+1)%uiStyles.length];
+applyStyle(nextStyle.id);
 });
 
 restoreAppearance();
@@ -414,10 +457,49 @@ if(/Linux/.test(ua))return'Linux';
 return'不明';
 }
 
+const DEVICE_HACK_KEY='zero-site-device-hack';
+const DEVICE_OS_NAMES={windows:'Windows',macos:'macOS',linux:'Linux'};
+
+function getDeviceHack(){
+try{
+const saved=JSON.parse(localStorage.getItem(DEVICE_HACK_KEY)||'{}');
+return{os:Object.prototype.hasOwnProperty.call(DEVICE_OS_NAMES,saved.os)?saved.os:'auto'};
+}catch(error){return{os:'auto'};}
+}
+
+function getEffectiveOsName(){
+const hack=getDeviceHack();
+return hack.os==='auto'?osName():DEVICE_OS_NAMES[hack.os];
+}
+
+function getWindowSystem(){
+const effective=getEffectiveOsName();
+return effective==='macOS'?'macos':'windows';
+}
+
+function setDeviceOsHack(os){
+const normalized=String(os||'').toLowerCase();
+if(normalized!=='auto'&&!Object.prototype.hasOwnProperty.call(DEVICE_OS_NAMES,normalized))return false;
+try{
+if(normalized==='auto')localStorage.removeItem(DEVICE_HACK_KEY);
+else localStorage.setItem(DEVICE_HACK_KEY,JSON.stringify({os:normalized}));
+}catch(error){console.warn('端末情報の上書きを保存できませんでした',error);}
+renderDeviceInfo();
+document.documentElement.dataset.windowSystem=getWindowSystem();
+window.dispatchEvent(new CustomEvent('zero:devicehackchange',{detail:getDeviceState()}));
+return true;
+}
+
+function getDeviceState(){
+const hack=getDeviceHack();
+return{actualOs:osName(),effectiveOs:getEffectiveOsName(),osHack:hack.os,hacked:hack.os!=='auto',windowSystem:getWindowSystem(),browser:browserName()};
+}
+
 function renderDeviceInfo(){
 const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+const deviceState=getDeviceState();
 const rows=[
-['OS',osName()],
+['OS',deviceState.effectiveOs,deviceState.hacked],
 ['ブラウザ',browserName()],
 ['画面',`${screen.width} × ${screen.height}`],
 ['表示領域',`${window.innerWidth} × ${window.innerHeight}`],
@@ -426,7 +508,21 @@ const rows=[
 ['通信',connection?.effectiveType?connection.effectiveType.toUpperCase():(navigator.onLine?'オンライン':'オフライン')],
 ['時刻帯',Intl.DateTimeFormat().resolvedOptions().timeZone||'不明']
 ];
-deviceInfoList.innerHTML=rows.map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+deviceInfoList.replaceChildren(...rows.map(([label,value,hacked])=>{
+const row=document.createElement('div');
+const term=document.createElement('dt');
+const description=document.createElement('dd');
+term.textContent=label;
+description.textContent=value;
+if(hacked){
+const badge=document.createElement('span');
+badge.className='device-hacked-badge';
+badge.textContent='ハック済み';
+description.append(' ',badge);
+}
+row.append(term,description);
+return row;
+}));
 }
 
 function revealWingTabs(){
@@ -574,6 +670,32 @@ window.addEventListener('resize',renderDeviceInfo,{passive:true});
 window.addEventListener('online',renderDeviceInfo);
 window.addEventListener('offline',renderDeviceInfo);
 renderDeviceInfo();
+
+document.documentElement.dataset.windowSystem=getWindowSystem();
+window.zeroSiteController={
+styles:uiStyles.map(style=>({...style})),
+getAppearance:getAppearanceState,
+setStyle:styleId=>applyStyle(styleId),
+setColorMode:mode=>applyColorMode(mode),
+getDeviceState,
+setDeviceOsHack,
+getClockMode:()=>is24Hour?'24':'12',
+setClockMode:mode=>{
+if(mode!=='12'&&mode!=='24')return false;
+is24Hour=mode==='24';
+isThursdayMode=false;
+updateTime();
+showToast(`${mode}時間表示`);
+return true;
+},
+refreshDeviceInfo:renderDeviceInfo,
+closeEdgeCards:()=>setEdgeCard(null,{hideTabsImmediately:true}),
+openDeviceCard:()=>setEdgeCard(deviceCard),
+openNavigationCard:()=>setEdgeCard(navigationCard),
+refreshEdgeState:updateEdgeInteractionState,
+showToast
+};
 </script>
+<script src="site-desktop.js?v=20260909-desktop3"></script>
 </body>
 </html>
