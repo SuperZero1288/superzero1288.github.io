@@ -2020,6 +2020,7 @@ color:var(--accent-color);
 font:700 1rem/1 ui-monospace,SFMono-Regular,Consolas,monospace
 }
 .app-launcher-icon i{align-self:flex-end;margin-bottom:11px;font-style:normal}
+.app-launcher-icon svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .app-launcher-item.is-empty{cursor:default;opacity:.32}
 .app-launcher-item.is-empty>span{color:#8f8a97;font:700 .66rem/1 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em}
 body.light-theme .app-launcher-item{background:rgba(238,238,244,.92)}
@@ -2030,7 +2031,7 @@ body.style-liquidglass .app-launcher-item{background:rgba(255,255,255,.07);borde
 body.style-liquidglass .edge-subcard{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.2)}
 body.style-fluent .app-launcher-item{border-radius:6px}
 body.style-fluent .edge-subcard{border-radius:8px}
-body.style-vrchat .app-launcher-terminal{border-color:color-mix(in srgb,var(--accent-color) 60%,var(--card-border))}
+body.style-vrchat .app-launcher-item:not(.is-empty){border-color:color-mix(in srgb,var(--accent-color) 60%,var(--card-border))}
 body.style-vrchat .edge-subcard{border-color:color-mix(in srgb,var(--accent-color) 38%,var(--card-border))}
 body.style-unity .app-launcher-item{border-radius:3px;box-shadow:inset 0 1px rgba(255,255,255,.07)}
 body.style-unity .edge-subcard{border-radius:3px;box-shadow:inset 0 1px rgba(255,255,255,.06)}
@@ -2153,8 +2154,74 @@ html[data-window-system="macos"] .desktop-task-item>span{font-size:.75rem}
 .terminal-command-line input{min-width:0;flex:1;padding:2px 0;border:0;outline:0;background:transparent;color:#fff;font:inherit;caret-color:var(--accent-color)}
 .terminal-command-line input::selection,.terminal-output ::selection{background:color-mix(in srgb,var(--accent-color) 45%,transparent)}
 
+/* Calculator */
+.calculator-app{display:grid;grid-template-rows:auto minmax(0,1fr);gap:15px;padding:18px;background:#101116;color:#f3f3f5}
+.calculator-display{display:grid;grid-template-rows:auto minmax(54px,auto) 20px;gap:4px;padding:14px 16px;border:1px solid #303139;border-radius:10px;background:#08090c;text-align:right}
+.calculator-display label{color:#858792;font:700 .62rem/1 var(--font-family);letter-spacing:.11em;text-transform:uppercase}
+.calculator-display input{min-width:0;width:100%;padding:0;border:0;outline:0;background:transparent;color:#fff;font:400 clamp(1.65rem,5vw,2.35rem)/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;text-align:right}
+.calculator-display output{overflow:hidden;color:#858792;font:500 .72rem/1.25 ui-monospace,SFMono-Regular,Consolas,monospace;text-overflow:ellipsis;white-space:nowrap}
+.calculator-display output.is-error{color:#ff858c}
+.calculator-keys{display:grid;min-height:0;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(6,1fr);gap:8px}
+.calculator-keys button{min-width:0;min-height:42px;border:1px solid #33343c;border-radius:9px;background:#1d1e24;color:#f2f2f4;font:600 1.05rem/1 var(--font-family);cursor:pointer;transition:background .12s ease,border-color .12s ease,transform .08s ease}
+.calculator-keys button:hover{border-color:#52545f;background:#282a31}
+.calculator-keys button:active{transform:scale(.96)}
+.calculator-keys button.is-utility{background:#272830;color:#d5d5da}
+.calculator-keys button.is-operator{color:var(--accent-color);font-size:1.25rem}
+.calculator-keys button.is-equals{border-color:color-mix(in srgb,var(--accent-color) 70%,#303139);background:color-mix(in srgb,var(--accent-color) 36%,#17181d);color:#fff}
+.calculator-keys button:focus-visible{outline:2px solid var(--accent-color);outline-offset:-3px}
+
+/* Paint */
+.paint-app{display:grid;grid-template-rows:auto minmax(0,1fr);background:#17181d;color:#ececf0}
+.paint-toolbar{display:flex;min-width:0;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #34353d;background:#222329;overflow-x:auto;scrollbar-width:thin}
+.paint-toolbar label{display:flex;flex:0 0 auto;align-items:center;gap:7px;color:#b9bac1;font:600 .7rem/1 var(--font-family)}
+.paint-color input{width:34px;height:29px;padding:2px;border:1px solid #484952;border-radius:6px;background:#111216;cursor:pointer}
+.paint-size input{width:100px;accent-color:var(--accent-color)}
+.paint-size output{width:20px;color:#fff;text-align:right}
+.paint-toolbar button,.notepad-toolbar button,.browser-toolbar button{flex:0 0 auto;padding:8px 11px;border:1px solid #44454e;border-radius:6px;background:#292a31;color:#eeeef1;font:600 .7rem/1 var(--font-family);cursor:pointer}
+.paint-toolbar button:hover,.notepad-toolbar button:hover,.browser-toolbar button:hover,.paint-toolbar button.is-active{border-color:color-mix(in srgb,var(--accent-color) 72%,#44454e);background:#34363e}
+.paint-toolbar button:disabled{opacity:.4;cursor:default}
+.paint-toolbar button.is-primary,.notepad-toolbar button,.browser-toolbar button{border-color:color-mix(in srgb,var(--accent-color) 70%,#44454e);background:color-mix(in srgb,var(--accent-color) 28%,#24252b)}
+.paint-stage{min-width:0;min-height:0;padding:12px;background:#393a41}
+.paint-stage canvas{display:block;width:100%;height:100%;border:1px solid #0b0c0e;background:#fff;box-shadow:0 5px 24px rgba(0,0,0,.28);cursor:crosshair;touch-action:none}
+.paint-stage canvas.is-erasing{cursor:cell}
+.paint-stage canvas:focus-visible{outline:2px solid var(--accent-color);outline-offset:2px}
+
+/* Notepad */
+.notepad-app{display:grid;grid-template-rows:auto minmax(0,1fr) 27px;background:#f8f7f3;color:#202126}
+.notepad-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border-bottom:1px solid #d5d4cf;background:#ecebe7}
+.notepad-toolbar label{display:flex;min-width:0;flex:1;align-items:center;gap:8px;color:#66676d;font:600 .66rem/1 var(--font-family)}
+.notepad-toolbar input{min-width:0;flex:1;padding:7px 9px;border:1px solid #c8c7c2;border-radius:5px;outline:0;background:#fff;color:#25262a;font:500 .76rem/1 var(--font-family)}
+.notepad-toolbar input:focus{border-color:var(--accent-color);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent-color) 20%,transparent)}
+.notepad-app textarea{width:100%;height:100%;min-width:0;min-height:0;resize:none;padding:22px 24px;border:0;outline:0;background:#fff;color:#202126;font:400 .95rem/1.75 ui-monospace,SFMono-Regular,Consolas,"Noto Sans Mono CJK JP",monospace;tab-size:4}
+.notepad-status{display:flex;align-items:center;justify-content:space-between;padding:0 11px;border-top:1px solid #d5d4cf;background:#eeede9;color:#696a70;font:500 .62rem/1 var(--font-family)}
+
+/* Web browser */
+.browser-app{display:grid;grid-template-rows:auto minmax(0,1fr);background:#111218;color:#eeeef1}
+.browser-toolbar{display:grid;gap:9px;padding:10px 12px;border-bottom:1px solid #33343c;background:#222329}
+.browser-search-row{display:flex;min-width:0;align-items:center;gap:9px}
+.browser-search-row>span{display:grid;width:26px;height:26px;flex:0 0 auto;place-items:center;color:var(--accent-color);font:700 1.1rem/1 ui-monospace,monospace}
+.browser-toolbar input{min-width:0;flex:1;padding:9px 13px;border:1px solid #44454e;border-radius:8px;outline:0;background:#111216;color:#fff;font:500 .8rem/1 var(--font-family)}
+.browser-toolbar input:focus{border-color:var(--accent-color);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent-color) 18%,transparent)}
+.browser-search-options{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.browser-search-options label{display:flex;align-items:center;gap:6px;color:#999ba4;font:600 .62rem/1 var(--font-family)}
+.browser-search-options select{height:28px;padding:0 28px 0 9px;border:1px solid #44454e;border-radius:6px;outline:0;background:#18191e;color:#eeeef1;font:600 .66rem/1 var(--font-family);cursor:pointer}
+.browser-search-options select:focus{border-color:var(--accent-color);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent-color) 18%,transparent)}
+.browser-start{min-width:0;min-height:0;overflow:auto;padding:clamp(28px,7vh,58px) clamp(22px,7vw,70px);text-align:center}
+.browser-mark{display:grid;width:62px;height:62px;margin:0 auto 14px;border:1px solid #393a43;border-radius:18px;background:#18191e;place-items:center}
+.browser-mark img{display:block;width:35px;height:35px;object-fit:contain}
+.browser-mark[data-engine="mojeek"] img{width:42px;height:30px}
+.browser-start h2{margin:0;font:700 1.35rem/1.2 var(--font-family)}
+.browser-start>p{margin:8px 0 24px;color:#898b94;font:500 .76rem/1.5 var(--font-family)}
+.browser-recent{width:min(560px,100%);margin:34px auto 0;text-align:left}
+.browser-recent h3{margin:0 0 10px;color:#858792;font:700 .64rem/1 var(--font-family);letter-spacing:.1em;text-transform:uppercase}
+.browser-recent>div{display:flex;flex-wrap:wrap;gap:7px}
+.browser-recent button{max-width:100%;overflow:hidden;padding:8px 11px;border:1px solid #35363e;border-radius:999px;background:#1b1c21;color:#d5d5da;font:500 .72rem/1 var(--font-family);text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.browser-recent button:hover{border-color:var(--accent-color)}
+.browser-recent p{margin:0;color:#686a72;font:500 .72rem/1.4 var(--font-family)}
+
 @media(max-width:640px){
-.desktop-layer{inset:0;overflow:hidden;background:#07080a}
+.desktop-layer{inset:0;overflow:hidden;background:transparent}
+body.desktop-app-active .desktop-layer{background:#07080a}
 .app-window,.app-window.is-maximized,html[data-window-system="macos"] .app-window,html[data-window-system="macos"] .app-window.is-maximized{
 inset:0 0 50px!important;
 width:100vw!important;
@@ -2180,11 +2247,24 @@ html[data-window-system="macos"] .desktop-task-item>b{display:block}
 .terminal-output{padding:15px 14px 6px}
 .terminal-command-line{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
 .terminal-app{font-size:.875rem}
+.calculator-app{padding:12px;gap:10px}
+.calculator-display{padding:10px 13px}
+.calculator-keys{gap:6px}
+.calculator-keys button{min-height:38px}
+.paint-toolbar{padding:7px 8px}
+.paint-size input{width:72px}
+.paint-stage{padding:7px}
+.notepad-app textarea{padding:18px 16px}
+.browser-toolbar{padding:8px}
+.browser-search-options{display:grid;grid-template-columns:1fr 1fr}
+.browser-search-options label{min-width:0;align-items:stretch;flex-direction:column}
+.browser-search-options select{width:100%}
+.browser-start{padding:28px 16px}
 body.desktop-app-active .floating-status-bar{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 }
 
 @media(prefers-reduced-motion:reduce){
-.app-window,.desktop-taskbar,.app-launcher-item{transition:none}
+.app-window,.desktop-taskbar,.app-launcher-item,.calculator-keys button{transition:none}
 }
 
 @media(max-width:760px){
