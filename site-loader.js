@@ -70,7 +70,55 @@
     return transitionQueue;
   };
 
-  window.zeroSiteLoader = { playTransition };
+  let navigating = false;
+  const navigate = (url, label = 'ページを読み込んでいます') => {
+    if (navigating) return Promise.resolve(false);
+    const target = new URL(url, location.href);
+    if (target.origin !== location.origin) {
+      window.open(target.href, '_blank', 'noopener');
+      return Promise.resolve(true);
+    }
+    navigating = true;
+    const navigationLoader = createTransitionLoader();
+    const navigationProgress = navigationLoader.querySelector('.site-loader-progress');
+    const navigationStatus = navigationLoader.querySelector('.site-loader-status');
+    const navigationPercent = navigationLoader.querySelector('.site-loader-percent');
+    const setProgress = (value, text) => {
+      navigationProgress.style.setProperty('--loader-progress', `${value}%`);
+      navigationProgress.setAttribute('aria-valuenow', String(value));
+      navigationPercent.textContent = `${value}%`;
+      navigationStatus.textContent = text;
+    };
+    document.documentElement.classList.add('site-is-loading');
+    document.body.appendChild(navigationLoader);
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      .then(() => { setProgress(18, '移動先を確認しています'); return wait(90); })
+      .then(() => { setProgress(54, label); return wait(120); })
+      .then(() => {
+        setProgress(82, 'ページを切り替えています');
+        location.assign(target.href);
+        setTimeout(() => {
+          navigating = false;
+          document.documentElement.classList.remove('site-is-loading');
+          navigationLoader.remove();
+        }, 1800);
+        return true;
+      });
+  };
+
+  window.zeroSiteLoader = { playTransition, navigate };
+
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const anchor = event.target.closest?.('a[href]');
+    if (!anchor || anchor.hasAttribute('download') || anchor.dataset.noPageTransition !== undefined) return;
+    if (anchor.target && anchor.target.toLowerCase() !== '_self') return;
+    const target = new URL(anchor.href, location.href);
+    if (!['http:', 'https:'].includes(target.protocol) || target.origin !== location.origin) return;
+    if (target.pathname === location.pathname && target.search === location.search && target.hash) return;
+    event.preventDefault();
+    navigate(target.href, anchor.dataset.loadingLabel || 'ページを読み込んでいます');
+  });
 
   document.documentElement.classList.add('site-is-loading');
 

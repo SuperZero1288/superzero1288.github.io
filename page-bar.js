@@ -57,6 +57,15 @@
     try{localStorage.setItem('zero-site-appearance',JSON.stringify({style:styles[styleIndex].id,light:document.body.classList.contains('light-theme')}));}
     catch(error){console.warn('表示設定を保存できませんでした',error);}
   };
+  const restoreWindowSystem=()=>{
+    let system=/Mac OS X|iPhone|iPad|iPod/.test(navigator.userAgent)?'macos':'windows';
+    try{
+      const saved=JSON.parse(localStorage.getItem('zero-site-device-hack')||'{}');
+      if(saved.os==='macos')system='macos';
+      if(saved.os==='windows'||saved.os==='linux')system='windows';
+    }catch(error){console.warn('OS表示設定を復元できませんでした',error);}
+    document.documentElement.dataset.windowSystem=system;
+  };
 
   const renderCalendar=(now)=>{
     const year=now.getFullYear(),month=now.getMonth(),today=now.getDate();
@@ -135,7 +144,12 @@
   });
 
   restoreAppearance();
+  restoreWindowSystem();
   updateTime();
   setInterval(updateTime,1000);
   updateThemeButton();
+  window.addEventListener('storage',(event)=>{
+    if(event.key==='zero-site-appearance'){restoreAppearance();updateThemeButton();}
+    if(event.key==='zero-site-device-hack')restoreWindowSystem();
+  });
 })();

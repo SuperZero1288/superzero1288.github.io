@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css?v=20260909-apps3">
-<script src="site-loader.js?v=20260909-desktop2" defer></script>
+<link rel="stylesheet" href="style.css?v=20260910-os1">
+<script src="site-loader.js?v=20260910-os1" defer></script>
 </head>
 <body class="style-default wing-tabs-idle">
 
@@ -51,7 +51,7 @@
 <p class="edge-card-kicker">APPLICATION</p>
 <div class="app-launcher-heading">
 <h2 id="app-launcher-title">アプリ</h2>
-<span>5 / 9</span>
+<span>6 / 9</span>
 </div>
 <div class="app-launcher-grid">
 <button class="app-launcher-item app-launcher-terminal" type="button" data-launch-app="terminal" aria-label="ターミナルを開く">
@@ -74,7 +74,10 @@
 <span class="app-launcher-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21c-2.3-2.5-3.5-5.5-3.5-9S9.7 5.5 12 3Z"></path></svg></span>
 <span>ブラウザ</span>
 </button>
-<button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">06</span></button>
+<button class="app-launcher-item app-launcher-explorer" type="button" data-launch-app="explorer" aria-label="ファイルエクスプローラーを開く">
+<span class="app-launcher-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3z"></path><path d="M3 7V5h7l2 2"></path></svg></span>
+<span>ファイル</span>
+</button>
 <button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">07</span></button>
 <button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">08</span></button>
 <button class="app-launcher-item is-empty" type="button" disabled aria-label="準備中"><span aria-hidden="true">09</span></button>
@@ -124,6 +127,10 @@
 <h1 class="profile-name">ぜろくんでんせつ</h1>
 <p class="profile-id">ZErrrrrO</p>
 <div class="profile-desc">趣味でUnityをしている一般高校生！いろんなことをしたいです</div>
+<button class="profile-more-button" type="button" data-open-profile aria-haspopup="dialog">
+<span><small>USER PROFILE</small><strong>詳しいプロフィール</strong></span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"></path></svg>
+</button>
 </section>
 
 <section class="gallery-section">
@@ -708,6 +715,7 @@ refreshEdgeState:updateEdgeInteractionState,
 showToast
 };
 </script>
-<script src="site-desktop.js?v=20260909-apps5"></script>
+<script src="zero-filesystem.js?v=20260910-os1"></script>
+<script src="site-desktop.js?v=20260910-os1"></script>
 </body>
 </html>

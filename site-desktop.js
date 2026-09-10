@@ -2,7 +2,8 @@
 'use strict';
 
 const controller=window.zeroSiteController;
-if(!controller)return;
+const vfs=window.zeroVfs;
+if(!controller||!vfs)return;
 
 const MAX_WINDOWS=10;
 const windows=new Map();
@@ -15,7 +16,10 @@ terminal:'>_',
 calculator:'＋',
 paint:'✎',
 notepad:'≡',
-browser:'◎'
+browser:'◎',
+profile:'ID',
+explorer:'▣',
+file:'TXT'
 };
 
 const SEARCH_ENGINES={
@@ -34,8 +38,25 @@ layer.setAttribute('aria-live','polite');
 const taskbar=document.createElement('div');
 taskbar.className='desktop-taskbar';
 taskbar.setAttribute('aria-label','開いているアプリ');
+taskbar.innerHTML=`
+<button class="desktop-task-home" type="button" aria-label="デスクトップを表示" title="デスクトップを表示"><span aria-hidden="true">Z</span></button>
+<div class="desktop-task-items" role="toolbar" aria-label="ウィンドウ一覧"></div>
+<div class="desktop-task-meta"><span class="desktop-window-count" aria-label="開いているウィンドウ数">0</span><time></time></div>`;
 layer.appendChild(taskbar);
 document.body.appendChild(layer);
+const taskItems=taskbar.querySelector('.desktop-task-items');
+const taskHome=taskbar.querySelector('.desktop-task-home');
+const taskCount=taskbar.querySelector('.desktop-window-count');
+const taskTime=taskbar.querySelector('time');
+let desktopRestoreIds=[];
+
+function updateTaskClock(){
+const now=new Date();
+taskTime.textContent=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+taskTime.dateTime=now.toISOString();
+}
+updateTaskClock();
+setInterval(updateTaskClock,10000);
 
 let desktopTouchStart=null;
 layer.addEventListener('touchstart',event=>{
@@ -60,13 +81,18 @@ function updateDesktopState(){
 const hasWindows=windows.size>0;
 document.body.classList.toggle('desktop-app-active',hasWindows);
 taskbar.classList.toggle('is-visible',hasWindows);
-if(!hasWindows)taskbar.replaceChildren();
+taskCount.textContent=String(windows.size);
+taskCount.setAttribute('aria-label',`開いているウィンドウ: ${windows.size}`);
+if(!hasWindows){desktopRestoreIds=[];taskHome.classList.remove('is-active');}
 controller.refreshEdgeState?.();
 }
 
 function focusWindow(record){
 if(!record||record.minimized)return;
 topZ+=1;
+record.lastFocusedAt=performance.now();
+desktopRestoreIds=[];
+taskHome.classList.remove('is-active');
 record.element.style.zIndex=String(topZ);
 windows.forEach(item=>item.element.classList.toggle('is-focused',item===record));
 record.taskButton?.classList.add('is-active');
@@ -91,6 +117,8 @@ if(!record.minimized){
 focusWindow(record);
 requestAnimationFrame(()=>record.focusTarget?.focus());
 }else{
+record.element.classList.remove('is-focused');
+record.taskButton?.classList.remove('is-active');
 const next=[...windows.values()].reverse().find(item=>item!==record&&!item.minimized);
 if(next)focusWindow(next);
 }
@@ -138,12 +166,35 @@ button.querySelector('span').textContent=record.icon;
 button.querySelector('b').textContent=`${record.title} ${record.id}`;
 button.addEventListener('click',()=>{
 if(record.minimized)toggleMinimize(record,false);
+else if(record.element.classList.contains('is-focused'))toggleMinimize(record,true);
 else focusWindow(record);
 });
-taskbar.appendChild(button);
+taskItems.appendChild(button);
 record.taskButton=button;
 syncTaskButton(record);
 }
+
+taskHome.addEventListener('click',()=>{
+const visible=[...windows.values()].filter(item=>!item.minimized);
+if(visible.length){
+const restoreIds=visible.map(item=>item.id);
+visible.forEach(item=>toggleMinimize(item,true));
+desktopRestoreIds=restoreIds;
+taskHome.classList.add('is-active');
+return;
+}
+if(desktopRestoreIds.length){
+const restore=[...desktopRestoreIds];
+restore.forEach(id=>{const record=windows.get(id);if(record)toggleMinimize(record,false);});
+const focus=windows.get(restore.at(-1));
+if(focus)focusWindow(focus);
+desktopRestoreIds=[];
+taskHome.classList.remove('is-active');
+return;
+}
+const next=[...windows.values()].sort((a,b)=>(b.lastFocusedAt||0)-(a.lastFocusedAt||0))[0];
+if(next){toggleMinimize(next,false);taskHome.classList.remove('is-active');}
+});
 
 function clampWindow(record){
 if(isMobileLayout()||record.maximized)return;
@@ -229,7 +280,7 @@ content.className='app-window-content';
 element.append(titlebar,content);
 layer.appendChild(element);
 
-const record={id,title,appId,icon,element,content,minimized:false,maximized:false,restoreRect:null,taskButton:null,focusTarget:null,dispose:null,maximizeButton:titlebar.querySelector('[data-window-action="maximize"]')};
+const record={id,title,appId,icon,element,content,minimized:false,maximized:false,restoreRect:null,taskButton:null,focusTarget:null,dispose:null,lastFocusedAt:performance.now(),maximizeButton:titlebar.querySelector('[data-window-action="maximize"]')};
 windows.set(id,record);
 createTaskButton(record);
 installWindowDrag(record,titlebar);
@@ -249,7 +300,9 @@ openTerminal:()=>openTerminal(),
 openCalculator:()=>openCalculator(),
 openPaint:()=>openPaint(),
 openNotepad:()=>openNotepad(),
-openBrowser:()=>openBrowser()
+openBrowser:()=>openBrowser(),
+openProfile:()=>openProfile(),
+openExplorer:path=>openExplorer(path)
 };
 const appResult=build?.(content,appApi)||{};
 record.focusTarget=appResult.focusTarget||null;
@@ -293,8 +346,9 @@ booth:{label:'BOOTH',url:'https://zerrrrro.booth.pm/'},
 github:{label:'GitHub',url:'https://github.com/SuperZero1288'}
 };
 
-function getPrompt(){
-return document.documentElement.dataset.windowSystem==='macos'?'zero@portfolio ~ %':'C:\\ZERO>';
+function getPrompt(path='/home'){
+const system=document.documentElement.dataset.windowSystem;
+return system==='macos'?`zero@portfolio ${vfs.toDisplayPath(path,'macos')} %`:`${vfs.toDisplayPath(path,'windows')}>`;
 }
 
 function openTerminal(){
@@ -305,6 +359,335 @@ width:780,
 height:500,
 build:(content,app)=>buildTerminal(content,app)
 });
+}
+
+const PROFILE_DATA={
+pc:[
+['CPU','AMD Ryzen 7 3700X'],
+['GPU','NVIDIA GeForce GTX 1660 Ti / 8 GB'],
+['MEMORY','DDR4 / 32 GB'],
+['SSD','256 GB'],
+['HDD 01','1 TB'],
+['HDD 02','1 TB'],
+['HDD 03','500 GB']
+],
+mobile:[
+['MAIN','Google Pixel 9a'],
+['SUB','Samsung Galaxy Z Flip5'],
+['TABLET','Apple iPad mini 6'],
+['DEV / TOY','Google Pixel 6a']
+]
+};
+
+function profileRows(items){
+return items.map(([label,value])=>`<div class="profile-spec-row"><dt>${label}</dt><dd>${value}</dd></div>`).join('');
+}
+
+function buildProfile(content){
+content.classList.add('profile-app');
+content.tabIndex=-1;
+content.innerHTML=`
+<header class="profile-app-hero">
+<img src="assets/social-x.jpg" alt="ZErrrrrOのXプロフィールアイコン">
+<div>
+<p>LOCAL USER</p>
+<h2>ぜろくんでんせつ</h2>
+<span>ZErrrrrO</span>
+</div>
+</header>
+<p class="profile-app-intro">趣味でUnityをしている一般高校生！いろんなことをしたいです</p>
+<div class="profile-spec-grid">
+<section class="profile-spec-card" aria-label="PC環境">
+<header><div><span>WORKSTATION</span><h3>PC環境</h3></div><b>DESKTOP</b></header>
+<dl>${profileRows(PROFILE_DATA.pc)}</dl>
+</section>
+<section class="profile-spec-card" aria-label="スマホ布陣">
+<header><div><span>DEVICE LINEUP</span><h3>スマホ布陣</h3></div><b>4 DEVICES</b></header>
+<dl>${profileRows(PROFILE_DATA.mobile)}</dl>
+</section>
+</div>`;
+return{focusTarget:content};
+}
+
+let mobileProfileModal=null;
+
+function openMobileProfile(){
+if(mobileProfileModal){
+mobileProfileModal.querySelector('[data-close-profile]')?.focus();
+return mobileProfileModal;
+}
+controller.closeEdgeCards();
+const overlay=document.createElement('div');
+overlay.className='profile-modal-layer';
+overlay.innerHTML=`
+<section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+<header class="profile-modal-header">
+<div><span aria-hidden="true">ID</span><strong id="profile-modal-title">詳しいプロフィール</strong></div>
+<button type="button" data-close-profile aria-label="プロフィールを閉じる">×</button>
+</header>
+<div class="profile-modal-body"></div>
+</section>`;
+document.body.appendChild(overlay);
+document.body.classList.add('profile-modal-open');
+mobileProfileModal=overlay;
+const modalHeader=overlay.querySelector('.profile-modal-header');
+const closeButton=overlay.querySelector('[data-close-profile]');
+buildProfile(overlay.querySelector('.profile-modal-body'));
+
+let touchStart=null;
+const close=()=>{
+if(mobileProfileModal!==overlay)return;
+overlay.classList.remove('is-open');
+document.body.classList.remove('profile-modal-open');
+mobileProfileModal=null;
+document.removeEventListener('keydown',onKeydown);
+setTimeout(()=>overlay.remove(),180);
+};
+const onKeydown=event=>{if(event.key==='Escape')close();};
+closeButton.addEventListener('click',close);
+overlay.addEventListener('click',event=>{if(event.target===overlay)close();});
+modalHeader.addEventListener('touchstart',event=>{
+const touch=event.changedTouches[0];
+touchStart={x:touch.clientX,y:touch.clientY};
+},{passive:true});
+modalHeader.addEventListener('touchend',event=>{
+if(!touchStart)return;
+const touch=event.changedTouches[0];
+const deltaX=touch.clientX-touchStart.x;
+const deltaY=touch.clientY-touchStart.y;
+touchStart=null;
+if(deltaY>90&&Math.abs(deltaY)>Math.abs(deltaX))close();
+},{passive:true});
+document.addEventListener('keydown',onKeydown);
+requestAnimationFrame(()=>{
+overlay.classList.add('is-open');
+closeButton.focus();
+});
+return overlay;
+}
+
+function openProfile(){
+if(isMobileLayout())return openMobileProfile();
+return createWindow({
+title:'詳しいプロフィール',
+appId:'profile',
+width:820,
+height:610,
+build:(content)=>buildProfile(content)
+});
+}
+
+function getLatestNoteUrl(){
+const latest=document.querySelector('#noteArticles .note-article[href],#latestNoteFeed .note-article[href],a.note-article[href]');
+return latest?latest.href:new URL('/blog/n8d41d4a76214.html',location.href).href;
+}
+
+function navigateSite(url,label='ページを開いています'){
+const target=new URL(url,location.href);
+if(target.origin!==location.origin){
+window.open(target.href,'_blank','noopener');
+return;
+}
+if(window.zeroSiteLoader?.navigate)window.zeroSiteLoader.navigate(target.href,label);
+else location.href=target.href;
+}
+
+function dynamicFileContent(entry){
+if(entry.dynamic==='device'){
+const state=controller.getDeviceState();
+return[
+`OS: ${state.effectiveOs}${state.hacked?' [ハック済み]':''}`,
+`実際のOS: ${state.actualOs}`,
+`ブラウザ: ${state.browser}`,
+`ウィンドウUI: ${state.windowSystem==='macos'?'macOS':'Windows'}`,
+`画面: ${screen.width} x ${screen.height}`,
+`表示領域: ${window.innerWidth} x ${window.innerHeight}`,
+`言語: ${navigator.language||'不明'}`
+].join('\n');
+}
+if(entry.dynamic==='settings'){
+const appearance=controller.getAppearance();
+const device=controller.getDeviceState();
+return[
+`theme=${appearance.style.replace('style-','')}`,
+`mode=${appearance.light?'light':'dark'}`,
+`os=${device.osHack}`,
+`window=${device.windowSystem}`,
+`clock=${controller.getClockMode()}`
+].join('\n');
+}
+return'';
+}
+
+function openTextFile(entry){
+return createWindow({
+title:entry.label,
+appId:'file',
+icon:entry.icon||APP_ICONS.file,
+width:620,
+height:410,
+build:content=>{
+content.classList.add('file-viewer-app');
+content.tabIndex=-1;
+const pre=document.createElement('pre');
+pre.textContent=entry.type==='dynamic'?dynamicFileContent(entry):entry.content||'';
+content.appendChild(pre);
+return{focusTarget:content};
+}
+});
+}
+
+function launchEntry(entry,{newTab=false}={}){
+if(!entry)return false;
+if(entry.type==='directory'){openExplorer(entry.path);return true;}
+if(entry.type==='file'||entry.type==='dynamic'){openTextFile(entry);return true;}
+if(entry.type==='external'){
+window.open(entry.url,'_blank','noopener');
+return true;
+}
+if(entry.type==='page'){
+const url=entry.action==='latest-note'?getLatestNoteUrl():entry.url;
+if(newTab)window.open(new URL(url,location.href).href,'_blank','noopener');
+else navigateSite(url,`${entry.label}を読み込んでいます`);
+return true;
+}
+if(entry.type==='app'){
+const launcher={terminal:openTerminal,explorer:()=>openExplorer('/home'),calculator:openCalculator,paint:openPaint,notepad:openNotepad,browser:openBrowser,profile:openProfile}[entry.app];
+launcher?.();
+return Boolean(launcher);
+}
+return false;
+}
+
+function explorerTypeLabel(entry){
+if(entry.type==='directory')return'フォルダー';
+if(entry.type==='app')return'アプリ';
+if(entry.type==='page')return entry.planned?'未作成のページ':'サイト内ページ';
+if(entry.type==='external')return'外部リンク';
+return'テキスト ファイル';
+}
+
+function openExplorer(startPath='/home'){
+return createWindow({
+title:'ファイル エクスプローラー',
+appId:'explorer',
+width:880,
+height:570,
+build:(content,app)=>buildExplorer(content,app,startPath)
+});
+}
+
+function buildExplorer(content,app,startPath){
+content.classList.add('explorer-app');
+content.innerHTML=`
+<header class="explorer-toolbar">
+<div class="explorer-nav-buttons">
+<button type="button" data-explorer-action="back" aria-label="戻る">←</button>
+<button type="button" data-explorer-action="forward" aria-label="進む">→</button>
+<button type="button" data-explorer-action="up" aria-label="ひとつ上へ">↑</button>
+</div>
+<form class="explorer-path-form"><span aria-hidden="true">⌘</span><input aria-label="場所" autocomplete="off" spellcheck="false"><button type="submit">移動</button></form>
+<button class="explorer-hidden-toggle" type="button" aria-pressed="false">隠し項目</button>
+</header>
+<div class="explorer-body">
+<nav class="explorer-sidebar" aria-label="よく使う場所"></nav>
+<section class="explorer-view" aria-live="polite">
+<header><div><small>LOCATION</small><h2></h2></div><span class="explorer-location-kind"></span></header>
+<div class="explorer-grid"></div>
+<footer><span class="explorer-count"></span><span>Ctrl + クリックでページを新しいタブに開く</span></footer>
+</section>
+</div>`;
+const pathForm=content.querySelector('.explorer-path-form');
+const pathInput=pathForm.querySelector('input');
+const grid=content.querySelector('.explorer-grid');
+const heading=content.querySelector('.explorer-view h2');
+const kind=content.querySelector('.explorer-location-kind');
+const count=content.querySelector('.explorer-count');
+const hiddenToggle=content.querySelector('.explorer-hidden-toggle');
+const backButton=content.querySelector('[data-explorer-action="back"]');
+const forwardButton=content.querySelector('[data-explorer-action="forward"]');
+let showHidden=false;
+let history=[vfs.normalize(startPath,'/home')];
+let historyIndex=0;
+let currentPath=history[0];
+
+const updateHistoryButtons=()=>{
+backButton.disabled=historyIndex<=0;
+forwardButton.disabled=historyIndex>=history.length-1;
+};
+const renderMissing=path=>{
+currentPath=path;
+pathInput.value=vfs.toDisplayPath(path,document.documentElement.dataset.windowSystem);
+heading.textContent='場所が見つかりません';
+kind.textContent='404';
+count.textContent='0 項目';
+grid.replaceChildren();
+const empty=document.createElement('div');
+empty.className='explorer-empty';
+empty.innerHTML='<span aria-hidden="true">?</span><strong>このパスは存在しません</strong><p>404ページで、この場所を確認できます。</p><button type="button">404ページを開く</button>';
+empty.querySelector('button').addEventListener('click',()=>navigateSite(path,'存在しないパスを確認しています'));
+grid.appendChild(empty);
+};
+const render=(path,{push=true}={})=>{
+const normalized=vfs.normalize(path,currentPath);
+const directory=vfs.get(normalized,'/');
+if(!directory||directory.type!=='directory'){renderMissing(normalized);updateHistoryButtons();return;}
+currentPath=normalized;
+if(push&&history[historyIndex]!==normalized){history=history.slice(0,historyIndex+1);history.push(normalized);historyIndex=history.length-1;}
+pathInput.value=vfs.toDisplayPath(normalized,document.documentElement.dataset.windowSystem);
+heading.textContent=directory.label;
+kind.textContent=normalized;
+const children=vfs.list(normalized,{hidden:showHidden});
+count.textContent=`${children.length} 項目`;
+grid.replaceChildren();
+if(!children.length){
+const empty=document.createElement('p');
+empty.className='explorer-folder-empty';
+empty.textContent='このフォルダーは空です';
+grid.appendChild(empty);
+}
+children.forEach(entry=>{
+const button=document.createElement('button');
+button.type='button';
+button.className=`explorer-item is-${entry.type}${entry.hidden?' is-hidden':''}`;
+button.innerHTML='<span class="explorer-item-icon" aria-hidden="true"></span><span class="explorer-item-copy"><strong></strong><small></small></span><span class="explorer-item-open" aria-hidden="true">›</span>';
+button.querySelector('.explorer-item-icon').textContent=entry.icon||'◇';
+button.querySelector('strong').textContent=vfs.name(entry.path);
+button.querySelector('small').textContent=explorerTypeLabel(entry);
+button.addEventListener('click',event=>{
+if(entry.type==='directory')render(entry.path);
+else launchEntry(entry,{newTab:event.ctrlKey||event.metaKey});
+});
+grid.appendChild(button);
+});
+updateHistoryButtons();
+};
+
+const sidebar=content.querySelector('.explorer-sidebar');
+[
+['/home','ホーム','⌂'],['/home/blog','ブログ','▤'],['/home/apps','アプリ','▦'],
+['/network','ネットワーク','◎'],['/system','システム','⚙']
+].forEach(([path,label,icon])=>{
+const button=document.createElement('button');
+button.type='button';button.innerHTML=`<span aria-hidden="true">${icon}</span><b>${label}</b>`;
+button.addEventListener('click',()=>render(path));
+sidebar.appendChild(button);
+});
+
+pathForm.addEventListener('submit',event=>{event.preventDefault();render(pathInput.value);});
+backButton.addEventListener('click',()=>{if(historyIndex>0){historyIndex-=1;render(history[historyIndex],{push:false});}});
+forwardButton.addEventListener('click',()=>{if(historyIndex<history.length-1){historyIndex+=1;render(history[historyIndex],{push:false});}});
+content.querySelector('[data-explorer-action="up"]').addEventListener('click',()=>render(vfs.parent(currentPath)));
+hiddenToggle.addEventListener('click',()=>{
+showHidden=!showHidden;
+hiddenToggle.classList.toggle('is-active',showHidden);
+hiddenToggle.setAttribute('aria-pressed',String(showHidden));
+render(currentPath,{push:false});
+});
+const onHackChange=()=>render(currentPath,{push:false});
+window.addEventListener('zero:devicehackchange',onHackChange);
+render(currentPath,{push:false});
+return{focusTarget:pathInput,dispose:()=>window.removeEventListener('zero:devicehackchange',onHackChange)};
 }
 
 function downloadBlob(blob,filename){
@@ -722,7 +1105,7 @@ renderRecent();
 return{focusTarget:input};
 }
 
-function buildTerminal(content,app){
+function buildTerminalLegacy(content,app){
 content.classList.add('terminal-app');
 const output=document.createElement('div');
 output.className='terminal-output';
@@ -805,6 +1188,7 @@ write('  clock [12|24]                 時計の表示形式');
 write('  hack os [macos|windows|linux|auto]');
 write('                               OS表示とウィンドウUIを上書き');
 write('  open [list|DESTINATION]       サイト内外のページを開く');
+write('  profile                      詳しいプロフィール');
 write('  calc / paint / notepad / browser  アプリを開く');
 write('  new                          ターミナルをもう1つ開く');
 write('  windows                      開いているウィンドウ');
@@ -815,7 +1199,11 @@ write('  settings / history / clear    設定・履歴・画面消去');
 break;
 case'clear':case'cls':output.replaceChildren();break;
 case'ver':write('ZERO SITE TERMINAL 1.0.0');break;
-case'whoami':write('visitor@zero-site');break;
+case'whoami':
+write('ぜろくんでんせつ / ZErrrrrO','accent');
+write('趣味でUnityをしている一般高校生');
+write('profile で詳しいプロフィールを表示できます','muted');
+break;
 case'date':write(new Intl.DateTimeFormat('ja-JP',{dateStyle:'full',timeStyle:'medium'}).format(new Date()));break;
 case'echo':write(tokens.join(' '));break;
 case'device':case'system':case'info':case'neofetch':writeDevice();break;
@@ -899,6 +1287,7 @@ write('calculator 電卓');
 write('paint      ペイント');
 write('notepad    メモ帳');
 write('browser    ウェブ ブラウザ');
+write('profile    詳しいプロフィール');
 break;
 }
 if(sub==='terminal'){openTerminal();write('新しいターミナルを開きました','success');break;}
@@ -906,6 +1295,7 @@ if(sub==='calculator'||sub==='calc'){openCalculator();write('電卓を開きま�
 if(sub==='paint'){openPaint();write('ペイントを開きました','success');break;}
 if(sub==='notepad'||sub==='memo'){openNotepad();write('メモ帳を開きました','success');break;}
 if(sub==='browser'||sub==='web'){openBrowser();write('ウェブ ブラウザを開きました','success');break;}
+if(sub==='profile'||sub==='about'||sub==='whoami'){openProfile();write('詳しいプロフィールを開きました','success');break;}
 const destination=destinations[sub];
 if(!destination){write(`開く場所が見つかりません: ${sub}`,'error');break;}
 const anchor=document.createElement('a');
@@ -921,6 +1311,7 @@ case'calc':case'calculator':openCalculator();write('電卓を開きました','s
 case'paint':openPaint();write('ペイントを開きました','success');break;
 case'memo':case'notepad':openNotepad();write('メモ帳を開きました','success');break;
 case'web':case'browser':openBrowser();write('ウェブ ブラウザを開きました','success');break;
+case'profile':case'about':openProfile();write('詳しいプロフィールを開きました','success');break;
 case'windows':
 windows.forEach(item=>write(`${String(item.id).padStart(2,'0')}  ${item.title.padEnd(12)} ${item.minimized?'[最小化]':item.maximized?'[最大化]':'[表示中]'}`,item===app.record?'accent':'normal'));
 break;
@@ -972,7 +1363,7 @@ event.preventDefault();
 output.replaceChildren();
 }else if(event.key==='Tab'){
 event.preventDefault();
-const commands=['help','device','theme','mode','clock','settings','hack','open','new','calculator','paint','notepad','browser','windows','window','minimize','maximize','close','date','whoami','ver','history','clear'];
+const commands=['help','device','theme','mode','clock','settings','hack','open','new','profile','calculator','paint','notepad','browser','windows','window','minimize','maximize','close','date','whoami','ver','history','clear'];
 const matches=commands.filter(item=>item.startsWith(input.value.toLowerCase()));
 if(matches.length===1)input.value=`${matches[0]} `;
 else if(matches.length>1)write(matches.join('  '));
@@ -1000,13 +1391,316 @@ window.removeEventListener('zero:devicehackchange',onHackChange);
 };
 }
 
-const appLaunchers={terminal:openTerminal,calculator:openCalculator,paint:openPaint,notepad:openNotepad,browser:openBrowser};
+function buildTerminal(content,app){
+content.classList.add('terminal-app');
+const output=document.createElement('div');
+output.className='terminal-output';
+output.setAttribute('role','log');
+output.setAttribute('aria-live','polite');
+const form=document.createElement('form');
+form.className='terminal-command-line';
+form.innerHTML='<label class="terminal-prompt"></label><input type="text" aria-label="コマンド" autocomplete="off" autocapitalize="none" spellcheck="false">';
+const prompt=form.querySelector('.terminal-prompt');
+const input=form.querySelector('input');
+content.append(output,form);
+
+let history=[];
+let historyIndex=0;
+let currentPath='/home';
+let disposed=false;
+try{
+history=JSON.parse(localStorage.getItem('zero-terminal-history')||'[]').filter(item=>typeof item==='string').slice(-100);
+const savedPath=localStorage.getItem('zero-terminal-cwd');
+if(savedPath&&vfs.isDirectory(savedPath,'/'))currentPath=vfs.normalize(savedPath,'/');
+}catch{}
+historyIndex=history.length;
+
+const persistHistory=()=>{try{localStorage.setItem('zero-terminal-history',JSON.stringify(history.slice(-100)));}catch{}};
+const persistPath=()=>{try{localStorage.setItem('zero-terminal-cwd',currentPath);}catch{}};
+const updatePrompt=()=>{prompt.textContent=getPrompt(currentPath);};
+const write=(text='',kind='normal')=>{
+const line=document.createElement('div');
+line.className=`terminal-line terminal-${kind}`;
+line.textContent=String(text);
+output.appendChild(line);
+output.scrollTop=output.scrollHeight;
+};
+const writeCommand=command=>{
+const line=document.createElement('div');
+line.className='terminal-line terminal-entered-command';
+const prefix=document.createElement('span');
+prefix.textContent=`${getPrompt(currentPath)} `;
+const value=document.createElement('b');
+value.textContent=command;
+line.append(prefix,value);
+output.appendChild(line);
+};
+const writeDevice=()=>{
+const state=controller.getDeviceState();
+const appearance=controller.getAppearance();
+write(`OS              ${state.effectiveOs}${state.hacked?'  [ハック済み]':''}`,'accent');
+write(`実際のOS        ${state.actualOs}`);
+write(`ブラウザ        ${state.browser}`);
+write(`ウィンドウUI    ${state.windowSystem==='macos'?'macOS':'Windows'}`);
+write(`テーマ          ${appearance.name} / ${appearance.light?'Light':'Dark'}`);
+write(`画面            ${screen.width} x ${screen.height}`);
+write(`表示領域        ${window.innerWidth} x ${window.innerHeight}`);
+write(`CPU             ${navigator.hardwareConcurrency?`${navigator.hardwareConcurrency} 論理コア`:'取得できません'}`);
+write(`言語            ${navigator.language||'不明'}`);
+};
+const runHackTransition=(label,action,onComplete)=>{
+const finish=result=>{if(disposed)return;onComplete(result);updatePrompt();requestAnimationFrame(()=>input.focus());};
+const fail=error=>{if(!disposed)write(`変更に失敗しました: ${error?.message||'不明なエラー'}`,'error');};
+if(window.zeroSiteLoader?.playTransition)window.zeroSiteLoader.playTransition(label,action).then(finish).catch(fail);
+else{try{finish(action());}catch(error){fail(error);}}
+};
+const resolveEntry=raw=>{
+const destination=destinations[String(raw||'').toLowerCase()];
+if(destination)return{type:new URL(destination.url,location.href).origin===location.origin?'page':'external',label:destination.label,url:destination.url,path:raw};
+return vfs.get(raw,currentPath);
+};
+const listDirectory=(raw,showHidden=false)=>{
+const path=vfs.normalize(raw||currentPath,currentPath);
+const directory=vfs.get(path,'/');
+if(!directory){write(`パスが見つかりません: ${path}`,'error');return;}
+if(directory.type!=='directory'){write(`${vfs.name(path)}  ${explorerTypeLabel(directory)}`);return;}
+const items=vfs.list(path,{hidden:showHidden});
+if(!items.length){write('(空のフォルダー)','muted');return;}
+items.forEach(entry=>write(`${entry.type==='directory'?'[DIR] ':'      '}${vfs.name(entry.path)}${entry.type==='directory'?'/':''}${entry.hidden?'  [hidden]':''}`,entry.hidden?'muted':'normal'));
+};
+const accessPath=raw=>{
+const entry=resolveEntry(raw);
+if(entry){
+if(entry.type==='directory'){currentPath=entry.path;persistPath();updatePrompt();openExplorer(entry.path);write(`${entry.label}をエクスプローラーで開きました`,'success');}
+else{launchEntry(entry);write(`${entry.label}を開いています`,'success');}
+return;
+}
+const path=vfs.normalize(raw,currentPath);
+write(`存在しないパスです。404へ移動します: ${path}`,'error');
+setTimeout(()=>navigateSite(path,'存在しないパスを確認しています'),240);
+};
+const showHelp=all=>{
+write('利用できるコマンド','accent');
+write('  pwd / cd PATH                 現在地の表示・移動');
+write('  ls [-a] [PATH] / dir [/a]    ファイル一覧');
+write('  tree [-a] [PATH]              ディレクトリ構造');
+write('  cat PATH / type PATH          ファイルを読む');
+write('  access PATH                   ページ・アプリへ移動');
+write('  explorer [PATH]               ファイルを表示');
+write('  note latest                   最新note記事を開く');
+write('  theme / mode / clock          表示設定');
+write('  hack os [macos|windows|linux|auto]');
+write('  profile / device              プロフィール・端末情報');
+write('  calc / paint / notepad / browser  アプリを開く');
+write('  windows / window ACTION ID    ウィンドウ管理');
+write('  history / clear / date / echo 基本コマンド');
+write('Tab: 補完  ↑↓: 履歴  Ctrl+L: 画面消去','muted');
+if(all){
+write('');
+write('隠しコマンド','accent');
+write('  matrix / fortune / sudo / boot');
+write('隠しファイルは ls -a または dir /a で表示できます','muted');
+}
+};
+
+const execute=raw=>{
+const tokens=tokenize(raw.trim());
+if(!tokens.length)return;
+const command=tokens.shift().toLowerCase();
+const sub=String(tokens[0]||'').toLowerCase();
+switch(command){
+case'help':case'?':showHelp(tokens.includes('--all')||tokens.includes('-a'));break;
+case'clear':case'cls':output.replaceChildren();break;
+case'ver':write('ZERO SITE TERMINAL 2.0.0 / VFS ready','accent');break;
+case'pwd':write(vfs.toDisplayPath(currentPath,document.documentElement.dataset.windowSystem),'accent');break;
+case'cd':{
+const path=vfs.normalize(tokens[0]||'/home',currentPath);
+if(!vfs.isDirectory(path,'/')){write(`ディレクトリが見つかりません: ${path}`,'error');break;}
+currentPath=path;persistPath();updatePrompt();break;
+}
+case'ls':case'dir':{
+const showHidden=tokens.includes('-a')||tokens.includes('--all')||tokens.includes('/a');
+const target=tokens.find(token=>!['-a','--all','/a'].includes(token));
+listDirectory(target,showHidden);break;
+}
+case'tree':{
+const showHidden=tokens.includes('-a')||tokens.includes('--all')||tokens.includes('/a');
+const target=tokens.find(token=>!['-a','--all','/a'].includes(token))||currentPath;
+const path=vfs.normalize(target,currentPath);
+if(!vfs.isDirectory(path,'/')){write(`ディレクトリが見つかりません: ${path}`,'error');break;}
+write(vfs.toDisplayPath(path,document.documentElement.dataset.windowSystem),'accent');
+vfs.walk(path,{hidden:showHidden}).forEach(line=>write(line));
+break;
+}
+case'cat':case'type':{
+const entry=vfs.get(tokens[0],currentPath);
+if(!entry||!['file','dynamic'].includes(entry.type)){write('読み取れるファイルを指定してください','error');break;}
+write(entry.type==='dynamic'?dynamicFileContent(entry):entry.content||'');break;
+}
+case'access':case'goto':{
+if(!tokens[0]){write('使い方: access PATH','error');break;}
+accessPath(tokens[0]);break;
+}
+case'explorer':case'files':openExplorer(tokens[0]?vfs.normalize(tokens[0],currentPath):currentPath);write('ファイル エクスプローラーを開きました','success');break;
+case'note':{
+if(!sub||sub==='latest'){navigateSite(getLatestNoteUrl(),'最新のnote記事を読み込んでいます');write('最新のnote記事を開いています','success');}
+else if(sub==='profile'||sub==='list'){window.open('https://note.com/zerrrrro_1288','_blank','noopener');write('noteを新しいタブで開きました','success');}
+else write('使い方: note latest | note profile','error');
+break;
+}
+case'whoami':write('ぜろくんでんせつ / ZErrrrrO','accent');write('趣味でUnityをしている一般高校生');write('profile で詳しいプロフィールを表示できます','muted');break;
+case'date':write(new Intl.DateTimeFormat('ja-JP',{dateStyle:'full',timeStyle:'medium'}).format(new Date()));break;
+case'echo':write(tokens.join(' '));break;
+case'device':case'system':case'info':case'neofetch':writeDevice();break;
+case'theme':{
+if(!sub){const appearance=controller.getAppearance();write(`${appearance.name} (${appearance.style}) / ${appearance.light?'Light':'Dark'}`,'accent');break;}
+if(sub==='list'){controller.styles.forEach(style=>write(`${style.id.replace('style-','').padEnd(14)} ${style.name}${style.light?'':'  [Darkのみ]'}`));break;}
+if(sub==='next'){
+const state=controller.getAppearance();
+const index=controller.styles.findIndex(style=>style.id===state.style);
+const next=controller.styles[(index+1)%controller.styles.length];
+controller.setStyle(next.id);write(`テーマを ${next.name} に変更しました`,'success');break;
+}
+const requested=sub==='set'?tokens[1]:tokens[0];
+const themeId=normalizeTheme(requested);
+if(!themeId){write(`テーマが見つかりません: ${requested||''}`,'error');break;}
+controller.setStyle(themeId);write(`テーマを ${controller.getAppearance().name} に変更しました`,'success');break;
+}
+case'mode':{
+if(!sub){write(controller.getAppearance().light?'light':'dark','accent');break;}
+if(!['dark','light','toggle'].includes(sub)){write('使い方: mode dark | light | toggle','error');break;}
+if(controller.setColorMode(sub))write(`${controller.getAppearance().light?'ライト':'ダーク'}モードに変更しました`,'success');
+else write('現在のテーマではライトモードを使用できません','error');break;
+}
+case'clock':{
+if(!sub){write(`${controller.getClockMode()}時間表示`,'accent');break;}
+if(!controller.setClockMode(sub)){write('使い方: clock 12 | 24','error');break;}
+write(`時計を${sub}時間表示に変更しました`,'success');break;
+}
+case'settings':{
+const appearance=controller.getAppearance();const device=controller.getDeviceState();
+write(`テーマ       ${appearance.name}`,'accent');write(`モード       ${appearance.light?'Light':'Dark'}`);
+write(`時計         ${controller.getClockMode()}時間表示`);write(`OS表示       ${device.effectiveOs}${device.hacked?' [ハック済み]':' [自動]'}`);
+write(`ウィンドウUI ${device.windowSystem==='macos'?'macOS':'Windows'}`);break;
+}
+case'hack':{
+if(!sub||sub==='status'){const state=controller.getDeviceState();write(`実際のOS: ${state.actualOs}`);write(`表示中: ${state.effectiveOs}${state.hacked?' [ハック済み]':' [自動]'}`,'accent');break;}
+if(sub==='reset'){runHackTransition('OS情報を復元しています',()=>controller.setDeviceOsHack('auto'),()=>write('OS表示を自動判定に戻しました','success'));break;}
+if(sub!=='os'){write('使い方: hack os macos | windows | linux | auto','error');break;}
+const value=String(tokens[1]||'').toLowerCase();
+const aliases={mac:'macos',osx:'macos',win:'windows',ubuntu:'linux',reset:'auto'};
+const os=aliases[value]||value;
+if(!['macos','windows','linux','auto'].includes(os)){write('指定できるOS: macos, windows, linux, auto','error');break;}
+runHackTransition('ウィンドウ環境を書き換えています',()=>controller.setDeviceOsHack(os),()=>{
+const state=controller.getDeviceState();write(os==='auto'?`自動判定に戻しました: ${state.effectiveOs}`:`OS表示を ${state.effectiveOs} に上書きしました [ハック済み]`,'success');
+});break;
+}
+case'open':{
+if(!sub||sub==='list'){
+write('パスまたは名前を指定できます','accent');
+vfs.list('/home',{hidden:false}).forEach(entry=>write(`${vfs.name(entry.path).padEnd(14)} ${entry.label}`));
+write('terminal / explorer / calculator / paint / notepad / browser / profile');break;
+}
+const appEntries={terminal:openTerminal,explorer:()=>openExplorer(currentPath),calculator:openCalculator,calc:openCalculator,paint:openPaint,notepad:openNotepad,memo:openNotepad,browser:openBrowser,web:openBrowser,profile:openProfile,about:openProfile};
+if(appEntries[sub]){appEntries[sub]();write(`${sub} を開きました`,'success');break;}
+accessPath(tokens[0]);break;
+}
+case'new':case'terminal':openTerminal();write('新しいターミナルを開きました','success');break;
+case'calc':case'calculator':openCalculator();write('電卓を開きました','success');break;
+case'paint':openPaint();write('ペイントを開きました','success');break;
+case'memo':case'notepad':openNotepad();write('メモ帳を開きました','success');break;
+case'web':case'browser':openBrowser();write('ウェブ ブラウザを開きました','success');break;
+case'profile':case'about':openProfile();write('詳しいプロフィールを開きました','success');break;
+case'windows':
+if(!windows.size)write('開いているウィンドウはありません','muted');
+windows.forEach(item=>write(`${String(item.id).padStart(2,'0')}  ${item.title.padEnd(18)} ${item.minimized?'[最小化]':item.maximized?'[最大化]':'[表示中]'}`,item===app.record?'accent':'normal'));
+break;
+case'window':{
+const action=sub;const id=Number(tokens[1]);const target=windows.get(id);
+if(!['focus','close','minimize','maximize','restore'].includes(action)||!target){write('使い方: window focus | close | minimize | maximize | restore ID','error');break;}
+if(action==='focus'||action==='restore'){toggleMinimize(target,false);if(action==='restore')toggleMaximize(target,false);focusWindow(target);}
+if(action==='close')closeWindow(target);if(action==='minimize')toggleMinimize(target,true);if(action==='maximize'){toggleMinimize(target,false);toggleMaximize(target,true);}
+write(`ウィンドウ ${id} を操作しました`,'success');break;
+}
+case'minimize':app.minimize();break;
+case'maximize':app.maximize();break;
+case'close':case'exit':app.close();break;
+case'history':
+if(sub==='clear'){history=[];historyIndex=0;persistHistory();write('コマンド履歴を消去しました','success');}
+else history.forEach((item,index)=>write(`${String(index+1).padStart(3,' ')}  ${item}`));
+break;
+case'matrix':{
+content.classList.add('terminal-matrix');
+['01011010 01000101 01010010 01001111','wake / explore / create','00000000 → ぜろ','signal locked.'].forEach((line,index)=>setTimeout(()=>{if(!disposed)write(line,index===3?'success':'accent');},index*110));
+setTimeout(()=>content.classList.remove('terminal-matrix'),1600);break;
+}
+case'fortune':{
+const fortunes=['作りかけの場所には、未来が置いてある。','404は行き止まりではなく、まだ名前のない部屋。','一番面白いコマンドは、まだhelpに載っていない。','今日のセーブポイントはここです。'];
+write(fortunes[Math.floor(Math.random()*fortunes.length)],'accent');break;
+}
+case'sudo':write('権限はすでにあります。この世界では、あなたが管理者です。','success');break;
+case'boot':write('ZERO SITE OS // all virtual systems operational','accent');write(`mounted: ${vfs.entries.length} entries`);write(`windows: ${windows.size} active`);write('hint: ls -a /','muted');break;
+default:write(`'${command}' はサイトコマンドとして認識されていません。help で一覧を表示できます。`,'error');
+}
+};
+
+form.addEventListener('submit',event=>{
+event.preventDefault();const command=input.value.trim();if(!command)return;
+writeCommand(command);history.push(command);history=history.slice(-100);historyIndex=history.length;persistHistory();input.value='';execute(command);output.scrollTop=output.scrollHeight;
+});
+
+const baseCommands=['help','pwd','cd','ls','dir','tree','cat','type','access','explorer','note','device','theme','mode','clock','settings','hack','open','new','profile','calculator','paint','notepad','browser','windows','window','minimize','maximize','close','date','whoami','ver','history','clear'];
+const hiddenCommands=['matrix','fortune','sudo','boot'];
+const completionOptions={theme:['list','next','set','default','material','liquidglass','fluent','vrchat','unity'],mode:['dark','light','toggle'],clock:['12','24'],hack:['os','status','reset'],note:['latest','profile'],window:['focus','close','minimize','maximize','restore'],history:['clear']};
+const completeInput=()=>{
+const source=input.value;const parts=source.trimStart().split(/\s+/);const hasSpace=/\s/.test(source.trimStart());
+let matches=[];let fragment=parts.at(-1)||'';
+if(!hasSpace){matches=[...baseCommands].filter(item=>item.startsWith(fragment.toLowerCase()));}
+else{
+const command=parts[0].toLowerCase();
+if(['cd','ls','dir','tree','cat','type','access','explorer','open'].includes(command)){
+matches=vfs.complete(fragment,currentPath,{hidden:fragment.startsWith('.')||parts.includes('-a')||parts.includes('/a')});
+if(command==='open'&&!fragment.includes('/')&&!fragment.includes('\\'))matches.push(...['terminal','explorer','calculator','paint','notepad','browser','profile'].filter(item=>item.startsWith(fragment.toLowerCase())));
+}else matches=(completionOptions[command]||[]).filter(item=>item.startsWith(fragment.toLowerCase()));
+}
+matches=[...new Set(matches)];
+if(matches.length===1){input.value=`${source.slice(0,source.length-fragment.length)}${matches[0]}${matches[0].endsWith('/')?'':' '}`;requestAnimationFrame(()=>input.setSelectionRange(input.value.length,input.value.length));}
+else if(matches.length>1)write(matches.join('  '));
+};
+
+input.addEventListener('keydown',event=>{
+if(event.key==='ArrowUp'&&history.length){event.preventDefault();historyIndex=Math.max(0,historyIndex-1);input.value=history[historyIndex]||'';requestAnimationFrame(()=>input.setSelectionRange(input.value.length,input.value.length));}
+else if(event.key==='ArrowDown'&&history.length){event.preventDefault();historyIndex=Math.min(history.length,historyIndex+1);input.value=history[historyIndex]||'';requestAnimationFrame(()=>input.setSelectionRange(input.value.length,input.value.length));}
+else if(event.key==='l'&&event.ctrlKey){event.preventDefault();output.replaceChildren();}
+else if(event.key==='Tab'){event.preventDefault();completeInput();}
+});
+content.addEventListener('pointerdown',event=>{if(!event.target.closest('button'))requestAnimationFrame(()=>input.focus());});
+const onHackChange=()=>updatePrompt();
+window.addEventListener('zero:devicehackchange',onHackChange);
+updatePrompt();write('ZERO SITE TERMINAL [Version 2.0.0]','accent');write('Virtual filesystem mounted.  help でコマンドを表示します。','muted');write('');
+return{focusTarget:input,dispose:()=>{if(disposed)return;disposed=true;window.removeEventListener('zero:devicehackchange',onHackChange);}};
+}
+
+const appLaunchers={terminal:openTerminal,calculator:openCalculator,paint:openPaint,notepad:openNotepad,browser:openBrowser,explorer:()=>openExplorer('/home')};
 document.querySelectorAll('[data-launch-app]').forEach(button=>{
 const launch=appLaunchers[button.dataset.launchApp];
 if(launch)button.addEventListener('click',launch);
 });
+document.querySelectorAll('[data-open-profile]').forEach(button=>button.addEventListener('click',openProfile));
 window.addEventListener('resize',()=>windows.forEach(clampWindow),{passive:true});
 window.addEventListener('zero:devicehackchange',()=>windows.forEach(item=>item.element.dataset.windowSystem=document.documentElement.dataset.windowSystem));
+window.addEventListener('keydown',event=>{
+if(event.ctrlKey&&event.altKey&&event.key.toLowerCase()==='t'){
+event.preventDefault();openTerminal();return;
+}
+if(event.altKey&&event.key==='Tab'&&windows.size){
+event.preventDefault();
+const ordered=[...windows.values()].sort((a,b)=>(b.lastFocusedAt||0)-(a.lastFocusedAt||0));
+const current=ordered.findIndex(item=>item.element.classList.contains('is-focused')&&!item.minimized);
+const next=ordered[(current+1+ordered.length)%ordered.length];
+toggleMinimize(next,false);focusWindow(next);
+}
+});
 
-window.zeroSiteDesktop={openTerminal,openCalculator,openPaint,openNotepad,openBrowser,getWindows:()=>[...windows.values()].map(({id,title,appId,minimized,maximized})=>({id,title,appId,minimized,maximized}))};
+window.zeroSiteDesktop={openTerminal,openCalculator,openPaint,openNotepad,openBrowser,openProfile,openExplorer,getWindows:()=>[...windows.values()].map(({id,title,appId,minimized,maximized})=>({id,title,appId,minimized,maximized}))};
 })();

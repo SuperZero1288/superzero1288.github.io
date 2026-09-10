@@ -319,9 +319,9 @@ function articleDocument(article, bodyHtml, coverPath) {
 <title>${title} | ぜろくんでんせつ</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
-<link rel="stylesheet" href="../style.css?v=20260908-loader3">
-<script src="../site-loader.js" defer></script>
-<script src="../page-bar.js" defer></script>
+<link rel="stylesheet" href="../style.css?v=20260910-os1">
+<script src="../site-loader.js?v=20260910-os1" defer></script>
+<script src="../page-bar.js?v=20260910-os1" defer></script>
 </head>
 <body class="style-default article-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
