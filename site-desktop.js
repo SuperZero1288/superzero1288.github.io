@@ -1040,18 +1040,24 @@ const browserMark=content.querySelector('.browser-mark');
 const browserMarkImage=browserMark.querySelector('img');
 const modeNote=content.querySelector('.browser-mode-note');
 const recentList=content.querySelector('.browser-recent div');
-let recent=[];
-try{recent=JSON.parse(localStorage.getItem('zero-browser-recent')||'[]');if(!Array.isArray(recent))recent=[];}catch{recent=[];}
+const readRecent=()=>{
+try{const saved=JSON.parse(localStorage.getItem('zero-browser-recent')||'[]');return Array.isArray(saved)?saved.filter(item=>typeof item==='string').slice(0,6):[];}catch{return[];}
+};
+const applyStoredSettings=()=>{
 try{
 const settings=JSON.parse(localStorage.getItem('zero-browser-settings')||'{}');
-if(SEARCH_ENGINES[settings.engine])engineSelect.value=settings.engine;
-if(settings.openMode==='new'||settings.openMode==='current')openModeSelect.value=settings.openMode;
-}catch{}
+engineSelect.value=SEARCH_ENGINES[settings.engine]?settings.engine:'google';
+openModeSelect.value=settings.openMode==='current'?'current':'new';
+}catch{engineSelect.value='google';openModeSelect.value='new';}
+};
+let recent=readRecent();
+applyStoredSettings();
 const selectedEngine=()=>SEARCH_ENGINES[engineSelect.value]||SEARCH_ENGINES.google;
 const saveSettings=()=>{
 try{localStorage.setItem('zero-browser-settings',JSON.stringify({engine:engineSelect.value,openMode:openModeSelect.value}));}catch{}
+window.dispatchEvent(new CustomEvent('zero:browserdatachange',{detail:{type:'settings',source:'browser-app'}}));
 };
-const updateSearchUi=()=>{
+const updateSearchUi=(persist=true)=>{
 const engine=selectedEngine();
 browserMark.dataset.engine=engineSelect.value;
 browserMarkImage.src=engine.icon;
@@ -1060,7 +1066,7 @@ input.setAttribute('aria-label',`${engine.label}で検索`);
 modeNote.textContent=openModeSelect.value==='current'
 ?`${engine.label}の検索結果でこのタブを上書きします。`
 :`${engine.label}の検索結果を新しいタブで開きます。`;
-saveSettings();
+if(persist)saveSettings();
 };
 const openSearch=query=>{
 const engine=selectedEngine();
@@ -1095,14 +1101,29 @@ const query=input.value.trim();
 if(!query)return;
 recent=[query,...recent.filter(item=>item!==query)].slice(0,6);
 try{localStorage.setItem('zero-browser-recent',JSON.stringify(recent));}catch{}
+window.dispatchEvent(new CustomEvent('zero:browserdatachange',{detail:{type:'recent',source:'browser-app'}}));
 renderRecent();
 openSearch(query);
 });
 engineSelect.addEventListener('change',updateSearchUi);
 openModeSelect.addEventListener('change',updateSearchUi);
-updateSearchUi();
+const syncBrowserData=()=>{
+applyStoredSettings();
+recent=readRecent();
+updateSearchUi(false);
 renderRecent();
-return{focusTarget:input};
+};
+const syncBrowserStorage=event=>{
+if(event.key==='zero-browser-settings'||event.key==='zero-browser-recent')syncBrowserData();
+};
+window.addEventListener('zero:browserdatachange',syncBrowserData);
+window.addEventListener('storage',syncBrowserStorage);
+updateSearchUi(false);
+renderRecent();
+return{focusTarget:input,dispose:()=>{
+window.removeEventListener('zero:browserdatachange',syncBrowserData);
+window.removeEventListener('storage',syncBrowserStorage);
+}};
 }
 
 function buildTerminalLegacy(content,app){

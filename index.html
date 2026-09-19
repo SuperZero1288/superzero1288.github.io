@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css?v=20260910-os1">
+<link rel="stylesheet" href="style.css?v=20260919-newtab1">
 <script src="site-loader.js?v=20260910-os1" defer></script>
+<script src="site-search.js?v=20260919-newtab2" defer></script>
 </head>
 <body class="style-default wing-tabs-idle">
 
@@ -17,7 +18,10 @@
 </div>
 
 <div class="floating-status-bar" id="statusBar">
+<div class="status-left-group">
 <button class="status-capsule icon-btn" id="starBtn" title="お気に入り"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M1 11C6.52285 11 11 6.52285 11 1H13C13 6.52285 17.4772 11 23 11V13C17.4772 13 13 17.4772 13 23H11C11 17.4772 6.52285 13 1 13V11Z"></path></svg></span></button>
+<button class="status-capsule icon-btn floating-search-toggle" type="button" title="ウェブ検索" aria-label="ウェブ検索を表示" aria-expanded="false"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></span></button>
+</div>
 
 <div class="status-capsule time-capsule" id="timeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
 <span class="status-time" id="statusTime">12:00</span>
@@ -374,7 +378,9 @@ setInterval(updateTime,1000);
 
 function hideStatusBarWithDelay(delayMs){
 clearTimeout(hideTimeout);
+if(document.body.classList.contains('floating-search-open'))return;
 hideTimeout=setTimeout(()=>{
+if(document.body.classList.contains('floating-search-open'))return;
 statusBar.classList.add('hidden');
 indicatorTimeout=setTimeout(()=>{
 if(statusBar.classList.contains('hidden'))statusBarIndicator.classList.add('visible');
@@ -399,7 +405,7 @@ if(openEdgeCard)setEdgeCard(null,{hideTabsImmediately:true});
 function checkStatusBarStateOnScroll(){
 clearTimeout(hideTimeout);
 updateEdgeInteractionState();
-if(matchMedia('(max-width:520px)').matches){
+if(matchMedia('(max-width:520px)').matches||document.body.classList.contains('floating-search-open')){
 statusBar.classList.remove('hidden');
 statusBarIndicator.classList.remove('visible');
 return;
@@ -441,7 +447,16 @@ statusBar.classList.remove('hidden');
 
 statusBar.addEventListener('mouseleave',()=>{
 isHoveringStatusBar=false;
-if(snapContainer.scrollTop>=window.innerHeight*.5)hideStatusBarWithDelay(600);
+if(snapContainer.scrollTop>=window.innerHeight*.5&&!document.body.classList.contains('floating-search-open'))hideStatusBarWithDelay(600);
+});
+
+window.addEventListener('zero:floatingsearchchange',event=>{
+if(event.detail?.open){
+clearTimeout(hideTimeout);
+clearTimeout(indicatorTimeout);
+statusBar.classList.remove('hidden');
+statusBarIndicator.classList.remove('visible');
+}else checkStatusBarStateOnScroll();
 });
 
 themeToggleBtn.addEventListener('click',()=>{
@@ -716,6 +731,6 @@ showToast
 };
 </script>
 <script src="zero-filesystem.js?v=20260910-os1"></script>
-<script src="site-desktop.js?v=20260910-os1"></script>
+<script src="site-desktop.js?v=20260916-search1"></script>
 </body>
 </html>

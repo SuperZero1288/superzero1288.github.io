@@ -14,7 +14,10 @@
 
   document.body.insertAdjacentHTML('afterbegin',`
     <div class="floating-status-bar page-floating-bar">
-      <a class="status-capsule icon-btn" href="/" title="トップページへ戻る" aria-label="トップページへ戻る"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.7 2.3 1 12l9.7 9.7 1.4-1.4L4.8 13H23v-2H4.8l7.3-7.3-1.4-1.4Z"/></svg></span></a>
+      <div class="status-left-group">
+        <a class="status-capsule icon-btn" href="/" title="トップページへ戻る" aria-label="トップページへ戻る"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.7 2.3 1 12l9.7 9.7 1.4-1.4L4.8 13H23v-2H4.8l7.3-7.3-1.4-1.4Z"/></svg></span></a>
+        <button class="status-capsule icon-btn floating-search-toggle" type="button" title="ウェブ検索" aria-label="ウェブ検索を表示" aria-expanded="false"><span class="svg-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></span></button>
+      </div>
       <div class="status-capsule time-capsule" id="pageTimeCapsule" title="クリックで12h/24h切り替え（連打で...？）">
         <span class="status-time" id="pageStatusTime">--:--</span>
         <div class="calendar-popup" id="pageCalendarPopup">
