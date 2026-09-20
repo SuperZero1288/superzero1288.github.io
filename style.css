@@ -2759,3 +2759,223 @@ body.desktop-app-active .floating-search-panel{opacity:0!important;visibility:hi
 .latest-panel{padding:12px}
 .latest-panel-heading{align-items:center}
 }
+
+/* デフォルトテーマ：フラットプレビュー
+   境界線を使わず、面の明度差と余白で情報を分ける。 */
+body.style-default{
+--ui-bg:rgba(22,20,26,.65);
+--card-bg:rgba(37,34,41,.75);
+--border-color:transparent;
+--card-border:transparent;
+--radius-main:22px;
+--radius-card:15px;
+--glow-effect:none;
+}
+
+body.style-default .floating-status-bar,
+body.style-default .calendar-popup,
+body.style-default .floating-search-surface,
+body.style-default .content-screen,
+body.style-default .profile-card,
+body.style-default .gallery-section,
+body.style-default .updates-card,
+body.style-default .site-title,
+body.style-default .scroll-indicator,
+body.style-default .edge-wing-tab,
+body.style-default .edge-card,
+body.style-default .links-hero,
+body.style-default .link-directory,
+body.style-default .links-latest,
+body.style-default .latest-panel,
+body.style-default .app-window,
+body.style-default .desktop-taskbar{
+border:0;
+}
+
+body.style-default .floating-status-bar{box-shadow:0 8px 32px rgba(0,0,0,.45)}
+body.style-default .floating-status-bar{border-radius:34px}
+body.style-default .calendar-popup{box-shadow:0 8px 32px rgba(0,0,0,.45)}
+body.style-default .floating-search-surface{box-shadow:0 24px 80px rgba(0,0,0,.48)}
+body.style-default .content-screen{box-shadow:0 16px 40px rgba(0,0,0,.35)}
+body.style-default .profile-card,
+body.style-default .gallery-section,
+body.style-default .updates-card{box-shadow:0 4px 16px rgba(0,0,0,.2)}
+body.style-default .scroll-indicator{box-shadow:0 4px 16px rgba(0,0,0,.28)}
+body.style-default .edge-wing-tab{box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 0 24px rgba(0,0,0,.22)}
+body.style-default .edge-card{box-shadow:0 20px 70px rgba(0,0,0,.55)}
+body.style-default .links-hero,
+body.style-default .link-directory,
+body.style-default .links-latest{box-shadow:0 18px 48px rgba(0,0,0,.22)}
+
+body.style-default .floating-status-bar,
+body.style-default .edge-wing-tab,
+body.style-default .desktop-taskbar{background:var(--ui-bg)}
+body.style-default .content-screen,
+body.style-default .edge-card,
+body.style-default .links-hero,
+body.style-default .link-directory,
+body.style-default .links-latest{background:var(--ui-bg)}
+body.style-default .profile-card,
+body.style-default .gallery-section,
+body.style-default .updates-card,
+body.style-default .latest-panel{background:var(--card-bg)}
+
+body.style-default .status-capsule,
+body.style-default .profile-desc,
+body.style-default .profile-more-button,
+body.style-default .note-article,
+body.style-default .future-action,
+body.style-default .grid-item,
+body.style-default .edge-link-list>a,
+body.style-default .edge-link-disabled,
+body.style-default .directory-link,
+body.style-default .latest-feed .youtube-video,
+body.style-default .latest-feed .github-repository,
+body.style-default .floating-search-box,
+body.style-default .floating-bookmark-item>a,
+body.style-default .app-launcher-item,
+body.style-default .edge-subcard{
+border:0;
+}
+
+body.style-default .status-capsule{background:rgba(255,255,255,.08)}
+body.style-default .profile-desc{background:rgba(0,0,0,.3)}
+body.style-default .profile-more-button{background:color-mix(in srgb,var(--card-bg) 90%,#000)}
+body.style-default .note-article,
+body.style-default .future-action,
+body.style-default .grid-item,
+body.style-default .directory-link,
+body.style-default .latest-feed .youtube-video,
+body.style-default .latest-feed .github-repository,
+body.style-default .edge-link-list>a,
+body.style-default .edge-link-disabled,
+body.style-default .floating-bookmark-item>a,
+body.style-default .app-launcher-item,
+body.style-default .edge-subcard{background:color-mix(in srgb,var(--card-bg) 92%,#000)}
+body.style-default .note-article{background:rgba(0,0,0,.24)}
+body.style-default .future-action{background:rgba(0,0,0,.2)}
+body.style-default .grid-item{background:#2d2933}
+body.style-default .directory-link,
+body.style-default .latest-feed .youtube-video,
+body.style-default .latest-feed .github-repository{background:rgba(0,0,0,.2)}
+body.style-default .edge-link-list>a,
+body.style-default .edge-link-disabled{background:var(--card-bg)}
+body.style-default .floating-bookmark-item>a{background:rgba(255,255,255,.055)}
+body.style-default .app-launcher-item{background:color-mix(in srgb,var(--card-bg) 92%,#000)}
+
+/* リンクカードは持ち上げず、奥行きとカーソル位置で反応させる */
+/* 親グリッドの透視投影は各カードの原点をずらして見せるため使わない */
+body.style-default .grid-container{perspective:none}
+body.style-default .grid-item{
+transform:perspective(900px) translateZ(0) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(var(--card-scale,1));
+transform-origin:center;
+transition:transform .28s cubic-bezier(.2,.8,.2,1),background-color .2s,border-radius .3s;
+will-change:transform
+}
+body.style-default .grid-item:hover{
+transform:perspective(900px) translateZ(14px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.035)
+}
+body.style-default .grid-item .item-link,
+body.style-default .grid-item:hover .item-link{background:#181a1f}
+
+body.style-default .item-link,
+body.style-default .future-panel,
+body.style-default .floating-bookmarks,
+body.style-default .profile-app-hero,
+body.style-default .profile-modal-header,
+body.style-default .profile-spec-card>header,
+body.style-default .profile-spec-row,
+body.style-default .paint-toolbar,
+body.style-default .browser-toolbar,
+body.style-default .explorer-toolbar,
+body.style-default .explorer-sidebar,
+body.style-default .explorer-view>header,
+body.style-default .explorer-view>footer,
+body.style-default .notepad-toolbar,
+body.style-default .notepad-status{
+border-color:transparent;
+}
+
+body.style-default .item-link{background:#181a1f}
+body.style-default .grid-item:hover,
+body.style-default .note-article:hover,
+body.style-default .profile-more-button:hover,
+body.style-default .directory-link:hover,
+body.style-default .latest-feed .youtube-video:hover,
+body.style-default .latest-feed .github-repository:hover,
+body.style-default .app-launcher-item:not(:disabled):hover{
+background:#2b2f37;
+border-color:transparent;
+}
+
+body.style-default .avatar-container,
+body.style-default .profile-app-hero img,
+body.style-default .floating-bookmark-icon,
+body.style-default .app-launcher-icon,
+body.style-default .directory-icon,
+body.style-default .latest-service-mark,
+body.style-default .browser-mark,
+body.style-default .explorer-item-icon{
+border:0;
+}
+
+body.style-default .floating-search-surface{background:var(--ui-bg)}
+body.style-default .floating-search-box{background:rgba(8,8,12,.72)}
+body.style-default .floating-bookmark-editor{background:rgba(7,8,11,.45)}
+body.style-default .floating-bookmark-item>a{background:rgba(255,255,255,.055)}
+body.style-default .floating-search-box>button{background:var(--accent-color)}
+
+body.style-default.light-theme,
+body.style-default.light-theme .floating-status-bar,
+body.style-default.light-theme .desktop-taskbar{background:rgba(235,235,242,.85)}
+body.style-default.light-theme .content-screen,
+body.style-default.light-theme .edge-card,
+body.style-default.light-theme .links-hero,
+body.style-default.light-theme .link-directory,
+body.style-default.light-theme .links-latest{background:rgba(244,244,247,.85)}
+body.style-default.light-theme .profile-card,
+body.style-default.light-theme .gallery-section,
+body.style-default.light-theme .updates-card,
+body.style-default.light-theme .latest-panel{background:rgba(255,255,255,.85)}
+body.style-default.light-theme .status-capsule{background:rgba(255,255,255,.85)}
+body.style-default.light-theme .profile-desc,
+body.style-default.light-theme .profile-more-button,
+body.style-default.light-theme .note-article,
+body.style-default.light-theme .future-action,
+body.style-default.light-theme .grid-item,
+body.style-default.light-theme .directory-link,
+body.style-default.light-theme .latest-feed .youtube-video,
+body.style-default.light-theme .latest-feed .github-repository,
+body.style-default.light-theme .edge-link-list>a,
+body.style-default.light-theme .edge-link-disabled,
+body.style-default.light-theme .floating-bookmark-item>a,
+body.style-default.light-theme .app-launcher-item{background:rgba(240,240,245,.88)}
+body.style-default.light-theme .item-link{background:rgba(234,234,238,.88)}
+body.style-default.light-theme .floating-status-bar{box-shadow:0 8px 32px rgba(0,0,0,.12)}
+body.style-default.light-theme .floating-search-surface{box-shadow:0 24px 80px rgba(0,0,0,.18)}
+body.style-default.light-theme .content-screen{box-shadow:0 16px 40px rgba(0,0,0,.12)}
+body.style-default.light-theme .profile-card,
+body.style-default.light-theme .gallery-section,
+body.style-default.light-theme .updates-card{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+
+/* テーマ切り替えはターミナルからのみ行う */
+#uiStyleToggleBtn,
+#pageStyleToggle{display:none!important}
+
+/* クリックできるカードは中心を基点に手前へ寄り、端で大きく傾く */
+body.style-default .card-hover-target{
+transform-box:border-box;
+transform-style:preserve-3d;
+transform-origin:center center;
+transform:perspective(900px) translate3d(0,0,0) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(var(--card-scale,1));
+transition:transform .34s cubic-bezier(.2,.82,.2,1),background-color .2s,border-color .2s,border-radius .3s;
+will-change:transform
+}
+body.style-default .card-hover-target:focus-visible{
+transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
+}
+@media (hover:hover) and (pointer:fine){
+body.style-default .card-hover-target:hover{
+transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
+}
+}
