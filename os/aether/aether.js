@@ -608,6 +608,7 @@
       explorerEntries = { ...explorerEntries, ...imported };
       repositoryManifest = manifest;
       await syncGitHubTree();
+      renderRepositoryDesktopItems();
       setTrayStatus('C: synchronized');
       return true;
     } catch (error) {
@@ -644,6 +645,33 @@
     }
   };
 
+  const renderRepositoryDesktopItems = () => {
+    const iconRoot = desktop.querySelector('.aether-icons');
+    if (!iconRoot) return;
+    iconRoot.querySelectorAll('.aether-repository-icon').forEach(item => item.remove());
+    const entries = explorerEntries['C:\\Users\\Unknown\\Desktop\\'] || [];
+    entries.filter(entry => entry.source || entry.path).forEach(entry => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'aether-icon aether-repository-icon';
+      button.title = entry.name;
+      const art = document.createElement('span');
+      art.className = 'aether-icon-art';
+      art.innerHTML = iconMarkup(entry.icon, 'aether-file-icon');
+      const label = document.createElement('span');
+      label.textContent = entry.name;
+      button.append(art, label);
+      const activate = () => entry.path ? openExplorer(entry.path) : openRepositoryFile(entry);
+      button.addEventListener('dblclick', activate);
+      button.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        activate();
+      });
+      iconRoot.append(button);
+    });
+  };
+
   const openRecycleBin = () => openExplorer('C:\\Recycle Bin\\');
 
   const openExplorer = (initialPath = 'C:\\') => {
@@ -653,7 +681,7 @@
       <div class="aether-explorer-menu"><button type="button">File</button><button type="button">Edit</button><button type="button">View</button><button type="button">Help</button></div>
       <div class="aether-explorer-toolbar"><button type="button" data-explorer-action="back">◀ Back</button><button type="button" data-explorer-action="up">↑ Up</button><button type="button" data-explorer-action="refresh">↻ Refresh</button></div>
       <div class="aether-explorer-address"><strong>Address</strong><span data-explorer-address></span></div>
-      <div class="aether-explorer-main"><aside class="aether-explorer-sidebar"><strong>Quick Access</strong><div class="aether-quick-access"><button type="button" data-explorer-path="C:\\Users\\Unknown\\Desktop\\"><img class="aether-quick-icon" src="${iconBase}desktop.svg" alt="">Desktop</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Downloads\\"><img class="aether-quick-icon" src="${iconBase}downloads.svg" alt="">Downloads</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Documents\\"><img class="aether-quick-icon" src="${iconBase}folder-file.svg" alt="">Documents</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Pictures\\"><img class="aether-quick-icon" src="${iconBase}pictures.svg" alt="">Pictures</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Music\\"><img class="aether-quick-icon" src="${iconBase}music.svg" alt="">Music</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Videos\\"><img class="aether-quick-icon" src="${iconBase}videos.svg" alt="">Videos</button></div><strong>Other Places</strong><button class="aether-other-place" type="button" data-explorer-path="C:\\"><img class="aether-quick-icon" src="${iconBase}computer.svg" alt="">My Computer</button><button class="aether-other-place" type="button" data-explorer-action="network"><img class="aether-quick-icon" src="${iconBase}network.svg" alt="">Aether Network</button></aside><div class="aether-explorer-content"><table class="aether-explorer-table"><thead><tr><th>Name</th><th>Type</th><th>Size</th></tr></thead><tbody data-explorer-list></tbody></table></div></div>
+      <div class="aether-explorer-main"><aside class="aether-explorer-sidebar"><strong>Quick Access</strong><div class="aether-quick-access"><button type="button" data-explorer-path="C:\\Users\\Unknown\\Desktop\\"><img class="aether-quick-icon" src="${iconBase}desktop.svg" alt="">Desktop</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Downloads\\"><img class="aether-quick-icon" src="${iconBase}downloads.svg" alt="">Downloads</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Documents\\"><img class="aether-quick-icon" src="${iconBase}folder-file.svg" alt="">Documents</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Pictures\\"><img class="aether-quick-icon" src="${iconBase}wangimg128.svg" alt="">Pictures</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Music\\"><img class="aether-quick-icon" src="${iconBase}media-audio.svg" alt="">Music</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Videos\\"><img class="aether-quick-icon" src="${iconBase}media-video.svg" alt="">Videos</button></div><strong>Other Places</strong><button class="aether-other-place" type="button" data-explorer-path="C:\\"><img class="aether-quick-icon" src="${iconBase}computer.svg" alt="">My Computer</button><button class="aether-other-place" type="button" data-explorer-action="network"><img class="aether-quick-icon" src="${iconBase}network.svg" alt="">Aether Network</button></aside><div class="aether-explorer-content"><table class="aether-explorer-table"><thead><tr><th>Name</th><th>Type</th><th>Size</th></tr></thead><tbody data-explorer-list></tbody></table></div></div>
       <div class="aether-explorer-status" data-explorer-status></div>`;
     const address = root.querySelector('[data-explorer-address]');
     const list = root.querySelector('[data-explorer-list]');
