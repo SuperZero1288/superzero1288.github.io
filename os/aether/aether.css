@@ -18,7 +18,7 @@ body {
   overflow: hidden;
   background: var(--aether-teal);
   color: var(--aether-text);
-  font-family: "MS Gothic", "ＭＳ ゴシック", "Courier New", monospace;
+  font-family: "MS Gothic", "ＭＳ ゴシック", "MS UI Gothic", "ＭＳ Ｐゴシック", "Courier New", monospace;
   font-size: 14px;
   image-rendering: pixelated;
   visibility: hidden;
@@ -26,7 +26,14 @@ body {
 
 body.aether-authorized { visibility: visible; }
 
-button, textarea { font: inherit; }
+button, input, select, textarea { font: inherit; }
+
+.aether-window,
+.aether-window button,
+.aether-window input,
+.aether-window select,
+.aether-window textarea,
+.aether-window option { font-family: inherit; }
 
 button { color: inherit; }
 
@@ -359,13 +366,13 @@ button:focus-visible, textarea:focus-visible {
 .aether-inset { padding: 8px; border: 2px inset var(--aether-gray); background: #e8e8e8; }
 
 .aether-notepad { display: grid; grid-template-rows: auto auto minmax(0, 1fr); height: 100%; min-height: 220px; color: #111; }
-.aether-notepad textarea { min-height: 160px; width: 100%; resize: none; padding: 8px; border: 2px inset var(--aether-gray); background: #fff; color: #111; line-height: 1.5; font: 14px/1.5 "Courier New", monospace; }
+.aether-notepad textarea { min-height: 160px; width: 100%; resize: none; padding: 8px; border: 2px inset var(--aether-gray); background: #fff; color: #111; line-height: 1.5; font-family: inherit; }
 .aether-notepad textarea.is-no-wrap { white-space: pre; overflow-x: auto; }
 .aether-notepad-actions { display: none; }
 .aether-button { padding: 4px 12px; border: 2px outset var(--aether-gray); background: var(--aether-gray); cursor: default; }
 .aether-button:active { border-style: inset; }
 
-.aether-console { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; min-height: 220px; background: #000; color: #d7ffd0; font-family: "Courier New", monospace; }
+.aether-console { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; min-height: 220px; background: #000; color: #d7ffd0; font-family: "MS Gothic", "ＭＳ ゴシック", "MS UI Gothic", "ＭＳ Ｐゴシック", "Courier New", monospace; }
 .aether-console-output { overflow: auto; padding: 9px; white-space: pre-wrap; }
 .aether-console-form { display: flex; gap: 7px; padding: 8px; border-top: 1px solid #363636; }
 .aether-console-form span { color: #fff; }
@@ -386,7 +393,7 @@ button:focus-visible, textarea:focus-visible {
 .aether-browser-view.is-compact { font-size: .85rem; padding: 8px; }
 .aether-browser-view h2 { margin: 0 0 10px; font-size: 1.2rem; }
 .aether-browser-view p { margin: 8px 0; line-height: 1.6; }
-.aether-browser-offline { padding: 10px; border: 1px solid #888; background: #eee; font-family: "Courier New", monospace; }
+.aether-browser-offline { padding: 10px; border: 1px solid #888; background: #eee; font-family: inherit; }
 .aether-ie-status { padding: 2px 7px; border-top: 1px solid #888; background: #d4d0c8; color: #333; font-size: .74rem; }
 
 .aether-paint { display: grid; grid-template-rows: auto auto minmax(0, 1fr); height: 100%; min-height: 220px; color: #111; }
@@ -406,7 +413,7 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 8px; border: 2px inset var(--aether-gray); background: #202020; }
 .aether-media-stage video, .aether-media-stage img { display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; background: #000; }
 .aether-media-stage:not(.is-fit) video, .aether-media-stage:not(.is-fit) img { width: auto; height: auto; max-width: none; max-height: none; }
-.aether-media-stage > span { position: absolute; color: #d4d0c8; font: 13px "Courier New", monospace; }
+.aether-media-stage > span { position: absolute; color: #d4d0c8; font-family: inherit; font-size: 13px; }
 .aether-media-info { min-width: 0; overflow: hidden; padding: 4px 7px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; text-overflow: ellipsis; white-space: nowrap; }
 .aether-media-transport { display: flex; align-items: center; gap: 5px; padding: 5px; border-top: 2px outset var(--aether-gray); background: var(--aether-gray); color: #111; }
 .aether-media-transport.is-audio { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-rows: auto auto; grid-template-areas: "seek seek seek time" "play stop . ."; gap: 4px 5px; padding: 6px 9px 8px; }
@@ -417,10 +424,13 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-transport button { min-width: 48px; padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
 .aether-media-transport button:active { border-style: inset; }
 .aether-media-transport input[type="range"] { min-width: 80px; flex: 1; accent-color: var(--aether-navy); }
-.aether-media-transport span { min-width: 94px; font: 11px "Courier New", monospace; text-align: right; }
-.aether-audio-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 132px; padding: 18px; border: 2px inset var(--aether-gray); background: #f3f3f3; }
-.aether-audio-stage img { width: 42px; height: 42px; image-rendering: pixelated; }
-.aether-audio-stage strong { max-width: 90%; overflow: hidden; font-size: clamp(1rem, 3vw, 1.45rem); text-overflow: ellipsis; white-space: nowrap; }
+.aether-media-transport span { min-width: 94px; font-family: inherit; font-size: 11px; text-align: right; }
+.aether-audio-stage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 152px; padding: 18px 24px; border: 2px inset var(--aether-gray); background: #f3f3f3; text-align: center; }
+.aether-audio-stage img { width: 56px; height: 56px; margin-bottom: 2px; image-rendering: pixelated; }
+.aether-audio-stage strong { display: block; max-width: 100%; overflow: hidden; font-size: clamp(1.25rem, 3.5vw, 1.8rem); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.aether-audio-stage .aether-audio-artist,
+.aether-audio-stage .aether-audio-album { max-width: 100%; overflow: hidden; color: #444; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
+.aether-audio-element { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 .aether-taskbar {
   position: absolute;
