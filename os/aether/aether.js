@@ -365,6 +365,61 @@
   let repositoryManifest = null;
   const repositoryRootUrl = new URL('C/', document.baseURI);
   const toRepositoryPath = source => String(source || '').replace(/^[/\\]+/, '').split('\\').join('/');
+  const githubTreeUrl = 'https://api.github.com/repos/SuperZero1288/superzero1288.github.io/git/trees/main?recursive=1';
+  const windowsDirectory = parts => parts.length ? `C:\\${parts.join('\\')}\\` : 'C:\\';
+  const repositoryIcon = (name, isDirectory = false) => {
+    if (isDirectory) return 'folder.svg';
+    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'browser.svg';
+    if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'pictures.svg';
+    if (/\.(txt|md|log|json|csv)$/i.test(name)) return 'folder-file.svg';
+    if (/\.(mp3|wav|flac|ogg)$/i.test(name)) return 'music.svg';
+    return 'documents.svg';
+  };
+  const repositoryFileKind = name => {
+    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'video';
+    if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'image';
+    return 'text';
+  };
+  const addRepositoryEntry = (directory, entry) => {
+    const entries = explorerEntries[directory] || (explorerEntries[directory] = []);
+    if (!entries.some(item => String(item.name).toLowerCase() === String(entry.name).toLowerCase())) entries.push(entry);
+  };
+  const syncGitHubTree = async () => {
+    try {
+      const response = await fetch(githubTreeUrl, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      const prefix = 'os/aether/C/';
+      const nodes = Array.isArray(payload.tree) ? payload.tree.filter(node => node.path?.startsWith(prefix)) : [];
+      nodes.sort((a, b) => a.path.length - b.path.length);
+      nodes.forEach(node => {
+        const relative = node.path.slice(prefix.length);
+        if (!relative || relative === 'manifest.json' || relative.endsWith('/.keep') || relative.includes('/.git/')) return;
+        const parts = relative.split('/');
+        const name = parts[parts.length - 1];
+        const parent = windowsDirectory(parts.slice(0, -1));
+        if (node.type === 'tree') {
+          const path = windowsDirectory(parts);
+          if (!explorerEntries[path]) explorerEntries[path] = [];
+          addRepositoryEntry(parent, { icon: repositoryIcon(name, true), name, type: 'File folder', size: '', path });
+          return;
+        }
+        const size = Number(node.size || 0);
+        const displaySize = size >= 1024 * 1024 ? `${(size / 1024 / 1024).toFixed(1)} MB` : size >= 1024 ? `${Math.ceil(size / 1024)} KB` : `${size} B`;
+        addRepositoryEntry(parent, {
+          icon: repositoryIcon(name),
+          name,
+          type: repositoryFileKind(name) === 'video' ? 'Video' : repositoryFileKind(name) === 'image' ? 'Image' : 'File',
+          size: displaySize,
+          source: relative,
+          kind: repositoryFileKind(name)
+        });
+      });
+      return nodes.length > 0;
+    } catch (error) {
+      return false;
+    }
+  };
   const loadRepositoryFilesystem = async () => {
     const manifestUrl = new URL('manifest.json?v=1.0.21', repositoryRootUrl);
     try {
@@ -378,6 +433,7 @@
       });
       explorerEntries = { ...explorerEntries, ...imported };
       repositoryManifest = manifest;
+      await syncGitHubTree();
       setTrayStatus('C: synchronized');
       return true;
     } catch (error) {
@@ -402,6 +458,16 @@
       video.setAttribute('aria-label', entry.name || 'AetherOS video');
       body.append(video);
       createWindow({ title: entry.name || 'Video', icon: 'browser.svg', body, width: 620, height: 420 });
+      return;
+    }
+    if (kind === 'image' || /\.(png|jpe?g|gif|webp|svg)$/i.test(source)) {
+      const body = document.createElement('div');
+      body.className = 'aether-media-viewer';
+      const image = document.createElement('img');
+      image.src = url.href;
+      image.alt = entry.name || 'AetherOS image';
+      body.append(image);
+      createWindow({ title: entry.name || 'Image', icon: 'pictures.svg', body, width: 620, height: 420 });
       return;
     }
     try {
