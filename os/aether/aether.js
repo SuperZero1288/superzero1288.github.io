@@ -382,7 +382,9 @@
   };
   const addRepositoryEntry = (directory, entry) => {
     const entries = explorerEntries[directory] || (explorerEntries[directory] = []);
-    if (!entries.some(item => String(item.name).toLowerCase() === String(entry.name).toLowerCase())) entries.push(entry);
+    const existingIndex = entries.findIndex(item => String(item.name).toLowerCase() === String(entry.name).toLowerCase());
+    if (existingIndex >= 0) entries[existingIndex] = { ...entries[existingIndex], ...entry };
+    else entries.push(entry);
   };
   const syncGitHubTree = async () => {
     try {

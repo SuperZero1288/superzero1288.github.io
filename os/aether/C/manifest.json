@@ -51,8 +51,8 @@
     ],
     "C:\\Users\\Unknown\\Music\\": [],
     "C:\\Users\\Unknown\\Videos\\": [
-      { "icon": "browser.svg", "name": "無音1.mp4", "type": "Video", "size": "", "source": "Users/Unknown/Videos/無音1.mp4", "kind": "video" },
-      { "icon": "browser.svg", "name": "無音2_compressed.mp4", "type": "Video", "size": "", "source": "Users/Unknown/Videos/無音2_compressed.mp4", "kind": "video" }
+      { "icon": "browser.svg", "name": "無題1.mp4", "type": "Video", "size": "13.4 MB", "source": "Users/Unknown/Videos/無題1.mp4", "kind": "video" },
+      { "icon": "browser.svg", "name": "無題2_compressed.mp4", "type": "Video", "size": "4.6 MB", "source": "Users/Unknown/Videos/無題2_compressed.mp4", "kind": "video" }
     ],
     "C:\\Recycle Bin\\": []
   }
