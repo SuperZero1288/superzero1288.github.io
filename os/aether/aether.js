@@ -465,7 +465,7 @@
     });
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
-    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 540, height: 280 });
+    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 560, height: 330 });
     audio.addEventListener('error', () => setTrayStatus('Audio file could not be loaded'));
     load(entry);
   };
