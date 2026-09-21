@@ -473,8 +473,8 @@
     const artist = document.createElement('span'); artist.className = 'aether-audio-artist';
     const album = document.createElement('span'); album.className = 'aether-audio-album';
     const metadata = document.createElement('div'); metadata.className = 'aether-audio-metadata'; metadata.append(info, artist, album);
-    readout.append(positionLabel, lengthLabel);
-    stage.append(readout, spectrum, metadata);
+    readout.append(positionLabel, spectrum, lengthLabel);
+    stage.append(readout, metadata);
     const audio = document.createElement('audio'); audio.className = 'aether-audio-element'; audio.preload = 'auto'; audio.setAttribute('aria-label', 'Aether Audio Player');
     const spectrumContext = spectrum.getContext('2d');
     let analyser = null;
@@ -534,7 +534,7 @@
     });
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
-    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 560, height: 330 });
+    record = createWindow({ title: entry?.name ? `${entry.name} - Sound Recorder` : 'Sound - Sound Recorder', icon: 'media-audio.svg', body, width: 560, height: 330 });
     record.element.classList.add('is-fixed-size');
     ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'pause', 'ended'].forEach(eventName => audio.addEventListener(eventName, updateReadout));
     audio.addEventListener('play', () => { ensureAudioGraph(); audioContext?.resume?.(); drawSpectrum(); });
