@@ -408,7 +408,7 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-viewer { display: grid; min-height: 0; height: 100%; place-items: center; padding: 10px; background: #222; }
 .aether-media-viewer video, .aether-media-viewer img { display: block; width: 100%; max-height: 100%; object-fit: contain; background: #000; }
 .aether-video-player, .aether-image-viewer { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; height: 100%; min-height: 220px; color: #111; }
-.aether-audio-player { display: grid; grid-template-rows: auto minmax(170px, 1fr) auto; height: 100%; min-height: 260px; min-width: 0; overflow: hidden; color: #111; }
+.aether-audio-player { display: grid; grid-template-rows: auto minmax(194px, 1fr) auto; height: 100%; min-height: 280px; min-width: 0; overflow: hidden; color: #111; }
 .aether-video-player .aether-media-stage, .aether-image-viewer .aether-media-stage { min-height: 0; }
 .aether-media-stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 8px; border: 2px inset var(--aether-gray); background: #202020; }
 .aether-media-stage video, .aether-media-stage img { display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; background: #000; }
@@ -416,18 +416,23 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-stage > span { position: absolute; color: #d4d0c8; font-family: inherit; font-size: 13px; }
 .aether-media-info { min-width: 0; overflow: hidden; padding: 4px 7px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; text-overflow: ellipsis; white-space: nowrap; }
 .aether-media-transport { display: flex; align-items: center; gap: 5px; padding: 5px; border-top: 2px outset var(--aether-gray); background: var(--aether-gray); color: #111; }
-.aether-media-transport.is-audio { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-rows: auto auto; grid-template-areas: "seek seek seek time" "play stop . ."; gap: 4px 5px; padding: 6px 9px 8px; }
-.aether-media-transport.is-audio button:nth-child(1) { grid-area: play; }
-.aether-media-transport.is-audio button:nth-child(2) { grid-area: stop; }
-.aether-media-transport.is-audio input[type="range"] { grid-area: seek; }
-.aether-media-transport.is-audio span { grid-area: time; }
+.aether-media-transport.is-audio { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; grid-template-areas: "seek" "controls"; gap: 5px; padding: 6px 9px 8px; }
+.aether-media-transport.is-audio input[type="range"] { grid-area: seek; width: 100%; min-width: 0; }
+.aether-audio-controls { display: grid; grid-area: controls; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.aether-audio-controls button { min-width: 0; padding: 3px 5px; }
+.aether-audio-controls .is-record { color: #7d1e1e; }
 .aether-media-transport button { min-width: 48px; padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
 .aether-media-transport button:active { border-style: inset; }
 .aether-media-transport input[type="range"] { min-width: 80px; min-height: 16px; flex: 1; accent-color: var(--aether-navy); }
 .aether-media-transport span { min-width: 94px; font-family: inherit; font-size: 11px; text-align: right; }
-.aether-audio-stage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 170px; min-width: 0; overflow: hidden; padding: 14px 24px; border: 2px inset var(--aether-gray); background: #f3f3f3; text-align: center; }
-.aether-audio-stage img { width: 56px; height: 56px; margin-bottom: 2px; image-rendering: pixelated; }
-.aether-audio-stage strong { display: block; max-width: 100%; overflow: hidden; font-size: clamp(1.25rem, 3.5vw, 1.8rem); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
+.aether-audio-stage { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; align-items: center; justify-items: stretch; gap: 5px; min-height: 194px; min-width: 0; overflow: hidden; padding: 8px 10px; border: 2px inset var(--aether-gray); background: #f3f3f3; text-align: center; }
+.aether-audio-readout { display: flex; align-items: start; justify-content: space-between; gap: 10px; min-width: 0; font-size: .78rem; }
+.aether-audio-readout label { display: grid; gap: 1px; min-width: 72px; padding: 3px 6px; border: 1px solid #888; background: #e8e8e8; text-align: left; }
+.aether-audio-readout label:last-child { text-align: right; }
+.aether-audio-readout output { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aether-audio-spectrum { display: block; width: 100%; height: 100%; min-height: 96px; border: 2px inset #888; background: #000; image-rendering: pixelated; }
+.aether-audio-metadata { display: grid; gap: 1px; min-width: 0; }
+.aether-audio-stage strong { display: block; max-width: 100%; overflow: hidden; font-size: clamp(1rem, 2.6vw, 1.35rem); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 .aether-audio-stage .aether-audio-artist,
 .aether-audio-stage .aether-audio-album { max-width: 100%; overflow: hidden; color: #444; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; }
 .aether-audio-element { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -500,6 +505,7 @@ button:focus-visible, textarea:focus-visible {
 @media (max-width: 640px) {
   .aether-desktop::after { content: "AetherOS 1.0 はPC専用です"; position: absolute; inset: 35% 10% auto; z-index: 30; padding: 20px; border: 2px outset var(--aether-gray); background: var(--aether-gray); text-align: center; }
   .aether-taskbar { display: none; }
-  .aether-media-transport.is-audio { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "seek time" "play stop"; }
+  .aether-media-transport.is-audio { grid-template-columns: minmax(0, 1fr); grid-template-areas: "seek" "controls"; }
   .aether-media-transport.is-audio input[type="range"] { min-width: 0; width: 100%; }
+  .aether-audio-readout label { min-width: 0; }
 }

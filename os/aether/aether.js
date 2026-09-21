@@ -361,6 +361,32 @@
     const transport = document.createElement('div');
     transport.className = 'aether-media-transport';
     if (variant !== 'default') transport.classList.add(`is-${variant}`);
+    if (variant === 'audio') {
+      const seek = document.createElement('input'); seek.type = 'range'; seek.min = '0'; seek.max = '1000'; seek.value = '0'; seek.setAttribute('aria-label', `${label} position`);
+      const controls = document.createElement('div'); controls.className = 'aether-audio-controls';
+      const makeControl = (text, ariaLabel, onClick) => {
+        const button = document.createElement('button'); button.type = 'button'; button.textContent = text; button.setAttribute('aria-label', ariaLabel); button.addEventListener('click', onClick); return button;
+      };
+      const rewind = makeControl('◀◀', 'Rewind 5 seconds', () => { if (Number.isFinite(media.currentTime)) media.currentTime = Math.max(0, media.currentTime - 5); });
+      const forward = makeControl('▶▶', 'Forward 5 seconds', () => { if (Number.isFinite(media.duration)) media.currentTime = Math.min(media.duration, media.currentTime + 5); });
+      const play = makeControl('▶', 'Play or pause', async () => {
+        if (media.paused) {
+          try { await media.play(); } catch { setTrayStatus(`${label} could not be played`); }
+        } else media.pause();
+      });
+      const stop = makeControl('■', 'Stop', () => { media.pause(); if (Number.isFinite(media.duration)) media.currentTime = 0; });
+      const record = makeControl('●', 'Record unavailable', () => setTrayStatus('Recording is not available in AetherOS'));
+      record.classList.add('is-record');
+      const update = () => {
+        play.textContent = media.paused ? '▶' : '❚❚';
+        seek.value = Number.isFinite(media.duration) && media.duration > 0 ? String(Math.round((Number.isFinite(media.currentTime) ? media.currentTime : 0) / media.duration * 1000)) : '0';
+      };
+      seek.addEventListener('input', () => { if (Number.isFinite(media.duration) && media.duration > 0) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
+      ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'play', 'pause', 'ended'].forEach(eventName => media.addEventListener(eventName, update));
+      controls.append(rewind, forward, play, stop, record);
+      transport.append(seek, controls);
+      return transport;
+    }
     const play = document.createElement('button'); play.type = 'button'; play.textContent = 'Play';
     const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop';
     const seek = document.createElement('input'); seek.type = 'range'; seek.min = '0'; seek.max = '1000'; seek.value = '0'; seek.setAttribute('aria-label', `${label} position`);
@@ -439,16 +465,58 @@
   const openAudioPlayer = (entry = null) => {
     const body = document.createElement('div'); body.className = 'aether-audio-player';
     const stage = document.createElement('div'); stage.className = 'aether-audio-stage';
-    const icon = document.createElement('img'); icon.src = `${iconBase}media-audio.svg`; icon.alt = '';
+    const readout = document.createElement('div'); readout.className = 'aether-audio-readout';
+    const positionLabel = document.createElement('label'); positionLabel.textContent = 'Position:';
+    const position = document.createElement('output'); position.textContent = '0.00 sec.'; positionLabel.append(position);
+    const lengthLabel = document.createElement('label'); lengthLabel.textContent = 'Length:';
+    const length = document.createElement('output'); length.textContent = '0.00 sec.'; lengthLabel.append(length);
+    const spectrum = document.createElement('canvas'); spectrum.className = 'aether-audio-spectrum'; spectrum.width = 420; spectrum.height = 104; spectrum.setAttribute('aria-label', 'Audio spectrum');
     const info = document.createElement('strong'); info.className = 'aether-audio-name'; info.textContent = entry?.name || 'No audio loaded';
     const artist = document.createElement('span'); artist.className = 'aether-audio-artist';
     const album = document.createElement('span'); album.className = 'aether-audio-album';
-    stage.append(icon, info, artist, album);
+    const metadata = document.createElement('div'); metadata.className = 'aether-audio-metadata'; metadata.append(info, artist, album);
+    readout.append(positionLabel, lengthLabel);
+    stage.append(readout, spectrum, metadata);
     const audio = document.createElement('audio'); audio.className = 'aether-audio-element'; audio.preload = 'auto'; audio.setAttribute('aria-label', 'Aether Audio Player');
+    const spectrumContext = spectrum.getContext('2d');
+    let analyser = null;
+    let audioContext = null;
+    let spectrumFrame = 0;
+    const ensureAudioGraph = () => {
+      if (analyser) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        audioContext = new AudioContext();
+        const source = audioContext.createMediaElementSource(audio);
+        analyser = audioContext.createAnalyser(); analyser.fftSize = 128; analyser.smoothingTimeConstant = .72;
+        source.connect(analyser); analyser.connect(audioContext.destination);
+      } catch { analyser = null; audioContext = null; }
+    };
+    const drawSpectrum = () => {
+      if (!spectrumContext) return;
+      const width = spectrum.width; const height = spectrum.height;
+      spectrumContext.fillStyle = '#000'; spectrumContext.fillRect(0, 0, width, height);
+      spectrumContext.strokeStyle = '#073'; spectrumContext.lineWidth = 1;
+      spectrumContext.beginPath(); spectrumContext.moveTo(0, height - 16); spectrumContext.lineTo(width, height - 16); spectrumContext.stroke();
+      const bars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
+      if (analyser) analyser.getByteFrequencyData(bars);
+      const barWidth = Math.max(3, Math.floor(width / bars.length) - 2);
+      bars.forEach((value, index) => {
+        const amount = analyser ? value / 255 : (index % 5 === 0 ? .18 : .05);
+        const barHeight = Math.max(2, Math.round(amount * (height - 24)));
+        const x = index * (width / bars.length);
+        spectrumContext.fillStyle = '#00a64f'; spectrumContext.fillRect(x, height - 17 - barHeight, barWidth, barHeight);
+      });
+      spectrumFrame = !audio.paused ? requestAnimationFrame(drawSpectrum) : 0;
+    };
+    const formatSeconds = value => Number.isFinite(value) && value >= 0 ? `${value.toFixed(2)} sec.` : '0.00 sec.';
+    const updateReadout = () => { position.textContent = formatSeconds(Number(audio.currentTime)); length.textContent = formatSeconds(Number(audio.duration)); };
     let record;
     const load = selected => {
       if (!selected?.source) {
         audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded'; artist.textContent = 'Artist: Unknown'; album.textContent = 'Album: Unknown';
+        updateReadout(); drawSpectrum();
         return;
       }
       audio.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href;
@@ -456,6 +524,7 @@
       info.textContent = selected.name || 'Unknown';
       artist.textContent = `Artist: ${selected.artist || 'Unknown'}`;
       album.textContent = `Album: ${selected.album || 'Unknown'}`;
+      updateReadout(); drawSpectrum();
     };
     createClassicMenu(body, {
       File: [{ label: 'Open Music Folder', onClick: () => openExplorer('C:\\Users\\Unknown\\Music\\') }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
@@ -466,6 +535,8 @@
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
     record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 560, height: 330 });
+    ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'pause', 'ended'].forEach(eventName => audio.addEventListener(eventName, updateReadout));
+    audio.addEventListener('play', () => { ensureAudioGraph(); audioContext?.resume?.(); drawSpectrum(); });
     audio.addEventListener('error', () => setTrayStatus('Audio file could not be loaded'));
     load(entry);
   };
