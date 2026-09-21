@@ -366,13 +366,21 @@
     const seek = document.createElement('input'); seek.type = 'range'; seek.min = '0'; seek.max = '1000'; seek.value = '0'; seek.setAttribute('aria-label', `${label} position`);
     const time = document.createElement('span'); time.textContent = '00:00 / 00:00';
     play.addEventListener('click', async () => {
-      if (media.paused) { try { await media.play(); } catch { /* autoplay is intentionally blocked until a click */ } } else media.pause();
+      if (media.paused) {
+        try { await media.play(); } catch { setTrayStatus(`${label} could not be played`); }
+      } else media.pause();
     });
-    stop.addEventListener('click', () => { media.pause(); media.currentTime = 0; });
-    seek.addEventListener('input', () => { if (Number.isFinite(media.duration)) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
-    const formatTime = value => { if (!Number.isFinite(value)) return '00:00'; const seconds = Math.floor(value); return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; };
-    const update = () => { play.textContent = media.paused ? 'Play' : 'Pause'; seek.value = Number.isFinite(media.duration) && media.duration ? String(Math.round(media.currentTime / media.duration * 1000)) : '0'; time.textContent = `${formatTime(media.currentTime)} / ${formatTime(media.duration)}`; };
-    media.addEventListener('timeupdate', update); media.addEventListener('loadedmetadata', update); media.addEventListener('play', update); media.addEventListener('pause', update); media.addEventListener('ended', update);
+    stop.addEventListener('click', () => { media.pause(); if (Number.isFinite(media.duration)) media.currentTime = 0; });
+    seek.addEventListener('input', () => { if (Number.isFinite(media.duration) && media.duration > 0) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
+    const formatTime = value => { if (!Number.isFinite(value) || value < 0) return '00:00'; const seconds = Math.floor(value); return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; };
+    const update = () => {
+      const duration = Number(media.duration);
+      const current = Number(media.currentTime);
+      play.textContent = media.paused ? 'Play' : 'Pause';
+      seek.value = Number.isFinite(duration) && duration > 0 ? String(Math.round((Number.isFinite(current) ? current : 0) / duration * 1000)) : '0';
+      time.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+    };
+    ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'play', 'pause', 'ended'].forEach(eventName => media.addEventListener(eventName, update));
     transport.append(play, stop, seek, time);
     return transport;
   };
@@ -432,12 +440,23 @@
     const body = document.createElement('div'); body.className = 'aether-audio-player';
     const stage = document.createElement('div'); stage.className = 'aether-audio-stage';
     const icon = document.createElement('img'); icon.src = `${iconBase}media-audio.svg`; icon.alt = '';
-    const info = document.createElement('strong'); info.textContent = entry?.name || 'No audio loaded';
-    stage.append(icon, info);
-    const audio = document.createElement('audio'); audio.preload = 'metadata';
-    audio.hidden = true;
+    const info = document.createElement('strong'); info.className = 'aether-audio-name'; info.textContent = entry?.name || 'No audio loaded';
+    const artist = document.createElement('span'); artist.className = 'aether-audio-artist';
+    const album = document.createElement('span'); album.className = 'aether-audio-album';
+    stage.append(icon, info, artist, album);
+    const audio = document.createElement('audio'); audio.className = 'aether-audio-element'; audio.preload = 'auto'; audio.setAttribute('aria-label', 'Aether Audio Player');
     let record;
-    const load = selected => { if (!selected?.source) { audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded'; return; } audio.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href; audio.load(); info.textContent = selected.name; };
+    const load = selected => {
+      if (!selected?.source) {
+        audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded'; artist.textContent = 'Artist: Unknown'; album.textContent = 'Album: Unknown';
+        return;
+      }
+      audio.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href;
+      audio.load();
+      info.textContent = selected.name || 'Unknown';
+      artist.textContent = `Artist: ${selected.artist || 'Unknown'}`;
+      album.textContent = `Album: ${selected.album || 'Unknown'}`;
+    };
     createClassicMenu(body, {
       File: [{ label: 'Open Music Folder', onClick: () => openExplorer('C:\\Users\\Unknown\\Music\\') }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
       Edit: [{ label: 'Stop', onClick: () => { audio.pause(); audio.currentTime = 0; } }],
@@ -447,6 +466,7 @@
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
     record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 540, height: 280 });
+    audio.addEventListener('error', () => setTrayStatus('Audio file could not be loaded'));
     load(entry);
   };
 
@@ -550,7 +570,7 @@
   const repositoryFileKind = name => {
     if (/\.(mp4|webm|mov)$/i.test(name)) return 'video';
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'image';
-    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'audio';
+    if (/\.(mp3|wav|flac|m4a|aac|ogg)$/i.test(name)) return 'audio';
     return 'text';
   };
   const addRepositoryEntry = (directory, entry) => {
