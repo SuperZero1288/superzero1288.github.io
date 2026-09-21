@@ -7,21 +7,21 @@
       { "icon": "folder.svg", "name": "Users", "type": "File folder", "size": "", "path": "C:\\Users\\" },
       { "icon": "folder.svg", "name": "Program Files", "type": "File folder", "size": "", "path": "C:\\Program Files\\" },
       { "icon": "trash.svg", "name": "Recycle Bin", "type": "System folder", "size": "", "path": "C:\\Recycle Bin\\" },
-      { "icon": "documents.svg", "name": "AETHER.SYS", "type": "System File", "size": "4 KB", "source": "AETHER.SYS", "kind": "text" }
+      { "icon": "file-text.svg", "name": "AETHER.SYS", "type": "System File", "size": "4 KB", "source": "AETHER.SYS", "kind": "text" }
     ],
     "C:\\AETHER\\": [
-      { "icon": "folder-file.svg", "name": "WELCOME.TXT", "type": "Text Document", "size": "1 KB", "source": "AETHER/WELCOME.TXT", "kind": "text" },
+      { "icon": "file-text.svg", "name": "WELCOME.TXT", "type": "Text Document", "size": "1 KB", "source": "AETHER/WELCOME.TXT", "kind": "text" },
       { "icon": "folder.svg", "name": "SYSTEM", "type": "File folder", "size": "", "path": "C:\\AETHER\\SYSTEM\\" }
     ],
     "C:\\AETHER\\SYSTEM\\": [],
     "C:\\Program Files\\": [
       { "icon": "notepad.svg", "name": "Notepad.exe", "type": "Application", "size": "42 KB", "app": "notepad" },
       { "icon": "computer.svg", "name": "Explorer.exe", "type": "Application", "size": "58 KB", "app": "explorer" },
-      { "icon": "paint.svg", "name": "Paint.exe", "type": "Application", "size": "76 KB", "app": "paint" },
+      { "icon": "mspaint.svg", "name": "Paint.exe", "type": "Application", "size": "76 KB", "app": "paint" },
       { "icon": "browser-globe.svg", "name": "AetherExplorer.exe", "type": "Application", "size": "64 KB", "app": "browser" },
-      { "icon": "browser.svg", "name": "Aether Video Player.exe", "type": "Application", "size": "72 KB", "app": "video" },
-      { "icon": "pictures.svg", "name": "Aether Image Viewer.exe", "type": "Application", "size": "68 KB", "app": "image" },
-      { "icon": "music.svg", "name": "Aether Audio Player.exe", "type": "Application", "size": "61 KB", "app": "audio" }
+      { "icon": "media-video.svg", "name": "Aether Video Player.exe", "type": "Application", "size": "72 KB", "app": "video" },
+      { "icon": "wangimg128.svg", "name": "Aether Image Viewer.exe", "type": "Application", "size": "68 KB", "app": "image" },
+      { "icon": "media-audio.svg", "name": "Aether Audio Player.exe", "type": "Application", "size": "61 KB", "app": "audio" }
     ],
     "C:\\Users\\": [
       { "icon": "folder.svg", "name": "Unknown", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\" }
@@ -36,26 +36,26 @@
     ],
     "C:\\Users\\Unknown\\Desktop\\": [
       { "icon": "notepad.svg", "name": "Notepad", "type": "Shortcut", "size": "", "app": "notepad" },
-      { "icon": "paint.svg", "name": "Paint", "type": "Shortcut", "size": "", "app": "paint" },
+      { "icon": "mspaint.svg", "name": "Paint", "type": "Shortcut", "size": "", "app": "paint" },
       { "icon": "browser-globe.svg", "name": "AetherExplorer", "type": "Shortcut", "size": "", "app": "browser" },
       { "icon": "terminal-glyph", "name": "Aether Console", "type": "Shortcut", "size": "", "app": "terminal" },
       { "icon": "folder.svg", "name": "テストフォルダ", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Desktop\\テストフォルダ\\" },
-      { "icon": "folder-file.svg", "name": "一生ネットの宝物.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/一生ネットの宝物.txt", "kind": "text" }
+      { "icon": "file-text.svg", "name": "一生ネットの宝物.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/一生ネットの宝物.txt", "kind": "text" }
     ],
     "C:\\Users\\Unknown\\Desktop\\テストフォルダ\\": [
-      { "icon": "folder-file.svg", "name": "おお.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/テストフォルダ/おお.txt", "kind": "text" }
+      { "icon": "file-text.svg", "name": "おお.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/テストフォルダ/おお.txt", "kind": "text" }
     ],
     "C:\\Users\\Unknown\\Downloads\\": [],
     "C:\\Users\\Unknown\\Documents\\": [],
     "C:\\Users\\Unknown\\Pictures\\": [
-      { "icon": "pictures.svg", "name": "1_2__1.png", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/1_2__1.png", "kind": "image" },
-      { "icon": "pictures.svg", "name": "418.jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/418.jpg", "kind": "image" },
-      { "icon": "pictures.svg", "name": "maxresdefault (3).jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/maxresdefault (3).jpg", "kind": "image" }
+      { "icon": "wangimg128.svg", "name": "1_2__1.png", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/1_2__1.png", "kind": "image" },
+      { "icon": "wangimg128.svg", "name": "418.jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/418.jpg", "kind": "image" },
+      { "icon": "wangimg128.svg", "name": "maxresdefault (3).jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/maxresdefault (3).jpg", "kind": "image" }
     ],
     "C:\\Users\\Unknown\\Music\\": [],
     "C:\\Users\\Unknown\\Videos\\": [
-      { "icon": "browser.svg", "name": "無題1.mp4", "type": "Video", "size": "13.4 MB", "source": "Users/Unknown/Videos/無題1.mp4", "kind": "video" },
-      { "icon": "browser.svg", "name": "無題2_compressed.mp4", "type": "Video", "size": "4.6 MB", "source": "Users/Unknown/Videos/無題2_compressed.mp4", "kind": "video" }
+      { "icon": "media-video.svg", "name": "無題1.mp4", "type": "Video", "size": "13.4 MB", "source": "Users/Unknown/Videos/無題1.mp4", "kind": "video" },
+      { "icon": "media-video.svg", "name": "無題2_compressed.mp4", "type": "Video", "size": "4.6 MB", "source": "Users/Unknown/Videos/無題2_compressed.mp4", "kind": "video" }
     ],
     "C:\\Recycle Bin\\": []
   }

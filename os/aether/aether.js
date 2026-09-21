@@ -346,7 +346,7 @@
       Help: [{ label: 'About Paint', onClick: () => setTrayStatus('Paint — AetherOS bitmap editor') }]
     });
     body.append(toolbar, canvasWrap);
-    record = createWindow({ title: 'Paint.exe', icon: 'paint.svg', body, width: 700, height: 510 });
+    record = createWindow({ title: 'Paint.exe', icon: 'mspaint.svg', body, width: 700, height: 510 });
   };
 
   const resizeMediaWindow = (record, ratio, extraHeight = 112) => {
@@ -396,7 +396,7 @@
       Help: [{ label: 'About Video Player', onClick: () => setTrayStatus('Aether Video Player — offline media') }]
     });
     body.append(info, stage, transport);
-    record = createWindow({ title: entry?.name || 'Aether Video Player', icon: 'browser.svg', body, width: 680, height: 460 });
+    record = createWindow({ title: entry?.name || 'Aether Video Player', icon: 'media-video.svg', body, width: 680, height: 460 });
     video.addEventListener('loadedmetadata', () => resizeMediaWindow(record, video.videoWidth / video.videoHeight, 140));
     video.addEventListener('error', () => { empty.hidden = false; empty.textContent = 'この動画を読み込めませんでした'; });
     load(entry);
@@ -421,7 +421,7 @@
       Help: [{ label: 'About Image Viewer', onClick: () => setTrayStatus('Aether Image Viewer — offline media') }]
     });
     body.append(info, stage);
-    record = createWindow({ title: entry?.name || 'Aether Image Viewer', icon: 'pictures.svg', body, width: 620, height: 440 });
+    record = createWindow({ title: entry?.name || 'Aether Image Viewer', icon: 'wangimg128.svg', body, width: 620, height: 440 });
     image.addEventListener('load', () => resizeMediaWindow(record, image.naturalWidth / image.naturalHeight, 100));
     image.addEventListener('error', () => { empty.hidden = false; empty.textContent = 'この画像を読み込めませんでした'; });
     load(entry);
@@ -430,7 +430,7 @@
   const openAudioPlayer = (entry = null) => {
     const body = document.createElement('div'); body.className = 'aether-audio-player';
     const stage = document.createElement('div'); stage.className = 'aether-audio-stage';
-    const icon = document.createElement('img'); icon.src = `${iconBase}music.svg`; icon.alt = '';
+    const icon = document.createElement('img'); icon.src = `${iconBase}media-audio.svg`; icon.alt = '';
     const info = document.createElement('strong'); info.textContent = entry?.name || 'No audio loaded';
     stage.append(icon, info);
     const audio = document.createElement('audio'); audio.preload = 'metadata';
@@ -445,7 +445,7 @@
     });
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio'));
-    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'music.svg', body, width: 540, height: 280 });
+    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 540, height: 280 });
     load(entry);
   };
 
@@ -493,20 +493,20 @@
       { icon: 'folder.svg', name: 'Users', type: 'File folder', size: '', path: 'C:\\Users\\' },
       { icon: 'folder.svg', name: 'Program Files', type: 'File folder', size: '', path: 'C:\\Program Files\\' },
       { icon: 'trash.svg', name: 'Recycle Bin', type: 'System folder', size: '', path: 'C:\\Recycle Bin\\' },
-      { icon: 'documents.svg', name: 'AETHER.SYS', type: 'System File', size: '4 KB' }
+      { icon: 'file-text.svg', name: 'AETHER.SYS', type: 'System File', size: '4 KB' }
     ],
     'C:\\AETHER\\': [
-      { icon: 'folder-file.svg', name: 'WELCOME.TXT', type: 'Text Document', size: '1 KB' },
+      { icon: 'file-text.svg', name: 'WELCOME.TXT', type: 'Text Document', size: '1 KB' },
       { icon: 'folder.svg', name: 'SYSTEM', type: 'File folder', size: '', path: 'C:\\AETHER\\SYSTEM\\' }
     ],
     'C:\\Program Files\\': [
       { icon: 'notepad.svg', name: 'Notepad.exe', type: 'Application', size: '42 KB', app: 'notepad' },
       { icon: 'computer.svg', name: 'Explorer.exe', type: 'Application', size: '58 KB', app: 'explorer' },
-      { icon: 'paint.svg', name: 'Paint.exe', type: 'Application', size: '76 KB', app: 'paint' },
+      { icon: 'mspaint.svg', name: 'Paint.exe', type: 'Application', size: '76 KB', app: 'paint' },
       { icon: 'browser-globe.svg', name: 'AetherExplorer.exe', type: 'Application', size: '64 KB', app: 'browser' },
-      { icon: 'browser.svg', name: 'Aether Video Player.exe', type: 'Application', size: '72 KB', app: 'video' },
-      { icon: 'pictures.svg', name: 'Aether Image Viewer.exe', type: 'Application', size: '68 KB', app: 'image' },
-      { icon: 'music.svg', name: 'Aether Audio Player.exe', type: 'Application', size: '61 KB', app: 'audio' }
+      { icon: 'media-video.svg', name: 'Aether Video Player.exe', type: 'Application', size: '72 KB', app: 'video' },
+      { icon: 'wangimg128.svg', name: 'Aether Image Viewer.exe', type: 'Application', size: '68 KB', app: 'image' },
+      { icon: 'media-audio.svg', name: 'Aether Audio Player.exe', type: 'Application', size: '61 KB', app: 'audio' }
     ],
     'C:\\Users\\': [
       { icon: 'folder.svg', name: 'Unknown', type: 'File folder', size: '', path: 'C:\\Users\\Unknown\\' }
@@ -521,7 +521,7 @@
     ],
     'C:\\Users\\Unknown\\Desktop\\': [
       { icon: 'notepad.svg', name: 'Notepad', type: 'Shortcut', size: '', app: 'notepad' },
-      { icon: 'paint.svg', name: 'Paint', type: 'Shortcut', size: '', app: 'paint' },
+      { icon: 'mspaint.svg', name: 'Paint', type: 'Shortcut', size: '', app: 'paint' },
       { icon: 'browser-globe.svg', name: 'AetherExplorer', type: 'Shortcut', size: '', app: 'browser' },
       { icon: 'terminal-glyph', name: 'Aether Console', type: 'Shortcut', size: '', app: 'terminal' }
     ],
@@ -540,11 +540,11 @@
   const windowsDirectory = parts => parts.length ? `C:\\${parts.join('\\')}\\` : 'C:\\';
   const repositoryIcon = (name, isDirectory = false) => {
     if (isDirectory) return 'folder.svg';
-    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'browser.svg';
-    if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'pictures.svg';
-    if (/\.(txt|md|log|json|csv)$/i.test(name)) return 'folder-file.svg';
-    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'music.svg';
-    return 'documents.svg';
+    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'media-video.svg';
+    if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'wangimg128.svg';
+    if (/\.(txt|md|log|json|csv)$/i.test(name)) return 'file-text.svg';
+    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'media-audio.svg';
+    return 'file-text.svg';
   };
   const repositoryFileKind = name => {
     if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'video';
