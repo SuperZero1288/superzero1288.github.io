@@ -540,14 +540,14 @@
   const windowsDirectory = parts => parts.length ? `C:\\${parts.join('\\')}\\` : 'C:\\';
   const repositoryIcon = (name, isDirectory = false) => {
     if (isDirectory) return 'folder.svg';
-    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'media-video.svg';
+    if (/\.(mp4|webm|mov)$/i.test(name)) return 'media-video.svg';
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'wangimg128.svg';
     if (/\.(txt|md|log|json|csv)$/i.test(name)) return 'file-text.svg';
-    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'media-audio.svg';
+    if (/\.(mp3|wav|flac|m4a|aac|ogg)$/i.test(name)) return 'media-audio.svg';
     return 'file-text.svg';
   };
   const repositoryFileKind = name => {
-    if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'video';
+    if (/\.(mp4|webm|mov)$/i.test(name)) return 'video';
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'image';
     if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'audio';
     return 'text';
@@ -623,7 +623,7 @@
     if (!source) return;
     const url = new URL(source, repositoryRootUrl);
     const kind = String(entry.kind || '').toLowerCase();
-    if (kind === 'video' || /\.(mp4|webm|ogg|mov)$/i.test(source)) {
+    if (kind === 'video' || /\.(mp4|webm|mov)$/i.test(source)) {
       openVideoPlayer(entry);
       return;
     }
