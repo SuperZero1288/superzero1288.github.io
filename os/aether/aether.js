@@ -375,15 +375,13 @@
         } else media.pause();
       });
       const stop = makeControl('■', 'Stop', () => { media.pause(); if (Number.isFinite(media.duration)) media.currentTime = 0; });
-      const record = makeControl('●', 'Record unavailable', () => setTrayStatus('Recording is not available in AetherOS'));
-      record.classList.add('is-record');
       const update = () => {
         play.textContent = media.paused ? '▶' : '❚❚';
         seek.value = Number.isFinite(media.duration) && media.duration > 0 ? String(Math.round((Number.isFinite(media.currentTime) ? media.currentTime : 0) / media.duration * 1000)) : '0';
       };
       seek.addEventListener('input', () => { if (Number.isFinite(media.duration) && media.duration > 0) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
       ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'play', 'pause', 'ended'].forEach(eventName => media.addEventListener(eventName, update));
-      controls.append(rewind, forward, play, stop, record);
+      controls.append(rewind, play, stop, forward);
       transport.append(seek, controls);
       return transport;
     }
@@ -499,11 +497,13 @@
       spectrumContext.fillStyle = '#000'; spectrumContext.fillRect(0, 0, width, height);
       spectrumContext.strokeStyle = '#073'; spectrumContext.lineWidth = 1;
       spectrumContext.beginPath(); spectrumContext.moveTo(0, height - 16); spectrumContext.lineTo(width, height - 16); spectrumContext.stroke();
-      const bars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
-      if (analyser) analyser.getByteFrequencyData(bars);
+      const rawBars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
+      if (analyser) analyser.getByteFrequencyData(rawBars);
+      const sourceBars = Array.from(rawBars.slice(0, 32));
+      const bars = sourceBars.length ? [...sourceBars, ...sourceBars.slice().reverse()] : [0];
       const barWidth = Math.max(3, Math.floor(width / bars.length) - 2);
       bars.forEach((value, index) => {
-        const amount = analyser ? value / 255 : (index % 5 === 0 ? .18 : .05);
+        const amount = analyser ? Math.min(1, Math.pow(value / 255, .62) * 1.35) : (index % 5 === 0 ? .18 : .05);
         const barHeight = Math.max(2, Math.round(amount * (height - 24)));
         const x = index * (width / bars.length);
         spectrumContext.fillStyle = '#00a64f'; spectrumContext.fillRect(x, height - 17 - barHeight, barWidth, barHeight);
@@ -535,6 +535,7 @@
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
     record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 560, height: 330 });
+    record.element.classList.add('is-fixed-size');
     ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'pause', 'ended'].forEach(eventName => audio.addEventListener(eventName, updateReadout));
     audio.addEventListener('play', () => { ensureAudioGraph(); audioContext?.resume?.(); drawSpectrum(); });
     audio.addEventListener('error', () => setTrayStatus('Audio file could not be loaded'));
