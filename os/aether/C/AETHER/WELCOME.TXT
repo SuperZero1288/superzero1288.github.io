@@ -1,0 +1,3 @@
+Welcome to AetherOS 1.0.
+
+This is the AetherOS system volume. Files placed in the C directory are made available to Explorer after the next boot.

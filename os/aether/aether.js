@@ -212,14 +212,14 @@
     createWindow({ title: 'About AetherOS', icon: 'about.svg', body, width: 430, height: 290 });
   };
 
-  const openNotepad = () => {
+  const openNotepad = (initialText = null, fileName = '') => {
     const body = document.createElement('div');
     body.className = 'aether-notepad';
     const heading = document.createElement('div');
     heading.textContent = 'Notepad';
     const textarea = document.createElement('textarea');
     textarea.setAttribute('aria-label', 'Aether Notes');
-    textarea.value = localStorage.getItem('aether-notes') || 'Welcome to AetherOS 1.0.\n';
+    textarea.value = initialText ?? localStorage.getItem('aether-notes') ?? 'Welcome to AetherOS 1.0.\n';
     const actions = document.createElement('div');
     actions.className = 'aether-notepad-actions';
     const save = document.createElement('button');
@@ -241,7 +241,7 @@
     clear.addEventListener('click', () => { textarea.value = ''; textarea.focus(); });
     actions.append(save, download, clear);
     body.append(heading, textarea, actions);
-    createWindow({ title: 'Notepad.exe', icon: 'notepad.svg', body, width: 520, height: 350 });
+    createWindow({ title: fileName ? `${fileName} - Notepad` : 'Notepad.exe', icon: 'notepad.svg', body, width: 520, height: 350 });
   };
 
   const openPaint = () => {
@@ -319,7 +319,7 @@
     createWindow({ title: 'AetherExplorer.exe', icon: 'browser-globe.svg', body, width: 650, height: 430 });
   };
 
-  const explorerEntries = {
+  let explorerEntries = {
     'C:\\': [
       { icon: 'folder.svg', name: 'AETHER', type: 'File folder', size: '', path: 'C:\\AETHER\\' },
       { icon: 'folder.svg', name: 'Users', type: 'File folder', size: '', path: 'C:\\Users\\' },
@@ -362,6 +362,58 @@
     'C:\\Recycle Bin\\': []
   };
 
+  let repositoryManifest = null;
+  const repositoryRootUrl = new URL('C/', document.baseURI);
+  const toRepositoryPath = source => String(source || '').replace(/^[/\\]+/, '').split('\\').join('/');
+  const loadRepositoryFilesystem = async () => {
+    const manifestUrl = new URL('manifest.json?v=1.0.21', repositoryRootUrl);
+    try {
+      const response = await fetch(manifestUrl, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const manifest = await response.json();
+      if (!manifest || typeof manifest.directories !== 'object') throw new Error('Invalid filesystem manifest');
+      const imported = {};
+      Object.entries(manifest.directories).forEach(([path, entries]) => {
+        imported[path] = Array.isArray(entries) ? entries.map(entry => ({ ...entry })) : [];
+      });
+      explorerEntries = { ...explorerEntries, ...imported };
+      repositoryManifest = manifest;
+      setTrayStatus('C: synchronized');
+      return true;
+    } catch (error) {
+      repositoryManifest = null;
+      setTrayStatus('C: built-in filesystem');
+      return false;
+    }
+  };
+
+  const openRepositoryFile = async entry => {
+    const source = toRepositoryPath(entry.source || entry.path);
+    if (!source) return;
+    const url = new URL(source, repositoryRootUrl);
+    const kind = String(entry.kind || '').toLowerCase();
+    if (kind === 'video' || /\.(mp4|webm|ogg|mov)$/i.test(source)) {
+      const body = document.createElement('div');
+      body.className = 'aether-media-viewer';
+      const video = document.createElement('video');
+      video.controls = true;
+      video.preload = 'metadata';
+      video.src = url.href;
+      video.setAttribute('aria-label', entry.name || 'AetherOS video');
+      body.append(video);
+      createWindow({ title: entry.name || 'Video', icon: 'browser.svg', body, width: 620, height: 420 });
+      return;
+    }
+    try {
+      const response = await fetch(url.href, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const text = await response.text();
+      openNotepad(text, entry.name || 'Aether file');
+    } catch (error) {
+      setTrayStatus(`${entry.name || 'File'} could not be opened`);
+    }
+  };
+
   const openRecycleBin = () => openExplorer('C:\\Recycle Bin\\');
 
   const openExplorer = (initialPath = 'C:\\') => {
@@ -380,6 +432,7 @@
     let currentPath = explorerEntries[initialPath] ? initialPath : 'C:\\';
 
     const openFile = entry => {
+      if (entry.source) { openRepositoryFile(entry); return; }
       if (entry.app === 'notepad') openNotepad();
       else if (entry.app === 'explorer') openExplorer();
       else if (entry.app === 'paint') openPaint();
@@ -513,6 +566,7 @@
   window.setInterval(updateClock, 1000);
 
   const bootSequence = async () => {
+    await loadRepositoryFilesystem();
     const steps = [
       [5, 'Award Modular BIOS v4.51PG', 'AETHER BIOS 1.0', 600],
       [11, 'P5I430TX Aether VXPro BIOS v1.2B    11/04/97', 'System BIOS detected', 520],

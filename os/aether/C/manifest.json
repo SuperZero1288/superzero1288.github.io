@@ -1,0 +1,47 @@
+{
+  "version": "1.0.21",
+  "filesystem": "AetherOS C:",
+  "directories": {
+    "C:\\": [
+      { "icon": "folder.svg", "name": "AETHER", "type": "File folder", "size": "", "path": "C:\\AETHER\\" },
+      { "icon": "folder.svg", "name": "Users", "type": "File folder", "size": "", "path": "C:\\Users\\" },
+      { "icon": "folder.svg", "name": "Program Files", "type": "File folder", "size": "", "path": "C:\\Program Files\\" },
+      { "icon": "trash.svg", "name": "Recycle Bin", "type": "System folder", "size": "", "path": "C:\\Recycle Bin\\" },
+      { "icon": "documents.svg", "name": "AETHER.SYS", "type": "System File", "size": "4 KB", "source": "AETHER.SYS", "kind": "text" }
+    ],
+    "C:\\AETHER\\": [
+      { "icon": "folder-file.svg", "name": "WELCOME.TXT", "type": "Text Document", "size": "1 KB", "source": "AETHER/WELCOME.TXT", "kind": "text" },
+      { "icon": "folder.svg", "name": "SYSTEM", "type": "File folder", "size": "", "path": "C:\\AETHER\\SYSTEM\\" }
+    ],
+    "C:\\AETHER\\SYSTEM\\": [],
+    "C:\\Program Files\\": [
+      { "icon": "notepad.svg", "name": "Notepad.exe", "type": "Application", "size": "42 KB", "app": "notepad" },
+      { "icon": "computer.svg", "name": "Explorer.exe", "type": "Application", "size": "58 KB", "app": "explorer" },
+      { "icon": "paint.svg", "name": "Paint.exe", "type": "Application", "size": "76 KB", "app": "paint" },
+      { "icon": "browser-globe.svg", "name": "AetherExplorer.exe", "type": "Application", "size": "64 KB", "app": "browser" }
+    ],
+    "C:\\Users\\": [
+      { "icon": "folder.svg", "name": "Unknown", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\" }
+    ],
+    "C:\\Users\\Unknown\\": [
+      { "icon": "desktop.svg", "name": "Desktop", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Desktop\\" },
+      { "icon": "downloads.svg", "name": "Downloads", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Downloads\\" },
+      { "icon": "folder-file.svg", "name": "Documents", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Documents\\" },
+      { "icon": "pictures.svg", "name": "Pictures", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Pictures\\" },
+      { "icon": "music.svg", "name": "Music", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Music\\" },
+      { "icon": "videos.svg", "name": "Videos", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Videos\\" }
+    ],
+    "C:\\Users\\Unknown\\Desktop\\": [
+      { "icon": "notepad.svg", "name": "Notepad", "type": "Shortcut", "size": "", "app": "notepad" },
+      { "icon": "paint.svg", "name": "Paint", "type": "Shortcut", "size": "", "app": "paint" },
+      { "icon": "browser-globe.svg", "name": "AetherExplorer", "type": "Shortcut", "size": "", "app": "browser" },
+      { "icon": "terminal-glyph", "name": "Aether Console", "type": "Shortcut", "size": "", "app": "terminal" }
+    ],
+    "C:\\Users\\Unknown\\Downloads\\": [],
+    "C:\\Users\\Unknown\\Documents\\": [],
+    "C:\\Users\\Unknown\\Pictures\\": [],
+    "C:\\Users\\Unknown\\Music\\": [],
+    "C:\\Users\\Unknown\\Videos\\": [],
+    "C:\\Recycle Bin\\": []
+  }
+}

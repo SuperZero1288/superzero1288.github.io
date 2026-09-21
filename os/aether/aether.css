@@ -383,6 +383,9 @@ button:focus-visible, textarea:focus-visible {
 .aether-paint-canvas { display: block; width: 100%; min-width: 320px; height: auto; background: #fff; image-rendering: pixelated; touch-action: none; cursor: crosshair; }
 .aether-paint-actions { display: flex; justify-content: flex-end; gap: 6px; }
 
+.aether-media-viewer { display: grid; min-height: 0; height: 100%; place-items: center; padding: 10px; background: #222; }
+.aether-media-viewer video { display: block; width: 100%; max-height: 100%; background: #000; }
+
 .aether-taskbar {
   position: absolute;
   z-index: 10;
