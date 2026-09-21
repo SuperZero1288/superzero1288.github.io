@@ -497,11 +497,13 @@
       spectrumContext.fillStyle = '#000'; spectrumContext.fillRect(0, 0, width, height);
       spectrumContext.strokeStyle = '#073'; spectrumContext.lineWidth = 1;
       spectrumContext.beginPath(); spectrumContext.moveTo(0, height - 16); spectrumContext.lineTo(width, height - 16); spectrumContext.stroke();
-      const bars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
-      if (analyser) analyser.getByteFrequencyData(bars);
+      const rawBars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
+      if (analyser) analyser.getByteFrequencyData(rawBars);
+      const sourceBars = Array.from(rawBars.slice(0, 32));
+      const bars = sourceBars.length ? [...sourceBars, ...sourceBars.slice().reverse()] : [0];
       const barWidth = Math.max(3, Math.floor(width / bars.length) - 2);
       bars.forEach((value, index) => {
-        const amount = analyser ? value / 255 : (index % 5 === 0 ? .18 : .05);
+        const amount = analyser ? Math.min(1, Math.pow(value / 255, .62) * 1.35) : (index % 5 === 0 ? .18 : .05);
         const barHeight = Math.max(2, Math.round(amount * (height - 24)));
         const x = index * (width / bars.length);
         spectrumContext.fillStyle = '#00a64f'; spectrumContext.fillRect(x, height - 17 - barHeight, barWidth, barHeight);
