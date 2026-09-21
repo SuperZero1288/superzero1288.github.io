@@ -357,9 +357,10 @@
     record.element.style.height = `${height}px`;
   };
 
-  const createMediaTransport = (media, label = 'Media') => {
+  const createMediaTransport = (media, label = 'Media', variant = 'default') => {
     const transport = document.createElement('div');
     transport.className = 'aether-media-transport';
+    if (variant !== 'default') transport.classList.add(`is-${variant}`);
     const play = document.createElement('button'); play.type = 'button'; play.textContent = 'Play';
     const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop';
     const seek = document.createElement('input'); seek.type = 'range'; seek.min = '0'; seek.max = '1000'; seek.value = '0'; seek.setAttribute('aria-label', `${label} position`);
@@ -444,7 +445,7 @@
       Help: [{ label: 'About Audio Player', onClick: () => setTrayStatus('Aether Audio Player — offline media') }]
     });
     stage.append(audio);
-    body.append(stage, createMediaTransport(audio, 'Audio'));
+    body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
     record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 540, height: 280 });
     load(entry);
   };

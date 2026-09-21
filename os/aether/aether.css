@@ -409,13 +409,18 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-stage > span { position: absolute; color: #d4d0c8; font: 13px "Courier New", monospace; }
 .aether-media-info { min-width: 0; overflow: hidden; padding: 4px 7px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; text-overflow: ellipsis; white-space: nowrap; }
 .aether-media-transport { display: flex; align-items: center; gap: 5px; padding: 5px; border-top: 2px outset var(--aether-gray); background: var(--aether-gray); color: #111; }
+.aether-media-transport.is-audio { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-rows: auto auto; grid-template-areas: "seek seek seek time" "play stop . ."; gap: 4px 5px; padding: 6px 9px 8px; }
+.aether-media-transport.is-audio button:nth-child(1) { grid-area: play; }
+.aether-media-transport.is-audio button:nth-child(2) { grid-area: stop; }
+.aether-media-transport.is-audio input[type="range"] { grid-area: seek; }
+.aether-media-transport.is-audio span { grid-area: time; }
 .aether-media-transport button { min-width: 48px; padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
 .aether-media-transport button:active { border-style: inset; }
 .aether-media-transport input[type="range"] { min-width: 80px; flex: 1; accent-color: var(--aether-navy); }
 .aether-media-transport span { min-width: 94px; font: 11px "Courier New", monospace; text-align: right; }
-.aether-audio-stage { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 120px; padding: 18px; border: 2px inset var(--aether-gray); background: #f3f3f3; }
-.aether-audio-stage img { width: 52px; height: 52px; image-rendering: pixelated; }
-.aether-audio-stage strong { max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aether-audio-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 132px; padding: 18px; border: 2px inset var(--aether-gray); background: #f3f3f3; }
+.aether-audio-stage img { width: 42px; height: 42px; image-rendering: pixelated; }
+.aether-audio-stage strong { max-width: 90%; overflow: hidden; font-size: clamp(1rem, 3vw, 1.45rem); text-overflow: ellipsis; white-space: nowrap; }
 
 .aether-taskbar {
   position: absolute;
