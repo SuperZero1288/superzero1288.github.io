@@ -18,7 +18,10 @@
       { "icon": "notepad.svg", "name": "Notepad.exe", "type": "Application", "size": "42 KB", "app": "notepad" },
       { "icon": "computer.svg", "name": "Explorer.exe", "type": "Application", "size": "58 KB", "app": "explorer" },
       { "icon": "paint.svg", "name": "Paint.exe", "type": "Application", "size": "76 KB", "app": "paint" },
-      { "icon": "browser-globe.svg", "name": "AetherExplorer.exe", "type": "Application", "size": "64 KB", "app": "browser" }
+      { "icon": "browser-globe.svg", "name": "AetherExplorer.exe", "type": "Application", "size": "64 KB", "app": "browser" },
+      { "icon": "browser.svg", "name": "Aether Video Player.exe", "type": "Application", "size": "72 KB", "app": "video" },
+      { "icon": "pictures.svg", "name": "Aether Image Viewer.exe", "type": "Application", "size": "68 KB", "app": "image" },
+      { "icon": "music.svg", "name": "Aether Audio Player.exe", "type": "Application", "size": "61 KB", "app": "audio" }
     ],
     "C:\\Users\\": [
       { "icon": "folder.svg", "name": "Unknown", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\" }

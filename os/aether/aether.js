@@ -205,6 +205,48 @@
     return panel;
   };
 
+  const createClassicMenu = (body, menus) => {
+    const bar = document.createElement('div');
+    bar.className = 'aether-app-menu';
+    const closeMenus = () => bar.querySelectorAll('.aether-app-menu-popup').forEach(menu => { menu.hidden = true; });
+    Object.entries(menus).forEach(([label, actions]) => {
+      const group = document.createElement('div');
+      group.className = 'aether-app-menu-group';
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'aether-app-menu-trigger';
+      trigger.textContent = label;
+      const popup = document.createElement('div');
+      popup.className = 'aether-app-menu-popup';
+      popup.hidden = true;
+      actions.forEach(action => {
+        if (action === null) {
+          const separator = document.createElement('div');
+          separator.className = 'aether-app-menu-separator';
+          popup.append(separator);
+          return;
+        }
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.textContent = action.label;
+        item.disabled = Boolean(action.disabled);
+        item.addEventListener('click', () => { closeMenus(); action.onClick?.(); });
+        popup.append(item);
+      });
+      trigger.addEventListener('click', event => {
+        event.stopPropagation();
+        const wasHidden = popup.hidden;
+        closeMenus();
+        popup.hidden = !wasHidden;
+      });
+      group.append(trigger, popup);
+      bar.append(group);
+    });
+    body.prepend(bar);
+    body.addEventListener('pointerdown', event => { if (!bar.contains(event.target)) closeMenus(); });
+    return { bar, closeMenus };
+  };
+
   const openAbout = () => {
     const body = document.createElement('div');
     body.className = 'aether-about';
@@ -215,42 +257,52 @@
   const openNotepad = (initialText = null, fileName = '') => {
     const body = document.createElement('div');
     body.className = 'aether-notepad';
-    const heading = document.createElement('div');
-    heading.textContent = 'Notepad';
     const textarea = document.createElement('textarea');
     textarea.setAttribute('aria-label', 'Aether Notes');
     textarea.value = initialText ?? localStorage.getItem('aether-notes') ?? 'Welcome to AetherOS 1.0.\n';
-    const actions = document.createElement('div');
-    actions.className = 'aether-notepad-actions';
-    const save = document.createElement('button');
-    save.type = 'button'; save.className = 'aether-button'; save.textContent = 'Save';
-    const download = document.createElement('button');
-    download.type = 'button'; download.className = 'aether-button'; download.textContent = 'Save .TXT';
-    const clear = document.createElement('button');
-    clear.type = 'button'; clear.className = 'aether-button'; clear.textContent = 'Clear';
-    save.addEventListener('click', () => { localStorage.setItem('aether-notes', textarea.value); setTrayStatus('Note saved'); });
-    download.addEventListener('click', () => {
+    const toolbar = document.createElement('div');
+    toolbar.className = 'aether-app-toolbar';
+    const toolbarButton = (label, onClick) => {
+      const button = document.createElement('button');
+      button.type = 'button'; button.textContent = label; button.addEventListener('click', onClick); toolbar.append(button); return button;
+    };
+    const save = () => { localStorage.setItem('aether-notes', textarea.value); setTrayStatus('Note saved'); };
+    const download = () => {
       const blob = new Blob([textarea.value], { type: 'text/plain;charset=utf-8' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = 'AetherNote.txt';
+      link.download = fileName || 'AetherNote.txt';
       link.click();
       URL.revokeObjectURL(link.href);
       setTrayStatus('AetherNote.txt saved');
+    };
+    const clear = () => { textarea.value = ''; textarea.focus(); };
+    toolbarButton('Save', save);
+    toolbarButton('Save .TXT', download);
+    toolbarButton('Clear', clear);
+    toolbarButton('Word Wrap', () => { textarea.classList.toggle('is-no-wrap'); });
+    let record;
+    createClassicMenu(body, {
+      File: [{ label: 'Save', onClick: save }, { label: 'Save As .TXT', onClick: download }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
+      Edit: [{ label: 'Clear', onClick: clear }, { label: 'Select All', onClick: () => { textarea.focus(); textarea.select(); } }],
+      View: [{ label: 'Word Wrap', onClick: () => textarea.classList.toggle('is-no-wrap') }],
+      Help: [{ label: 'About Notepad', onClick: () => setTrayStatus('Notepad — AetherOS text editor') }]
     });
-    clear.addEventListener('click', () => { textarea.value = ''; textarea.focus(); });
-    actions.append(save, download, clear);
-    body.append(heading, textarea, actions);
-    createWindow({ title: fileName ? `${fileName} - Notepad` : 'Notepad.exe', icon: 'notepad.svg', body, width: 520, height: 350 });
+    body.append(toolbar, textarea);
+    record = createWindow({ title: fileName ? `${fileName} - Notepad` : 'Notepad.exe', icon: 'notepad.svg', body, width: 520, height: 350 });
   };
 
   const openPaint = () => {
     const body = document.createElement('div');
     body.className = 'aether-paint';
     const toolbar = document.createElement('div');
-    toolbar.className = 'aether-paint-toolbar';
-    toolbar.innerHTML = '<label>Color <input type="color" value="#000000" aria-label="Paint color"></label><button type="button" data-paint-action="clear">Clear</button>';
-    const color = toolbar.querySelector('input');
+    toolbar.className = 'aether-app-toolbar aether-paint-toolbar';
+    const colorLabel = document.createElement('label');
+    colorLabel.textContent = 'Color ';
+    const color = document.createElement('input');
+    color.type = 'color'; color.value = '#000000'; color.setAttribute('aria-label', 'Paint color');
+    colorLabel.append(color);
+    toolbar.append(colorLabel);
     const canvasWrap = document.createElement('div');
     canvasWrap.className = 'aether-paint-canvas-wrap';
     const canvas = document.createElement('canvas');
@@ -259,13 +311,8 @@
     canvas.height = 390;
     canvas.setAttribute('aria-label', 'Paint canvas');
     canvasWrap.append(canvas);
-    const actions = document.createElement('div');
-    actions.className = 'aether-paint-actions';
     const save = document.createElement('button');
     save.type = 'button';
-    save.textContent = 'Save .PNG';
-    actions.append(save);
-    body.append(toolbar, canvasWrap, actions);
     const context = canvas.getContext('2d');
     context.fillStyle = '#fff';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -280,14 +327,126 @@
     canvas.addEventListener('pointermove', event => { if (!drawing) return; const p = point(event); context.strokeStyle = color.value; context.lineTo(p.x, p.y); context.stroke(); });
     canvas.addEventListener('pointerup', event => { drawing = false; canvas.releasePointerCapture?.(event.pointerId); });
     canvas.addEventListener('pointercancel', () => { drawing = false; });
-    toolbar.querySelector('[data-paint-action="clear"]').addEventListener('click', () => { context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height); });
-    save.addEventListener('click', () => {
+    const clear = () => { context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height); };
+    const savePng = () => {
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
       link.download = 'AetherPaint.png';
       link.click();
+    };
+    const clearButton = document.createElement('button');
+    clearButton.type = 'button'; clearButton.textContent = 'Clear'; clearButton.addEventListener('click', clear);
+    save.textContent = 'Save .PNG'; save.addEventListener('click', savePng);
+    toolbar.append(save, clearButton);
+    let record;
+    createClassicMenu(body, {
+      File: [{ label: 'New', onClick: clear }, { label: 'Save As .PNG', onClick: savePng }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
+      Edit: [{ label: 'Clear Canvas', onClick: clear }],
+      View: [{ label: 'Reset Canvas', onClick: clear }],
+      Help: [{ label: 'About Paint', onClick: () => setTrayStatus('Paint — AetherOS bitmap editor') }]
     });
-    createWindow({ title: 'Paint.exe', icon: 'paint.svg', body, width: 700, height: 510 });
+    body.append(toolbar, canvasWrap);
+    record = createWindow({ title: 'Paint.exe', icon: 'paint.svg', body, width: 700, height: 510 });
+  };
+
+  const resizeMediaWindow = (record, ratio, extraHeight = 112) => {
+    if (!record || !Number.isFinite(ratio) || ratio <= 0) return;
+    const width = Math.max(420, Math.min(860, Math.round(Math.min(window.innerWidth * .72, 760))));
+    const height = Math.max(260, Math.min(650, Math.round(width / ratio + extraHeight)));
+    record.element.style.width = `${width}px`;
+    record.element.style.height = `${height}px`;
+  };
+
+  const createMediaTransport = (media, label = 'Media') => {
+    const transport = document.createElement('div');
+    transport.className = 'aether-media-transport';
+    const play = document.createElement('button'); play.type = 'button'; play.textContent = 'Play';
+    const stop = document.createElement('button'); stop.type = 'button'; stop.textContent = 'Stop';
+    const seek = document.createElement('input'); seek.type = 'range'; seek.min = '0'; seek.max = '1000'; seek.value = '0'; seek.setAttribute('aria-label', `${label} position`);
+    const time = document.createElement('span'); time.textContent = '00:00 / 00:00';
+    play.addEventListener('click', async () => {
+      if (media.paused) { try { await media.play(); } catch { /* autoplay is intentionally blocked until a click */ } } else media.pause();
+    });
+    stop.addEventListener('click', () => { media.pause(); media.currentTime = 0; });
+    seek.addEventListener('input', () => { if (Number.isFinite(media.duration)) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
+    const formatTime = value => { if (!Number.isFinite(value)) return '00:00'; const seconds = Math.floor(value); return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`; };
+    const update = () => { play.textContent = media.paused ? 'Play' : 'Pause'; seek.value = Number.isFinite(media.duration) && media.duration ? String(Math.round(media.currentTime / media.duration * 1000)) : '0'; time.textContent = `${formatTime(media.currentTime)} / ${formatTime(media.duration)}`; };
+    media.addEventListener('timeupdate', update); media.addEventListener('loadedmetadata', update); media.addEventListener('play', update); media.addEventListener('pause', update); media.addEventListener('ended', update);
+    transport.append(play, stop, seek, time);
+    return transport;
+  };
+
+  const openVideoPlayer = (entry = null) => {
+    const body = document.createElement('div'); body.className = 'aether-video-player';
+    const stage = document.createElement('div'); stage.className = 'aether-media-stage is-fit';
+    const video = document.createElement('video'); video.preload = 'metadata'; video.setAttribute('aria-label', 'Aether Video Player');
+    const empty = document.createElement('span'); empty.textContent = 'File > Open から動画を選択してください';
+    stage.append(video, empty);
+    const info = document.createElement('div'); info.className = 'aether-media-info'; info.textContent = entry?.name || 'No video loaded';
+    let record;
+    const load = selected => {
+      if (!selected?.source) { video.removeAttribute('src'); video.load(); empty.hidden = false; info.textContent = 'No video loaded'; return; }
+      video.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href; video.load(); empty.hidden = true; info.textContent = selected.name;
+    };
+    const transport = createMediaTransport(video, 'Video');
+    createClassicMenu(body, {
+      File: [{ label: 'Open Video Folder', onClick: () => openExplorer('C:\\Users\\Unknown\\Videos\\') }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
+      Edit: [{ label: 'Stop', onClick: () => { video.pause(); video.currentTime = 0; } }],
+      View: [{ label: 'Fit to Window', onClick: () => stage.classList.add('is-fit') }, { label: 'Actual Size', onClick: () => stage.classList.remove('is-fit') }],
+      Help: [{ label: 'About Video Player', onClick: () => setTrayStatus('Aether Video Player — offline media') }]
+    });
+    body.append(info, stage, transport);
+    record = createWindow({ title: entry?.name || 'Aether Video Player', icon: 'browser.svg', body, width: 680, height: 460 });
+    video.addEventListener('loadedmetadata', () => resizeMediaWindow(record, video.videoWidth / video.videoHeight, 140));
+    video.addEventListener('error', () => { empty.hidden = false; empty.textContent = 'この動画を読み込めませんでした'; });
+    load(entry);
+  };
+
+  const openImageViewer = (entry = null) => {
+    const body = document.createElement('div'); body.className = 'aether-image-viewer';
+    const stage = document.createElement('div'); stage.className = 'aether-media-stage is-fit';
+    const image = document.createElement('img'); image.alt = entry?.name || 'Aether Image Viewer';
+    const empty = document.createElement('span'); empty.textContent = 'File > Open から画像を選択してください';
+    stage.append(image, empty);
+    const info = document.createElement('div'); info.className = 'aether-media-info'; info.textContent = entry?.name || 'No image loaded';
+    let record;
+    const load = selected => {
+      if (!selected?.source) { image.removeAttribute('src'); empty.hidden = false; info.textContent = 'No image loaded'; return; }
+      image.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href; empty.hidden = true; info.textContent = selected.name;
+    };
+    createClassicMenu(body, {
+      File: [{ label: 'Open Pictures Folder', onClick: () => openExplorer('C:\\Users\\Unknown\\Pictures\\') }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
+      Edit: [{ label: 'Copy Image Address', onClick: () => setTrayStatus('Image address is local to AetherOS') }],
+      View: [{ label: 'Fit to Window', onClick: () => stage.classList.add('is-fit') }, { label: 'Actual Size', onClick: () => stage.classList.remove('is-fit') }],
+      Help: [{ label: 'About Image Viewer', onClick: () => setTrayStatus('Aether Image Viewer — offline media') }]
+    });
+    body.append(info, stage);
+    record = createWindow({ title: entry?.name || 'Aether Image Viewer', icon: 'pictures.svg', body, width: 620, height: 440 });
+    image.addEventListener('load', () => resizeMediaWindow(record, image.naturalWidth / image.naturalHeight, 100));
+    image.addEventListener('error', () => { empty.hidden = false; empty.textContent = 'この画像を読み込めませんでした'; });
+    load(entry);
+  };
+
+  const openAudioPlayer = (entry = null) => {
+    const body = document.createElement('div'); body.className = 'aether-audio-player';
+    const stage = document.createElement('div'); stage.className = 'aether-audio-stage';
+    const icon = document.createElement('img'); icon.src = `${iconBase}music.svg`; icon.alt = '';
+    const info = document.createElement('strong'); info.textContent = entry?.name || 'No audio loaded';
+    stage.append(icon, info);
+    const audio = document.createElement('audio'); audio.preload = 'metadata';
+    audio.hidden = true;
+    let record;
+    const load = selected => { if (!selected?.source) { audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded'; return; } audio.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href; audio.load(); info.textContent = selected.name; };
+    createClassicMenu(body, {
+      File: [{ label: 'Open Music Folder', onClick: () => openExplorer('C:\\Users\\Unknown\\Music\\') }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
+      Edit: [{ label: 'Stop', onClick: () => { audio.pause(); audio.currentTime = 0; } }],
+      View: [{ label: 'Reset', onClick: () => { audio.pause(); audio.currentTime = 0; } }],
+      Help: [{ label: 'About Audio Player', onClick: () => setTrayStatus('Aether Audio Player — offline media') }]
+    });
+    stage.append(audio);
+    body.append(stage, createMediaTransport(audio, 'Audio'));
+    record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'music.svg', body, width: 540, height: 280 });
+    load(entry);
   };
 
   const openBrowser = () => {
@@ -316,6 +475,15 @@
         view.innerHTML = '<h2>AetherExplorer</h2><div class="aether-browser-offline">This command is unavailable while the AetherOS network adapter is disabled.</div>';
       }
     }));
+    body.querySelectorAll('.aether-ie-menu button').forEach(button => button.addEventListener('click', () => {
+      const action = button.textContent.trim();
+      if (action === 'File') view.innerHTML = '<h2>AetherExplorer</h2><p>File menu</p><div class="aether-browser-offline">Use the address bar to open an AetherOS local page.</div>';
+      if (action === 'Edit') { input.focus(); input.select(); }
+      if (action === 'View') view.classList.toggle('is-compact');
+      if (action === 'Favorites') view.innerHTML = '<h2>Favorites</h2><p>AetherOS Local Pages</p>';
+      if (action === 'Tools') setTrayStatus('AetherExplorer tools: network adapter disabled');
+      if (action === 'Help') view.innerHTML = '<h2>About AetherExplorer</h2><p>Offline local browser for AetherOS.</p>';
+    }));
     createWindow({ title: 'AetherExplorer.exe', icon: 'browser-globe.svg', body, width: 650, height: 430 });
   };
 
@@ -335,7 +503,10 @@
       { icon: 'notepad.svg', name: 'Notepad.exe', type: 'Application', size: '42 KB', app: 'notepad' },
       { icon: 'computer.svg', name: 'Explorer.exe', type: 'Application', size: '58 KB', app: 'explorer' },
       { icon: 'paint.svg', name: 'Paint.exe', type: 'Application', size: '76 KB', app: 'paint' },
-      { icon: 'browser-globe.svg', name: 'AetherExplorer.exe', type: 'Application', size: '64 KB', app: 'browser' }
+      { icon: 'browser-globe.svg', name: 'AetherExplorer.exe', type: 'Application', size: '64 KB', app: 'browser' },
+      { icon: 'browser.svg', name: 'Aether Video Player.exe', type: 'Application', size: '72 KB', app: 'video' },
+      { icon: 'pictures.svg', name: 'Aether Image Viewer.exe', type: 'Application', size: '68 KB', app: 'image' },
+      { icon: 'music.svg', name: 'Aether Audio Player.exe', type: 'Application', size: '61 KB', app: 'audio' }
     ],
     'C:\\Users\\': [
       { icon: 'folder.svg', name: 'Unknown', type: 'File folder', size: '', path: 'C:\\Users\\Unknown\\' }
@@ -372,12 +543,13 @@
     if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'browser.svg';
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'pictures.svg';
     if (/\.(txt|md|log|json|csv)$/i.test(name)) return 'folder-file.svg';
-    if (/\.(mp3|wav|flac|ogg)$/i.test(name)) return 'music.svg';
+    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'music.svg';
     return 'documents.svg';
   };
   const repositoryFileKind = name => {
     if (/\.(mp4|webm|ogg|mov)$/i.test(name)) return 'video';
     if (/\.(png|jpe?g|gif|webp|svg)$/i.test(name)) return 'image';
+    if (/\.(mp3|wav|flac|m4a|aac)$/i.test(name)) return 'audio';
     return 'text';
   };
   const addRepositoryEntry = (directory, entry) => {
@@ -411,7 +583,7 @@
         addRepositoryEntry(parent, {
           icon: repositoryIcon(name),
           name,
-          type: repositoryFileKind(name) === 'video' ? 'Video' : repositoryFileKind(name) === 'image' ? 'Image' : 'File',
+          type: repositoryFileKind(name) === 'video' ? 'Video' : repositoryFileKind(name) === 'image' ? 'Image' : repositoryFileKind(name) === 'audio' ? 'Audio' : 'File',
           size: displaySize,
           source: relative,
           kind: repositoryFileKind(name)
@@ -451,25 +623,15 @@
     const url = new URL(source, repositoryRootUrl);
     const kind = String(entry.kind || '').toLowerCase();
     if (kind === 'video' || /\.(mp4|webm|ogg|mov)$/i.test(source)) {
-      const body = document.createElement('div');
-      body.className = 'aether-media-viewer';
-      const video = document.createElement('video');
-      video.controls = true;
-      video.preload = 'metadata';
-      video.src = url.href;
-      video.setAttribute('aria-label', entry.name || 'AetherOS video');
-      body.append(video);
-      createWindow({ title: entry.name || 'Video', icon: 'browser.svg', body, width: 620, height: 420 });
+      openVideoPlayer(entry);
       return;
     }
     if (kind === 'image' || /\.(png|jpe?g|gif|webp|svg)$/i.test(source)) {
-      const body = document.createElement('div');
-      body.className = 'aether-media-viewer';
-      const image = document.createElement('img');
-      image.src = url.href;
-      image.alt = entry.name || 'AetherOS image';
-      body.append(image);
-      createWindow({ title: entry.name || 'Image', icon: 'pictures.svg', body, width: 620, height: 420 });
+      openImageViewer(entry);
+      return;
+    }
+    if (kind === 'audio' || /\.(mp3|wav|flac|m4a|aac|ogg)$/i.test(source)) {
+      openAudioPlayer(entry);
       return;
     }
     try {
@@ -505,6 +667,9 @@
       else if (entry.app === 'explorer') openExplorer();
       else if (entry.app === 'paint') openPaint();
       else if (entry.app === 'browser') openBrowser();
+      else if (entry.app === 'video') openVideoPlayer();
+      else if (entry.app === 'image') openImageViewer();
+      else if (entry.app === 'audio') openAudioPlayer();
       else if (entry.app === 'terminal') openTerminal();
       else if (entry.name === 'WELCOME.TXT') openNotepad();
     };
@@ -536,6 +701,13 @@
     root.querySelector('[data-explorer-action="back"]').addEventListener('click', () => { const previous = history.pop(); if (previous) { currentPath = previous; render(); } });
     root.querySelector('[data-explorer-action="up"]').addEventListener('click', () => { if (currentPath === 'C:\\') return; const parts = currentPath.split('\\').filter(Boolean); parts.pop(); currentPath = parts.length ? `${parts.join('\\')}\\` : 'C:\\'; render(); });
     root.querySelector('[data-explorer-action="refresh"]').addEventListener('click', render);
+    root.querySelectorAll('.aether-explorer-menu button').forEach(button => button.addEventListener('click', () => {
+      const action = button.textContent.trim();
+      if (action === 'File') statusLine.textContent = 'File menu: double-click an item to open it.';
+      if (action === 'Edit') list.querySelectorAll('.aether-explorer-entry').forEach(item => item.classList.add('is-selected'));
+      if (action === 'View') render();
+      if (action === 'Help') statusLine.textContent = 'Aether Explorer — double-click folders and files.';
+    }));
     render();
     const title = initialPath === 'C:\\Recycle Bin\\' ? 'Recycle Bin' : 'Explorer.exe';
     createWindow({ title, icon: initialPath === 'C:\\Recycle Bin\\' ? 'trash.svg' : 'computer.svg', body: root, width: 680, height: 430 });
@@ -573,7 +745,7 @@
     requestAnimationFrame(() => input.focus());
   };
 
-  const apps = { explorer: openExplorer, notepad: openNotepad, paint: openPaint, browser: openBrowser, about: openAbout, terminal: openTerminal, recycle: openRecycleBin };
+  const apps = { explorer: openExplorer, notepad: openNotepad, paint: openPaint, browser: openBrowser, video: openVideoPlayer, image: openImageViewer, audio: openAudioPlayer, about: openAbout, terminal: openTerminal, recycle: openRecycleBin };
   document.querySelectorAll('[data-aether-app]').forEach(button => {
     const launch = () => { startMenu.hidden = true; startButton.setAttribute('aria-expanded', 'false'); apps[button.dataset.aetherApp]?.(); };
     if (button.closest('.aether-start-items')) button.addEventListener('click', launch);
