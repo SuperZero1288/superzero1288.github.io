@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
-<link rel="stylesheet" href="style.css?v=20260921-cardcenter2">
+<link rel="stylesheet" href="style.css?v=20260921-thememotion7">
 <script src="site-loader.js?v=20260910-os1" defer></script>
 <script src="card-hover.js?v=20260920-cardhover3" defer></script>
 <script src="site-search.js?v=20260919-newtab2" defer></script>
@@ -223,7 +223,7 @@ const deviceInfoList=document.getElementById('deviceInfoList');
 const deviceWingTab=document.getElementById('deviceWingTab');
 const navigationWingTab=document.getElementById('navigationWingTab');
 
-let hideTimeout,indicatorTimeout,toastTimeout;
+let hideTimeout,indicatorTimeout,toastTimeout,themeTransitionTimeout;
 let is24Hour=true,lastRenderedMonth=-1,isHoveringStatusBar=false;
 let clickCount=0,clickTimer=null,isThursdayMode=false;
 let openEdgeCard=null,wingTabHideTimer=null,edgeCardClosingTimer=null;
@@ -258,13 +258,28 @@ try{localStorage.setItem('zero-site-appearance',JSON.stringify({style:currentSty
 catch(error){console.warn('表示設定を保存できませんでした',error);}
 }
 
+function markThemeTransition(){
+document.body.classList.add('theme-transitioning');
+clearTimeout(themeTransitionTimeout);
+themeTransitionTimeout=setTimeout(()=>document.body.classList.remove('theme-transitioning'),420);
+}
+
+function updateBlurOverlay(){
+const scrollRatio=Math.min(snapContainer.scrollTop/window.innerHeight,1);
+const light=document.body.classList.contains('light-theme');
+const alpha=light?scrollRatio*.14:scrollRatio*.4;
+blurOverlay.style.backgroundColor=`rgba(${light?'255,255,255':'0,0,0'},${alpha})`;
+}
+
 function applyStyle(styleId,{notify=true}={}){
 const nextIndex=uiStyles.findIndex(style=>style.id===styleId);
 if(nextIndex<0)return false;
+markThemeTransition();
 document.body.classList.remove(...uiStyles.map(style=>style.id));
 currentStyleIndex=nextIndex;
 document.body.classList.add(currentStyle().id);
 if(!currentStyle().light&&document.body.classList.contains('light-theme'))document.body.classList.remove('light-theme');
+updateBlurOverlay();
 saveAppearance();
 updateThemeButton();
 if(notify)showToast(currentStyle().light?currentStyle().name:`${currentStyle().name} はダークモードのみ対応`);
@@ -279,7 +294,9 @@ if(mode==='light'&&!currentStyle().light){
 if(notify)showToast(`${currentStyle().name} はダークモードのみ対応`);
 return false;
 }
+markThemeTransition();
 document.body.classList.toggle('light-theme',mode==='light');
+updateBlurOverlay();
 saveAppearance();
 updateThemeButton();
 if(notify)showToast(mode==='light'?'ライトモード':'ダークモード');
@@ -426,7 +443,7 @@ const scrollRatio=Math.min(scrollTop/window.innerHeight,1);
 const blurVal=scrollRatio*16;
 blurOverlay.style.backdropFilter=`blur(${blurVal}px)`;
 blurOverlay.style.webkitBackdropFilter=`blur(${blurVal}px)`;
-blurOverlay.style.backgroundColor=`rgba(0,0,0,${scrollRatio*.4})`;
+updateBlurOverlay();
 checkStatusBarStateOnScroll();
 },{passive:true});
 
@@ -471,6 +488,7 @@ applyStyle(nextStyle.id);
 });
 
 restoreAppearance();
+updateBlurOverlay();
 updateThemeButton();
 
 function browserName(){
@@ -732,6 +750,6 @@ showToast
 };
 </script>
 <script src="zero-filesystem.js?v=20260910-os1"></script>
-<script src="site-desktop.js?v=20260916-search1"></script>
+<script src="site-desktop.js?v=20260921-lightbase1"></script>
 </body>
 </html>

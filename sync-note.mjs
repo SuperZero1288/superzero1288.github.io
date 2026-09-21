@@ -319,10 +319,10 @@ function articleDocument(article, bodyHtml, coverPath) {
 <title>${title} | ぜろくんでんせつ</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
-<link rel="stylesheet" href="../style.css?v=20260921-cardcenter2">
+<link rel="stylesheet" href="../style.css?v=20260921-thememotion7">
 <script src="../site-loader.js?v=20260910-os1" defer></script>
 <script src="../card-hover.js?v=20260920-cardhover3" defer></script>
-<script src="../page-bar.js?v=20260916-search1" defer></script>
+<script src="../page-bar.js?v=20260921-thememotion7" defer></script>
 <script src="../site-search.js?v=20260919-newtab2" defer></script>
 </head>
 <body class="style-default article-page">

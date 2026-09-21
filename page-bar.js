@@ -43,7 +43,7 @@
   const themeIcon=document.getElementById('pageThemeIcon');
   const toast=document.getElementById('pageBarToast');
   let styleIndex=0;
-  let toastTimer,clickTimer;
+  let toastTimer,clickTimer,themeTransitionTimer;
   let is24Hour=true,clickCount=0,isThursdayMode=false,lastRenderedMonth=-1;
 
   const restoreAppearance=()=>{
@@ -104,6 +104,11 @@
     clearTimeout(toastTimer);
     toastTimer=setTimeout(()=>toast.classList.remove('show'),1800);
   };
+  const markThemeTransition=()=>{
+    document.body.classList.add('theme-transitioning');
+    clearTimeout(themeTransitionTimer);
+    themeTransitionTimer=setTimeout(()=>document.body.classList.remove('theme-transitioning'),420);
+  };
   const updateThemeButton=()=>{
     const light=document.body.classList.contains('light-theme');
     themeButton.disabled=!styles[styleIndex].light;
@@ -113,6 +118,7 @@
   };
 
   styleButton.addEventListener('click',()=>{
+    markThemeTransition();
     document.body.classList.remove(styles[styleIndex].id);
     styleIndex=(styleIndex+1)%styles.length;
     const style=styles[styleIndex];
@@ -124,6 +130,7 @@
   });
   themeButton.addEventListener('click',()=>{
     if(!styles[styleIndex].light)return;
+    markThemeTransition();
     document.body.classList.toggle('light-theme');
     saveAppearance();
     updateThemeButton();

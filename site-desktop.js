@@ -80,6 +80,7 @@ function isMobileLayout(){return matchMedia('(max-width:640px)').matches;}
 function updateDesktopState(){
 const hasWindows=windows.size>0;
 document.body.classList.toggle('desktop-app-active',hasWindows);
+if(hasWindows)document.body.classList.remove('desktop-app-closing');
 taskbar.classList.toggle('is-visible',hasWindows);
 taskCount.textContent=String(windows.size);
 taskCount.setAttribute('aria-label',`開いているウィンドウ: ${windows.size}`);
@@ -87,7 +88,7 @@ if(!hasWindows){desktopRestoreIds=[];taskHome.classList.remove('is-active');}
 controller.refreshEdgeState?.();
 }
 
-function focusWindow(record){
+function focusWindow(record,{animate=false}={}){
 if(!record||record.minimized)return;
 topZ+=1;
 record.lastFocusedAt=performance.now();
@@ -99,6 +100,12 @@ record.taskButton?.classList.add('is-active');
 windows.forEach(item=>{
 if(item!==record)item.taskButton?.classList.remove('is-active');
 });
+if(animate){
+record.element.classList.add('is-opening');
+const finish=()=>record.element.classList.remove('is-opening');
+requestAnimationFrame(finish);
+setTimeout(finish,24);
+}
 }
 
 function syncTaskButton(record){
@@ -114,7 +121,7 @@ record.element.classList.toggle('is-minimized',record.minimized);
 record.element.setAttribute('aria-hidden',String(record.minimized));
 syncTaskButton(record);
 if(!record.minimized){
-focusWindow(record);
+focusWindow(record,{animate:true});
 requestAnimationFrame(()=>record.focusTarget?.focus());
 }else{
 record.element.classList.remove('is-focused');
@@ -138,7 +145,10 @@ height:record.element.style.height
 record.element.classList.add('is-maximized');
 }else{
 record.element.classList.remove('is-maximized');
-if(record.restoreRect)Object.assign(record.element.style,record.restoreRect);
+if(record.restoreRect){
+const restoreRect={...record.restoreRect};
+requestAnimationFrame(()=>Object.assign(record.element.style,restoreRect));
+}
 }
 record.maximized=maximize;
 record.maximizeButton.setAttribute('aria-label',maximize?'元のサイズに戻す':'最大化');
@@ -151,7 +161,11 @@ record.dispose?.();
 record.element.classList.add('is-closing');
 record.taskButton?.remove();
 windows.delete(record.id);
-setTimeout(()=>record.element.remove(),180);
+if(!windows.size)document.body.classList.add('desktop-app-closing');
+setTimeout(()=>{
+record.element.remove();
+if(!windows.size)document.body.classList.remove('desktop-app-closing');
+},240);
 const next=[...windows.values()].reverse().find(item=>!item.minimized);
 if(next)focusWindow(next);
 updateDesktopState();
@@ -307,7 +321,7 @@ openExplorer:path=>openExplorer(path)
 const appResult=build?.(content,appApi)||{};
 record.focusTarget=appResult.focusTarget||null;
 record.dispose=appResult.dispose||null;
-focusWindow(record);
+focusWindow(record,{animate:true});
 updateDesktopState();
 requestAnimationFrame(()=>record.focusTarget?.focus());
 return record;

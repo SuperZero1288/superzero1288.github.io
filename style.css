@@ -2979,3 +2979,444 @@ body.style-default .card-hover-target:hover{
 transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
 }
 }
+
+/* テーマ切り替えの共通モーション */
+body.theme-transitioning,
+body.theme-transitioning *,
+body.theme-transitioning *::before,
+body.theme-transitioning *::after{
+transition-duration:.36s!important;
+transition-timing-function:cubic-bezier(.2,.7,.2,1)!important
+}
+
+.scroll-indicator,
+.profile-app,
+.profile-app-hero,
+.profile-spec-card,
+.profile-spec-card>header,
+.profile-spec-row,
+.terminal-app,
+.terminal-output,
+.terminal-command-line,
+.calculator-app,
+.calculator-display,
+.calculator-keys button,
+.paint-app,
+.paint-toolbar,
+.paint-toolbar button,
+.paint-stage,
+.browser-app,
+.browser-toolbar,
+.browser-toolbar input,
+.browser-toolbar select,
+.browser-start,
+.browser-recent button,
+.explorer-app,
+.explorer-toolbar,
+.explorer-sidebar,
+.explorer-sidebar button,
+.explorer-view,
+.explorer-view>header,
+.explorer-item,
+.explorer-view>footer,
+.file-viewer-app,
+.profile-modal,
+.profile-modal-header,
+.article-card,
+.article-embed-card{
+transition:background-color .36s ease,color .36s ease,border-color .36s ease,box-shadow .36s ease,filter .36s ease
+}
+.calculator-keys button{transition:background-color .36s ease,color .36s ease,border-color .36s ease,box-shadow .36s ease,transform .08s ease}
+.scroll-indicator{transition:opacity .4s ease,transform .4s ease,background-color .36s ease,border-color .36s ease,box-shadow .36s ease}
+
+/* アプリウィンドウの出現・最小化・最大化 */
+.app-window{
+transition:opacity .24s ease,transform .28s cubic-bezier(.2,.82,.2,1),box-shadow .28s ease,background-color .36s ease,color .36s ease,border-color .36s ease,top .3s cubic-bezier(.2,.82,.2,1),right .3s cubic-bezier(.2,.82,.2,1),bottom .3s cubic-bezier(.2,.82,.2,1),left .3s cubic-bezier(.2,.82,.2,1),inset .3s cubic-bezier(.2,.82,.2,1),width .3s cubic-bezier(.2,.82,.2,1),height .3s cubic-bezier(.2,.82,.2,1),border-radius .3s ease
+}
+.app-window.is-minimized{
+display:grid;
+opacity:0;
+visibility:visible;
+pointer-events:none;
+transform:scale(.94) translateY(12px)
+}
+.app-window.is-closing{opacity:0;visibility:visible;transform:scale(.94) translateY(10px);pointer-events:none}
+.app-window.is-focused.is-opening{opacity:.96;transform:scale(.985) translateY(5px)}
+.app-window-titlebar,
+.app-window-content,
+.desktop-taskbar,
+.desktop-task-home,
+.desktop-task-item,
+.desktop-task-meta{
+transition:background-color .36s ease,color .36s ease,border-color .36s ease,box-shadow .36s ease,opacity .24s ease,transform .24s ease
+}
+
+/* スマホではアプリもプロフィールと同じポップアップ表示 */
+@media(max-width:640px){
+body.desktop-app-active .desktop-layer{
+pointer-events:auto;
+background:rgba(3,4,7,.68);
+transition:background .24s ease,backdrop-filter .24s ease;
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px)
+}
+body.desktop-app-closing .desktop-layer{
+pointer-events:auto;
+background:rgba(3,4,7,.68);
+transition:background .24s ease,backdrop-filter .24s ease;
+backdrop-filter:blur(8px);
+-webkit-backdrop-filter:blur(8px)
+}
+body.desktop-app-active .app-window,
+body.desktop-app-active .app-window.is-maximized,
+body.desktop-app-closing .app-window,
+body.desktop-app-closing .app-window.is-maximized,
+html[data-window-system="macos"] body.desktop-app-active .app-window,
+html[data-window-system="macos"] body.desktop-app-active .app-window.is-maximized,
+html[data-window-system="macos"] body.desktop-app-closing .app-window,
+html[data-window-system="macos"] body.desktop-app-closing .app-window.is-maximized{
+inset:auto!important;
+top:50%!important;
+left:50%!important;
+right:auto!important;
+bottom:auto!important;
+width:min(calc(100vw - 24px),560px)!important;
+height:min(calc(100dvh - 118px),720px)!important;
+max-height:calc(100dvh - 96px);
+border:1px solid rgba(255,255,255,.16);
+border-radius:18px;
+opacity:0;
+visibility:hidden;
+transform:translate(-50%,-46%) scale(.94);
+transition:opacity .22s ease,transform .28s cubic-bezier(.2,.82,.2,1),box-shadow .28s ease,background-color .36s ease,color .36s ease,border-color .36s ease
+}
+body.desktop-app-active .app-window.is-focused,
+body.desktop-app-closing .app-window.is-focused{
+opacity:1;
+visibility:visible;
+transform:translate(-50%,-50%) scale(1)
+}
+body.desktop-app-active .app-window.is-focused.is-opening,
+body.desktop-app-closing .app-window.is-focused.is-opening{
+opacity:0;
+visibility:visible;
+transform:translate(-50%,-46%) scale(.94)
+}
+body.desktop-app-active .app-window.is-minimized,
+body.desktop-app-closing .app-window.is-minimized{
+display:grid;
+opacity:0;
+visibility:visible;
+transform:translate(-50%,-44%) scale(.92)
+}
+body.desktop-app-active .app-window.is-closing,
+body.desktop-app-closing .app-window.is-closing{
+opacity:0;
+visibility:visible;
+transform:translate(-50%,-44%) scale(.94)
+}
+body.desktop-app-active .app-window-titlebar,
+body.desktop-app-closing .app-window-titlebar,
+html[data-window-system="macos"] body.desktop-app-active .app-window-titlebar,
+html[data-window-system="macos"] body.desktop-app-closing .app-window-titlebar{height:48px}
+}
+
+/* ライトモードでも同じ情報量とコントラストを保つ */
+body.light-theme .scroll-indicator{
+background:rgba(255,255,255,.84);
+border-color:rgba(0,0,0,.09);
+box-shadow:0 5px 18px rgba(40,40,55,.14)
+}
+body.light-theme .scroll-text,
+body.light-theme .scroll-bored-text{color:#3c3c48;text-shadow:none}
+body.light-theme .scroll-text>span{color:#6c6c78}
+body.light-theme .edge-wing-tab{
+background:rgba(238,238,245,.9);
+border-color:rgba(0,0,0,.1);
+box-shadow:0 14px 38px rgba(38,38,55,.18),inset 0 0 18px rgba(255,255,255,.52)
+}
+body.light-theme .edge-wing-tab:hover{background:#fff;border-color:var(--accent-color)}
+body.light-theme .edge-card-scrim{background:rgba(45,45,60,.14)}
+body.style-default.light-theme .edge-card{background:rgba(244,244,247,.92);color:#2e2e38}
+body.style-default.light-theme .edge-subcard{background:rgba(255,255,255,.74)}
+body.style-default.light-theme .edge-link-list>a,
+body.style-default.light-theme .edge-link-disabled{background:#f0f0f5;color:#2e2e38}
+body.style-default.light-theme .edge-card-note{color:#6e6e79}
+body.style-default.light-theme .item-content{background:rgba(255,255,255,.3);color:#2e2e38;text-shadow:0 1px 3px rgba(255,255,255,.55)}
+body.style-default.light-theme .grid-item:hover,
+body.style-default.light-theme .note-article:hover,
+body.style-default.light-theme .directory-link:hover,
+body.style-default.light-theme .latest-feed .youtube-video:hover,
+body.style-default.light-theme .latest-feed .github-repository:hover,
+body.style-default.light-theme .app-launcher-item:not(:disabled):hover{background:#fff;color:#2e2e38}
+body.style-default.light-theme .note-article-copy strong{color:#2e2e38}
+
+/* ライトモードのアプリウィンドウ */
+body.light-theme .app-window{
+background:#f7f7fa;
+border-color:#d7d7e0;
+box-shadow:0 24px 70px rgba(40,40,55,.2),0 0 0 1px rgba(0,0,0,.03);
+color:#2e2e38
+}
+body.light-theme .app-window-titlebar{background:#ececf1;border-color:#d9d9e2;color:#2e2e38}
+body.light-theme .app-window-icon{background:#fff;color:var(--accent-color)}
+body.light-theme .app-window-controls button{color:#4a4a55}
+body.light-theme .app-window-controls button:hover{background:rgba(0,0,0,.07)}
+body.light-theme .desktop-taskbar{background:rgba(247,247,251,.94);border-color:rgba(0,0,0,.1);box-shadow:0 12px 36px rgba(40,40,55,.18)}
+body.light-theme .desktop-task-home{background:#fff;border-color:rgba(0,0,0,.1);color:var(--accent-color)}
+body.light-theme .desktop-task-item{color:#454550}
+body.light-theme .desktop-task-item:hover,
+body.light-theme .desktop-task-item.is-active{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.1)}
+body.light-theme .desktop-task-meta{border-color:rgba(0,0,0,.1);color:#666673}
+body.light-theme .desktop-window-count{border-color:rgba(0,0,0,.12)}
+body.light-theme .profile-app{background:#f7f7fa;color:#2e2e38;scrollbar-color:#b9bac4 #f7f7fa}
+body.light-theme .profile-app-hero{border-color:#dcdce5}
+body.light-theme .profile-app-hero h2{color:#282831}
+body.light-theme .profile-app-hero span{color:#6d6e78}
+body.light-theme .profile-app-intro{color:#5e5f6b}
+body.light-theme .profile-spec-card{border-color:#d9d9e2;background:#fff}
+body.light-theme .profile-spec-card>header{border-color:#dddde6;background:#f0f0f4}
+body.light-theme .profile-spec-card>header h3{color:#2d2d36}
+body.light-theme .profile-spec-card>header b{border-color:#d0d0da;color:#70717b}
+body.light-theme .profile-spec-row{border-color:#e4e4ea}
+body.light-theme .profile-spec-row dt{color:#777883}
+body.light-theme .profile-spec-row dd{color:#373741}
+body.light-theme .terminal-app,
+body.light-theme .terminal-output{background:#f5f5f8;color:#30303a;scrollbar-color:#b8b9c3 #f5f5f8}
+body.light-theme .terminal-command-line{background:#ececf1}
+body.light-theme .terminal-command-line input{color:#2b2b34}
+body.light-theme .terminal-entered-command b{color:#33333d}
+body.light-theme .terminal-muted{color:#73747f}
+body.light-theme .calculator-app{background:#f3f3f7;color:#30303a}
+body.light-theme .calculator-display{border-color:#d7d7e0;background:#fff}
+body.light-theme .calculator-display input{color:#2d2d36}
+body.light-theme .calculator-display output{color:#747580}
+body.light-theme .calculator-keys button{border-color:#d8d8e0;background:#fff;color:#373740}
+body.light-theme .calculator-keys button:hover{border-color:#b9bac6;background:#f0f0f4}
+body.light-theme .calculator-keys button.is-utility{background:#ececf1;color:#50515b}
+body.light-theme .calculator-keys button.is-equals{color:#fff}
+body.light-theme .paint-app{background:#f4f4f7;color:#30303a}
+body.light-theme .paint-toolbar{border-color:#dadbe3;background:#ececf1}
+body.light-theme .paint-toolbar label{color:#62636e}
+body.light-theme .paint-toolbar button{border-color:#cfd0d9;background:#fff;color:#3a3a44}
+body.light-theme .paint-toolbar button:hover,
+body.light-theme .paint-toolbar button.is-active{background:#e6e6ec}
+body.light-theme .paint-stage{background:#dfe0e7}
+body.light-theme .browser-app,
+body.light-theme .explorer-app{background:#f5f5f8;color:#30303a}
+body.light-theme .browser-toolbar,
+body.light-theme .explorer-toolbar{border-color:#d9dae2;background:#ececf1}
+body.light-theme .browser-toolbar input,
+body.light-theme .browser-toolbar select,
+body.light-theme .explorer-path-form{border-color:#cfd0d9;background:#fff;color:#30303a}
+body.light-theme .browser-start>p,
+body.light-theme .browser-recent h3{color:#777883}
+body.light-theme .browser-mark{border-color:#d9dae2;background:#fff}
+body.light-theme .browser-recent button{border-color:#d5d6df;background:#fff;color:#4a4a55}
+body.light-theme .explorer-sidebar{border-color:#d9dae2;background:#eeeff3}
+body.light-theme .explorer-sidebar button{color:#555661}
+body.light-theme .explorer-sidebar button:hover{border-color:#d1d2db;background:#e4e5eb;color:#2e2e38}
+body.light-theme .explorer-view{background:#f7f7fa}
+body.light-theme .explorer-view>header{border-color:#dedee6}
+body.light-theme .explorer-view>header h2{color:#30303a}
+body.light-theme .explorer-grid{scrollbar-color:#b9bac4 #f7f7fa}
+body.light-theme .explorer-item{border-color:#d7d8e0;background:#fff;color:#363640}
+body.light-theme .explorer-item:hover,
+body.light-theme .explorer-item:focus-visible{border-color:#bfc0ca;background:#f0f0f4}
+body.light-theme .explorer-item-icon{border-color:#d1d2dc;background:#f0f0f4}
+body.light-theme .explorer-view>footer{border-color:#dedee6;background:#eeeff3;color:#777883}
+body.light-theme .file-viewer-app{background:#f6f6f9;color:#34343e}
+
+/* スマホプロフィールポップアップと同じ明るいオーバーレイ */
+body.light-theme .profile-modal-layer{background:rgba(236,236,243,.68)}
+body.light-theme .profile-modal{background:#f7f7fa;border-color:#d7d7e0;box-shadow:0 30px 90px rgba(40,40,55,.22);color:#2e2e38}
+body.light-theme .profile-modal-header{border-color:#d9d9e2;background:#ececf1}
+body.light-theme .profile-modal-header button{color:#4a4a55}
+
+/* 記事ページもライトモードでは本文と埋め込みカードを明るくする */
+body.light-theme.article-page{background:#e8e8ee;color:#2e2e38}
+body.light-theme .article-backdrop{filter:blur(18px) brightness(1.05) saturate(.72);opacity:.42}
+body.light-theme .article-card{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.08);box-shadow:0 20px 70px rgba(40,40,55,.16);color:#2e2e38}
+body.light-theme .article-meta{border-color:#dedee6;color:#6c6d78}
+body.light-theme .article-body blockquote{border-color:#c9cad4;color:#5d5e69}
+body.light-theme .article-body pre{background:#f0f0f4;border-color:#d9dae2;color:#34343e}
+body.light-theme .article-body figcaption{color:#777883}
+body.light-theme .article-embed-card{background:#f2f2f6;border-color:#d7d8e0;color:#34343e}
+body.light-theme .article-embed-card:hover{background:#fff;color:#2e2e38}
+
+@media(prefers-reduced-motion:reduce){
+body.theme-transitioning,
+body.theme-transitioning *,
+body.theme-transitioning *::before,
+body.theme-transitioning *::after{transition-duration:0s!important}
+}
+
+/* ライトモードの基底トークン
+   個別コンポーネントの暗色を一つずつ上書きするのではなく、
+   テーマの基準色を差し替えてページ全体へ伝播させる。 */
+body.style-default{
+--theme-page-bg:#0f0f12;
+--theme-surface:rgba(22,20,26,.65);
+--theme-surface-strong:rgba(37,34,41,.75);
+--theme-surface-soft:rgba(42,37,42,.8);
+--theme-control:rgba(255,255,255,.08);
+--theme-control-hover:rgba(255,255,255,.14);
+--theme-text:#e0e0e6;
+--theme-muted:#9994a2;
+--theme-subtle:#888;
+--theme-border:rgba(255,255,255,.18);
+--theme-card-border:rgba(255,255,255,.1);
+--theme-code-bg:rgba(0,0,0,.38);
+--theme-overlay-rgb:0,0,0
+}
+
+body.light-theme{
+--theme-page-bg:#e8e8ee;
+--theme-surface:rgba(247,247,251,.9);
+--theme-surface-strong:rgba(255,255,255,.92);
+--theme-surface-soft:rgba(240,240,245,.9);
+--theme-control:rgba(255,255,255,.72);
+--theme-control-hover:rgba(255,255,255,.96);
+--theme-text:#2e2e38;
+--theme-muted:#6c6d78;
+--theme-subtle:#777883;
+--theme-border:rgba(38,38,52,.14);
+--theme-card-border:rgba(38,38,52,.1);
+--theme-code-bg:#f0f0f4;
+--theme-overlay-rgb:255,255,255;
+--ui-bg:var(--theme-surface);
+--card-bg:var(--theme-surface-strong);
+--border-color:var(--theme-border);
+--card-border:var(--theme-card-border)
+}
+
+body.light-theme,
+body.light-theme .hero-slider,
+body.light-theme .links-backdrop{
+background-color:var(--theme-page-bg);
+color:var(--theme-text)
+}
+body.light-theme .hero-slider{background-image:none}
+body.light-theme .blur-overlay{background-color:rgba(var(--theme-overlay-rgb),0)}
+body.theme-transitioning .hero-slider{transition:background-color .36s ease}
+
+body.light-theme .floating-status-bar,
+body.light-theme .calendar-popup,
+body.light-theme .content-screen,
+body.light-theme .profile-card,
+body.light-theme .gallery-section,
+body.light-theme .updates-card,
+body.light-theme .links-hero,
+body.light-theme .link-directory,
+body.light-theme .links-latest,
+body.light-theme .error-card,
+body.light-theme .article-card{
+color:var(--theme-text)
+}
+body.light-theme .site-title,
+body.light-theme .profile-desc,
+body.light-theme .note-profile-link,
+body.light-theme .note-article,
+body.light-theme .future-action,
+body.light-theme .grid-item,
+body.light-theme .item-link,
+body.light-theme .directory-link,
+body.light-theme .latest-panel,
+body.light-theme .youtube-video,
+body.light-theme .github-repository,
+body.light-theme .edge-link-list>a,
+body.light-theme .edge-link-disabled,
+body.light-theme .app-launcher-item{
+color:var(--theme-text)
+}
+
+body.light-theme .profile-desc{background:var(--theme-surface-soft);border-color:var(--theme-card-border)}
+body.light-theme .note-profile-link{background:var(--theme-control);border-color:var(--theme-card-border)}
+body.light-theme .note-profile-link:hover{background:var(--theme-control-hover)}
+body.light-theme .note-article,
+body.light-theme .future-action,
+body.light-theme .directory-link,
+body.light-theme .latest-panel,
+body.light-theme .youtube-video,
+body.light-theme .github-repository,
+body.light-theme .edge-link-list>a,
+body.light-theme .edge-link-disabled,
+body.light-theme .app-launcher-item{background:var(--theme-surface-soft);border-color:var(--theme-card-border)}
+body.light-theme .item-link{background:rgba(234,234,238,.9);border-color:var(--theme-card-border)}
+body.light-theme .item-content{background:rgba(255,255,255,.3);color:var(--theme-text);text-shadow:0 1px 3px rgba(255,255,255,.62)}
+body.light-theme .note-article-copy time,
+body.light-theme .section-subtitle,
+body.light-theme .edge-card-note,
+body.light-theme .directory-copy>span,
+body.light-theme .directory-group h3,
+body.light-theme .latest-feed .youtube-video-copy time,
+body.light-theme .github-repository-meta,
+body.light-theme .github-repository>span:last-child{color:var(--theme-muted)}
+body.light-theme .future-action span,
+body.light-theme .note-article-copy>span,
+body.light-theme .youtube-video-copy span{color:var(--accent-color)}
+body.light-theme .grid-item:hover,
+body.light-theme .note-article:hover,
+body.light-theme .directory-link:hover,
+body.light-theme .youtube-video:hover,
+body.light-theme .github-repository:hover,
+body.light-theme .app-launcher-item:not(:disabled):hover{background:var(--theme-control-hover);color:var(--theme-text)}
+
+/* ライトモードの共通部品 */
+body.light-theme .error-card{background:var(--theme-surface);border-color:var(--theme-border);box-shadow:0 24px 90px rgba(40,40,55,.16),var(--glow-effect)}
+body.light-theme .error-message{color:var(--theme-muted)}
+body.light-theme .error-stage::before{background-image:linear-gradient(rgba(40,40,55,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(40,40,55,.08) 1px,transparent 1px)}
+body.light-theme .site-loader{background:var(--theme-page-bg);color:var(--theme-text)}
+body.light-theme .site-loader-status{color:var(--theme-muted)}
+body.light-theme .site-loader-percent{color:var(--theme-text)}
+body.light-theme .site-loader-progress{background:rgba(40,40,55,.12)}
+body.light-theme .article-body pre{background:var(--theme-code-bg);color:var(--theme-text)}
+body.light-theme .article-body blockquote{color:var(--theme-muted)}
+body.light-theme .article-body figcaption{color:var(--theme-muted)}
+body.light-theme .article-embed-card{background:var(--theme-surface-soft);border-color:var(--theme-card-border);color:var(--theme-text)}
+body.light-theme .article-embed-card:hover{background:var(--theme-control-hover);color:var(--theme-text)}
+
+/* ライトモードのサイト内アプリ内部 */
+body.light-theme .app-launcher-icon{background:var(--theme-surface-strong);border-color:color-mix(in srgb,var(--accent-color) 50%,var(--theme-card-border));box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+body.light-theme .app-launcher-heading>span,
+body.light-theme .app-launcher-item.is-empty>span{color:var(--theme-muted)}
+body.light-theme .notepad-app{background:#fbfbfd;color:var(--theme-text)}
+body.light-theme .notepad-toolbar{background:#f0f0f4;border-color:#d9d9e2}
+body.light-theme .notepad-toolbar label{color:var(--theme-muted)}
+body.light-theme .notepad-toolbar input{background:#fff;border-color:#cfd0d9;color:var(--theme-text)}
+body.light-theme .notepad-toolbar button{background:var(--theme-surface-strong);border-color:#cfd0d9;color:var(--theme-text)}
+body.light-theme .notepad-app textarea{background:#fff;color:var(--theme-text)}
+body.light-theme .notepad-status{background:#f0f0f4;border-color:#d9d9e2;color:var(--theme-muted)}
+body.light-theme .paint-color input{background:#fff;border-color:#cfd0d9}
+body.light-theme .paint-size output{color:var(--theme-text)}
+body.light-theme .paint-toolbar button,
+body.light-theme .browser-toolbar button,
+body.light-theme .explorer-toolbar button{background:var(--theme-surface-strong);border-color:#cfd0d9;color:var(--theme-text)}
+body.light-theme .paint-toolbar button:hover,
+body.light-theme .browser-toolbar button:hover,
+body.light-theme .explorer-toolbar button:hover:not(:disabled),
+body.light-theme .paint-toolbar button.is-active{background:var(--theme-control-hover);border-color:#b9bac6}
+body.light-theme .terminal-success{color:#227a3d}
+body.light-theme .terminal-error{color:#ba303b}
+body.light-theme .terminal-entered-command{color:#5d5e69}
+body.light-theme .terminal-entered-command b{color:var(--theme-text)}
+body.light-theme .calculator-display label,
+body.light-theme .calculator-display output{color:var(--theme-muted)}
+body.light-theme .calculator-display output.is-error{color:#ba303b}
+body.light-theme .calculator-keys button.is-operator{color:var(--accent-color)}
+body.light-theme .browser-search-options label,
+body.light-theme .browser-start>p,
+body.light-theme .browser-recent h3,
+body.light-theme .browser-recent p{color:var(--theme-muted)}
+body.light-theme .explorer-toolbar button,
+body.light-theme .explorer-sidebar button{color:var(--theme-muted)}
+body.light-theme .explorer-sidebar button:hover{color:var(--theme-text)}
+body.light-theme .explorer-location-kind,
+body.light-theme .explorer-item-copy small,
+body.light-theme .explorer-item-open,
+body.light-theme .explorer-folder-empty{color:var(--theme-muted)}
+body.light-theme .explorer-count{color:var(--theme-text)}
+
+@media(prefers-reduced-motion:reduce){
+body.light-theme .blur-overlay{transition:none}
+}
