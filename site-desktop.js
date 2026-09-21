@@ -360,6 +360,20 @@ booth:{label:'BOOTH',url:'https://zerrrrro.booth.pm/'},
 github:{label:'GitHub',url:'https://github.com/SuperZero1288'}
 };
 
+// Boot Manager 用の OS レジストリ。公開 OS と隠し OS を分けて保持し、
+// OS を追加する段階では registerBootSystem() を呼ぶだけで一覧・コードネーム検索に反映できます。
+const bootSystems={visible:[],hidden:[]};
+const registerBootSystem=(definition,{hidden=false}={})=>{
+const source=typeof definition==='string'?{codename:definition,label:definition}:definition||{};
+const codename=String(source.codename||'').trim();
+if(!codename)return null;
+const entry={...source,codename,label:String(source.label||codename)};
+const target=hidden?bootSystems.hidden:bootSystems.visible;
+const existing=target.findIndex(item=>item.codename.toLowerCase()===codename.toLowerCase());
+if(existing>=0)target[existing]=entry;else target.push(entry);
+return entry;
+};
+
 function getPrompt(path='/home'){
 const system=document.documentElement.dataset.windowSystem;
 return system==='macos'?`zero@portfolio ${vfs.toDisplayPath(path,'macos')} %`:`${vfs.toDisplayPath(path,'windows')}>`;
@@ -1528,17 +1542,134 @@ write('  hack os [macos|windows|linux|auto]');
 write('  profile / device              プロフィール・端末情報');
 write('  calc / paint / notepad / browser  アプリを開く');
 write('  windows / window ACTION ID    ウィンドウ管理');
+write('  bootmgr                      PC用 Boot Manager');
 write('  history / clear / date / echo 基本コマンド');
 write('Tab: 補完  ↑↓: 履歴  Ctrl+L: 画面消去','muted');
 if(all){
 write('');
 write('隠しコマンド','accent');
-write('  matrix / fortune / sudo / boot');
+write('  matrix / fortune / sudo / boot / bootmgr');
 write('隠しファイルは ls -a または dir /a で表示できます','muted');
 }
 };
 
+const writeBootCommand=command=>{
+const line=document.createElement('div');
+line.className='terminal-line terminal-entered-command terminal-boot-command';
+const prefix=document.createElement('span');
+prefix.textContent='bootmgr> ';
+const value=document.createElement('b');
+value.textContent=command;
+line.append(prefix,value);
+output.appendChild(line);
+output.scrollTop=output.scrollHeight;
+};
+let bootManagerState=null;
+const bootSystemsForLookup=()=>[...bootSystems.visible,...bootSystems.hidden];
+const restoreTerminalInput=()=>{
+bootManagerState=null;
+input.setAttribute('aria-label','コマンド');
+input.placeholder='';
+updatePrompt();
+};
+const showBootMenu=()=>{
+bootManagerState={screen:'menu'};
+prompt.textContent='bootmgr>';
+input.setAttribute('aria-label','Boot Manager command');
+input.removeAttribute('placeholder');
+write('ZERO SITE BOOT MANAGER','accent');
+write('[1.Select from list]');
+write('[2.Type to select]');
+write('[3.Quit]');
+write('Select an option (1/2/3):','muted');
+};
+const showBootList=()=>{
+bootManagerState={screen:'list'};
+write('Bootable operating systems','accent');
+if(!bootSystems.visible.length)write('No bootable OS is installed.','muted');
+bootSystems.visible.forEach((entry,index)=>write(`${index+1}. ${entry.label} (${entry.codename})`));
+write(`${bootSystems.visible.length+1}. Quit`);
+write('Select an OS number (or Q to return):','muted');
+};
+const showBootType=()=>{
+bootManagerState={screen:'type'};
+write('Type an OS codename (Q or Quit to return):','muted');
+};
+const showBootConfirmation=entry=>{
+bootManagerState={screen:'confirm',entry};
+write(`Are you sure you want to boot ${entry.codename}?`,'accent');
+write('Y/N:','muted');
+};
+const finishBootManager=()=>{
+write('Boot Manager exited.','success');
+restoreTerminalInput();
+};
+const bootSelectedSystem=entry=>{
+write(`Booting ${entry.codename}...`,'accent');
+if(typeof entry.boot==='function'){
+try{entry.boot(entry);}catch(error){write(`Boot failed: ${error?.message||'unknown error'}`,'error');}
+}else write('No bootable OS image is installed yet.','muted');
+restoreTerminalInput();
+};
+const handleBootManagerInput=raw=>{
+const value=String(raw||'').trim();
+const lower=value.toLowerCase();
+if(!bootManagerState)return;
+if(bootManagerState.screen==='menu'){
+if(value==='1'){showBootList();return;}
+if(value==='2'){showBootType();return;}
+if(value==='3'||lower==='q'||lower==='quit'){finishBootManager();return;}
+write('Please select 1, 2, or 3.','error');
+write('Select an option (1/2/3):','muted');
+return;
+}
+if(bootManagerState.screen==='list'){
+if(lower==='q'||lower==='quit'){showBootMenu();return;}
+const selected=Number(value);
+const quitIndex=bootSystems.visible.length+1;
+if(Number.isInteger(selected)&&selected===quitIndex){finishBootManager();return;}
+const entry=Number.isInteger(selected)&&selected>=1?bootSystems.visible[selected-1]:null;
+if(entry){showBootConfirmation(entry);return;}
+write('Invalid OS selection.','error');
+write(`Select an OS number (1-${quitIndex}) or Q to return:`,'muted');
+return;
+}
+if(bootManagerState.screen==='type'){
+if(lower==='q'||lower==='quit'){showBootMenu();return;}
+const entry=bootSystemsForLookup().find(item=>item.codename.toLowerCase()===lower);
+if(entry){showBootConfirmation(entry);return;}
+bootManagerState={screen:'not-found'};
+write('No bootable OS with that codename was found.','error');
+write('Q) Quit    R) Retry','muted');
+return;
+}
+if(bootManagerState.screen==='not-found'){
+if(lower==='q'||lower==='quit'){showBootMenu();return;}
+if(lower==='r'||lower==='retry'){showBootType();return;}
+write('Enter Q to quit or R to retry.','muted');
+return;
+}
+if(bootManagerState.screen==='confirm'){
+if(lower==='y'||lower==='yes'){bootSelectedSystem(bootManagerState.entry);return;}
+if(lower==='n'||lower==='no'){showBootMenu();return;}
+write('Please answer Y or N.','muted');
+}
+};
+const startBootManager=()=>{
+const state=controller.getDeviceState();
+if(isMobileLayout()){
+write('bootmgr is available on PC only. Mobile devices are not supported.','error');
+return;
+}
+if(state.hacked){
+write('bootmgr is disabled while an OS hack is active. Run "hack reset" first.','error');
+return;
+}
+showBootMenu();
+};
+
 const execute=raw=>{
+if(bootManagerState){handleBootManagerInput(raw);return;}
 const tokens=tokenize(raw.trim());
 if(!tokens.length)return;
 const command=tokens.shift().toLowerCase();
@@ -1674,6 +1805,7 @@ const fortunes=['作りかけの場所には、未来が置いてある。','404
 write(fortunes[Math.floor(Math.random()*fortunes.length)],'accent');break;
 }
 case'sudo':write('権限はすでにあります。この世界では、あなたが管理者です。','success');break;
+case'bootmgr':startBootManager();break;
 case'boot':write('ZERO SITE OS // all virtual systems operational','accent');write(`mounted: ${vfs.entries.length} entries`);write(`windows: ${windows.size} active`);write('hint: ls -a /','muted');break;
 default:write(`'${command}' はサイトコマンドとして認識されていません。help で一覧を表示できます。`,'error');
 }
@@ -1681,10 +1813,11 @@ default:write(`'${command}' はサイトコマンドとして認識されてい�
 
 form.addEventListener('submit',event=>{
 event.preventDefault();const command=input.value.trim();if(!command)return;
-writeCommand(command);history.push(command);history=history.slice(-100);historyIndex=history.length;persistHistory();input.value='';execute(command);output.scrollTop=output.scrollHeight;
+if(bootManagerState)writeBootCommand(command);else writeCommand(command);
+history.push(command);history=history.slice(-100);historyIndex=history.length;persistHistory();input.value='';execute(command);output.scrollTop=output.scrollHeight;
 });
 
-const baseCommands=['help','pwd','cd','ls','dir','tree','cat','type','access','explorer','note','device','theme','mode','clock','settings','hack','open','new','profile','calculator','paint','notepad','browser','windows','window','minimize','maximize','close','date','whoami','ver','history','clear'];
+const baseCommands=['help','pwd','cd','ls','dir','tree','cat','type','access','explorer','note','device','theme','mode','clock','settings','hack','open','new','profile','calculator','paint','notepad','browser','windows','window','bootmgr','minimize','maximize','close','date','whoami','ver','history','clear'];
 const hiddenCommands=['matrix','fortune','sudo','boot'];
 const completionOptions={theme:['list','next','set','default','material','liquidglass','fluent','vrchat','unity'],mode:['dark','light','toggle'],clock:['12','24'],hack:['os','status','reset'],note:['latest','profile'],window:['focus','close','minimize','maximize','restore'],history:['clear']};
 const completeInput=()=>{
@@ -1710,7 +1843,14 @@ else if(event.key==='l'&&event.ctrlKey){event.preventDefault();output.replaceChi
 else if(event.key==='Tab'){event.preventDefault();completeInput();}
 });
 content.addEventListener('pointerdown',event=>{if(!event.target.closest('button'))requestAnimationFrame(()=>input.focus());});
-const onHackChange=()=>updatePrompt();
+const onHackChange=()=>{
+const state=controller.getDeviceState();
+if(bootManagerState&&state.hacked){
+write('Boot Manager terminated: an OS hack is active.','error');
+restoreTerminalInput();
+}
+updatePrompt();
+};
 window.addEventListener('zero:devicehackchange',onHackChange);
 updatePrompt();write('ZERO SITE TERMINAL [Version 2.0.0]','accent');write('Virtual filesystem mounted.  help でコマンドを表示します。','muted');write('');
 return{focusTarget:input,dispose:()=>{if(disposed)return;disposed=true;window.removeEventListener('zero:devicehackchange',onHackChange);}};
@@ -1737,5 +1877,5 @@ toggleMinimize(next,false);focusWindow(next);
 }
 });
 
-window.zeroSiteDesktop={openTerminal,openCalculator,openPaint,openNotepad,openBrowser,openProfile,openExplorer,getWindows:()=>[...windows.values()].map(({id,title,appId,minimized,maximized})=>({id,title,appId,minimized,maximized}))};
+window.zeroSiteDesktop={openTerminal,openCalculator,openPaint,openNotepad,openBrowser,openProfile,openExplorer,registerBootSystem,bootSystems,getWindows:()=>[...windows.values()].map(({id,title,appId,minimized,maximized})=>({id,title,appId,minimized,maximized}))};
 })();

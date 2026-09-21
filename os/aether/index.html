@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>AetherOS 1.0</title>
+  <link rel="stylesheet" href="aether.css?v=1.0.20">
+</head>
+<body>
+  <main id="aether-boot" class="aether-boot" aria-live="polite">
+    <div class="aether-boot-panel">
+      <p class="aether-boot-brand">AETHER BIOS v4.51PG</p>
+      <p class="aether-boot-version">Copyright (C) 1984-97, Omnivast Corporation.</p>
+      <div class="aether-boot-log" id="aetherBootLog"></div>
+      <div class="aether-boot-progress" aria-label="AetherOS boot progress">
+        <span id="aetherBootProgress"></span>
+      </div>
+      <p class="aether-boot-status" id="aetherBootStatus">システムを起動しています...</p>
+      <div class="aether-boot-footer"><p>Press <strong>DEL</strong> to enter SETUP</p><p>09/13/97-AETHER-2A59I9Q1GC-00</p></div>
+      <div class="aether-boot-license" aria-label="React95 Icons license"><p>React95 Icons — Copyright (c) 2018 React95 — MIT License.</p><p>Windows and all associated images are the property of the Microsoft Corp and are not covered by this license.</p><p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p><p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p><p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></div>
+    </div>
+  </main>
+
+  <main id="aether-os-boot" class="aether-os-boot" hidden aria-live="polite">
+    <div class="aether-os-boot-panel">
+      <div class="aether-os-logo" aria-label="AetherOS 1.0">
+        <span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span>
+        <strong>AetherOS</strong><sup>1.0</sup>
+      </div>
+      <p class="aether-os-boot-status" id="aetherOsBootStatus">Starting AetherOS...</p>
+      <div class="aether-os-progress" aria-label="AetherOS startup progress"><span id="aetherOsBootProgress"></span></div>
+      <p class="aether-os-copyright">Copyright (C) 1997 Omnivast Corporation</p>
+    </div>
+  </main>
+
+  <main id="aether-desktop" class="aether-desktop" hidden>
+    <div class="aether-wallpaper" aria-hidden="true"></div>
+    <section class="aether-icons" aria-label="デスクトップ">
+      <button class="aether-icon" type="button" data-aether-app="explorer">
+        <span class="aether-icon-art aether-icon-computer" aria-hidden="true"><img src="../../assets/aether/icons/computer.svg" alt=""></span>
+        <span>My Computer</span>
+      </button>
+      <button class="aether-icon" type="button" data-aether-app="notepad">
+        <span class="aether-icon-art aether-icon-notepad" aria-hidden="true"><img src="../../assets/aether/icons/notepad.svg" alt=""></span>
+        <span>Notepad</span>
+      </button>
+      <button class="aether-icon" type="button" data-aether-app="paint">
+        <span class="aether-icon-art aether-icon-paint" aria-hidden="true"><img src="../../assets/aether/icons/paint.svg" alt=""></span>
+        <span>Paint</span>
+      </button>
+      <button class="aether-icon" type="button" data-aether-app="browser">
+        <span class="aether-icon-art aether-icon-browser" aria-hidden="true"><img src="../../assets/aether/icons/browser-globe.svg" alt=""></span>
+        <span>AetherExplorer</span>
+      </button>
+      <button class="aether-icon" type="button" data-aether-app="terminal">
+        <span class="aether-icon-art aether-icon-terminal" aria-hidden="true"><span class="aether-terminal-glyph">&gt;_</span></span>
+        <span>Aether Console</span>
+      </button>
+      <button class="aether-icon" type="button" data-aether-app="recycle">
+        <span class="aether-icon-art aether-icon-trash" aria-hidden="true"><img src="../../assets/aether/icons/trash.svg" alt=""></span>
+        <span>Recycle Bin</span>
+      </button>
+    </section>
+
+    <div class="aether-windows" id="aetherWindows" aria-live="polite"></div>
+
+    <nav class="aether-start-menu" id="aetherStartMenu" aria-label="AetherOS Start menu" hidden>
+      <div class="aether-start-banner"><div class="aether-start-brand"><span class="aether-start-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong></div><span>1.0</span></div>
+      <div class="aether-start-items">
+        <div class="aether-start-section">Programs</div>
+        <button type="button" data-aether-app="explorer"><span><img src="../../assets/aether/icons/computer.svg" alt=""></span>Explorer.exe</button>
+        <button type="button" data-aether-app="notepad"><span><img src="../../assets/aether/icons/notepad.svg" alt=""></span>Notepad.exe</button>
+        <button type="button" data-aether-app="paint"><span><img src="../../assets/aether/icons/paint.svg" alt=""></span>Paint.exe</button>
+        <button type="button" data-aether-app="browser"><span><img src="../../assets/aether/icons/browser-globe.svg" alt=""></span>AetherExplorer.exe</button>
+        <button type="button" data-aether-app="terminal"><span class="aether-start-terminal-glyph">&gt;_</span>Aether Console</button>
+        <button type="button" data-aether-app="recycle"><span><img src="../../assets/aether/icons/trash.svg" alt=""></span>Recycle Bin</button>
+        <div class="aether-start-divider"></div>
+        <div class="aether-start-section">System</div>
+        <button type="button" data-aether-app="about"><span><img src="../../assets/aether/icons/about.svg" alt=""></span>About AetherOS</button>
+      </div>
+      <div class="aether-start-footer"><span>System ready</span><span class="aether-power-actions"><button type="button" id="aetherShutdownButton">Shut Down</button><button type="button" id="aetherRestartButton">Restart</button></span></div>
+    </nav>
+
+    <footer class="aether-taskbar">
+      <button class="aether-start-button" id="aetherStartButton" type="button" aria-expanded="false"><span class="aether-start-mark">◆</span> Start</button>
+      <div class="aether-task-buttons" id="aetherTaskButtons" role="toolbar" aria-label="Open windows"></div>
+      <div class="aether-tray" aria-label="システムトレイ">
+        <button class="aether-tray-item aether-network-status" id="aetherNetworkStatus" type="button" aria-label="LAN: オフライン" title="LAN: オフライン"><img class="aether-tray-icon" src="../../assets/aether/icons/network-tray.svg" alt=""></button>
+        <button class="aether-tray-item aether-volume-status" id="aetherVolumeButton" type="button" aria-pressed="false" aria-label="音量: 100パーセント" title="音量: 100パーセント"><img class="aether-tray-icon" id="aetherVolumeIcon" src="../../assets/aether/icons/volume-on-tray.svg" alt=""></button>
+        <time class="aether-tray-time" id="aetherClock">00:00</time>
+      </div>
+    </footer>
+  </main>
+
+  <script src="aether.js?v=1.0.20"></script>
+</body>
+</html>

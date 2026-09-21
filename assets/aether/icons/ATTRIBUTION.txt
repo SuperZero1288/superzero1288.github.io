@@ -1,0 +1,20 @@
+AetherOS icon set
+==================
+
+The PNG icons in this folder are adapted from Kenney's "Game Icons" pack.
+The pack is released under CC0 (public domain dedication). Attribution is
+optional; this project keeps the creator credit here as a courtesy.
+
+Creator: Kenney (https://kenney.nl/)
+Source: https://opengameart.org/content/game-icons
+License: CC0 — https://creativecommons.org/publicdomain/zero/1.0/
+
+The complete downloaded source archive is kept in
+assets/aether/kenney-game-icons.zip and its extracted source files are under
+assets/aether/source/kenney-icons.
+
+The active AetherOS UI icons are provided by React95 Icons (@react95/icons,
+version 2.5.3). Windows and all associated images are the property of the
+Microsoft Corp and are not covered by the React95 license. The React95 source
+is used under the MIT License; see REACT95-LICENSE.txt for the copyright
+notice and full license text.

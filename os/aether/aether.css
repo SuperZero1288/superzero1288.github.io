@@ -1,0 +1,454 @@
+:root {
+  --aether-teal: #008080;
+  --aether-gray: #c0c0c0;
+  --aether-light: #ffffff;
+  --aether-shadow: #808080;
+  --aether-dark: #000000;
+  --aether-navy: #000080;
+  --aether-navy-dark: #00004c;
+  --aether-text: #111111;
+  --aether-focus: #ffff00;
+}
+
+* { box-sizing: border-box; }
+
+html, body { width: 100%; height: 100%; margin: 0; }
+
+body {
+  overflow: hidden;
+  background: var(--aether-teal);
+  color: var(--aether-text);
+  font-family: "MS Gothic", "ＭＳ ゴシック", "Courier New", monospace;
+  font-size: 14px;
+  image-rendering: pixelated;
+  visibility: hidden;
+}
+
+body.aether-authorized { visibility: visible; }
+
+button, textarea { font: inherit; }
+
+button { color: inherit; }
+
+button:focus-visible, textarea:focus-visible {
+  outline: 1px dotted var(--aether-dark);
+  outline-offset: -3px;
+}
+
+[hidden] { display: none !important; }
+
+.aether-boot {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: #030303;
+  color: #d7d7d7;
+}
+
+.aether-boot-panel {
+  position: relative;
+  width: min(100vw, 100vh);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 28px 34px;
+  background: #030303;
+}
+
+.aether-boot-brand {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  letter-spacing: .04em;
+}
+
+.aether-boot-version { margin: 6px 0 26px; color: #d0d0d0; }
+
+.aether-boot-log {
+  min-height: 225px;
+  color: #bfbfbf;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.aether-boot-log .is-ok { color: #fff; }
+.aether-boot-cursor { display: block; width: 10px; height: 18px; margin-top: 5px; background: #fff; animation: aether-cursor-blink 1s steps(1, end) infinite; }
+@keyframes aether-cursor-blink { 0%, 45% { opacity: 1; } 46%, 100% { opacity: 0; } }
+
+.aether-boot-progress {
+  position: absolute;
+  right: 34px;
+  bottom: 91px;
+  left: 34px;
+  height: 3px;
+  background: #252525;
+}
+
+.aether-boot-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #e6e6e6;
+  transition: width .35s steps(5, end);
+}
+
+.aether-boot-status { position: absolute; right: 34px; bottom: 69px; left: 34px; min-height: 1.5em; margin: 0; color: #aaa; }
+.aether-boot-footer { position: absolute; inset: auto 34px 24px; color: #c8c8c8; line-height: 1.55; }
+.aether-boot-footer p { margin: 0; }
+.aether-boot-license {
+  position: absolute;
+  right: 34px;
+  bottom: 112px;
+  left: 34px;
+  max-height: 4.6em;
+  overflow: auto;
+  color: #777;
+  font-size: .58rem;
+  line-height: 1.32;
+  scrollbar-color: #666 #151515;
+}
+.aether-boot-license p { margin: 0 0 .3em; }
+
+.aether-os-boot {
+  display: grid;
+  min-height: 100%;
+  place-items: center;
+  background: #000;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.aether-os-boot.is-visible { opacity: 1; }
+.aether-os-boot-panel {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: min(100vw, 100vh);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 12%;
+  background: #000;
+}
+.aether-os-boot-panel > * {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .55s ease, transform .55s ease;
+}
+.aether-os-boot.is-visible .aether-os-boot-panel > * { opacity: 1; transform: none; }
+.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(1) { transition-delay: .18s; }
+.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(2) { transition-delay: .4s; }
+.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(3) { transition-delay: .58s; }
+.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(4) { transition-delay: .72s; }
+.aether-os-logo { display: flex; align-items: center; gap: 8px; color: #f2f2f2; font-family: Arial, sans-serif; font-size: clamp(2rem, 6vw, 4.2rem); letter-spacing: -.08em; }
+.aether-os-logo strong { font-weight: 500; }
+.aether-os-logo sup { align-self: flex-start; margin-top: .25em; font-size: .28em; letter-spacing: 0; }
+.aether-os-logo-symbol { position: relative; display: block; width: .72em; height: .72em; border: .075em solid #f0f0f0; border-radius: .16em; transform: rotate(45deg); }
+.aether-os-logo-symbol::before, .aether-os-logo-symbol::after { position: absolute; content: ''; }
+.aether-os-logo-symbol::before { top: 50%; left: 50%; width: 64%; height: 64%; border: .06em solid #91aaff; border-radius: 50%; transform: translate(-50%, -50%); }
+.aether-os-logo-symbol::after { display: none; }
+.aether-os-logo-symbol i { position: absolute; top: 50%; left: 10%; z-index: 1; width: 80%; height: .075em; background: #f0f0f0; transform: translateY(-50%); }
+.aether-os-boot-status { min-height: 1.5em; margin: 34px 0 12px; color: #cfcfcf; font-size: clamp(.72rem, 1.5vw, .95rem); }
+.aether-os-progress { display: flex; gap: 2px; width: min(260px, 70%); height: 14px; padding: 2px; border: 1px solid #aaa; border-radius: 4px; background: #111; }
+.aether-os-progress > span { display: flex; flex: 1; gap: 2px; width: 100%; height: 100%; }
+.aether-os-progress-block { display: block; flex: 1; height: 100%; border-radius: 1px; opacity: 0; background: linear-gradient(180deg, #c8d5ff 0%, #7893ff 48%, #3e5de0 100%); }
+.aether-os-progress-block.is-active { opacity: 1; }
+.aether-os-copyright { position: absolute; right: 6%; bottom: 7%; left: 6%; margin: 0; color: #cfcfcf; font-size: clamp(.65rem, 1.4vw, .85rem); }
+
+.aether-desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--aether-teal);
+}
+
+.aether-wallpaper {
+  position: absolute;
+  inset: 0 0 30px;
+  background-color: var(--aether-teal);
+  background-image: radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+.aether-icons {
+  position: absolute;
+  z-index: 1;
+  inset: 12px auto auto 12px;
+  display: grid;
+  grid-template-columns: 118px;
+  gap: 12px;
+}
+
+.aether-icon {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  width: 118px;
+  min-width: 118px;
+  padding: 4px 3px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #fff;
+  text-shadow: 1px 1px #000;
+  cursor: default;
+}
+
+.aether-icon > span:last-child { display: block; width: 100%; overflow-wrap: anywhere; text-align: center; line-height: 1.15; }
+
+.aether-icon:hover, .aether-icon:focus-visible { border-color: #fff; }
+
+.aether-icon-art {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 50px;
+  border: 0;
+  background: transparent;
+  text-shadow: none;
+}
+
+.aether-icon-art img {
+  display: block;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.aether-legacy-blue-icon {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(90%) saturate(1330%) hue-rotate(198deg) brightness(87%) contrast(95%);
+}
+.aether-terminal-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 34px;
+  border: 1px solid #4c4c4c;
+  background: #000;
+  box-shadow: inset 0 0 0 1px #1e1e1e;
+  color: #39d46a;
+  font: 700 1.2rem/1 "Courier New", monospace;
+  letter-spacing: -.08em;
+}
+.aether-icon-art.aether-icon-computer,
+.aether-icon-art.aether-icon-notepad,
+.aether-icon-art.aether-icon-terminal,
+.aether-icon-art.aether-icon-about,
+.aether-icon-art.aether-icon-trash,
+.aether-icon-art.aether-icon-paint,
+.aether-icon-art.aether-icon-browser { background: transparent; }
+
+.aether-windows { position: absolute; inset: 0 0 30px; z-index: 3; pointer-events: none; }
+
+.aether-window {
+  position: absolute;
+  display: grid;
+  grid-template-rows: 25px minmax(0, 1fr);
+  min-width: 260px;
+  min-height: 150px;
+  width: min(560px, calc(100% - 32px));
+  height: min(390px, calc(100% - 54px));
+  border: 2px outset var(--aether-gray);
+  background: var(--aether-gray);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, .45);
+  pointer-events: auto;
+  resize: both;
+  overflow: hidden;
+}
+
+.aether-window.is-minimized { display: none; }
+.aether-window.is-maximized { inset: 4px !important; width: auto !important; height: auto !important; resize: none; }
+
+.aether-titlebar {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 2px 3px 2px 6px;
+  background: var(--aether-navy);
+  color: #fff;
+  user-select: none;
+  cursor: default;
+}
+
+.aether-titlebar strong { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aether-window-icon, .aether-task-icon { display: inline-block; width: 16px; height: 16px; margin-right: 3px; object-fit: contain; vertical-align: -3px; image-rendering: pixelated; }
+.aether-task-icon { }
+.aether-window-icon-text, .aether-task-icon-text { display: inline-block; margin-right: 3px; }
+.aether-window-icon-terminal, .aether-task-icon-terminal { display: inline-block; min-width: 16px; margin-right: 3px; font: 700 13px/1 "Courier New", monospace; letter-spacing: -.18em; vertical-align: -2px; }
+.aether-window-icon-terminal { min-width: 21px; height: 15px; padding: 0 2px; border: 1px solid #555; background: #000; color: #39d46a; font-size: 11px; letter-spacing: -.08em; }
+.aether-task-icon-terminal { min-width: 21px; height: 15px; padding: 0 2px; border: 1px solid #555; background: #000; color: #39d46a; font-size: 11px; letter-spacing: -.08em; }
+
+.aether-title-controls { display: flex; gap: 2px; }
+.aether-title-controls button {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 2px outset var(--aether-gray);
+  background: var(--aether-gray);
+  color: #000;
+  font: bold 12px/1 Arial, sans-serif;
+}
+.aether-title-controls button:active { border-style: inset; }
+
+.aether-window-body { min-height: 0; overflow: auto; padding: 12px; background: var(--aether-gray); }
+.aether-window.has-explorer .aether-window-body { overflow: hidden; padding: 0; }
+
+.aether-panel { border: 2px inset var(--aether-gray); background: #fff; color: #111; }
+.aether-panel-heading { padding: 7px 9px; border-bottom: 1px solid var(--aether-shadow); background: #e6e6e6; font-weight: bold; }
+.aether-file-list { display: grid; gap: 0; padding: 6px; }
+.aether-file-list button { display: flex; gap: 10px; align-items: center; padding: 7px 9px; border: 1px solid transparent; background: transparent; text-align: left; cursor: default; }
+.aether-file-list button:hover, .aether-file-list button:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-file-icon { display: block; flex: 0 0 24px; width: 24px; height: 24px; object-fit: contain; image-rendering: pixelated; }
+.aether-explorer .aether-file-icon, .aether-explorer .aether-quick-icon { filter: none; }
+.aether-file-icon-text { display: inline-grid; place-items: center; width: 24px; color: var(--aether-navy); font-weight: bold; }
+.aether-file-icon-terminal { display: inline-grid; flex: 0 0 22px; place-items: center; width: 22px; height: 17px; border: 1px solid #555; background: #000; color: #39d46a; font: 700 11px/1 "Courier New", monospace; letter-spacing: -.08em; }
+
+.aether-explorer { display: grid; grid-template-rows: auto auto auto minmax(0, 1fr) auto; height: 100%; min-height: 250px; color: #111; }
+.aether-explorer-menu { display: flex; gap: 18px; padding: 4px 7px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; }
+.aether-explorer-menu button, .aether-explorer-toolbar button { padding: 2px 7px; border: 1px solid transparent; background: transparent; text-align: left; }
+.aether-explorer-menu button:hover, .aether-explorer-toolbar button:hover { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-explorer-toolbar { display: flex; align-items: center; gap: 4px; padding: 4px; border-bottom: 2px outset var(--aether-gray); }
+.aether-explorer-toolbar button { border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+.aether-explorer-address { display: flex; align-items: center; gap: 6px; padding: 4px 6px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; }
+.aether-explorer-address strong { white-space: nowrap; }
+.aether-explorer-address span { min-width: 0; flex: 1; padding: 3px 6px; border: 2px inset var(--aether-gray); background: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aether-explorer-main { min-width: 0; min-height: 0; display: grid; grid-template-columns: 155px minmax(0, 1fr); overflow: hidden; border: 2px inset var(--aether-gray); background: #fff; }
+.aether-explorer-sidebar { min-height: 0; overflow: auto; padding: 7px; border-right: 1px solid var(--aether-shadow); background: #e8e8e8; line-height: 1.45; }
+.aether-explorer-sidebar strong { display: block; color: var(--aether-navy); }
+.aether-quick-access { display: grid; gap: 2px; margin: 4px 0 12px; }
+.aether-quick-access button { display: flex; align-items: center; gap: 6px; width: 100%; padding: 3px 4px; border: 1px solid transparent; background: transparent; text-align: left; }
+.aether-quick-access button:hover, .aether-quick-access button:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-quick-icon { display: block; flex: 0 0 18px; width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; }
+.aether-other-place { display: flex; align-items: center; gap: 6px; width: 100%; padding: 3px 4px; border: 1px solid transparent; background: transparent; text-align: left; }
+.aether-other-place:hover, .aether-other-place:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-explorer-content { min-width: 0; overflow: auto; }
+.aether-explorer-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.aether-explorer-table th { padding: 4px 7px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; text-align: left; white-space: nowrap; }
+.aether-explorer-table td { padding: 5px 7px; border: 1px solid transparent; vertical-align: top; }
+.aether-explorer-table tr:hover td, .aether-explorer-table tr:focus-within td { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-explorer-entry { display: flex; gap: 7px; width: 100%; padding: 0; border: 0; background: transparent; text-align: left; }
+.aether-explorer-entry strong { white-space: nowrap; }
+.aether-explorer-status { padding: 4px 7px; border-top: 1px solid var(--aether-shadow); background: #e8e8e8; font-size: .8rem; }
+
+.aether-about { line-height: 1.7; }
+.aether-about h2 { margin: 0 0 10px; font-size: 1.2rem; }
+.aether-about p { margin: 8px 0; }
+.aether-about-logo { justify-content: center; width: 100%; margin: 0 0 12px; color: #111; font-size: 2rem; }
+.aether-about-logo .aether-os-logo-symbol { border-color: #111; }
+.aether-about-logo .aether-os-logo-symbol::before { border-color: #111; }
+.aether-about-logo .aether-os-logo-symbol::after, .aether-about-logo .aether-os-logo-symbol i { background: #111; }
+.aether-inset { padding: 8px; border: 2px inset var(--aether-gray); background: #e8e8e8; }
+
+.aether-notepad { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; height: 100%; }
+.aether-notepad textarea { min-height: 160px; width: 100%; resize: none; padding: 8px; border: 2px inset var(--aether-gray); background: #fff; color: #111; line-height: 1.5; }
+.aether-notepad-actions { display: flex; justify-content: flex-end; gap: 6px; }
+.aether-button { padding: 4px 12px; border: 2px outset var(--aether-gray); background: var(--aether-gray); cursor: default; }
+.aether-button:active { border-style: inset; }
+
+.aether-console { display: grid; grid-template-rows: minmax(0, 1fr) auto; height: 100%; min-height: 220px; background: #000; color: #d7ffd0; font-family: "Courier New", monospace; }
+.aether-console-output { overflow: auto; padding: 9px; white-space: pre-wrap; }
+.aether-console-form { display: flex; gap: 7px; padding: 8px; border-top: 1px solid #363636; }
+.aether-console-form span { color: #fff; }
+.aether-console-form input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; }
+
+.aether-browser { display: grid; grid-template-rows: auto auto auto auto minmax(0, 1fr) auto; gap: 0; height: 100%; min-height: 220px; color: #111; background: #d4d0c8; }
+.aether-ie-menu { display: flex; gap: 18px; padding: 3px 8px; border-bottom: 1px solid #888; background: #d4d0c8; font-size: .82rem; }
+.aether-ie-menu button, .aether-ie-links button { padding: 1px 2px; border: 0; background: transparent; text-align: left; }
+.aether-ie-nav { display: flex; align-items: center; gap: 4px; padding: 4px 6px; border-bottom: 1px solid #888; background: #d4d0c8; }
+.aether-ie-nav button { min-width: 34px; padding: 3px 5px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+.aether-ie-nav button:disabled { color: #777; }
+.aether-ie-address { display: flex; gap: 5px; align-items: center; padding: 4px 6px; border-bottom: 1px solid #888; background: #d4d0c8; }
+.aether-ie-address label { font-size: .78rem; }
+.aether-ie-address input { min-width: 0; flex: 1; padding: 3px 6px; border: 2px inset var(--aether-gray); background: #fff; color: #111; }
+.aether-ie-address button { padding: 3px 9px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+.aether-ie-links { padding: 3px 8px; border-bottom: 1px solid #aaa; background: #e6e2d9; color: #174f93; font-size: .78rem; }
+.aether-browser-view { min-height: 0; overflow: auto; padding: 18px; border: 2px inset var(--aether-gray); background: #fff; color: #111; }
+.aether-browser-view h2 { margin: 0 0 10px; font-size: 1.2rem; }
+.aether-browser-view p { margin: 8px 0; line-height: 1.6; }
+.aether-browser-offline { padding: 10px; border: 1px solid #888; background: #eee; font-family: "Courier New", monospace; }
+.aether-ie-status { padding: 2px 7px; border-top: 1px solid #888; background: #d4d0c8; color: #333; font-size: .74rem; }
+
+.aether-paint { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; height: 100%; min-height: 220px; color: #111; }
+.aether-paint-toolbar { display: flex; align-items: center; gap: 6px; padding: 4px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+.aether-paint-toolbar label { display: inline-flex; align-items: center; gap: 4px; }
+.aether-paint-toolbar input[type="color"] { width: 28px; height: 22px; padding: 0; border: 1px inset var(--aether-gray); }
+.aether-paint-toolbar button, .aether-paint-actions button { padding: 3px 9px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+.aether-paint-canvas-wrap { min-height: 0; overflow: auto; padding: 10px; border: 2px inset var(--aether-gray); background: #777; }
+.aether-paint-canvas { display: block; width: 100%; min-width: 320px; height: auto; background: #fff; image-rendering: pixelated; touch-action: none; cursor: crosshair; }
+.aether-paint-actions { display: flex; justify-content: flex-end; gap: 6px; }
+
+.aether-taskbar {
+  position: absolute;
+  z-index: 10;
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 3px;
+  border-top: 2px outset var(--aether-gray);
+  background: var(--aether-gray);
+}
+
+.aether-start-button { height: 24px; padding: 1px 9px 1px 5px; border: 2px outset var(--aether-gray); background: var(--aether-gray); font-weight: bold; }
+.aether-start-button:active, .aether-start-button[aria-expanded="true"] { border-style: inset; }
+.aether-start-mark { display: inline-block; margin-right: 5px; color: var(--aether-navy); }
+.aether-task-buttons { display: flex; min-width: 0; flex: 1; gap: 4px; overflow: hidden; }
+.aether-task-button { display: flex; align-items: center; min-width: 120px; max-width: 190px; height: 24px; overflow: hidden; padding: 1px 8px; border: 2px outset var(--aether-gray); background: var(--aether-gray); text-align: left; white-space: nowrap; }
+.aether-task-button > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.aether-task-button.is-active { border-style: inset; background: #aaa; }
+.aether-tray { display: flex; align-items: center; gap: 3px; min-width: 0; height: 24px; padding: 2px 5px; border: 2px inset var(--aether-gray); white-space: nowrap; }
+.aether-tray-item { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 20px; padding: 1px; border: 1px solid transparent; background: transparent; }
+.aether-tray-item:hover, .aether-tray-item:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-network-status { position: relative; }
+.aether-network-status::after { position: absolute; right: -1px; bottom: -3px; content: '×'; color: #7d1e1e; font: bold 11px/1 Arial, sans-serif; text-shadow: 1px 1px #fff; }
+.aether-tray-icon { display: block; width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; }
+.aether-network-status .aether-tray-icon { opacity: .72; filter: grayscale(1); }
+.aether-tray-time { min-width: 48px; padding: 1px 3px; font-size: .8rem; text-align: center; }
+
+.aether-desktop:not(.is-taskbar-visible) .aether-taskbar { visibility: hidden; pointer-events: none; }
+.aether-desktop:not(.is-icons-visible) .aether-icons { visibility: hidden; pointer-events: none; }
+
+.aether-start-menu { position: absolute; z-index: 20; left: 3px; bottom: 30px; width: min(320px, calc(100% - 6px)); border: 2px outset var(--aether-gray); background: var(--aether-gray); box-shadow: 4px 4px 0 rgba(0, 0, 0, .35); }
+.aether-start-banner { display: flex; align-items: center; justify-content: space-between; min-height: 54px; padding: 10px 12px; background: linear-gradient(90deg, var(--aether-navy-dark), var(--aether-navy)); color: #fff; }
+.aether-start-brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.aether-start-banner strong { font-size: 1.1rem; letter-spacing: .04em; }
+.aether-start-logo-symbol { position: relative; display: block; flex: 0 0 25px; width: 25px; height: 25px; border: 2px solid #f0f0f0; border-radius: 4px; transform: rotate(45deg); }
+.aether-start-logo-symbol::before { position: absolute; top: 50%; left: 50%; width: 64%; height: 64%; border: 2px solid #91aaff; border-radius: 50%; content: ''; transform: translate(-50%, -50%); }
+.aether-start-logo-symbol i { position: absolute; top: 50%; left: 8%; width: 84%; height: 2px; background: #f0f0f0; transform: translateY(-50%); }
+.aether-start-banner span { color: #d4d4ff; }
+.aether-start-items { padding: 5px; }
+.aether-start-section { padding: 4px 8px 2px 42px; color: #555; font-size: .78rem; font-weight: bold; text-transform: uppercase; }
+.aether-start-divider { height: 1px; margin: 4px 8px; border-top: 1px solid var(--aether-shadow); border-bottom: 1px solid var(--aether-light); }
+.aether-start-items button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px; border: 1px solid transparent; background: transparent; text-align: left; }
+.aether-start-items button span { display: inline-grid; place-items: center; width: 24px; height: 22px; color: var(--aether-navy); font-weight: bold; }
+.aether-start-items button span img { display: block; width: 22px; height: 22px; object-fit: contain; image-rendering: pixelated; }
+.aether-start-terminal-glyph { display: inline-grid; place-items: center; width: 22px; height: 17px; border: 1px solid #555; background: #000; color: #39d46a; font: 700 11px/1 "Courier New", monospace; letter-spacing: -.08em; }
+.aether-start-items button:hover, .aether-start-items button:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-start-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px; border-top: 1px solid var(--aether-shadow); font-size: .8rem; }
+.aether-power-actions { display: flex; gap: 4px; }
+.aether-start-footer button { padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+
+.aether-shutdown-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: #000;
+  color: #fff;
+}
+.aether-shutdown-panel { text-align: center; }
+.aether-shutdown-panel strong { display: block; font-size: clamp(1rem, 2vw, 1.4rem); }
+.aether-shutdown-panel span { display: block; margin-top: 10px; color: #aaa; font-size: .82rem; }
+
+@media (max-width: 640px) {
+  .aether-desktop::after { content: "AetherOS 1.0 はPC専用です"; position: absolute; inset: 35% 10% auto; z-index: 30; padding: 20px; border: 2px outset var(--aether-gray); background: var(--aether-gray); text-align: center; }
+  .aether-taskbar { display: none; }
+}
