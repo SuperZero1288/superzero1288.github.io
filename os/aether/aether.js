@@ -470,9 +470,7 @@
     const length = document.createElement('output'); length.textContent = '0.00 sec.'; lengthLabel.append(length);
     const spectrum = document.createElement('canvas'); spectrum.className = 'aether-audio-spectrum'; spectrum.width = 420; spectrum.height = 104; spectrum.setAttribute('aria-label', 'Audio spectrum');
     const info = document.createElement('strong'); info.className = 'aether-audio-name'; info.textContent = entry?.name || 'No audio loaded';
-    const artist = document.createElement('span'); artist.className = 'aether-audio-artist';
-    const album = document.createElement('span'); album.className = 'aether-audio-album';
-    const metadata = document.createElement('div'); metadata.className = 'aether-audio-metadata'; metadata.append(info, artist, album);
+    const metadata = document.createElement('div'); metadata.className = 'aether-audio-metadata'; metadata.append(info);
     readout.append(positionLabel, spectrum, lengthLabel);
     stage.append(readout, metadata);
     const audio = document.createElement('audio'); audio.className = 'aether-audio-element'; audio.preload = 'auto'; audio.setAttribute('aria-label', 'Aether Audio Player');
@@ -500,7 +498,7 @@
       const rawBars = analyser ? new Uint8Array(analyser.frequencyBinCount) : new Uint8Array(32);
       if (analyser) analyser.getByteFrequencyData(rawBars);
       const sourceBars = Array.from(rawBars.slice(0, 32));
-      const bars = sourceBars.length ? [...sourceBars, ...sourceBars.slice().reverse()] : [0];
+      const bars = sourceBars.length ? sourceBars : [0];
       const barWidth = Math.max(3, Math.floor(width / bars.length) - 2);
       bars.forEach((value, index) => {
         const amount = analyser ? Math.min(1, Math.pow(value / 255, .62) * 1.35) : (index % 5 === 0 ? .18 : .05);
@@ -515,15 +513,13 @@
     let record;
     const load = selected => {
       if (!selected?.source) {
-        audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded'; artist.textContent = 'Artist: Unknown'; album.textContent = 'Album: Unknown';
+        audio.removeAttribute('src'); audio.load(); info.textContent = 'No audio loaded';
         updateReadout(); drawSpectrum();
         return;
       }
       audio.src = new URL(toRepositoryPath(selected.source), repositoryRootUrl).href;
       audio.load();
       info.textContent = selected.name || 'Unknown';
-      artist.textContent = `Artist: ${selected.artist || 'Unknown'}`;
-      album.textContent = `Album: ${selected.album || 'Unknown'}`;
       updateReadout(); drawSpectrum();
     };
     createClassicMenu(body, {
@@ -534,7 +530,7 @@
     });
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
-    record = createWindow({ title: entry?.name ? `${entry.name} - Sound Recorder` : 'Sound - Sound Recorder', icon: 'media-audio.svg', body, width: 560, height: 330 });
+    record = createWindow({ title: entry?.name ? `${entry.name} - Sound Recorder` : 'Sound - Sound Recorder', icon: 'media-audio.svg', body, width: 440, height: 280 });
     record.element.classList.add('is-fixed-size');
     ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'pause', 'ended'].forEach(eventName => audio.addEventListener(eventName, updateReadout));
     audio.addEventListener('play', () => { ensureAudioGraph(); audioContext?.resume?.(); drawSpectrum(); });
