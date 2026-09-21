@@ -408,7 +408,7 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-viewer { display: grid; min-height: 0; height: 100%; place-items: center; padding: 10px; background: #222; }
 .aether-media-viewer video, .aether-media-viewer img { display: block; width: 100%; max-height: 100%; object-fit: contain; background: #000; }
 .aether-video-player, .aether-image-viewer { display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; height: 100%; min-height: 220px; color: #111; }
-.aether-audio-player { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; min-height: 220px; color: #111; }
+.aether-audio-player { display: grid; grid-template-rows: auto minmax(170px, 1fr) auto; height: 100%; min-height: 260px; min-width: 0; overflow: hidden; color: #111; }
 .aether-video-player .aether-media-stage, .aether-image-viewer .aether-media-stage { min-height: 0; }
 .aether-media-stage { position: relative; display: grid; place-items: center; overflow: hidden; padding: 8px; border: 2px inset var(--aether-gray); background: #202020; }
 .aether-media-stage video, .aether-media-stage img { display: block; width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; background: #000; }
@@ -423,9 +423,9 @@ button:focus-visible, textarea:focus-visible {
 .aether-media-transport.is-audio span { grid-area: time; }
 .aether-media-transport button { min-width: 48px; padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
 .aether-media-transport button:active { border-style: inset; }
-.aether-media-transport input[type="range"] { min-width: 80px; flex: 1; accent-color: var(--aether-navy); }
+.aether-media-transport input[type="range"] { min-width: 80px; min-height: 16px; flex: 1; accent-color: var(--aether-navy); }
 .aether-media-transport span { min-width: 94px; font-family: inherit; font-size: 11px; text-align: right; }
-.aether-audio-stage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 152px; padding: 18px 24px; border: 2px inset var(--aether-gray); background: #f3f3f3; text-align: center; }
+.aether-audio-stage { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 170px; min-width: 0; overflow: hidden; padding: 14px 24px; border: 2px inset var(--aether-gray); background: #f3f3f3; text-align: center; }
 .aether-audio-stage img { width: 56px; height: 56px; margin-bottom: 2px; image-rendering: pixelated; }
 .aether-audio-stage strong { display: block; max-width: 100%; overflow: hidden; font-size: clamp(1.25rem, 3.5vw, 1.8rem); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 .aether-audio-stage .aether-audio-artist,
@@ -500,4 +500,6 @@ button:focus-visible, textarea:focus-visible {
 @media (max-width: 640px) {
   .aether-desktop::after { content: "AetherOS 1.0 はPC専用です"; position: absolute; inset: 35% 10% auto; z-index: 30; padding: 20px; border: 2px outset var(--aether-gray); background: var(--aether-gray); text-align: center; }
   .aether-taskbar { display: none; }
+  .aether-media-transport.is-audio { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "seek time" "play stop"; }
+  .aether-media-transport.is-audio input[type="range"] { min-width: 0; width: 100%; }
 }
