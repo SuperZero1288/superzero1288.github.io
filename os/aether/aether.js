@@ -375,15 +375,13 @@
         } else media.pause();
       });
       const stop = makeControl('■', 'Stop', () => { media.pause(); if (Number.isFinite(media.duration)) media.currentTime = 0; });
-      const record = makeControl('●', 'Record unavailable', () => setTrayStatus('Recording is not available in AetherOS'));
-      record.classList.add('is-record');
       const update = () => {
         play.textContent = media.paused ? '▶' : '❚❚';
         seek.value = Number.isFinite(media.duration) && media.duration > 0 ? String(Math.round((Number.isFinite(media.currentTime) ? media.currentTime : 0) / media.duration * 1000)) : '0';
       };
       seek.addEventListener('input', () => { if (Number.isFinite(media.duration) && media.duration > 0) media.currentTime = (Number(seek.value) / 1000) * media.duration; });
       ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'play', 'pause', 'ended'].forEach(eventName => media.addEventListener(eventName, update));
-      controls.append(rewind, forward, play, stop, record);
+      controls.append(rewind, play, stop, forward);
       transport.append(seek, controls);
       return transport;
     }
@@ -535,6 +533,7 @@
     stage.append(audio);
     body.append(stage, createMediaTransport(audio, 'Audio', 'audio'));
     record = createWindow({ title: entry?.name || 'Aether Audio Player', icon: 'media-audio.svg', body, width: 560, height: 330 });
+    record.element.classList.add('is-fixed-size');
     ['timeupdate', 'loadedmetadata', 'durationchange', 'loadeddata', 'canplay', 'pause', 'ended'].forEach(eventName => audio.addEventListener(eventName, updateReadout));
     audio.addEventListener('play', () => { ensureAudioGraph(); audioContext?.resume?.(); drawSpectrum(); });
     audio.addEventListener('error', () => setTrayStatus('Audio file could not be loaded'));
