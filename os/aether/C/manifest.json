@@ -35,13 +35,25 @@
       { "icon": "notepad.svg", "name": "Notepad", "type": "Shortcut", "size": "", "app": "notepad" },
       { "icon": "paint.svg", "name": "Paint", "type": "Shortcut", "size": "", "app": "paint" },
       { "icon": "browser-globe.svg", "name": "AetherExplorer", "type": "Shortcut", "size": "", "app": "browser" },
-      { "icon": "terminal-glyph", "name": "Aether Console", "type": "Shortcut", "size": "", "app": "terminal" }
+      { "icon": "terminal-glyph", "name": "Aether Console", "type": "Shortcut", "size": "", "app": "terminal" },
+      { "icon": "folder.svg", "name": "テストフォルダ", "type": "File folder", "size": "", "path": "C:\\Users\\Unknown\\Desktop\\テストフォルダ\\" },
+      { "icon": "folder-file.svg", "name": "一生ネットの宝物.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/一生ネットの宝物.txt", "kind": "text" }
+    ],
+    "C:\\Users\\Unknown\\Desktop\\テストフォルダ\\": [
+      { "icon": "folder-file.svg", "name": "おお.txt", "type": "Text Document", "size": "", "source": "Users/Unknown/Desktop/テストフォルダ/おお.txt", "kind": "text" }
     ],
     "C:\\Users\\Unknown\\Downloads\\": [],
     "C:\\Users\\Unknown\\Documents\\": [],
-    "C:\\Users\\Unknown\\Pictures\\": [],
+    "C:\\Users\\Unknown\\Pictures\\": [
+      { "icon": "pictures.svg", "name": "1_2__1.png", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/1_2__1.png", "kind": "image" },
+      { "icon": "pictures.svg", "name": "418.jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/418.jpg", "kind": "image" },
+      { "icon": "pictures.svg", "name": "maxresdefault (3).jpg", "type": "Image", "size": "", "source": "Users/Unknown/Pictures/maxresdefault (3).jpg", "kind": "image" }
+    ],
     "C:\\Users\\Unknown\\Music\\": [],
-    "C:\\Users\\Unknown\\Videos\\": [],
+    "C:\\Users\\Unknown\\Videos\\": [
+      { "icon": "browser.svg", "name": "無音1.mp4", "type": "Video", "size": "", "source": "Users/Unknown/Videos/無音1.mp4", "kind": "video" },
+      { "icon": "browser.svg", "name": "無音2_compressed.mp4", "type": "Video", "size": "", "source": "Users/Unknown/Videos/無音2_compressed.mp4", "kind": "video" }
+    ],
     "C:\\Recycle Bin\\": []
   }
 }
