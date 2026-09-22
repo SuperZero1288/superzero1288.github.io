@@ -30,6 +30,7 @@
   document.body.classList.add('aether-authorized');
 
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
   const iconBase = '../../assets/aether/icons/';
   const iconMarkup = (icon, className = 'aether-file-icon') => {
     if (icon === 'terminal-glyph') {
@@ -250,7 +251,7 @@
   const openAbout = () => {
     const body = document.createElement('div');
     body.className = 'aether-about';
-    body.innerHTML = `<div class="aether-os-logo aether-about-logo" aria-label="AetherOS 1.0"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><h2>About AetherOS 1.0</h2><p>AetherOSは、Omnivast Corporationが設計・開発した実機向けオペレーティングシステムです。</p><div class="aether-inset"><strong>AetherOS 1.0</strong><br>Build 9501<br>Manufacturer: Omnivast Corporation<br>Hardware status: Operational</div><p>日々の作業と静かな探索を支える、堅牢で親しみやすいデスクトップを目指しています。</p>`;
+    body.innerHTML = `<div class="aether-os-logo aether-about-logo" aria-label="AetherOS 1.0"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><h2>About AetherOS 1.0</h2><p>AetherOS is an operating system designed and developed by Omnivast Corporation for physical computers.</p><div class="aether-inset"><strong>AetherOS 1.0</strong><br>Build 9501<br>Manufacturer: Omnivast Corporation<br>Hardware status: Operational</div><p>Built to provide a reliable, approachable desktop for everyday work and quiet exploration.</p>`;
     createWindow({ title: 'About AetherOS', icon: 'about.svg', body, width: 430, height: 290 });
   };
 
@@ -923,7 +924,6 @@
   window.setInterval(updateClock, 1000);
 
   const bootSequence = async () => {
-    await loadRepositoryFilesystem();
     const steps = [
       [5, 'Award Modular BIOS v4.51PG', 'AETHER BIOS 1.0', 600],
       [11, 'P5I430TX Aether VXPro BIOS v1.2B    11/04/97', 'System BIOS detected', 520],
@@ -940,14 +940,16 @@
     for (const [value, message, line, delay] of steps) {
       appendBootLine(message, false);
       appendBootLine(line, value === 100);
-      setBootProgress(value, value === 100 ? '起動シーケンスが完了しました' : 'システムを確認しています...');
+      setBootProgress(value, value === 100 ? 'Boot sequence complete' : 'Checking system...');
       await wait(delay);
     }
     log.querySelector('.aether-boot-cursor')?.remove();
     await wait(520);
     boot.hidden = true;
     osBoot.hidden = false;
-    requestAnimationFrame(() => osBoot.classList.add('is-visible'));
+    await nextFrame();
+    await nextFrame();
+    osBoot.classList.add('is-visible');
     const osSteps = [
       [8, 'Loading AetherOS kernel...'],
       [18, 'Checking system hardware...'],
@@ -977,5 +979,7 @@
     openAbout();
   };
 
+  // Filesystem synchronization must not delay the visible boot sequence.
+  loadRepositoryFilesystem();
   bootSequence();
 })();

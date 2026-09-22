@@ -35,7 +35,12 @@ button, input, select, textarea { font: inherit; }
 .aether-window textarea,
 .aether-window option { font-family: inherit; }
 
-button { color: inherit; }
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  color: inherit;
+}
 
 button:focus-visible, textarea:focus-visible {
   outline: 1px dotted var(--aether-dark);
