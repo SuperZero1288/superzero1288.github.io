@@ -185,6 +185,13 @@ button:focus-visible, textarea:focus-visible {
   background-size: 4px 4px;
 }
 
+.aether-screensaver { position: absolute; inset: 0; z-index: 100; overflow: hidden; background: #000; color: #fff; cursor: none; }
+.aether-screensaver[hidden] { display: none; }
+.aether-screensaver-brand { position: absolute; display: grid; justify-items: center; gap: 9px; width: max-content; max-width: calc(100vw - 20px); }
+.aether-screensaver-brand .aether-os-logo { font-size: clamp(2rem, 6vw, 3.8rem); }
+.aether-screensaver-brand > span { color: #aaa; font-size: .65rem; letter-spacing: .18em; }
+.aether-screensaver > p { position: absolute; right: 0; bottom: 5%; left: 0; margin: 0; color: #777; font-size: .75rem; text-align: center; }
+
 .aether-icons {
   position: absolute;
   z-index: 1;
@@ -390,6 +397,9 @@ button:focus-visible, textarea:focus-visible {
 .aether-about-logo .aether-os-logo-symbol { border-color: #111; }
 .aether-about-logo .aether-os-logo-symbol::before { border-color: #111; }
 .aether-about-logo .aether-os-logo-symbol::after, .aether-about-logo .aether-os-logo-symbol i { background: #111; }
+.aether-about-logo[role="button"] { cursor: pointer; }
+.aether-about-logo[role="button"]:focus-visible { outline: 1px dotted #111; outline-offset: 4px; }
+.aether-about-secret { margin-top: 10px; padding: 7px; font-size: .84rem; line-height: 1.45; }
 .aether-inset { padding: 8px; border: 2px inset var(--aether-gray); background: #e8e8e8; }
 
 .aether-notepad { display: grid; grid-template-rows: minmax(24px, auto) minmax(0, 1fr); height: 100%; min-height: 220px; color: #111; }
@@ -407,6 +417,26 @@ button:focus-visible, textarea:focus-visible {
 .aether-console-form { display: flex; gap: 7px; padding: 8px; border-top: 1px solid #363636; }
 .aether-console-form span { color: #fff; }
 .aether-console-form input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; }
+.aether-snake-game { display: grid; justify-items: center; gap: 8px; color: #111; }
+.aether-snake-heading, .aether-snake-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: min(100%, 320px); }
+.aether-snake-heading { color: #164d27; font-size: .78rem; }
+.aether-snake-board { display: block; width: min(100%, 320px); height: auto; border: 2px inset var(--aether-gray); background: #000; image-rendering: pixelated; outline: none; }
+.aether-snake-footer { font-size: .72rem; }
+.aether-snake-footer button { flex: 0 0 auto; padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); color: #111; }
+.aether-snake-footer button:active { border-style: inset; }
+.aether-rng-app { display: grid; width: 100%; height: 100%; min-height: 100px; place-items: center; }
+.aether-rng-roll { width: min(100%, 240px); min-height: 64px; font-size: 1.15rem; font-weight: bold; letter-spacing: .05em; }
+.aether-rng-roll:disabled { opacity: 1; }
+.aether-rng-roll.is-odds-one-digit { color: #111; }
+.aether-rng-roll.is-odds-two-digits { color: #0000c8; }
+.aether-rng-roll.is-odds-three-digits { color: #b18a00; }
+.aether-rng-roll.is-odds-four-digits { color: #cc0000; }
+.aether-network-dialer { display: grid; grid-template-rows: auto auto 13px minmax(0, 1fr); gap: 7px; height: 100%; color: #111; font-family: "MS Gothic", "ＭＳ ゴシック", "Courier New", monospace; }
+.aether-network-dialer-title { font-weight: bold; }
+.aether-network-dialer-status { margin: 0; }
+.aether-network-dialer-track { overflow: hidden; border: 2px inset var(--aether-gray); background: #eee; }
+.aether-network-dialer-track span { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #173d91 0 8px, #d8d8d8 8px 11px); }
+.aether-network-dialer-log { min-height: 34px; padding: 5px; overflow: auto; border: 2px inset var(--aether-gray); background: #000; color: #a6ffb6; font-size: .72rem; white-space: pre-wrap; }
 
 .aether-browser { display: grid; grid-template-rows: auto auto auto auto minmax(0, 1fr) auto; gap: 0; height: 100%; min-height: 220px; color: #111; background: #d4d0c8; }
 .aether-ie-menu { display: flex; gap: 18px; padding: 3px 8px; border-bottom: 1px solid #888; background: #d4d0c8; font-size: .82rem; }

@@ -129,6 +129,7 @@
   };
 
   const maximizeWindow = record => {
+    if (record.maximizable === false) return;
     record.maximized = !record.maximized;
     record.element.classList.toggle('is-maximized', record.maximized);
     record.maximizeButton.textContent = record.maximized ? '❐' : '□';
@@ -158,10 +159,11 @@
     titlebar.addEventListener('pointercancel', finish);
   };
 
-  const createWindow = ({ title, icon = 'folder.svg', body, width = 540, height = 360 }) => {
+  const createWindow = ({ title, icon = 'folder.svg', body, width = 540, height = 360, fixedSize = false, maximizable = true }) => {
     const id = nextWindowId++;
     const element = document.createElement('section');
     element.className = 'aether-window';
+    if (fixedSize) element.classList.add('is-fixed-size');
     element.style.width = `${width}px`;
     element.style.height = `${height}px`;
     element.style.left = `${Math.max(110, 120 + (id - 1) * 24)}px`;
@@ -182,8 +184,13 @@
     const bodyRoot = element.querySelector('.aether-window-body');
     bodyRoot.append(body);
     if (body.classList?.contains('aether-explorer')) element.classList.add('has-explorer');
-    const record = { id, title, element, bodyRoot, minimized: false, maximized: false };
+    const record = { id, title, element, bodyRoot, minimized: false, maximized: false, maximizable };
     record.maximizeButton = element.querySelector('[data-window-action="maximize"]');
+    record.maximizeButton.disabled = !maximizable;
+    if (!maximizable) {
+      record.maximizeButton.setAttribute('aria-label', '最大化できません');
+      record.maximizeButton.title = 'このウィンドウは最大化できません';
+    }
     element.querySelector('[data-window-action="minimize"]').addEventListener('click', () => minimizeWindow(record));
     record.maximizeButton.addEventListener('click', () => maximizeWindow(record));
     element.querySelector('[data-window-action="close"]').addEventListener('click', () => closeWindow(record));
@@ -254,7 +261,27 @@
   const openAbout = ({ startup = false } = {}) => {
     const body = document.createElement('div');
     body.className = 'aether-about';
-    body.innerHTML = `<div class="aether-os-logo aether-about-logo" aria-label="AetherOS 1.0"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><h2>About AetherOS 1.0</h2><p>AetherOS is an operating system designed and developed by Omnivast Corporation for physical computers.</p><div class="aether-inset"><strong>AetherOS 1.0</strong><br>Build 9501<br>Manufacturer: Omnivast Corporation<br>Hardware status: Operational</div><p>Built to provide a reliable, approachable desktop for everyday work and quiet exploration.</p>`;
+    body.innerHTML = `<div class="aether-os-logo aether-about-logo" role="button" tabindex="0" aria-label="AetherOS 1.0" aria-expanded="false" title="Omnivast Corporation"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><h2>About AetherOS 1.0</h2><p>AetherOS is an operating system designed and developed by Omnivast Corporation for physical computers.</p><div class="aether-inset"><strong>AetherOS 1.0</strong><br>Build 9501<br>Manufacturer: Omnivast Corporation<br>Hardware status: Operational</div><p>Built to provide a reliable, approachable desktop for everyday work and quiet exploration.</p><div class="aether-inset aether-about-secret" hidden><strong>OMNIVAST // INTERNAL RECORD</strong><br>Project AETHER: operational.<br>Local systems are stable. No carrier is expected on this line.</div>`;
+    const logo = body.querySelector('.aether-about-logo');
+    const secret = body.querySelector('.aether-about-secret');
+    let logoTaps = 0;
+    let tapReset;
+    const tapLogo = () => {
+      logoTaps += 1;
+      window.clearTimeout(tapReset);
+      if (logoTaps >= 5) {
+        secret.hidden = false;
+        logo.setAttribute('aria-expanded', 'true');
+        return;
+      }
+      tapReset = window.setTimeout(() => { logoTaps = 0; }, 3200);
+    };
+    logo.addEventListener('click', tapLogo);
+    logo.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      tapLogo();
+    });
     createWindow({ title: 'About AetherOS', icon: 'about.svg', body, width: 430, height: 290 });
     if (startup) void playSystemSound('startup');
   };
@@ -603,7 +630,9 @@
       { icon: 'browser-globe.svg', name: 'AetherExplorer.exe', type: 'Application', size: '64 KB', app: 'browser' },
       { icon: 'media-video.svg', name: 'Aether Video Player.exe', type: 'Application', size: '72 KB', app: 'video' },
       { icon: 'wangimg128.svg', name: 'Aether Image Viewer.exe', type: 'Application', size: '68 KB', app: 'image' },
-      { icon: 'media-audio.svg', name: 'Aether Audio Player.exe', type: 'Application', size: '61 KB', app: 'audio' }
+      { icon: 'media-audio.svg', name: 'Aether Audio Player.exe', type: 'Application', size: '61 KB', app: 'audio' },
+      { icon: 'computer.svg', name: 'Snake.exe', type: 'Application', size: '24 KB', app: 'snake' },
+      { icon: 'aetherrng.svg', name: 'AetherRNG.exe', type: 'Application', size: '18 KB', app: 'rng' }
     ],
     'C:\\Users\\': [
       { icon: 'folder.svg', name: 'Unknown', type: 'File folder', size: '', path: 'C:\\Users\\Unknown\\' }
@@ -620,6 +649,7 @@
       { icon: 'notepad.svg', name: 'Notepad', type: 'Shortcut', size: '', app: 'notepad' },
       { icon: 'mspaint.svg', name: 'Paint', type: 'Shortcut', size: '', app: 'paint' },
       { icon: 'browser-globe.svg', name: 'AetherExplorer', type: 'Shortcut', size: '', app: 'browser' },
+      { icon: 'aetherrng.svg', name: 'AetherRNG', type: 'Shortcut', size: '', app: 'rng' },
       { icon: 'terminal-glyph', name: 'Aether Console', type: 'Shortcut', size: '', app: 'terminal' }
     ],
     'C:\\Users\\Unknown\\Downloads\\': [],
@@ -629,6 +659,10 @@
     'C:\\Users\\Unknown\\Videos\\': [],
     'C:\\Recycle Bin\\': []
   };
+  const cloneExplorerEntries = source => Object.fromEntries(
+    Object.entries(source).map(([path, entries]) => [path, entries.map(entry => ({ ...entry }))])
+  );
+  const builtInExplorerEntries = cloneExplorerEntries(explorerEntries);
 
   let repositoryManifest = null;
   const repositoryRootUrl = new URL('C/', document.baseURI);
@@ -649,8 +683,8 @@
     if (/\.(mp3|wav|flac|m4a|aac|ogg)$/i.test(name)) return 'audio';
     return 'text';
   };
-  const addRepositoryEntry = (directory, entry) => {
-    const entries = explorerEntries[directory] || (explorerEntries[directory] = []);
+  const addRepositoryEntry = (directory, entry, target = explorerEntries) => {
+    const entries = target[directory] || (target[directory] = []);
     const existingIndex = entries.findIndex(item => String(item.name).toLowerCase() === String(entry.name).toLowerCase());
     if (existingIndex >= 0) entries[existingIndex] = { ...entries[existingIndex], ...entry };
     else entries.push(entry);
@@ -660,19 +694,23 @@
       const response = await fetch(githubTreeUrl, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();
+      if (!Array.isArray(payload?.tree) || payload.truncated) throw new Error('Invalid or incomplete GitHub tree');
       const prefix = 'os/aether/C/';
-      const nodes = Array.isArray(payload.tree) ? payload.tree.filter(node => node.path?.startsWith(prefix)) : [];
+      const nodes = payload.tree.filter(node => node.path?.startsWith(prefix));
       nodes.sort((a, b) => a.path.length - b.path.length);
+      const synchronizedEntries = cloneExplorerEntries(builtInExplorerEntries);
       nodes.forEach(node => {
         const relative = node.path.slice(prefix.length);
-        if (!relative || relative === 'manifest.json' || relative.endsWith('/.keep') || relative.includes('/.git/')) return;
+        if (!relative || relative === 'manifest.json' || relative.includes('/.git/')) return;
         const parts = relative.split('/');
         const name = parts[parts.length - 1];
         const parent = windowsDirectory(parts.slice(0, -1));
+        if (!synchronizedEntries[parent]) synchronizedEntries[parent] = [];
+        if (name === '.keep') return;
         if (node.type === 'tree') {
           const path = windowsDirectory(parts);
-          if (!explorerEntries[path]) explorerEntries[path] = [];
-          addRepositoryEntry(parent, { icon: repositoryIcon(name, true), name, type: 'File folder', size: '', path });
+          if (!synchronizedEntries[path]) synchronizedEntries[path] = [];
+          addRepositoryEntry(parent, { icon: repositoryIcon(name, true), name, type: 'File folder', size: '', path }, synchronizedEntries);
           return;
         }
         const size = Number(node.size || 0);
@@ -684,15 +722,16 @@
           size: displaySize,
           source: relative,
           kind: repositoryFileKind(name)
-        });
+        }, synchronizedEntries);
       });
-      return nodes.length > 0;
+      explorerEntries = synchronizedEntries;
+      return true;
     } catch (error) {
       return false;
     }
   };
   const loadRepositoryFilesystem = async () => {
-    const manifestUrl = new URL('manifest.json?v=1.0.21', repositoryRootUrl);
+    const manifestUrl = new URL('manifest.json?v=1.0.24', repositoryRootUrl);
     try {
       const response = await fetch(manifestUrl, { cache: 'no-store' });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -704,9 +743,9 @@
       });
       explorerEntries = { ...explorerEntries, ...imported };
       repositoryManifest = manifest;
-      await syncGitHubTree();
+      const synchronized = await syncGitHubTree();
       renderRepositoryDesktopItems();
-      setTrayStatus('C: synchronized');
+      setTrayStatus(synchronized ? 'C: synchronized' : 'C: offline manifest');
       return true;
     } catch (error) {
       repositoryManifest = null;
@@ -801,6 +840,8 @@
       else if (entry.app === 'video') openVideoPlayer();
       else if (entry.app === 'image') openImageViewer();
       else if (entry.app === 'audio') openAudioPlayer();
+      else if (entry.app === 'snake') openSnake();
+      else if (entry.app === 'rng') openAetherRNG();
       else if (entry.app === 'terminal') openTerminal();
       else if (entry.name === 'WELCOME.TXT') openNotepad();
     };
@@ -854,36 +895,329 @@
     form.innerHTML = '<span>C:\\&gt;</span><input aria-label="Aether Console command" autocomplete="off">';
     const input = form.querySelector('input');
     const write = text => { const line = document.createElement('div'); line.textContent = text; output.append(line); output.scrollTop = output.scrollHeight; };
+    const programFiles = explorerEntries['C:\\Program Files\\'] || [];
+    const launchProgram = rawName => {
+      if (!rawName) {
+        const names = programFiles.filter(entry => entry.app).map(entry => entry.name);
+        write(`Available programs in C:\\Program Files:\n${names.join('\n')}`);
+        return;
+      }
+      const requestedName = rawName.trim().replace(/^['"]|['"]$/g, '').split(/[\\/]/).filter(Boolean).pop() || '';
+      const requestedStem = requestedName.replace(/\.exe$/i, '').toLowerCase();
+      const program = programFiles.find(entry => entry.app && entry.name.replace(/\.exe$/i, '').toLowerCase() === requestedStem);
+      if (!program) { write(`The system cannot find a program named "${requestedName}" in C:\\Program Files.`); return; }
+      const launch = apps[program.app];
+      if (typeof launch !== 'function') { write(`${program.name} is not available.`); return; }
+      write(`Starting ${program.name}...`);
+      launch();
+    };
+    let record;
+    let matrixTimer = 0;
     write('Microsoft(R) AetherOS Console Version 1.0');
     write('(C) 1997 Omnivast Corporation. All rights reserved.');
     write('Type HELP for help.');
     form.addEventListener('submit', event => {
       event.preventDefault();
-      const command = input.value.trim().toLowerCase();
+      const enteredCommand = input.value.trim();
+      const command = enteredCommand.toLowerCase();
       if (!command) return;
+      const runMatch = enteredCommand.match(/^run(?:\s+(.+))?$/i);
       write(`C:\\>${input.value.trim()}`);
       input.value = '';
-      if (command === 'help') write('HELP  VER  DIR  CLS  ABOUT  EXIT');
+      window.clearInterval(matrixTimer);
+      matrixTimer = 0;
+      if (runMatch) launchProgram(runMatch[1]);
+      else if (command === 'help') write('HELP  VER  DIR  CLS  ABOUT  EXIT  MATRIX  FORTUNE  RUN [program]');
       else if (command === 'ver') write('AetherOS 1.0 / build 9501');
       else if (command === 'dir') write(' Volume in drive C is AETHER\n Directory of C:\\\n\nAETHER       <DIR>\nUSERS        <DIR>\nPROGRAM FILES <DIR>\nRECYCLE BIN  <DIR>\nAETHER   SYS    4,096  bytes');
       else if (command === 'cls') output.replaceChildren();
       else if (command === 'about') openAbout();
+      else if (command === 'fortune') {
+        const fortunes = [
+          'A quiet system is a healthy system.',
+          'Every reliable orbit begins with a steady signal.',
+          'The best backup is the one made before it is needed.',
+          'No carrier today. The stars remain in alignment.'
+        ];
+        write(fortunes[Math.floor(Math.random() * fortunes.length)]);
+      }
+      else if (command === 'matrix') {
+        let rows = 0;
+        const alphabet = '0123456789ABCDEF';
+        matrixTimer = window.setInterval(() => {
+          if (!record?.element.isConnected || rows >= 16) {
+            window.clearInterval(matrixTimer);
+            matrixTimer = 0;
+            if (record?.element.isConnected && rows >= 16) write('BUFFER FLUSH COMPLETE.');
+            return;
+          }
+          const stream = Array.from({ length: 48 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+          write(`AE-${String(rows + 1).padStart(2, '0')} ${stream}`);
+          rows += 1;
+        }, 75);
+      }
+      else if (command === 'snake') write('Use RUN SNAKE.EXE to launch the installed game.');
       else if (command === 'exit') closeWindow(record);
       else write(`Bad command or file name: ${command}`);
     });
     consoleRoot.append(output, form);
-    const record = createWindow({ title: 'Aether Console', icon: 'terminal-glyph', body: consoleRoot, width: 570, height: 340 });
+    record = createWindow({ title: 'Aether Console', icon: 'terminal-glyph', body: consoleRoot, width: 570, height: 340 });
     requestAnimationFrame(() => input.focus());
   };
 
-  const apps = { explorer: openExplorer, notepad: openNotepad, paint: openPaint, browser: openBrowser, video: openVideoPlayer, image: openImageViewer, audio: openAudioPlayer, about: openAbout, terminal: openTerminal, recycle: openRecycleBin };
+  const openSnake = () => {
+    const body = document.createElement('div');
+    body.className = 'aether-snake-game';
+    body.innerHTML = '<div class="aether-snake-heading"><strong>AETHER SNAKE</strong><span id="aetherSnakeScore">SCORE 000</span></div><canvas class="aether-snake-board" width="320" height="224" tabindex="0" aria-label="Aether Snake game board"></canvas><div class="aether-snake-footer"><span id="aetherSnakeMessage">Use the arrow keys to move.</span><button type="button" id="aetherSnakeRestart">New Game</button></div>';
+    const canvas = body.querySelector('canvas');
+    const context = canvas.getContext('2d');
+    const scoreReadout = body.querySelector('#aetherSnakeScore');
+    const message = body.querySelector('#aetherSnakeMessage');
+    const columns = 20;
+    const rows = 14;
+    let snake;
+    let direction;
+    let nextDirection;
+    let food;
+    let score;
+    let gameOver;
+    let record;
+    const placeFood = () => {
+      do { food = { x: Math.floor(Math.random() * columns), y: Math.floor(Math.random() * rows) }; }
+      while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+    };
+    const draw = () => {
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.strokeStyle = '#092412';
+      context.lineWidth = 1;
+      for (let x = 0; x <= canvas.width; x += 16) { context.beginPath(); context.moveTo(x, 0); context.lineTo(x, canvas.height); context.stroke(); }
+      for (let y = 0; y <= canvas.height; y += 16) { context.beginPath(); context.moveTo(0, y); context.lineTo(canvas.width, y); context.stroke(); }
+      context.fillStyle = '#f0f0f0';
+      context.fillRect(food.x * 16 + 3, food.y * 16 + 3, 10, 10);
+      snake.forEach((segment, index) => {
+        context.fillStyle = index === 0 ? '#b8ffc8' : '#00a64f';
+        context.fillRect(segment.x * 16 + 1, segment.y * 16 + 1, 14, 14);
+      });
+      scoreReadout.textContent = `SCORE ${String(score).padStart(3, '0')}`;
+    };
+    const restart = () => {
+      snake = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }];
+      direction = { x: 1, y: 0 };
+      nextDirection = direction;
+      score = 0;
+      gameOver = false;
+      message.textContent = 'Use the arrow keys to move.';
+      placeFood();
+      draw();
+      canvas.focus();
+    };
+    const step = () => {
+      if (gameOver || !record?.element.isConnected) return;
+      direction = nextDirection;
+      const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+      const eating = head.x === food.x && head.y === food.y;
+      const bodySegments = eating ? snake : snake.slice(0, -1);
+      if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows || bodySegments.some(segment => segment.x === head.x && segment.y === head.y)) {
+        gameOver = true;
+        message.textContent = 'SYSTEM HALTED — press New Game to retry.';
+        return;
+      }
+      snake.unshift(head);
+      if (eating) { score += 10; placeFood(); } else snake.pop();
+      draw();
+    };
+    body.querySelector('#aetherSnakeRestart').addEventListener('click', restart);
+    record = createWindow({ title: 'Snake.exe', icon: 'computer.svg', body, width: 380, height: 340 });
+    record.element.addEventListener('keydown', event => {
+      const directions = {
+        ArrowUp: { x: 0, y: -1 }, ArrowDown: { x: 0, y: 1 },
+        ArrowLeft: { x: -1, y: 0 }, ArrowRight: { x: 1, y: 0 }
+      };
+      const candidate = directions[event.key];
+      if (!candidate || gameOver) return;
+      event.preventDefault();
+      if (candidate.x + direction.x === 0 && candidate.y + direction.y === 0) return;
+      nextDirection = candidate;
+    });
+    const timer = window.setInterval(step, 145);
+    record.element.querySelector('[data-window-action="close"]').addEventListener('click', () => window.clearInterval(timer));
+    restart();
+  };
+
+  const openAetherRNG = () => {
+    const body = document.createElement('div');
+    body.className = 'aether-rng-app';
+    const rollButton = document.createElement('button');
+    rollButton.type = 'button';
+    rollButton.className = 'aether-button aether-rng-roll';
+    rollButton.textContent = 'ROLL';
+    rollButton.setAttribute('aria-label', 'Roll');
+    body.append(rollButton);
+    let record;
+    let rollTimer = 0;
+    const outcomes = [2, 4, 8, 16, 32, 50, 64, 100, 128, 150, 200, 256, 300, 350, 400, 450, 500, 512, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
+    const weightedOutcomes = outcomes.map(value => ({ value, weight: 1 / value }));
+    const totalWeight = weightedOutcomes.reduce((sum, outcome) => sum + outcome.weight, 0);
+    const pickResult = () => {
+      let ticket = Math.random() * totalWeight;
+      for (const outcome of weightedOutcomes) {
+        ticket -= outcome.weight;
+        if (ticket < 0) return outcome.value;
+      }
+      return outcomes[outcomes.length - 1];
+    };
+    const formatResult = value => `1 in ${value.toLocaleString('en-US')}`;
+    const showResult = value => {
+      const digits = String(value).length;
+      rollButton.textContent = formatResult(value);
+      rollButton.classList.remove('is-odds-one-digit', 'is-odds-two-digits', 'is-odds-three-digits', 'is-odds-four-digits');
+      rollButton.classList.add(`is-odds-${['', 'one-digit', 'two-digits', 'three-digits', 'four-digits'][digits]}`);
+    };
+    rollButton.addEventListener('click', () => {
+      if (rollButton.disabled) return;
+      rollButton.disabled = true;
+      const result = pickResult();
+      const animationFrames = 20;
+      let frame = 0;
+      const animateRoll = () => {
+        if (!record?.element.isConnected) return;
+        frame += 1;
+        if (frame >= animationFrames) {
+          showResult(result);
+          rollButton.setAttribute('aria-label', `1 in ${result}`);
+          rollButton.disabled = false;
+          rollTimer = 0;
+          return;
+        }
+        showResult(pickResult());
+        rollButton.setAttribute('aria-label', 'Rolling');
+        rollTimer = window.setTimeout(animateRoll, 24 + frame * 5);
+      };
+      animateRoll();
+    });
+    record = createWindow({ title: 'AetherRNG', icon: 'aetherrng.svg', body, width: 330, height: 210, fixedSize: true, maximizable: false });
+    record.element.querySelector('[data-window-action="close"]').addEventListener('click', () => window.clearTimeout(rollTimer));
+  };
+
+  let networkDialerWindow = null;
+  const openOfflineNetworkDialer = () => {
+    if (networkDialerWindow?.element.isConnected) { focusWindow(networkDialerWindow); return; }
+    const body = document.createElement('div');
+    body.className = 'aether-network-dialer';
+    body.innerHTML = '<div class="aether-network-dialer-title">Omnivast Information Service</div><p class="aether-network-dialer-status">Checking network adapter...</p><div class="aether-network-dialer-track"><span></span></div><div class="aether-network-dialer-log" aria-live="polite"></div>';
+    const status = body.querySelector('.aether-network-dialer-status');
+    const bar = body.querySelector('.aether-network-dialer-track span');
+    const log = body.querySelector('.aether-network-dialer-log');
+    networkDialerWindow = createWindow({ title: 'Aether Network Dialer', icon: 'network-tray.svg', body, width: 390, height: 205 });
+    const record = networkDialerWindow;
+    record.element.querySelector('[data-window-action="close"]').addEventListener('click', () => { networkDialerWindow = null; });
+    const steps = [
+      ['Checking network adapter...', 18, 450, 'ATZ'],
+      ['Initializing 56K modem...', 42, 550, 'AT&F'],
+      ['Dialing Omnivast Information Service...', 69, 650, 'ATDT 0197-OMNI'],
+      ['Waiting for carrier...', 88, 700, '...']
+    ];
+    void (async () => {
+      for (const [text, value, delay, command] of steps) {
+        if (!record.element.isConnected) return;
+        status.textContent = text;
+        log.textContent = `CONNECT ${command}`;
+        bar.style.width = `${value}%`;
+        await wait(delay);
+      }
+      if (!record.element.isConnected) return;
+      status.textContent = 'NO CARRIER';
+      log.textContent = 'Remote host did not answer.\nThis system is configured for local operation only.';
+      bar.style.width = '100%';
+    })();
+  };
+
+  const apps = { explorer: openExplorer, notepad: openNotepad, paint: openPaint, browser: openBrowser, video: openVideoPlayer, image: openImageViewer, audio: openAudioPlayer, snake: openSnake, rng: openAetherRNG, about: openAbout, terminal: openTerminal, recycle: openRecycleBin };
   const desktopIconRoot = desktop.querySelector('.aether-icons');
+  const screensaver = document.createElement('div');
+  screensaver.className = 'aether-screensaver';
+  screensaver.hidden = true;
+  screensaver.innerHTML = '<div class="aether-screensaver-brand"><div class="aether-os-logo"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><span>OMNIVAST CORPORATION</span></div><p>Move the mouse or press any key to return</p>';
+  desktop.append(screensaver);
+  const screensaverBrand = screensaver.querySelector('.aether-screensaver-brand');
+  let screensaverTimer = 0;
+  let screensaverFrame = 0;
+  let screensaverActive = false;
+  let screensaverX = 0;
+  let screensaverY = 0;
+  let screensaverVelocityX = 70;
+  let screensaverVelocityY = 50;
+  let screensaverLastFrame = 0;
+  const animateScreensaver = () => {
+    if (!screensaverActive) return;
+    const timestamp = performance.now();
+    const delta = screensaverLastFrame ? Math.min(.3, (timestamp - screensaverLastFrame) / 1000) : 0;
+    screensaverLastFrame = timestamp;
+    const maxX = Math.max(0, desktop.clientWidth - screensaverBrand.offsetWidth);
+    const maxY = Math.max(0, desktop.clientHeight - screensaverBrand.offsetHeight);
+    screensaverX += screensaverVelocityX * delta;
+    screensaverY += screensaverVelocityY * delta;
+    if (screensaverX <= 0 || screensaverX >= maxX) { screensaverX = Math.max(0, Math.min(maxX, screensaverX)); screensaverVelocityX *= -1; }
+    if (screensaverY <= 0 || screensaverY >= maxY) { screensaverY = Math.max(0, Math.min(maxY, screensaverY)); screensaverVelocityY *= -1; }
+    screensaverBrand.style.left = `${screensaverX}px`;
+    screensaverBrand.style.top = `${screensaverY}px`;
+    screensaverFrame = window.setTimeout(animateScreensaver, 125);
+  };
+  const showScreensaver = () => {
+    if (desktop.hidden || screensaverActive) return;
+    screensaverActive = true;
+    screensaver.hidden = false;
+    screensaverX = Math.max(0, (desktop.clientWidth - screensaverBrand.offsetWidth) / 2);
+    screensaverY = Math.max(0, (desktop.clientHeight - screensaverBrand.offsetHeight) / 2);
+    screensaverVelocityX = 70;
+    screensaverVelocityY = 50;
+    screensaverLastFrame = 0;
+    screensaverFrame = window.setTimeout(animateScreensaver, 125);
+  };
+  const resetScreensaverTimer = () => {
+    window.clearTimeout(screensaverTimer);
+    if (!desktop.hidden) screensaverTimer = window.setTimeout(showScreensaver, 120000);
+  };
+  const handleScreensaverActivity = event => {
+    if (screensaverActive) {
+      screensaverActive = false;
+      screensaver.hidden = true;
+      window.clearTimeout(screensaverFrame);
+      if (event.type === 'keydown') event.preventDefault();
+    }
+    resetScreensaverTimer();
+  };
+  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(type => {
+    window.addEventListener(type, handleScreensaverActivity, { capture: true, passive: type !== 'keydown' });
+  });
   const desktopPositionKey = 'aether-desktop-icon-positions';
+  const desktopLayoutVersionKey = `${desktopPositionKey}-layout-version`;
   let desktopActivationSuppressedUntil = 0;
   const desktopIconId = icon => icon.dataset.desktopId || (icon.dataset.aetherApp ? `app:${icon.dataset.aetherApp}` : `label:${icon.textContent.trim()}`);
   const readDesktopPositions = () => {
     try { return JSON.parse(localStorage.getItem(desktopPositionKey) || '{}'); } catch { return {}; }
   };
+  const migrateDesktopShortcutLayout = () => {
+    if (localStorage.getItem(desktopLayoutVersionKey) === 'rng-slot-v1') return false;
+    const saved = readDesktopPositions();
+    if (!Object.keys(saved).length) {
+      localStorage.setItem(desktopLayoutVersionKey, 'rng-slot-v1');
+      return false;
+    }
+    const computer = saved['app:explorer'];
+    const consolePosition = saved['app:terminal'];
+    if (computer) saved['app:notepad'] = { left: computer.left, top: (Number(computer.top) || 0) + 92 };
+    if (consolePosition) {
+      saved['app:rng'] = { ...consolePosition };
+      saved['app:terminal'] = { left: consolePosition.left, top: (Number(consolePosition.top) || 0) + 92 };
+    }
+    if (saved['app:recycle']) saved['app:recycle'] = { left: saved['app:recycle'].left, top: (Number(saved['app:recycle'].top) || 0) + 92 };
+    localStorage.setItem(desktopPositionKey, JSON.stringify(saved));
+    localStorage.setItem(desktopLayoutVersionKey, 'rng-slot-v1');
+    return true;
+  };
+  let desktopLayoutNeedsSave = migrateDesktopShortcutLayout();
   const desktopGrid = () => {
     const width = desktopIconRoot.clientWidth || Math.max(260, window.innerWidth - 24);
     const height = desktopIconRoot.clientHeight || Math.max(300, window.innerHeight - 54);
@@ -924,7 +1258,10 @@
       icon.style.left = `${cell.left}px`;
       icon.style.top = `${cell.top}px`;
     });
-    if (reset) saveDesktopPositions();
+    if (reset || desktopLayoutNeedsSave) {
+      saveDesktopPositions();
+      desktopLayoutNeedsSave = false;
+    }
   };
 
   const contextMenu = document.createElement('div');
@@ -1094,10 +1431,11 @@
     startup: new Audio(soundUrl('Sound/startup.wav')),
     shutdown: new Audio(soundUrl('Sound/shutdown.wav'))
   };
-  Object.values(systemSounds).forEach(sound => { sound.preload = 'auto'; });
-  systemSounds.click.volume = .35;
-  systemSounds.startup.volume = .55;
-  systemSounds.shutdown.volume = .55;
+  const systemSoundVolumes = { click: .35, startup: .34, shutdown: .55 };
+  Object.entries(systemSounds).forEach(([name, sound]) => {
+    sound.preload = 'auto';
+    sound.volume = systemSoundVolumes[name];
+  });
   const fadeTimers = new WeakMap();
   const clearSoundFade = sound => {
     const timer = fadeTimers.get(sound);
@@ -1108,7 +1446,7 @@
     if (muted) return false;
     const sound = systemSounds[name];
     if (!sound) return false;
-    const baseVolume = name === 'click' ? .35 : .55;
+    const baseVolume = systemSoundVolumes[name] ?? .55;
     try {
       clearSoundFade(sound);
       sound.pause();
@@ -1154,8 +1492,9 @@
     clock.textContent = new Intl.DateTimeFormat('ja-JP', { hour: '2-digit', minute: '2-digit' }).format(now);
   };
   networkStatus.addEventListener('click', () => {
-    networkStatus.title = 'LAN: オフライン（接続できません）';
-    networkStatus.setAttribute('aria-label', 'LAN: オフライン（接続できません）');
+    networkStatus.title = 'LAN: オフライン（クリックして診断）';
+    networkStatus.setAttribute('aria-label', 'LAN: オフライン（クリックして診断）');
+    openOfflineNetworkDialer();
   });
   volumeButton.addEventListener('click', () => {
     muted = !muted;
@@ -1220,6 +1559,7 @@
     desktop.classList.add('is-icons-visible');
     await wait(260);
     openAbout({ startup: true });
+    resetScreensaverTimer();
   };
 
   // Filesystem synchronization must not delay the visible boot sequence.
