@@ -25,12 +25,15 @@ body {
   font-family: "MS Gothic", "ＭＳ ゴシック", "MS UI Gothic", "ＭＳ Ｐゴシック", "Courier New", monospace;
   font-size: 14px;
   image-rendering: pixelated;
+  user-select: none;
+  -webkit-user-select: none;
   visibility: hidden;
 }
 
 body.aether-authorized { visibility: visible; }
 
 button, input, select, textarea { font: inherit; }
+input, textarea, select { user-select: text; -webkit-user-select: text; }
 
 .aether-window,
 .aether-window button,
@@ -185,13 +188,14 @@ button:focus-visible, textarea:focus-visible {
 .aether-icons {
   position: absolute;
   z-index: 1;
-  inset: 12px auto auto 12px;
-  display: grid;
-  grid-template-columns: 118px;
-  gap: 12px;
+  inset: 12px 12px 42px;
+  pointer-events: none;
 }
 
 .aether-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: grid;
   justify-items: center;
   gap: 5px;
@@ -203,11 +207,29 @@ button:focus-visible, textarea:focus-visible {
   color: #fff;
   text-shadow: 1px 1px #000;
   cursor: default;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .aether-icon > span:last-child { display: block; width: 100%; overflow-wrap: anywhere; text-align: center; line-height: 1.15; }
 
-.aether-icon:hover, .aether-icon:focus-visible { border-color: #fff; }
+.aether-icon:hover, .aether-icon:focus-visible, .aether-icon.is-selected { border-color: #fff; background: rgba(0, 0, 128, .28); }
+.aether-icon { pointer-events: auto; }
+
+.aether-context-menu {
+  position: absolute;
+  z-index: 30;
+  min-width: 170px;
+  padding: 3px;
+  border: 2px outset var(--aether-gray);
+  background: var(--aether-gray);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, .35);
+  color: #111;
+}
+.aether-context-menu button { display: block; width: 100%; padding: 5px 20px; border: 1px solid transparent; background: transparent; color: inherit; text-align: left; white-space: nowrap; }
+.aether-context-menu button:hover, .aether-context-menu button:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
+.aether-context-separator { height: 1px; margin: 3px 4px; border-top: 1px solid var(--aether-shadow); border-bottom: 1px solid var(--aether-light); }
 
 .aether-icon-art {
   display: grid;
@@ -265,6 +287,8 @@ button:focus-visible, textarea:focus-visible {
   pointer-events: auto;
   resize: both;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .aether-window.is-minimized { display: none; }
@@ -305,9 +329,11 @@ button:focus-visible, textarea:focus-visible {
 .aether-title-controls button:active { border-style: inset; }
 
 .aether-window-body { min-height: 0; overflow: auto; padding: 12px; background: var(--aether-gray); }
+.aether-window input, .aether-window textarea, .aether-window select { user-select: text; -webkit-user-select: text; }
+.aether-explorer-entry, .aether-task-button, .aether-context-menu { user-select: none; -webkit-user-select: none; }
 .aether-window.has-explorer .aether-window-body { overflow: hidden; padding: 0; }
 
-.aether-app-menu { position: relative; z-index: 4; display: flex; gap: 2px; min-height: 24px; padding: 2px 4px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; color: #111; }
+.aether-app-menu { position: relative; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; min-height: 24px; padding: 2px 4px; border-bottom: 1px solid var(--aether-shadow); background: #e8e8e8; color: #111; }
 .aether-app-menu-group { position: relative; }
 .aether-app-menu-trigger { min-width: 44px; padding: 2px 8px; border: 1px solid transparent; background: transparent; color: inherit; text-align: left; }
 .aether-app-menu-trigger:hover, .aether-app-menu-trigger:focus-visible { border-color: var(--aether-navy); background: #dbe5ff; }
@@ -366,7 +392,10 @@ button:focus-visible, textarea:focus-visible {
 .aether-about-logo .aether-os-logo-symbol::after, .aether-about-logo .aether-os-logo-symbol i { background: #111; }
 .aether-inset { padding: 8px; border: 2px inset var(--aether-gray); background: #e8e8e8; }
 
-.aether-notepad { display: grid; grid-template-rows: auto auto minmax(0, 1fr); height: 100%; min-height: 220px; color: #111; }
+.aether-notepad { display: grid; grid-template-rows: minmax(24px, auto) minmax(0, 1fr); height: 100%; min-height: 220px; color: #111; }
+.aether-notepad-controls { display: flex; align-items: center; gap: 3px; margin-left: auto; padding-left: 3px; }
+.aether-notepad-controls button { min-height: 21px; padding: 2px 5px; border: 2px outset var(--aether-gray); background: var(--aether-gray); color: #111; font-size: .76rem; white-space: nowrap; }
+.aether-notepad-controls button:active { border-style: inset; }
 .aether-notepad textarea { min-height: 160px; width: 100%; resize: none; padding: 8px; border: 2px inset var(--aether-gray); background: #fff; color: #111; line-height: 1.5; font-family: inherit; }
 .aether-notepad textarea.is-no-wrap { white-space: pre; overflow-x: auto; }
 .aether-notepad-actions { display: none; }
@@ -450,7 +479,13 @@ button:focus-visible, textarea:focus-visible {
 
 .aether-start-button { height: 24px; padding: 1px 9px 1px 5px; border: 2px outset var(--aether-gray); background: var(--aether-gray); font-weight: bold; }
 .aether-start-button:active, .aether-start-button[aria-expanded="true"] { border-style: inset; }
-.aether-start-mark { display: inline-block; margin-right: 5px; color: var(--aether-navy); }
+.aether-start-mark { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-right: 5px; }
+.aether-start-mark .aether-start-logo-symbol { flex: 0 0 13px; width: 13px; height: 13px; border-width: 1px; border-radius: 2px; }
+.aether-start-mark .aether-start-logo-symbol::before { border-width: 1px; }
+.aether-start-mark .aether-start-logo-symbol i { height: 1px; }
+.aether-start-mark .aether-start-logo-symbol,
+.aether-start-mark .aether-start-logo-symbol::before { border-color: #000; }
+.aether-start-mark .aether-start-logo-symbol i { background: #000; }
 .aether-task-buttons { display: flex; min-width: 0; flex: 1; gap: 4px; overflow: hidden; }
 .aether-task-button { display: flex; align-items: center; min-width: 120px; max-width: 190px; height: 24px; overflow: hidden; padding: 1px 8px; border: 2px outset var(--aether-gray); background: var(--aether-gray); text-align: left; white-space: nowrap; }
 .aether-task-button > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
@@ -490,6 +525,7 @@ button:focus-visible, textarea:focus-visible {
 /* Explicit bevels keep the classic button edges consistent across browser engines. */
 .aether-title-controls button,
 .aether-app-toolbar button,
+.aether-notepad-controls button,
 .aether-explorer-toolbar button,
 .aether-button,
 .aether-ie-nav button,
@@ -507,6 +543,7 @@ button:focus-visible, textarea:focus-visible {
 
 .aether-title-controls button:active,
 .aether-app-toolbar button:active,
+.aether-notepad-controls button:active,
 .aether-explorer-toolbar button:active,
 .aether-button:active,
 .aether-ie-nav button:active,
@@ -554,3 +591,4 @@ button:focus-visible, textarea:focus-visible {
   .aether-audio-readout { gap: 4px; }
   .aether-audio-readout label { min-width: 0; padding-inline: 4px; }
 }
+

@@ -31,6 +31,10 @@
 
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
   const iconBase = '../../assets/aether/icons/';
+  const soundRoot = ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? 'https://superzero1288.github.io/os/aether/'
+    : new URL('.', location.href).href;
+  const soundUrl = path => new URL(path, soundRoot).href;
   const iconMarkup = (icon, className = 'aether-file-icon') => {
     if (icon === 'terminal-glyph') {
       return `<span class="${className}-terminal" aria-hidden="true">&gt;_</span>`;
@@ -247,11 +251,12 @@
     return { bar, closeMenus };
   };
 
-  const openAbout = () => {
+  const openAbout = ({ startup = false } = {}) => {
     const body = document.createElement('div');
     body.className = 'aether-about';
     body.innerHTML = `<div class="aether-os-logo aether-about-logo" aria-label="AetherOS 1.0"><span class="aether-os-logo-symbol" aria-hidden="true"><i></i></span><strong>AetherOS</strong><sup>1.0</sup></div><h2>About AetherOS 1.0</h2><p>AetherOS is an operating system designed and developed by Omnivast Corporation for physical computers.</p><div class="aether-inset"><strong>AetherOS 1.0</strong><br>Build 9501<br>Manufacturer: Omnivast Corporation<br>Hardware status: Operational</div><p>Built to provide a reliable, approachable desktop for everyday work and quiet exploration.</p>`;
     createWindow({ title: 'About AetherOS', icon: 'about.svg', body, width: 430, height: 290 });
+    if (startup) void playSystemSound('startup');
   };
 
   const openNotepad = (initialText = null, fileName = '') => {
@@ -260,11 +265,9 @@
     const textarea = document.createElement('textarea');
     textarea.setAttribute('aria-label', 'Aether Notes');
     textarea.value = initialText ?? localStorage.getItem('aether-notes') ?? 'Welcome to AetherOS 1.0.\n';
-    const toolbar = document.createElement('div');
-    toolbar.className = 'aether-app-toolbar';
     const toolbarButton = (label, onClick) => {
       const button = document.createElement('button');
-      button.type = 'button'; button.textContent = label; button.addEventListener('click', onClick); toolbar.append(button); return button;
+      button.type = 'button'; button.textContent = label; button.addEventListener('click', () => { menu.closeMenus(); onClick(); }); return button;
     };
     const save = () => { localStorage.setItem('aether-notes', textarea.value); setTrayStatus('Note saved'); };
     const download = () => {
@@ -277,18 +280,23 @@
       setTrayStatus('AetherNote.txt saved');
     };
     const clear = () => { textarea.value = ''; textarea.focus(); };
-    toolbarButton('Save', save);
-    toolbarButton('Save .TXT', download);
-    toolbarButton('Clear', clear);
-    toolbarButton('Word Wrap', () => { textarea.classList.toggle('is-no-wrap'); });
     let record;
-    createClassicMenu(body, {
+    const menu = createClassicMenu(body, {
       File: [{ label: 'Save', onClick: save }, { label: 'Save As .TXT', onClick: download }, null, { label: 'Close', onClick: () => record?.element.querySelector('[data-window-action="close"]')?.click() }],
       Edit: [{ label: 'Clear', onClick: clear }, { label: 'Select All', onClick: () => { textarea.focus(); textarea.select(); } }],
       View: [{ label: 'Word Wrap', onClick: () => textarea.classList.toggle('is-no-wrap') }],
       Help: [{ label: 'About Notepad', onClick: () => setTrayStatus('Notepad — AetherOS text editor') }]
     });
-    body.append(toolbar, textarea);
+    const controls = document.createElement('div');
+    controls.className = 'aether-notepad-controls';
+    controls.append(
+      toolbarButton('Save', save),
+      toolbarButton('Save .TXT', download),
+      toolbarButton('Clear', clear),
+      toolbarButton('Word Wrap', () => { textarea.classList.toggle('is-no-wrap'); })
+    );
+    menu.bar.append(controls);
+    body.append(textarea);
     record = createWindow({ title: fileName ? `${fileName} - Notepad` : 'Notepad.exe', icon: 'notepad.svg', body, width: 520, height: 350 });
   };
 
@@ -743,6 +751,7 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'aether-icon aether-repository-icon';
+      button.dataset.desktopId = `repository:${entry.name}`;
       button.title = entry.name;
       const art = document.createElement('span');
       art.className = 'aether-icon-art';
@@ -751,7 +760,11 @@
       label.textContent = entry.name;
       button.append(art, label);
       const activate = () => entry.path ? openExplorer(entry.path) : openRepositoryFile(entry);
-      button.addEventListener('dblclick', activate);
+      button._aetherActivate = activate;
+      button.addEventListener('dblclick', event => {
+        if (Date.now() < desktopActivationSuppressedUntil) { event.preventDefault(); return; }
+        activate();
+      });
       button.addEventListener('keydown', event => {
         if (event.key !== 'Enter' && event.key !== ' ') return;
         event.preventDefault();
@@ -759,6 +772,7 @@
       });
       iconRoot.append(button);
     });
+    layoutDesktopIcons();
   };
 
   const openRecycleBin = () => openExplorer('C:\\Recycle Bin\\');
@@ -770,7 +784,7 @@
       <div class="aether-explorer-menu"><button type="button">File</button><button type="button">Edit</button><button type="button">View</button><button type="button">Help</button></div>
       <div class="aether-explorer-toolbar"><button type="button" data-explorer-action="back">◀ Back</button><button type="button" data-explorer-action="up">↑ Up</button><button type="button" data-explorer-action="refresh">↻ Refresh</button></div>
       <div class="aether-explorer-address"><strong>Address</strong><span data-explorer-address></span></div>
-      <div class="aether-explorer-main"><aside class="aether-explorer-sidebar"><strong>Quick Access</strong><div class="aether-quick-access"><button type="button" data-explorer-path="C:\\Users\\Unknown\\Desktop\\"><img class="aether-quick-icon" src="${iconBase}desktop.svg" alt="">Desktop</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Downloads\\"><img class="aether-quick-icon" src="${iconBase}downloads.svg" alt="">Downloads</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Documents\\"><img class="aether-quick-icon" src="${iconBase}folder-file.svg" alt="">Documents</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Pictures\\"><img class="aether-quick-icon" src="${iconBase}wangimg128.svg" alt="">Pictures</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Music\\"><img class="aether-quick-icon" src="${iconBase}media-audio.svg" alt="">Music</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Videos\\"><img class="aether-quick-icon" src="${iconBase}media-video.svg" alt="">Videos</button></div><strong>Other Places</strong><button class="aether-other-place" type="button" data-explorer-path="C:\\"><img class="aether-quick-icon" src="${iconBase}computer.svg" alt="">My Computer</button><button class="aether-other-place" type="button" data-explorer-action="network"><img class="aether-quick-icon" src="${iconBase}network.svg" alt="">Aether Network</button></aside><div class="aether-explorer-content"><table class="aether-explorer-table"><thead><tr><th>Name</th><th>Type</th><th>Size</th></tr></thead><tbody data-explorer-list></tbody></table></div></div>
+      <div class="aether-explorer-main"><aside class="aether-explorer-sidebar"><strong>Quick Access</strong><div class="aether-quick-access"><button type="button" data-explorer-path="C:\\Users\\Unknown\\Desktop\\"><img class="aether-quick-icon" src="${iconBase}desktop.svg" alt="">Desktop</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Downloads\\"><img class="aether-quick-icon" src="${iconBase}downloads.svg" alt="">Downloads</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Documents\\"><img class="aether-quick-icon" src="${iconBase}folder-file.svg" alt="">Documents</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Pictures\\"><img class="aether-quick-icon" src="${iconBase}wangimg128.svg" alt="">Pictures</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Music\\"><img class="aether-quick-icon" src="${iconBase}media-audio.svg" alt="">Music</button><button type="button" data-explorer-path="C:\\Users\\Unknown\\Videos\\"><img class="aether-quick-icon" src="${iconBase}media-video.svg" alt="">Videos</button></div><strong>Other Places</strong><button class="aether-other-place" type="button" data-explorer-path="C:\\"><img class="aether-quick-icon" src="${iconBase}computer.svg" alt="">My Computer</button><button class="aether-other-place" type="button" data-explorer-action="network"><img class="aether-quick-icon" src="${iconBase}browser-globe.svg" alt="">Aether Network</button></aside><div class="aether-explorer-content"><table class="aether-explorer-table"><thead><tr><th>Name</th><th>Type</th><th>Size</th></tr></thead><tbody data-explorer-list></table></div></div>
       <div class="aether-explorer-status" data-explorer-status></div>`;
     const address = root.querySelector('[data-explorer-address]');
     const list = root.querySelector('[data-explorer-list]');
@@ -863,8 +877,162 @@
   };
 
   const apps = { explorer: openExplorer, notepad: openNotepad, paint: openPaint, browser: openBrowser, video: openVideoPlayer, image: openImageViewer, audio: openAudioPlayer, about: openAbout, terminal: openTerminal, recycle: openRecycleBin };
+  const desktopIconRoot = desktop.querySelector('.aether-icons');
+  const desktopPositionKey = 'aether-desktop-icon-positions';
+  let desktopActivationSuppressedUntil = 0;
+  const desktopIconId = icon => icon.dataset.desktopId || (icon.dataset.aetherApp ? `app:${icon.dataset.aetherApp}` : `label:${icon.textContent.trim()}`);
+  const readDesktopPositions = () => {
+    try { return JSON.parse(localStorage.getItem(desktopPositionKey) || '{}'); } catch { return {}; }
+  };
+  const desktopGrid = () => {
+    const width = desktopIconRoot.clientWidth || Math.max(260, window.innerWidth - 24);
+    const height = desktopIconRoot.clientHeight || Math.max(300, window.innerHeight - 54);
+    const maxLeft = Math.max(0, width - 118);
+    const maxTop = Math.max(0, height - 88);
+    return { columns: Math.max(1, Math.floor(maxLeft / 120) + 1), rows: Math.max(1, Math.floor(maxTop / 92) + 1) };
+  };
+  const nearestFreeDesktopCell = (point, occupied, columns, rows) => {
+    const desiredColumn = Math.max(0, Math.min(columns - 1, Math.round((Number(point.left) || 0) / 120)));
+    const desiredRow = Math.max(0, Math.min(rows - 1, Math.round((Number(point.top) || 0) / 92)));
+    const candidates = [];
+    for (let row = 0; row < rows; row += 1) {
+      for (let column = 0; column < columns; column += 1) {
+        candidates.push({ column, row, distance: (column - desiredColumn) ** 2 + (row - desiredRow) ** 2 });
+      }
+    }
+    candidates.sort((a, b) => a.distance - b.distance || a.row - b.row || a.column - b.column);
+    const cell = candidates.find(candidate => !occupied.has(`${candidate.column}:${candidate.row}`)) || candidates[0];
+    return { left: cell.column * 120, top: cell.row * 92, key: `${cell.column}:${cell.row}` };
+  };
+  const saveDesktopPositions = () => {
+    const positions = {};
+    desktopIconRoot.querySelectorAll('.aether-icon').forEach(icon => {
+      positions[desktopIconId(icon)] = { left: Number.parseFloat(icon.style.left) || 0, top: Number.parseFloat(icon.style.top) || 0 };
+    });
+    localStorage.setItem(desktopPositionKey, JSON.stringify(positions));
+  };
+  const layoutDesktopIcons = (reset = false) => {
+    if (reset) localStorage.removeItem(desktopPositionKey);
+    const saved = reset ? {} : readDesktopPositions();
+    const { columns, rows } = desktopGrid();
+    const occupied = new Set();
+    desktopIconRoot.querySelectorAll('.aether-icon').forEach((icon, index) => {
+      const id = desktopIconId(icon);
+      const point = saved[id] || { left: Math.floor(index / rows) * 120, top: (index % rows) * 92 };
+      const cell = nearestFreeDesktopCell(point, occupied, columns, rows);
+      occupied.add(cell.key);
+      icon.style.left = `${cell.left}px`;
+      icon.style.top = `${cell.top}px`;
+    });
+    if (reset) saveDesktopPositions();
+  };
+
+  const contextMenu = document.createElement('div');
+  contextMenu.className = 'aether-context-menu';
+  contextMenu.setAttribute('role', 'menu');
+  contextMenu.hidden = true;
+  contextMenu.innerHTML = '<button type="button" role="menuitem" data-desktop-action="open">Open</button><div class="aether-context-separator" role="separator"></div><button type="button" role="menuitem" data-desktop-action="arrange">Arrange Icons</button><button type="button" role="menuitem" data-desktop-action="refresh">Refresh</button><div class="aether-context-separator" role="separator"></div><button type="button" role="menuitem" data-desktop-action="properties">About AetherOS</button>';
+  desktop.append(contextMenu);
+  let contextIcon = null;
+  const closeDesktopContextMenu = () => { contextMenu.hidden = true; };
+  const activateDesktopIcon = icon => {
+    if (!icon) return;
+    if (typeof icon._aetherActivate === 'function') icon._aetherActivate();
+    else apps[icon.dataset.aetherApp]?.();
+  };
+  contextMenu.addEventListener('click', event => {
+    const action = event.target.closest('[data-desktop-action]')?.dataset.desktopAction;
+    closeDesktopContextMenu();
+    if (action === 'open') activateDesktopIcon(contextIcon);
+    if (action === 'arrange') layoutDesktopIcons(true);
+    if (action === 'refresh') void loadRepositoryFilesystem();
+    if (action === 'properties') openAbout();
+  });
+  desktop.addEventListener('contextmenu', event => {
+    if (event.target.closest('.aether-window, .aether-taskbar, #aetherStartMenu, .aether-context-menu')) return;
+    event.preventDefault();
+    contextIcon = event.target.closest('.aether-icon');
+    desktopIconRoot.querySelectorAll('.aether-icon').forEach(icon => icon.classList.toggle('is-selected', icon === contextIcon));
+    contextMenu.querySelector('[data-desktop-action="open"]').hidden = !contextIcon;
+    contextMenu.querySelectorAll('.aether-context-separator')[0].hidden = !contextIcon;
+    contextMenu.querySelectorAll('.aether-context-separator')[1].hidden = !contextIcon;
+    contextMenu.hidden = false;
+    const bounds = desktop.getBoundingClientRect();
+    const left = Math.max(0, Math.min(event.clientX - bounds.left, desktop.clientWidth - contextMenu.offsetWidth));
+    const top = Math.max(0, Math.min(event.clientY - bounds.top, desktop.clientHeight - contextMenu.offsetHeight));
+    contextMenu.style.left = `${left}px`;
+    contextMenu.style.top = `${top}px`;
+    contextMenu.querySelector('[data-desktop-action="open"]:not([hidden]), [data-desktop-action="arrange"]').focus();
+  });
+  desktop.addEventListener('pointerdown', event => {
+    if (!contextMenu.contains(event.target) && event.button !== 2) closeDesktopContextMenu();
+  });
+  desktop.addEventListener('keydown', event => { if (event.key === 'Escape') closeDesktopContextMenu(); });
+  desktopIconRoot.addEventListener('click', event => {
+    const icon = event.target.closest('.aether-icon');
+    if (!icon) return;
+    desktopIconRoot.querySelectorAll('.aether-icon').forEach(item => item.classList.toggle('is-selected', item === icon));
+  });
+  desktop.addEventListener('click', event => {
+    if (event.target.closest('.aether-icon')) return;
+    desktopIconRoot.querySelectorAll('.aether-icon.is-selected').forEach(icon => icon.classList.remove('is-selected'));
+  });
+  desktopIconRoot.addEventListener('pointerdown', event => {
+    const icon = event.target.closest('.aether-icon');
+    if (!icon || event.button !== 0) return;
+    desktopIconRoot.querySelectorAll('.aether-icon').forEach(item => item.classList.toggle('is-selected', item === icon));
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startLeft = Number.parseFloat(icon.style.left) || 0;
+    const startTop = Number.parseFloat(icon.style.top) || 0;
+    let dragged = false;
+    try { icon.setPointerCapture(event.pointerId); } catch { /* Pointer capture is optional on older browsers. */ }
+    const move = moveEvent => {
+      if (moveEvent.pointerId !== event.pointerId) return;
+      const deltaX = moveEvent.clientX - startX;
+      const deltaY = moveEvent.clientY - startY;
+      if (!dragged && Math.hypot(deltaX, deltaY) < 4) return;
+      dragged = true;
+      const width = desktopIconRoot.clientWidth || desktop.clientWidth;
+      const height = desktopIconRoot.clientHeight || desktop.clientHeight - 30;
+      icon.style.left = `${Math.max(0, Math.min(width - icon.offsetWidth, startLeft + deltaX))}px`;
+      icon.style.top = `${Math.max(0, Math.min(height - icon.offsetHeight, startTop + deltaY))}px`;
+    };
+    const finish = finishEvent => {
+      if (finishEvent.pointerId !== event.pointerId) return;
+      icon.removeEventListener('pointermove', move);
+      icon.removeEventListener('pointerup', finish);
+      icon.removeEventListener('pointercancel', finish);
+      if (dragged) {
+        desktopActivationSuppressedUntil = Date.now() + 450;
+        const { columns, rows } = desktopGrid();
+        const occupied = new Set();
+        desktopIconRoot.querySelectorAll('.aether-icon').forEach(other => {
+          if (other === icon) return;
+          const column = Math.round((Number.parseFloat(other.style.left) || 0) / 120);
+          const row = Math.round((Number.parseFloat(other.style.top) || 0) / 92);
+          occupied.add(`${column}:${row}`);
+        });
+        const snapped = nearestFreeDesktopCell({ left: Number.parseFloat(icon.style.left), top: Number.parseFloat(icon.style.top) }, occupied, columns, rows);
+        icon.style.left = `${snapped.left}px`;
+        icon.style.top = `${snapped.top}px`;
+        saveDesktopPositions();
+      }
+    };
+    icon.addEventListener('pointermove', move);
+    icon.addEventListener('pointerup', finish);
+    icon.addEventListener('pointercancel', finish);
+  });
+  desktopIconRoot.addEventListener('dragstart', event => { if (event.target.closest('.aether-icon')) event.preventDefault(); });
+  window.addEventListener('resize', () => layoutDesktopIcons());
+
   document.querySelectorAll('[data-aether-app]').forEach(button => {
-    const launch = () => { startMenu.hidden = true; startButton.setAttribute('aria-expanded', 'false'); apps[button.dataset.aetherApp]?.(); };
+    const launch = event => {
+      if (event?.type === 'dblclick' && Date.now() < desktopActivationSuppressedUntil) return;
+      startMenu.hidden = true;
+      startButton.setAttribute('aria-expanded', 'false');
+      apps[button.dataset.aetherApp]?.();
+    };
     if (button.closest('.aether-start-items')) button.addEventListener('click', launch);
     else button.addEventListener('dblclick', launch);
     button.addEventListener('keydown', event => {
@@ -888,10 +1056,27 @@
     screen.className = 'aether-shutdown-screen';
     screen.innerHTML = `<div class="aether-shutdown-panel"><strong>Shutting down AetherOS...</strong><span>${restart ? 'Preparing to restart...' : 'It is now safe to return.'}</span></div>`;
     document.body.append(screen);
+    const shutdownPlayback = playSystemSound('shutdown');
     if (restart) sessionStorage.setItem(ticketKey, JSON.stringify({ id: 'restart', expiresAt: Date.now() + 120000 }));
     else sessionStorage.removeItem(ticketKey);
     window.setTimeout(() => { screen.replaceChildren(); screen.classList.add('is-black'); }, 850);
-    window.setTimeout(() => restart ? location.reload() : location.replace(new URL('../../', location.href).href), 1250);
+    let finished = false;
+    let hardFallback;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(hardFallback);
+      restart ? location.reload() : location.replace(new URL('../../', location.href).href);
+    };
+    hardFallback = window.setTimeout(finish, 5600);
+    Promise.resolve(shutdownPlayback).then(played => {
+      if (finished) return;
+      const duration = played && Number.isFinite(systemSounds.shutdown.duration)
+        ? Math.max(1250, Math.min(5000, systemSounds.shutdown.duration * 1000 + 180))
+        : 1250;
+      const fallback = window.setTimeout(finish, duration);
+      if (played) systemSounds.shutdown.addEventListener('ended', () => { window.clearTimeout(fallback); finish(); }, { once: true });
+    });
   };
   document.getElementById('aetherShutdownButton').addEventListener('click', () => runShutdown(false));
   document.getElementById('aetherRestartButton').addEventListener('click', () => runShutdown(true));
@@ -902,7 +1087,68 @@
     }
   });
 
-  let muted = false;
+  let muted = localStorage.getItem('aether-system-sounds-muted') === 'true';
+  let startupSoundPending = false;
+  const systemSounds = {
+    click: new Audio(soundUrl('Click.wav')),
+    startup: new Audio(soundUrl('Sound/startup.wav')),
+    shutdown: new Audio(soundUrl('Sound/shutdown.wav'))
+  };
+  Object.values(systemSounds).forEach(sound => { sound.preload = 'auto'; });
+  systemSounds.click.volume = .35;
+  systemSounds.startup.volume = .55;
+  systemSounds.shutdown.volume = .55;
+  const fadeTimers = new WeakMap();
+  const clearSoundFade = sound => {
+    const timer = fadeTimers.get(sound);
+    if (timer) window.clearInterval(timer);
+    fadeTimers.delete(sound);
+  };
+  const playSystemSound = async name => {
+    if (muted) return false;
+    const sound = systemSounds[name];
+    if (!sound) return false;
+    const baseVolume = name === 'click' ? .35 : .55;
+    try {
+      clearSoundFade(sound);
+      sound.pause();
+      sound.currentTime = 0;
+      sound.volume = baseVolume;
+      if (name !== 'click') {
+        const timer = window.setInterval(() => {
+          if (!Number.isFinite(sound.duration) || sound.duration <= 0) return;
+          const remaining = sound.duration - sound.currentTime;
+          if (remaining <= 1) sound.volume = baseVolume * Math.max(0, remaining);
+        }, 50);
+        fadeTimers.set(sound, timer);
+        sound.addEventListener('ended', () => {
+          clearSoundFade(sound);
+          sound.volume = baseVolume;
+        }, { once: true });
+      }
+      await sound.play();
+      if (name === 'startup') startupSoundPending = false;
+      return true;
+    } catch (error) {
+      clearSoundFade(sound);
+      sound.volume = baseVolume;
+      if (name === 'startup') startupSoundPending = error?.name === 'NotAllowedError';
+      return false;
+    }
+  };
+  document.addEventListener('pointerdown', () => {
+    if (startupSoundPending && !muted) void playSystemSound('startup');
+  }, { capture: true });
+  document.addEventListener('click', event => {
+    const control = event.target instanceof Element ? event.target.closest('button, [role="button"]') : null;
+    if (!control || !desktop.contains(control) || control.matches('#aetherShutdownButton, #aetherRestartButton')) return;
+    if (control.closest('.aether-icon') && Date.now() < desktopActivationSuppressedUntil) return;
+    void playSystemSound('click');
+  }, true);
+  volumeButton.setAttribute('aria-pressed', String(muted));
+  volumeButton.setAttribute('aria-label', `音量: ${muted ? 'ミュート' : '100パーセント'}`);
+  volumeButton.title = `音量: ${muted ? 'ミュート' : '100パーセント'}`;
+  volumeIcon.src = `../../assets/aether/icons/${muted ? 'volume-off-tray' : 'volume-on-tray'}.svg`;
   const updateClock = () => {
     const now = new Date();
     clock.textContent = new Intl.DateTimeFormat('ja-JP', { hour: '2-digit', minute: '2-digit' }).format(now);
@@ -913,6 +1159,7 @@
   });
   volumeButton.addEventListener('click', () => {
     muted = !muted;
+    localStorage.setItem('aether-system-sounds-muted', String(muted));
     volumeButton.setAttribute('aria-pressed', String(muted));
     volumeButton.setAttribute('aria-label', `音量: ${muted ? 'ミュート' : '100パーセント'}`);
     volumeButton.title = `音量: ${muted ? 'ミュート' : '100パーセント'}`;
@@ -966,15 +1213,17 @@
     osBoot.hidden = true;
     desktop.classList.remove('is-taskbar-visible', 'is-icons-visible');
     desktop.hidden = false;
+    layoutDesktopIcons();
     await wait(420);
     desktop.classList.add('is-taskbar-visible');
     await wait(360);
     desktop.classList.add('is-icons-visible');
     await wait(260);
-    openAbout();
+    openAbout({ startup: true });
   };
 
   // Filesystem synchronization must not delay the visible boot sequence.
   loadRepositoryFilesystem();
   bootSequence();
 })();
+
