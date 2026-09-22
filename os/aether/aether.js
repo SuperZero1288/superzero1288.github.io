@@ -30,7 +30,6 @@
   document.body.classList.add('aether-authorized');
 
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-  const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
   const iconBase = '../../assets/aether/icons/';
   const iconMarkup = (icon, className = 'aether-file-icon') => {
     if (icon === 'terminal-glyph') {
@@ -947,9 +946,6 @@
     await wait(520);
     boot.hidden = true;
     osBoot.hidden = false;
-    await nextFrame();
-    await nextFrame();
-    osBoot.classList.add('is-visible');
     const osSteps = [
       [8, 'Loading AetherOS kernel...'],
       [18, 'Checking system hardware...'],
@@ -968,7 +964,6 @@
     }
     await wait(450);
     osBoot.hidden = true;
-    osBoot.classList.remove('is-visible');
     desktop.classList.remove('is-taskbar-visible', 'is-icons-visible');
     desktop.hidden = false;
     await wait(420);

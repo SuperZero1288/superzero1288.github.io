@@ -8,6 +8,10 @@
   --aether-navy-dark: #00004c;
   --aether-text: #111111;
   --aether-focus: #ffff00;
+  --aether-bevel-highlight: #ffffff;
+  --aether-bevel-shadow: #404040;
+  --aether-bevel-highlight-inner: #dfdfdf;
+  --aether-bevel-shadow-inner: #808080;
 }
 
 * { box-sizing: border-box; }
@@ -129,10 +133,7 @@ button:focus-visible, textarea:focus-visible {
   place-items: center;
   background: #000;
   color: #fff;
-  opacity: 0;
-  transition: opacity 1.4s ease;
 }
-.aether-os-boot.is-visible { opacity: 1; }
 .aether-os-boot-panel {
   position: relative;
   display: grid;
@@ -147,15 +148,9 @@ button:focus-visible, textarea:focus-visible {
   background: #000;
 }
 .aether-os-boot-panel > * {
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .55s ease, transform .55s ease;
+  opacity: 1;
+  transform: none;
 }
-.aether-os-boot.is-visible .aether-os-boot-panel > * { opacity: 1; transform: none; }
-.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(1) { transition-delay: .18s; }
-.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(2) { transition-delay: .4s; }
-.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(3) { transition-delay: .58s; }
-.aether-os-boot.is-visible .aether-os-boot-panel > :nth-child(4) { transition-delay: .72s; }
 .aether-os-logo { display: flex; align-items: center; gap: 8px; color: #f2f2f2; font-family: Arial, sans-serif; font-size: clamp(2rem, 6vw, 4.2rem); letter-spacing: -.08em; }
 .aether-os-logo strong { font-weight: 500; }
 .aether-os-logo sup { align-self: flex-start; margin-top: .25em; font-size: .28em; letter-spacing: 0; }
@@ -491,6 +486,52 @@ button:focus-visible, textarea:focus-visible {
 .aether-start-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px; border-top: 1px solid var(--aether-shadow); font-size: .8rem; }
 .aether-power-actions { display: flex; gap: 4px; }
 .aether-start-footer button { padding: 3px 7px; border: 2px outset var(--aether-gray); background: var(--aether-gray); }
+
+/* Explicit bevels keep the classic button edges consistent across browser engines. */
+.aether-title-controls button,
+.aether-app-toolbar button,
+.aether-explorer-toolbar button,
+.aether-button,
+.aether-ie-nav button,
+.aether-ie-address button,
+.aether-paint-toolbar button,
+.aether-paint-actions button,
+.aether-media-transport button,
+.aether-start-button,
+.aether-task-button,
+.aether-start-footer button {
+  border-style: solid;
+  border-color: var(--aether-bevel-highlight) var(--aether-bevel-shadow) var(--aether-bevel-shadow) var(--aether-bevel-highlight);
+  box-shadow: inset 1px 1px 0 var(--aether-bevel-highlight-inner), inset -1px -1px 0 var(--aether-bevel-shadow-inner);
+}
+
+.aether-title-controls button:active,
+.aether-app-toolbar button:active,
+.aether-explorer-toolbar button:active,
+.aether-button:active,
+.aether-ie-nav button:active,
+.aether-ie-address button:active,
+.aether-paint-toolbar button:active,
+.aether-paint-actions button:active,
+.aether-media-transport button:active,
+.aether-start-button:active,
+.aether-start-button[aria-expanded="true"],
+.aether-task-button.is-active,
+.aether-start-footer button:active {
+  border-color: var(--aether-bevel-shadow) var(--aether-bevel-highlight) var(--aether-bevel-highlight) var(--aether-bevel-shadow);
+  box-shadow: inset 1px 1px 0 var(--aether-bevel-shadow-inner), inset -1px -1px 0 var(--aether-bevel-highlight-inner);
+}
+
+.aether-window,
+.aether-app-menu-popup,
+.aether-start-menu {
+  border-style: solid;
+  border-color: var(--aether-bevel-highlight) var(--aether-bevel-shadow) var(--aether-bevel-shadow) var(--aether-bevel-highlight);
+}
+
+.aether-taskbar { border-top-style: solid; border-top-color: var(--aether-bevel-highlight); }
+.aether-app-toolbar, .aether-explorer-toolbar { border-bottom-style: solid; border-bottom-color: var(--aether-bevel-shadow); }
+.aether-media-transport { border-top-style: solid; border-top-color: var(--aether-bevel-highlight); }
 
 .aether-shutdown-screen {
   position: fixed;
