@@ -2,11 +2,11 @@
   {
     "id": "n8d41d4a76214",
     "title": "305SHを今更MIUI化/Root化/使えるようにしてみた",
-    "description": "極細ベゼルで有名な初代AQUOS CRYSTAL、305SH どうやらこいつ、海外で発売されたおかげで有志の力が集まりAQUOSのくせにROM焼きができるようになったんですね しかもMIUI てことで備忘録(?)として方法と使い道をまとめていきます  あ、ちなみに初Noteです   必要な物    305SH本体    MicroSDカード(8GB以上)    MicroUSBケーブル    必要なファイル    305sh_miui7-v3.zip    open_gapps-arm-4.4-pico.zip    SR5-SuperSU-v2.82-SR5.zip    Tewil",
+    "description": "極細ベゼルで有名な初代AQUOS CRYSTAL、305SH どうやらこいつ、海外で発売されたおかげで有志の力が集まり AQUOSのくせにROM焼きができる ようになったんですね しかもMIUI てことで備忘録(?)として方法と使い道をまとめていきます あ、ちなみに初Noteです",
     "thumbnail": "https://assets.st-note.com/production/uploads/images/310671099/rectangle_large_type_2_a1642a4adeb923b12c27a37eb651a399.jpeg?width=800",
     "publishedAt": "Sun, 06 Sep 2026 12:54:08 +0900",
     "sourceUrl": "https://note.com/zerrrrro_1288/n/n8d41d4a76214",
-    "coverPath": "assets/n8d41d4a76214/cover-323a8816b1b01e.jpeg",
-    "generated": true
+    "coverPath": "",
+    "generated": false
   }
 ]
