@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Vastique 1.0</title>
+  <link rel="stylesheet" href="vastique.css?v=1.0.0">
+</head>
+<body>
+  <main class="v-boot" id="vBoot" aria-live="polite">
+    <div class="v-boot-card">
+      <div class="v-mark v-mark-large"><span></span><i></i></div>
+      <h1>Vastique</h1>
+      <p class="v-boot-subtitle">A Vectoraise operating system</p>
+      <div class="v-boot-progress"><span id="vBootProgress"></span></div>
+      <p id="vBootStatus">Preparing your workspace…</p>
+    </div>
+  </main>
+
+  <main class="v-desktop" id="vDesktop" hidden>
+    <div class="v-wallpaper" aria-hidden="true"><span class="v-orb v-orb-one"></span><span class="v-orb v-orb-two"></span><span class="v-orb v-orb-three"></span></div>
+    <header class="v-menubar">
+      <button class="v-menu-brand" type="button" data-v-app="about" aria-label="About Vastique"><span class="v-mark v-mark-small"><span></span><i></i></span></button>
+      <button type="button" class="v-menu-name" data-v-menu="vastique">Vastique</button>
+      <button type="button" data-v-menu="file">File</button><button type="button" data-v-menu="edit">Edit</button><button type="button" data-v-menu="view">View</button><button type="button" data-v-menu="window">Window</button><button type="button" data-v-menu="help">Help</button>
+      <span class="v-menubar-spacer"></span><span class="v-status-dot" aria-label="Offline"></span><span class="v-status-text">Offline</span><time id="vClock">00:00</time>
+    </header>
+    <section class="v-icons" aria-label="Desktop">
+      <button type="button" class="v-desktop-icon" data-v-app="finder"><span class="v-icon-glyph v-icon-finder">⌂</span><span>Vastique Drive</span></button>
+      <button type="button" class="v-desktop-icon" data-v-app="textedit"><span class="v-icon-glyph v-icon-text">▤</span><span>TextEdit</span></button>
+      <button type="button" class="v-desktop-icon" data-v-app="browser"><span class="v-icon-glyph v-icon-browser">◎</span><span>Vastique Web</span></button>
+      <button type="button" class="v-desktop-icon" data-v-app="terminal"><span class="v-icon-glyph v-icon-terminal">›_</span><span>Terminal</span></button>
+    </section>
+    <section class="v-windows" id="vWindows" aria-live="polite"></section>
+    <nav class="v-dock" aria-label="Dock">
+      <button type="button" data-v-app="finder" title="Vastique Drive"><span class="v-dock-glyph v-icon-finder">⌂</span></button>
+      <button type="button" data-v-app="browser" title="Vastique Web"><span class="v-dock-glyph v-icon-browser">◎</span></button>
+      <button type="button" data-v-app="textedit" title="TextEdit"><span class="v-dock-glyph v-icon-text">▤</span></button>
+      <button type="button" data-v-app="terminal" title="Terminal"><span class="v-dock-glyph v-icon-terminal">›_</span></button>
+      <span class="v-dock-divider"></span>
+      <button type="button" data-v-app="about" title="About Vastique"><span class="v-dock-glyph v-icon-about">V</span></button>
+      <button type="button" data-v-action="shutdown" title="Shut Down"><span class="v-dock-glyph v-icon-power">⏻</span></button>
+    </nav>
+  </main>
+  <script src="vastique.js?v=1.0.0"></script>
+</body>
+</html>

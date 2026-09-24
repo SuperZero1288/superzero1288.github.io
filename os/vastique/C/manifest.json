@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "filesystem": "Vastique Drive",
+  "directories": {
+    "C:\\": [
+      { "icon": "folder", "name": "Users", "type": "File folder", "size": "", "path": "C:\\Users\\" },
+      { "icon": "folder", "name": "Applications", "type": "File folder", "size": "", "path": "C:\\Applications\\" },
+      { "icon": "folder", "name": "System", "type": "File folder", "size": "", "path": "C:\\System\\" }
+    ],
+    "C:\\Users\\": [
+      { "icon": "folder", "name": "Vectoraise", "type": "File folder", "size": "", "path": "C:\\Users\\Vectoraise\\" }
+    ],
+    "C:\\Users\\Vectoraise\\": [
+      { "icon": "folder", "name": "Desktop", "type": "File folder", "size": "", "path": "C:\\Users\\Vectoraise\\Desktop\\" },
+      { "icon": "folder", "name": "Documents", "type": "File folder", "size": "", "path": "C:\\Users\\Vectoraise\\Documents\\" },
+      { "icon": "folder", "name": "Downloads", "type": "File folder", "size": "", "path": "C:\\Users\\Vectoraise\\Downloads\\" },
+      { "icon": "folder", "name": "Pictures", "type": "File folder", "size": "", "path": "C:\\Users\\Vectoraise\\Pictures\\" }
+    ],
+    "C:\\Users\\Vectoraise\\Desktop\\": [
+      { "icon": "file", "name": "Welcome.txt", "type": "Text Document", "size": "1 KB", "source": "Users/Vectoraise/Desktop/Welcome.txt", "kind": "text" }
+    ],
+    "C:\\Applications\\": [
+      { "icon": "app", "name": "Finder.app", "type": "Application", "size": "48 KB", "app": "finder" },
+      { "icon": "app", "name": "TextEdit.app", "type": "Application", "size": "36 KB", "app": "textedit" },
+      { "icon": "app", "name": "Vastique Web.app", "type": "Application", "size": "52 KB", "app": "browser" },
+      { "icon": "app", "name": "Terminal.app", "type": "Application", "size": "31 KB", "app": "terminal" }
+    ],
+    "C:\\Users\\Vectoraise\\Documents\\": [],
+    "C:\\Users\\Vectoraise\\Downloads\\": [],
+    "C:\\Users\\Vectoraise\\Pictures\\": [],
+    "C:\\System\\": []
+  }
+}
