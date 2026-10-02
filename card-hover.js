@@ -6,6 +6,8 @@
     '.profile-more-button',
     '.app-launcher-item:not(:disabled)',
     '.directory-link[href]',
+    '.catalog-category-card',
+    '.catalog-item-card',
     '.latest-feed .youtube-video[href]',
     '.github-repository[href]',
     '.feed-empty-card[href]',
@@ -52,3 +54,4 @@
   const observer = new MutationObserver(init);
   observer.observe(document.documentElement, {childList: true, subtree: true});
 })();
+
