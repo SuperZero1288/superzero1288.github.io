@@ -20,11 +20,13 @@
   panel.className = 'floating-search-panel';
   panel.setAttribute('aria-label', '新しいタブ');
   panel.setAttribute('aria-hidden', 'true');
+  panel.inert = true;
   panel.innerHTML = `
-    <div class="floating-search-surface">
+    <div class="floating-search-surface" role="dialog" aria-modal="true" aria-labelledby="floating-search-title">
       <header class="floating-search-heading">
         <span>NEW TAB</span>
-        <h2>Googleで検索</h2>
+        <h2 id="floating-search-title">Googleで検索</h2>
+        <button class="floating-search-close" type="button" aria-label="新しいタブを閉じる">×</button>
       </header>
       <form class="floating-search-form" role="search">
         <div class="floating-search-box">
@@ -91,6 +93,7 @@
   const bookmarkError = panel.querySelector('.floating-bookmark-error');
   const bookmarkCancel = panel.querySelector('[data-bookmark-cancel]');
   let isOpen = false;
+  const surface = panel.querySelector('.floating-search-surface');
 
   const readSettings = () => {
     try {
@@ -184,6 +187,7 @@
 
   function renderRecent() {
     const recent = readRecent();
+    if (recentList.contains(document.activeElement)) window.zeroA11y?.focus(input);
     recentList.replaceChildren();
     recentList.classList.toggle('is-empty', recent.length === 0);
     if (!recent.length) return;
@@ -230,6 +234,7 @@
   };
 
   function renderBookmarks() {
+    const restoreFocus = bookmarkGrid.contains(document.activeElement);
     const bookmarks = readBookmarks();
     bookmarkGrid.replaceChildren();
     bookmarkEmpty.hidden = bookmarks.length > 0;
@@ -265,10 +270,15 @@
       item.append(link, remove);
       bookmarkGrid.appendChild(item);
     });
+    if (restoreFocus) {
+      if (!window.zeroA11y?.focus(bookmarkAdd)) window.zeroA11y?.focus(bookmarkGrid.querySelector('a') || input);
+    }
   }
 
-  const setOpen = (open, { persist = true, focus = false } = {}) => {
+  const setOpen = (open, { persist = true } = {}) => {
+    if (!open && isOpen) window.zeroA11y?.closeDialog(surface, {fallback: toggle});
     isOpen = Boolean(open);
+    panel.inert = !isOpen;
     panel.classList.toggle('is-open', isOpen);
     panel.setAttribute('aria-hidden', String(!isOpen));
     toggle.classList.toggle('is-active', isOpen);
@@ -283,10 +293,19 @@
       renderSettings();
       renderRecent();
       renderBookmarks();
-      if (focus) requestAnimationFrame(() => input.focus({ preventScroll: true }));
+      window.zeroA11y?.openDialog(surface, {
+        scope: panel, allow: [toggle], returnFocus: toggle, initialFocus: input,
+        onEscape: () => {
+          if (!bookmarkEditor.hidden) { closeBookmarkEditor(); window.zeroA11y?.focus(bookmarkAdd); }
+          else setOpen(false);
+        }
+      });
     } else closeBookmarkEditor();
   };
 
+  panel.querySelector('.floating-search-close').addEventListener('click', () => setOpen(false));
+  panel.addEventListener('click', (event) => { if (event.target === panel) setOpen(false); });
+  toggle.setAttribute('aria-haspopup', 'dialog');
   toggle.title = '新しいタブ';
   toggle.setAttribute('aria-label', '新しいタブを開く');
   toggle.addEventListener('click', () => setOpen(!isOpen, { focus: !isOpen }));
@@ -302,7 +321,7 @@
     if (bookmarkEditor.hidden) openBookmarkEditor();
     else closeBookmarkEditor();
   });
-  bookmarkCancel.addEventListener('click', closeBookmarkEditor);
+  bookmarkCancel.addEventListener('click', () => { closeBookmarkEditor(); window.zeroA11y?.focus(bookmarkAdd); });
   bookmarkEditor.addEventListener('submit', event => {
     event.preventDefault();
     const name = bookmarkName.value.trim();
@@ -316,12 +335,9 @@
     saveBookmarks([...bookmarks.filter(item => item.url !== url), { name, url }]);
     closeBookmarkEditor();
     renderBookmarks();
+    if (!window.zeroA11y?.focus(bookmarkAdd)) window.zeroA11y?.focus(bookmarkGrid.querySelector('.floating-bookmark-item:last-child a') || input);
   });
-  document.addEventListener('keydown', event => {
-    if (event.key !== 'Escape' || !isOpen) return;
-    if (!bookmarkEditor.hidden) closeBookmarkEditor();
-    else setOpen(false);
-  });
+  window.addEventListener('zero:closefloatingsearch', () => { if (isOpen) setOpen(false); });
   window.addEventListener('zero:browserdatachange', event => {
     if (event.detail?.source === 'floating-search') return;
     renderSettings();

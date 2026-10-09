@@ -1,0 +1,41 @@
+name: サイトの表示とアクセシビリティを確認
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'blog/assets/**'
+      - 'assets/social-*'
+      - 'blog/articles.json'
+      - 'blog/latest-links.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  site-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: テスト用パッケージを準備
+        run: npm ci
+      - name: JavaScriptの構文を確認
+        run: npm run test:syntax
+      - name: テスト用ブラウザを準備
+        run: npx playwright install --with-deps chromium
+      - name: 表示・キーボード操作・アクセシビリティを確認
+        run: npm test
+      - name: 失敗時のスクリーンショット・トレースを保存
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-test-results
+          path: test-results/
+          retention-days: 7

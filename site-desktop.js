@@ -117,12 +117,14 @@ record.taskButton.setAttribute('aria-label',`${record.title}${record.minimized?'
 function toggleMinimize(record,force){
 if(!record)return;
 record.minimized=typeof force==='boolean'?force:!record.minimized;
+if(record.minimized&&record.element.contains(document.activeElement))window.zeroA11y?.focus(record.taskButton);
+record.element.inert=record.minimized;
 record.element.classList.toggle('is-minimized',record.minimized);
 record.element.setAttribute('aria-hidden',String(record.minimized));
 syncTaskButton(record);
 if(!record.minimized){
 focusWindow(record,{animate:true});
-requestAnimationFrame(()=>record.focusTarget?.focus());
+requestAnimationFrame(()=>window.zeroA11y?.focusFirst(record.element,record.focusTarget));
 }else{
 record.element.classList.remove('is-focused');
 record.taskButton?.classList.remove('is-active');
@@ -166,9 +168,13 @@ setTimeout(()=>{
 record.element.remove();
 if(!windows.size)document.body.classList.remove('desktop-app-closing');
 },240);
-const next=[...windows.values()].reverse().find(item=>!item.minimized);
-if(next)focusWindow(next);
+const next=[...windows.values()].filter(item=>!item.minimized).sort((a,b)=>b.lastFocusedAt-a.lastFocusedAt)[0];
 updateDesktopState();
+if(next){focusWindow(next);window.zeroA11y?.focusFirst(next.element,next.focusTarget);}
+else if(windows.size)window.zeroA11y?.focus([...windows.values()].at(-1)?.taskButton);
+else if(!window.zeroA11y?.focus(record.returnFocus))window.zeroA11y?.focus(document.querySelector('[data-open-profile],.floating-search-toggle'));
+record.element.inert=true;
+record.element.setAttribute('aria-hidden','true');
 }
 
 function createTaskButton(record){
@@ -259,6 +265,10 @@ if(windows.size>=MAX_WINDOWS){
 controller.showToast(`同時に開けるウィンドウは${MAX_WINDOWS}個までです`);
 return null;
 }
+window.dispatchEvent(new Event('zero:closefloatingsearch'));
+const opener=document.activeElement;
+const openerPanel=opener?.closest('.edge-card');
+const returnFocus=openerPanel?document.querySelector(`[aria-controls="${openerPanel.id}"]`):opener;
 controller.closeEdgeCards();
 
 const id=nextWindowId++;
@@ -294,7 +304,7 @@ content.className='app-window-content';
 element.append(titlebar,content);
 layer.appendChild(element);
 
-const record={id,title,appId,icon,element,content,minimized:false,maximized:false,restoreRect:null,taskButton:null,focusTarget:null,dispose:null,lastFocusedAt:performance.now(),maximizeButton:titlebar.querySelector('[data-window-action="maximize"]')};
+const record={id,title,appId,icon,element,content,minimized:false,maximized:false,restoreRect:null,taskButton:null,focusTarget:null,dispose:null,lastFocusedAt:performance.now(),returnFocus,maximizeButton:titlebar.querySelector('[data-window-action="maximize"]')};
 windows.set(id,record);
 createTaskButton(record);
 installWindowDrag(record,titlebar);
@@ -303,6 +313,7 @@ titlebar.querySelector('[data-window-action="minimize"]').addEventListener('clic
 record.maximizeButton.addEventListener('click',()=>toggleMaximize(record));
 titlebar.querySelector('[data-window-action="close"]').addEventListener('click',()=>closeWindow(record));
 element.addEventListener('pointerdown',()=>focusWindow(record));
+element.addEventListener('focusin',()=>focusWindow(record));
 
 const appApi={
 record,
@@ -323,7 +334,7 @@ record.focusTarget=appResult.focusTarget||null;
 record.dispose=appResult.dispose||null;
 focusWindow(record,{animate:true});
 updateDesktopState();
-requestAnimationFrame(()=>record.focusTarget?.focus());
+requestAnimationFrame(()=>window.zeroA11y?.focusFirst(record.element,record.focusTarget));
 return record;
 }
 
@@ -445,6 +456,7 @@ mobileProfileModal.querySelector('[data-close-profile]')?.focus();
 return mobileProfileModal;
 }
 controller.closeEdgeCards();
+const returnFocus=document.activeElement;
 const overlay=document.createElement('div');
 overlay.className='profile-modal-layer';
 overlay.innerHTML=`
@@ -453,7 +465,7 @@ overlay.innerHTML=`
 <div><span aria-hidden="true">ID</span><strong id="profile-modal-title">詳しいプロフィール</strong></div>
 <button type="button" data-close-profile aria-label="プロフィールを閉じる">×</button>
 </header>
-<div class="profile-modal-body"></div>
+<div class="profile-modal-body" tabindex="0" role="region" aria-label="プロフィールの詳細"></div>
 </section>`;
 document.body.appendChild(overlay);
 document.body.classList.add('profile-modal-open');
@@ -461,17 +473,21 @@ mobileProfileModal=overlay;
 const modalHeader=overlay.querySelector('.profile-modal-header');
 const closeButton=overlay.querySelector('[data-close-profile]');
 buildProfile(overlay.querySelector('.profile-modal-body'));
+overlay.querySelector('.profile-modal-body').tabIndex=0;
 
 let touchStart=null;
 const close=()=>{
 if(mobileProfileModal!==overlay)return;
-overlay.classList.remove('is-open');
 document.body.classList.remove('profile-modal-open');
+window.zeroA11y?.closeDialog(overlay.querySelector('.profile-modal'),{fallback:document.querySelector('[data-open-profile]')});
+overlay.inert=true;
+overlay.setAttribute('aria-hidden','true');
+overlay.classList.remove('is-open');
 mobileProfileModal=null;
-document.removeEventListener('keydown',onKeydown);
+
 setTimeout(()=>overlay.remove(),180);
 };
-const onKeydown=event=>{if(event.key==='Escape')close();};
+
 closeButton.addEventListener('click',close);
 overlay.addEventListener('click',event=>{if(event.target===overlay)close();});
 modalHeader.addEventListener('touchstart',event=>{
@@ -486,10 +502,9 @@ const deltaY=touch.clientY-touchStart.y;
 touchStart=null;
 if(deltaY>90&&Math.abs(deltaY)>Math.abs(deltaX))close();
 },{passive:true});
-document.addEventListener('keydown',onKeydown);
 requestAnimationFrame(()=>{
 overlay.classList.add('is-open');
-closeButton.focus();
+window.zeroA11y?.openDialog(overlay.querySelector('.profile-modal'),{scope:overlay,returnFocus,initialFocus:closeButton,onClose:close});
 });
 return overlay;
 }
@@ -1865,6 +1880,12 @@ document.querySelectorAll('[data-open-profile]').forEach(button=>button.addEvent
 window.addEventListener('resize',()=>windows.forEach(clampWindow),{passive:true});
 window.addEventListener('zero:devicehackchange',()=>windows.forEach(item=>item.element.dataset.windowSystem=document.documentElement.dataset.windowSystem));
 window.addEventListener('keydown',event=>{
+if(event.defaultPrevented||event.isComposing||window.zeroA11y?.activeDialog)return;
+if((event.key==='Escape'||(event.altKey&&event.key==='F4'))&&event.target.closest('.app-window')&&!event.target.matches('select')){
+const record=windows.get(Number(event.target.closest('.app-window').dataset.windowId));
+if(record){event.preventDefault();closeWindow(record);}
+return;
+}
 if(event.ctrlKey&&event.altKey&&event.key.toLowerCase()==='t'){
 event.preventDefault();openTerminal();return;
 }
@@ -1873,7 +1894,7 @@ event.preventDefault();
 const ordered=[...windows.values()].sort((a,b)=>(b.lastFocusedAt||0)-(a.lastFocusedAt||0));
 const current=ordered.findIndex(item=>item.element.classList.contains('is-focused')&&!item.minimized);
 const next=ordered[(current+1+ordered.length)%ordered.length];
-toggleMinimize(next,false);focusWindow(next);
+toggleMinimize(next,false);focusWindow(next);window.zeroA11y?.focusFirst(next.element,next.focusTarget);
 }
 });
 

@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ぜろくんでんせつ</title>
 <link rel="stylesheet" href="style.css?v=20260921-thememotion7">
+<link rel="stylesheet" href="/site-accessibility.css?v=20261010-a11y1">
+<script src="/site-accessibility.js?v=20261010-a11y1" defer></script>
 <script src="site-loader.js?v=20260910-os1" defer></script>
-<script src="card-hover.js?v=20260920-cardhover3" defer></script>
-<script src="site-search.js?v=20260919-newtab2" defer></script>
+<script src="card-hover.js?v=20261010-a11y1" defer></script>
+<script src="site-search.js?v=20261010-a11y1" defer></script>
 </head>
 <body class="style-default wing-tabs-idle">
 
@@ -40,7 +42,7 @@
 </div>
 </div>
 
-<div class="toast-notification" id="toast">コピーしました！</div>
+<div class="toast-notification" id="toast" role="status" aria-live="polite"></div>
 <div class="status-bar-indicator" id="statusBarIndicator"></div>
 
 <div class="hero-slider" id="heroSlider">
@@ -50,7 +52,7 @@
 
 <div class="edge-card-scrim" id="edgeCardScrim"></div>
 <button class="edge-wing-tab edge-wing-tab-left" id="deviceWingTab" type="button" aria-label="端末情報カードを開く" aria-controls="deviceCard" aria-expanded="false"><span aria-hidden="true"></span></button>
-<aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true">
+<aside class="edge-card edge-card-left" id="deviceCard" aria-labelledby="device-card-title" aria-hidden="true" inert>
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="端末情報を閉じる">×</button>
 <section class="app-launcher edge-subcard" aria-labelledby="app-launcher-title">
 <p class="edge-card-kicker">APPLICATION</p>
@@ -91,13 +93,13 @@
 <section class="device-details edge-subcard" aria-labelledby="device-card-title">
 <p class="edge-card-kicker">LOCAL STATUS</p>
 <h2 id="device-card-title">この端末について</h2>
-<div class="device-info-list" id="deviceInfoList"></div>
+<dl class="device-info-list" id="deviceInfoList"></dl>
 <p class="edge-card-note">ブラウザが公開している情報だけを、この端末内で表示しています。</p>
 </section>
 </aside>
 
 <button class="edge-wing-tab edge-wing-tab-right" id="navigationWingTab" type="button" aria-label="追加リンクカードを開く" aria-controls="navigationCard" aria-expanded="false"><span aria-hidden="true"></span></button>
-<aside class="edge-card edge-card-right" id="navigationCard" aria-labelledby="navigation-card-title" aria-hidden="true">
+<aside class="edge-card edge-card-right" id="navigationCard" aria-labelledby="navigation-card-title" aria-hidden="true" inert>
 <button class="edge-card-close" type="button" data-close-edge-card aria-label="リンクメニューを閉じる">×</button>
 <p class="edge-card-kicker">EXPANSION PORTS</p>
 <h2 id="navigation-card-title">もっと見る</h2>
@@ -357,15 +359,18 @@ calendarDaysGrid.appendChild(emptyCell);
 }
 
 for(let day=1;day<=totalDays;day++){
-const dayCell=document.createElement('div');
+const dayCell=document.createElement('button');
+dayCell.type='button';
 dayCell.className='calendar-day-cell';
+dayCell.setAttribute('aria-label',`${year}年${month+1}月${day}日をコピー`);
 const cellDate=new Date(year,month,day);
 const dayOfWeek=cellDate.getDay();
 if(dayOfWeek===0)dayCell.classList.add('sun');
 if(dayOfWeek===6)dayCell.classList.add('sat');
-if(day===today)dayCell.classList.add('is-today');
+if(day===today){dayCell.classList.add('is-today');dayCell.setAttribute('aria-current','date');}
 dayCell.textContent=day;
-dayCell.addEventListener('click',()=>{
+dayCell.addEventListener('click',event=>{
+event.stopPropagation();
 const formattedDate=`${year}/${monthStr}/${String(day).padStart(2,'0')}`;
 navigator.clipboard.writeText(formattedDate).then(()=>showToast(`コピーしました: ${formattedDate}`)).catch(console.error);
 });
@@ -586,7 +591,7 @@ wingTabHideTimer=null;
 }
 
 function scheduleWingTabsHide(delay=150){
-if(matchMedia('(max-width:520px)').matches||openEdgeCard||!isHeroInteractionActive()||document.body.classList.contains('edge-card-closing')||wingTabHideTimer!==null)return;
+if(matchMedia('(max-width:520px)').matches||openEdgeCard||!isHeroInteractionActive()||document.body.classList.contains('edge-card-closing')||wingTabHideTimer!==null||[deviceWingTab,navigationWingTab].includes(document.activeElement))return;
 wingTabHideTimer=setTimeout(()=>{
 document.body.classList.add('wing-tabs-idle');
 wingTabHideTimer=null;
@@ -595,7 +600,11 @@ wingTabHideTimer=null;
 
 function setEdgeCard(card,{hideTabsImmediately=false}={}){
 if(card&&!isHeroInteractionActive())return;
+if(card)window.dispatchEvent(new Event('zero:closefloatingsearch'));
 const previousCard=openEdgeCard;
+if(previousCard&&previousCard!==card){
+window.zeroA11y?.closeDialog(previousCard,{fallback:document.querySelector('.floating-search-toggle')});
+}
 const closingTab=previousCard===deviceCard?deviceWingTab:previousCard===navigationCard?navigationWingTab:null;
 clearTimeout(edgeCardClosingTimer);
 edgeCardClosingTimer=null;
@@ -603,6 +612,7 @@ document.body.classList.remove('edge-card-closing');
 [deviceWingTab,navigationWingTab].forEach(tab=>tab.classList.remove('is-closing'));
 [deviceCard,navigationCard].forEach(item=>{
 const open=item===card;
+item.inert=!open;
 item.classList.toggle('is-open',open);
 item.setAttribute('aria-hidden',String(!open));
 });
@@ -616,6 +626,13 @@ openEdgeCard=card;
 edgeCardScrim.classList.toggle('is-visible',Boolean(card));
 document.body.classList.toggle('edge-card-open',Boolean(card));
 if(card){
+const openingTab=card===deviceCard?deviceWingTab:navigationWingTab;
+window.zeroA11y?.openDialog(card,{
+allow:[edgeCardScrim,openingTab],
+returnFocus:openingTab,
+initialFocus:card.querySelector('[data-close-edge-card]'),
+onClose:closeEdgeCards
+});
 document.body.classList.remove('wing-tabs-idle');
 clearTimeout(wingTabHideTimer);
 wingTabHideTimer=null;
@@ -638,6 +655,10 @@ document.querySelectorAll('[data-close-edge-card]').forEach(button=>button.addEv
 edgeCardScrim.addEventListener('click',closeEdgeCards);
 deviceWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===deviceCard?null:deviceCard));
 navigationWingTab.addEventListener('click',()=>setEdgeCard(openEdgeCard===navigationCard?null:navigationCard));
+[deviceWingTab,navigationWingTab].forEach(tab=>{
+tab.addEventListener('focus',revealWingTabs);
+tab.addEventListener('blur',()=>scheduleWingTabsHide());
+});
 
 window.addEventListener('pointermove',event=>{
 if(event.pointerType==='touch'||openEdgeCard)return;
@@ -750,7 +771,7 @@ showToast
 };
 </script>
 <script src="zero-filesystem.js?v=20260910-os1"></script>
-<script src="site-desktop.js?v=20260921-aether1"></script>
+<script src="site-desktop.js?v=20261010-a11y1"></script>
 <script src="aether-boot.js?v=1.0.1"></script>
 <script src="vastique-boot.js?v=1.0.0"></script>
 </body>
