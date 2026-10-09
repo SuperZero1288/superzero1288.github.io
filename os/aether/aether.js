@@ -99,6 +99,8 @@
     record.taskButton?.classList.toggle('is-active', activeId === record.id && !record.minimized);
   };
 
+  const focusContents = record => window.zeroA11y?.focusFirst(record.element, record.bodyRoot.querySelector('textarea, input') || record.bodyRoot);
+
   const closeWindow = record => {
     if (!record || !windows.has(record.id)) return;
     record.element.remove();
@@ -107,11 +109,14 @@
     if (activeId === record.id) {
       activeId = null;
       const next = [...windows.values()].reverse().find(item => !item.minimized);
-      if (next) focusWindow(next);
+      if (next) { focusWindow(next); focusContents(next); }
+      else if (!window.zeroA11y?.focus(record.returnFocus)) window.zeroA11y?.focus(document.getElementById('aetherStartButton'));
     }
   };
 
   const minimizeWindow = record => {
+    if (record.element.contains(document.activeElement)) window.zeroA11y?.focus(record.taskButton);
+    record.element.inert = true;
     record.minimized = true;
     record.element.classList.add('is-minimized');
     record.taskButton?.classList.remove('is-active');
@@ -123,9 +128,11 @@
   };
 
   const restoreWindow = record => {
+    record.element.inert = false;
     record.minimized = false;
     record.element.classList.remove('is-minimized');
     focusWindow(record);
+    focusContents(record);
   };
 
   const maximizeWindow = record => {
@@ -160,6 +167,7 @@
   };
 
   const createWindow = ({ title, icon = 'folder.svg', body, width = 540, height = 360, fixedSize = false, maximizable = true }) => {
+    const returnFocus = document.activeElement;
     const id = nextWindowId++;
     const element = document.createElement('section');
     element.className = 'aether-window';
@@ -182,9 +190,10 @@
       <div class="aether-window-body"></div>`;
     const titlebar = element.querySelector('.aether-titlebar');
     const bodyRoot = element.querySelector('.aether-window-body');
+    bodyRoot.tabIndex = 0;
     bodyRoot.append(body);
     if (body.classList?.contains('aether-explorer')) element.classList.add('has-explorer');
-    const record = { id, title, element, bodyRoot, minimized: false, maximized: false, maximizable };
+    const record = { id, title, element, bodyRoot, returnFocus, minimized: false, maximized: false, maximizable };
     record.maximizeButton = element.querySelector('[data-window-action="maximize"]');
     record.maximizeButton.disabled = !maximizable;
     if (!maximizable) {
@@ -204,8 +213,10 @@
     taskButtons.append(taskButton);
     windows.set(id, record);
     element.addEventListener('pointerdown', () => focusWindow(record));
+    element.addEventListener('focusin', () => focusWindow(record));
     enableDragging(record, titlebar);
     focusWindow(record);
+    requestAnimationFrame(() => focusContents(record));
     return record;
   };
 
@@ -1078,7 +1089,7 @@
       if (rollButton.disabled) return;
       rollButton.disabled = true;
       const result = pickResult();
-      const animationFrames = 20;
+      const animationFrames = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 20;
       let frame = 0;
       const animateRoll = () => {
         if (!record?.element.isConnected) return;
@@ -1177,7 +1188,7 @@
   };
   const resetScreensaverTimer = () => {
     window.clearTimeout(screensaverTimer);
-    if (!desktop.hidden) screensaverTimer = window.setTimeout(showScreensaver, 120000);
+    if (!desktop.hidden && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) screensaverTimer = window.setTimeout(showScreensaver, 120000);
   };
   const handleScreensaverActivity = event => {
     if (screensaverActive) {
@@ -1190,6 +1201,10 @@
   };
   ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(type => {
     window.addEventListener(type, handleScreensaverActivity, { capture: true, passive: type !== 'keydown' });
+  });
+  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
+    if (screensaverActive) { screensaverActive = false; screensaver.hidden = true; window.clearTimeout(screensaverFrame); }
+    resetScreensaverTimer();
   });
   const desktopPositionKey = 'aether-desktop-icon-positions';
   const desktopLayoutVersionKey = `${desktopPositionKey}-layout-version`;
@@ -1564,6 +1579,11 @@
 
   // Filesystem synchronization must not delay the visible boot sequence.
   loadRepositoryFilesystem();
+  window.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.isComposing || event.key !== 'Escape' || !event.target.closest('.aether-window')) return;
+    const record = [...windows.values()].find(item => item.element.contains(event.target));
+    if (record && !record.element.querySelector('.aether-app-menu-popup:not([hidden])')) { event.preventDefault(); closeWindow(record); }
+  });
   bootSequence();
 })();
 

@@ -320,10 +320,12 @@ function articleDocument(article, bodyHtml, coverPath) {
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
 <link rel="stylesheet" href="../style.css?v=20260921-thememotion7">
+<link rel="stylesheet" href="/site-accessibility.css?v=20261010-a11y1">
+<script src="/site-accessibility.js?v=20261010-a11y1" defer></script>
 <script src="../site-loader.js?v=20260910-os1" defer></script>
-<script src="../card-hover.js?v=20260920-cardhover3" defer></script>
-<script src="../page-bar.js?v=20260921-thememotion7" defer></script>
-<script src="../site-search.js?v=20260919-newtab2" defer></script>
+<script src="../card-hover.js?v=20261010-a11y1" defer></script>
+<script src="../page-bar.js?v=20261010-a11y1" defer></script>
+<script src="../site-search.js?v=20261010-a11y1" defer></script>
 </head>
 <body class="style-default article-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">

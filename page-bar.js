@@ -76,7 +76,10 @@
     calendarDays.innerHTML='';
     for(let index=0;index<new Date(year,month,1).getDay();index++)calendarDays.insertAdjacentHTML('beforeend','<div class="calendar-day-cell empty"></div>');
     for(let day=1;day<=new Date(year,month+1,0).getDate();day++){
-      const cell=document.createElement('div');
+      const cell=document.createElement('button');
+      cell.type='button';
+      cell.setAttribute('aria-label',`${year}年${month+1}月${day}日をコピー`);
+      if(day===today)cell.setAttribute('aria-current','date');
       const weekDay=new Date(year,month,day).getDay();
       cell.className=`calendar-day-cell${weekDay===0?' sun':''}${weekDay===6?' sat':''}${day===today?' is-today':''}`;
       cell.textContent=day;
@@ -158,6 +161,7 @@
   updateTime();
   setInterval(updateTime,1000);
   updateThemeButton();
+  window.zeroA11y?.enhanceClocks();
   window.addEventListener('storage',(event)=>{
     if(event.key==='zero-site-appearance'){restoreAppearance();updateThemeButton();}
     if(event.key==='zero-site-device-hack')restoreWindowSystem();

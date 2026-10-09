@@ -38,28 +38,40 @@
   const focusWindow = record => {
     state.active = record.id;
     state.windows.forEach(item => item.element.classList.toggle('is-active', item.id === record.id));
-    record.element.style.zIndex = String(10 + record.id);
+    record.element.style.zIndex = String(++topZ);
   };
+  let topZ = 10;
+  const focusContents = record => window.zeroA11y?.focusFirst(record.element, record.bodyRoot.querySelector('textarea, input') || record.bodyRoot);
   const closeWindow = record => {
     record.element.remove();
     record.task?.remove();
     state.windows.delete(record.id);
+    const next = [...state.windows.values()].reverse().find(item => !item.minimized);
+    if (next) { focusWindow(next); focusContents(next); }
+    else if (!window.zeroA11y?.focus(record.returnFocus)) window.zeroA11y?.focus(document.querySelector('.v-dock [data-v-app]'));
   };
-  const createWindow = ({ title, glyph = 'V', body, width = 620, height = 430, fixed = false }) => {
+  const createWindow = ({ title, glyph = 'V', body, width = 620, height = 430, fixed = false, appId = '' }) => {
+    const returnFocus = document.activeElement;
     const id = state.nextId++;
     const element = document.createElement('section');
     element.className = 'v-window';
+    element.setAttribute('role', 'dialog');
+    element.setAttribute('aria-label', title);
     if (fixed) element.style.resize = 'none';
     element.style.width = `${width}px`;
     element.style.height = `${height}px`;
     element.style.left = `${Math.max(24, 130 + (id - 1) * 22)}px`;
     element.style.top = `${Math.max(54, 74 + (id - 1) * 20)}px`;
     element.innerHTML = `<header class="v-titlebar"><strong><span class="v-title-icon">${escapeHtml(glyph)}</span>${escapeHtml(title)}</strong><div class="v-title-controls"><button type="button" data-v-window="min" aria-label="Minimize">−</button><button type="button" data-v-window="max" aria-label="Maximize">□</button><button type="button" data-v-window="close" aria-label="Close">×</button></div></header><div class="v-body"></div>`;
-    const record = { id, title, element, bodyRoot: element.querySelector('.v-body'), minimized: false, maximized: false };
+    const record = { id, title, appId, element, returnFocus, bodyRoot: element.querySelector('.v-body'), minimized: false, maximized: false };
+    record.bodyRoot.tabIndex = 0;
     record.bodyRoot.append(body);
     const titlebar = element.querySelector('.v-titlebar');
     element.querySelector('[data-v-window="close"]').addEventListener('click', () => closeWindow(record));
-    element.querySelector('[data-v-window="min"]').addEventListener('click', () => { record.minimized = true; element.classList.add('is-minimized'); });
+    element.querySelector('[data-v-window="min"]').addEventListener('click', () => {
+      if (!window.zeroA11y?.focus(returnFocus)) window.zeroA11y?.focus(document.querySelector('.v-dock [data-v-app]'));
+      element.inert = true; record.minimized = true; element.classList.add('is-minimized');
+    });
     element.querySelector('[data-v-window="max"]').addEventListener('click', () => { record.maximized = !record.maximized; element.classList.toggle('is-maximized', record.maximized); focusWindow(record); });
     let drag = null;
     titlebar.addEventListener('pointerdown', event => {
@@ -76,13 +88,15 @@
     });
     titlebar.addEventListener('pointerup', () => { drag = null; });
     element.addEventListener('pointerdown', () => focusWindow(record));
+    element.addEventListener('focusin', () => focusWindow(record));
     const task = document.createElement('button');
     task.type = 'button'; task.className = 'v-task'; task.textContent = title;
-    task.addEventListener('click', () => { record.minimized = false; element.classList.remove('is-minimized'); focusWindow(record); });
+    task.addEventListener('click', () => { element.inert = false; record.minimized = false; element.classList.remove('is-minimized'); focusWindow(record); focusContents(record); });
     record.task = task;
     windowsRoot.append(element);
     state.windows.set(id, record);
     focusWindow(record);
+    requestAnimationFrame(() => focusContents(record));
     return record;
   };
 
@@ -157,6 +171,9 @@
       const glyph = entry.path ? '⌂' : iconFor(entry);
       button.innerHTML = `<span class="v-file-glyph ${entry.path ? 'folder' : entry.kind === 'text' ? 'text' : ''}">${glyph}</span><span>${escapeHtml(entry.name)}</span>`;
       button.addEventListener('dblclick', () => openEntry(entry));
+      button.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openEntry(entry); }
+      });
       button.addEventListener('click', () => root.querySelector('.v-selected')?.classList.remove('v-selected'));
       list.append(button);
     });
@@ -164,7 +181,7 @@
   const openFinder = (path = 'C:\\') => {
     const body = document.createElement('div'); body.className = 'v-finder';
     body.innerHTML = '<div class="v-toolbar"><button type="button" data-finder="back">‹</button><button type="button" data-finder="up">↑</button><button type="button" data-finder="refresh">↻</button><span class="v-path"></span></div><div class="v-finder-main"><aside class="v-sidebar"><h3>Favorites</h3><button type="button" data-path="C:\\"><span>◈</span> Vastique Drive</button><button type="button" data-path="C:\\Users\\Vectoraise\\Desktop\\"><span>⌂</span> Desktop</button><button type="button" data-path="C:\\Users\\Vectoraise\\Documents\\"><span>▤</span> Documents</button><button type="button" data-path="C:\\Users\\Vectoraise\\Downloads\\"><span>↓</span> Downloads</button><h3>Locations</h3><button type="button" data-path="C:\\Applications\\"><span>▦</span> Applications</button></aside><div class="v-file-area"><div class="v-file-grid"></div></div></div>';
-    const record = createWindow({ title: 'Vastique Drive', glyph: '⌂', body, width: 700, height: 470 });
+    const record = createWindow({ appId: 'finder', title: 'Vastique Drive', glyph: '⌂', body, width: 700, height: 470 });
     let history = [normalizePath(path)];
     const navigate = next => { history.push(normalizePath(next)); renderFinder(body, next); };
     body.querySelectorAll('[data-path]').forEach(button => button.addEventListener('click', () => navigate(button.dataset.path)));
@@ -177,7 +194,7 @@
   const openTextEdit = async entry => {
     const body = document.createElement('div'); body.className = 'v-editor';
     body.innerHTML = '<div class="v-toolbar"><button type="button" data-edit="save">Save</button><button type="button" data-edit="new">New</button><span class="v-path"></span></div><textarea spellcheck="false" aria-label="TextEdit document"></textarea>';
-    const record = createWindow({ title: entry?.name || 'TextEdit', glyph: '▤', body, width: 640, height: 430 });
+    const record = createWindow({ appId: 'textedit', title: entry?.name || 'TextEdit', glyph: '▤', body, width: 640, height: 430 });
     const textarea = body.querySelector('textarea'); body.querySelector('.v-path').textContent = entry?.name || 'Untitled';
     if (entry?.source) { try { textarea.value = await (await fetch(sourceUrl(entry.source), { cache: 'no-store' })).text(); } catch { textarea.value = 'Unable to read this document.'; } }
     body.querySelector('[data-edit="new"]').addEventListener('click', () => { textarea.value = ''; textarea.focus(); });
@@ -194,14 +211,14 @@
   const openBrowser = () => {
     const body = document.createElement('div'); body.className = 'v-browser';
     body.innerHTML = '<div class="v-toolbar"><button type="button" data-web="back">‹</button><button type="button" data-web="forward">›</button><input class="v-address" value="vastique://start" aria-label="Address"><button type="button" data-web="go">Go</button></div><div class="v-browser-home"><div><span class="v-mark v-mark-large"></span><h2>Vastique Web</h2><p>A quiet, private place for local documents and trusted destinations. Network access is disabled on this machine.</p><button class="v-plain-button" type="button" data-web="offline">View offline information</button></div></div>';
-    const record = createWindow({ title: 'Vastique Web', glyph: '◎', body, width: 700, height: 440 });
+    const record = createWindow({ appId: 'browser', title: 'Vastique Web', glyph: '◎', body, width: 700, height: 440 });
     body.querySelector('[data-web="go"]').addEventListener('click', () => { body.querySelector('.v-address').value = 'vastique://offline'; });
     body.querySelector('[data-web="offline"]').addEventListener('click', () => { body.querySelector('.v-address').value = 'vastique://offline'; });
     return record;
   };
   const openTerminal = () => {
     const body = document.createElement('div'); body.className = 'v-terminal'; body.innerHTML = '<div class="v-terminal-output"></div><form class="v-terminal-form"><span>vastique %</span><input autocomplete="off" aria-label="Vastique Terminal command"></form>';
-    const record = createWindow({ title: 'Terminal', glyph: '›_', body, width: 570, height: 350 });
+    const record = createWindow({ appId: 'terminal', title: 'Terminal', glyph: '›_', body, width: 570, height: 350 });
     const output = body.querySelector('.v-terminal-output'); const form = body.querySelector('form'); const input = form.querySelector('input');
     const write = text => { const line = document.createElement('div'); line.textContent = text; output.append(line); output.scrollTop = output.scrollHeight; };
     write('Vastique Terminal 1.0'); write('Vectoraise Corporation. Local session ready.'); write('Type help for available commands.');
@@ -210,14 +227,31 @@
   };
   const openAbout = () => {
     const body = document.createElement('div'); body.className = 'v-about'; body.innerHTML = '<span class="v-mark v-mark-large"></span><h2>Vastique 1.0</h2><p>A calm, expressive desktop operating system<br>for the next generation of physical computers.</p><hr><p><strong>Vectoraise Corporation</strong><br>Build 2409 · Local Edition</p><small>Copyright © 2026 Vectoraise Corporation.</small>';
-    return createWindow({ title: 'About Vastique', glyph: 'V', body, width: 380, height: 350, fixed: true });
+    return createWindow({ appId: 'about', title: 'About Vastique', glyph: 'V', body, width: 380, height: 350, fixed: true });
   };
   const apps = { finder: () => openFinder('C:\\'), textedit: () => openTextEdit(null), browser: openBrowser, terminal: openTerminal, about: openAbout };
-  document.querySelectorAll('[data-v-app]').forEach(button => button.addEventListener('dblclick', () => apps[button.dataset.vApp]?.()));
-  document.querySelectorAll('.v-dock [data-v-app], .v-menubar [data-v-app]').forEach(button => button.addEventListener('click', () => apps[button.dataset.vApp]?.()));
+  const launchApp = appId => {
+    const minimized = [...state.windows.values()].reverse().find(record => record.appId === appId && record.minimized);
+    if (minimized) {
+      minimized.element.inert = false; minimized.minimized = false; minimized.element.classList.remove('is-minimized');
+      focusWindow(minimized); focusContents(minimized);
+    } else apps[appId]?.();
+  };
+  document.querySelectorAll('[data-v-app]').forEach(button => {
+    button.addEventListener('dblclick', () => launchApp(button.dataset.vApp));
+    if (!button.closest('.v-dock, .v-menubar')) button.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); launchApp(button.dataset.vApp); }
+    });
+  });
+  document.querySelectorAll('.v-dock [data-v-app], .v-menubar [data-v-app]').forEach(button => button.addEventListener('click', () => launchApp(button.dataset.vApp)));
   document.querySelectorAll('[data-v-menu]').forEach(button => button.addEventListener('click', () => { if (button.dataset.vMenu === 'help') openAbout(); }));
   const shutdown = () => { const screen = document.createElement('div'); screen.className = 'v-shutdown'; screen.innerHTML = '<div><strong>Vastique is shutting down</strong><p>Your workspace has been closed safely.</p></div>'; document.body.append(screen); window.setTimeout(() => location.replace(new URL('../../', location.href).href), 1050); };
   document.querySelector('[data-v-action="shutdown"]').addEventListener('click', shutdown);
   const updateClock = () => { document.getElementById('vClock').textContent = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(new Date()); };
+  window.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.isComposing || event.key !== 'Escape') return;
+    const record = [...state.windows.values()].find(item => item.element.contains(event.target));
+    if (record) { event.preventDefault(); closeWindow(record); }
+  });
   bootSequence();
 })();

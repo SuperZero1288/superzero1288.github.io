@@ -1,0 +1,139 @@
+/* Keyboard affordances are only visible while using the keyboard. */
+body { --focus-ring-color: color-mix(in srgb, var(--accent-color, #ff8fa3) 70%, #fff); }
+body.light-theme { --focus-ring-color: color-mix(in srgb, var(--accent-color, #ff8fa3) 50%, #29232f); }
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--accent-color, #ff8fa3)) !important;
+  outline-offset: 3px;
+}
+
+.floating-status-bar:focus-within {
+  opacity: 1 !important;
+  transform: translateX(-50%) translateY(0) !important;
+  pointer-events: auto;
+}
+
+/* Modeless apps must not leave keyboard-reachable widgets behind their layer. */
+body.desktop-app-active .floating-status-bar:focus-within { z-index: 13010; }
+body.desktop-app-active .floating-search-panel.is-open {
+  z-index: 13000;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.clock-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.time-capsule.calendar-keyboard-open .calendar-popup {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+button.calendar-day-cell {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: .75rem;
+  cursor: pointer;
+}
+button.calendar-day-cell:focus-visible { outline-offset: -2px; }
+button.calendar-day-cell.is-today { background: var(--accent-color); color: #17141c; }
+body.style-unity button.calendar-day-cell.is-today { color: #fff; }
+
+/* Keep the photo-first hero unchanged, but make its tabs reachable by Tab. */
+body.wing-tabs-idle .edge-wing-tab:not(.is-open):not(.is-closing) {
+  visibility: visible;
+  transition: opacity .24s ease, transform .42s ease;
+}
+body.wing-tabs-idle:not(.edge-interactions-disabled) .edge-wing-tab:focus-visible {
+  opacity: 1 !important;
+  visibility: visible;
+  pointer-events: auto;
+  outline-offset: -4px;
+}
+body.edge-interactions-disabled .edge-wing-tab { visibility: hidden !important; }
+.edge-card-close { display: grid; place-items: center; }
+
+.floating-search-heading { position: relative; padding-right: 44px; }
+.floating-search-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-capsule, 50%);
+  background: var(--card-bg);
+  color: inherit;
+  font: 400 1.4rem/1 sans-serif;
+  cursor: pointer;
+}
+.profile-modal-body { overflow-y: auto; }
+.profile-modal-body:focus-visible { outline-offset: -3px; }
+.profile-spec-row dt { color: #a5a8b4; }
+body.light-theme .profile-spec-row dt { color: #626570; }
+.article-body p a { text-decoration: underline; text-underline-offset: .2em; }
+.links-footer > span { color: #a39cad; }
+body.light-theme .links-footer > span { color: #68616f; }
+
+@media (max-width: 520px) {
+  .edge-wing-tab {
+    display: block !important;
+    top: 45%;
+    width: 40px;
+    height: 88px;
+    opacity: 0 !important;
+    visibility: visible;
+    pointer-events: none !important;
+  }
+  body:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:focus-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+  }
+  body.theme-transitioning, body.theme-transitioning *,
+  body.theme-transitioning *::before, body.theme-transitioning *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+  /* An animation's first frame is transparent: explicitly retain the first photo. */
+  .slides { animation: none !important; opacity: 0 !important; transform: none !important; }
+  .slides:first-child { opacity: 1 !important; }
+  .scroll-indicator, .scroll-arrow, .catalog-file-list, .catalog-spinner,
+  .aether-boot-cursor, .v-orb, .v-window { animation: none !important; }
+  .scroll-indicator { transform: translateX(-50%) !important; }
+  .scroll-arrow { transform: none !important; }
+  .card-hover-target {
+    --card-rotate-x: 0deg !important;
+    --card-rotate-y: 0deg !important;
+    --card-scale: 1 !important;
+    transform: none !important;
+  }
+}

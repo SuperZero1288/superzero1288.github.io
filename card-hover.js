@@ -16,6 +16,8 @@
     '.explorer-item'
   ].join(',');
 
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
   const reset = (card) => {
     card.style.setProperty('--card-rotate-x', '0deg');
     card.style.setProperty('--card-rotate-y', '0deg');
@@ -23,7 +25,7 @@
   };
 
   const updateTilt = (card, event) => {
-    if (!document.body.classList.contains('style-default') || event.pointerType === 'touch') return;
+    if (reducedMotion.matches || !document.body.classList.contains('style-default') || event.pointerType === 'touch') { reset(card); return; }
     const rect = card.getBoundingClientRect();
     const x = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
     const y = Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height));
@@ -50,6 +52,8 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, {once: true});
   else init();
+
+  reducedMotion.addEventListener('change', () => document.querySelectorAll(selector).forEach(reset));
 
   const observer = new MutationObserver(init);
   observer.observe(document.documentElement, {childList: true, subtree: true});

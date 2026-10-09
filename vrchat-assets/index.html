@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Zeroichiba WorkshopのVRChat向け配布アセットをカテゴリから探せます。">
+<meta name="description" content="Zeroichiba WorkshopのVRChat向け配布アセット。カテゴリから探して、導入に必要なパッケージと配布ファイルを確認できます。">
 <title>VRChat向けアセット | Zeroichiba Workshop</title>
 <link rel="stylesheet" href="/style.css?v=20261003-vrcassets1">
-<link rel="stylesheet" href="/vrchat-assets/catalog.css?v=20261003-vrcassets7">
+<link rel="stylesheet" href="/site-accessibility.css?v=20261010-a11y1">
+<link rel="stylesheet" href="/vrchat-assets/catalog.css?v=20261010-catalog1">
+<script src="/site-accessibility.js?v=20261010-a11y1" defer></script>
 <script src="/site-loader.js?v=20260910-os1" defer></script>
-<script src="/page-bar.js?v=20260921-thememotion7" defer></script>
-<script src="/site-search.js?v=20260919-newtab2" defer></script>
-<script src="/card-hover.js?v=20261003-cardhover4" defer></script>
-<script src="/vrchat-assets/catalog.js?v=20261003-vrcassets6" defer></script>
+<script src="/page-bar.js?v=20261010-a11y1" defer></script>
+<script src="/site-search.js?v=20261010-a11y1" defer></script>
+<script src="/card-hover.js?v=20261010-a11y1" defer></script>
+<script src="/vrchat-assets/catalog.js?v=20261010-catalog1" defer></script>
 </head>
 <body class="style-default links-page asset-catalog-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="アセット一覧を読み込んでいます">
@@ -27,32 +29,32 @@
     <div class="catalog-brand">
       <span class="catalog-kicker">ZEROICHIBA / WORKSHOP</span>
       <h1>VRChat向けアセット</h1>
+      <p>いつもの空間に、ちょっと違う表現を。</p>
     </div>
-    <a class="links-home" href="/index.html#main-content">ポートフォリオへ戻る</a>
+    <a class="links-home" href="/index.html#main-content"><span aria-hidden="true">←</span> ポートフォリオへ戻る</a>
   </header>
 
   <section class="link-directory catalog-panel" aria-labelledby="catalog-heading">
     <div class="links-section-heading catalog-heading-row">
       <div>
-        <h2 id="catalog-heading">ライブラリ</h2>
+        <h2 id="catalog-heading">配布ライブラリ</h2>
+        <p class="catalog-summary" id="catalogSummary">公開中のアセットを確認しています</p>
       </div>
-      <a class="catalog-repo-link" href="https://github.com/SuperZero1288/Zeroichiba-Workshop" target="_blank" rel="noopener noreferrer">GitHubリポジトリ ↗</a>
+      <a class="catalog-repo-link" href="https://github.com/SuperZero1288/Zeroichiba-Workshop" target="_blank" rel="noopener noreferrer">GitHubで見る <span aria-hidden="true">↗</span></a>
     </div>
 
-    <section class="catalog-stage" aria-label="アセットカタログ">
+    <div class="catalog-stage">
       <div class="catalog-stage-nav">
-        <button type="button" id="catalogBack" class="catalog-back-button" disabled><span aria-hidden="true">←</span> <span id="catalogBackLabel">カテゴリ一覧</span></button>
-        <button type="button" id="catalogRefresh" class="catalog-refresh-button" aria-label="カタログを再読み込み" title="再読み込み">↻</button>
+        <button type="button" id="catalogBack" class="catalog-back-button" disabled aria-label="前の画面へ戻る"><span aria-hidden="true">←</span> <span id="catalogBackLabel">戻る</span></button>
+        <nav class="catalog-breadcrumbs" id="catalogBreadcrumbs" aria-label="カタログ内の現在地"><span aria-current="page">ライブラリ</span></nav>
+        <button type="button" id="catalogRefresh" class="catalog-refresh-button" aria-label="カタログを再読み込み" title="カタログを再読み込み"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 6.1a8 8 0 0 1 13.3 3M17.9 17.9a8 8 0 0 1-13.3-3"/></svg></button>
       </div>
-      <div class="catalog-content-meta" id="catalogContentMeta" aria-live="polite"></div>
-      <div class="catalog-file-list" id="catalogFileList" aria-live="polite">
-        <div class="catalog-empty-state"><span class="catalog-spinner" aria-hidden="true"></span><strong>カタログを読み込んでいます</strong><p>GitHubの配布リポジトリを確認しています。</p></div>
+      <div class="catalog-file-list" id="catalogFileList" tabindex="0" role="region" aria-label="アセット一覧と詳細" aria-busy="true">
+        <div class="catalog-empty-state"><span class="catalog-spinner" aria-hidden="true"></span><h3 tabindex="-1" data-catalog-focus>カタログを読み込んでいます</h3><p>GitHubの配布リポジトリを確認しています。</p></div>
       </div>
-    </section>
+    </div>
     <p class="catalog-status" id="catalogStatus" role="status" aria-live="polite">公開リポジトリからカタログ情報を取得しています。</p>
   </section>
-
 </main>
 </body>
 </html>
-

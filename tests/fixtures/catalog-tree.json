@@ -1,0 +1,187 @@
+{
+  "sha": "29cd8eee8e4b066bc610fda0ef3342b686ccbf45",
+  "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/29cd8eee8e4b066bc610fda0ef3342b686ccbf45",
+  "tree": [
+    {
+      "path": "Avatar.cat",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12e1352cb13a18630931fa6c8a845e17d8dd9a4b",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/12e1352cb13a18630931fa6c8a845e17d8dd9a4b"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e5f3387cdc1c63e705de572b9e05b1e33bb69dec",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/e5f3387cdc1c63e705de572b9e05b1e33bb69dec"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Illusionary.ast",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8257e5b0b06049a685d1c9ed62b3e223ec2fd41f",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/8257e5b0b06049a685d1c9ed62b3e223ec2fd41f"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Illusionary.ast/Distribution",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "412384b558e99e5f5b10205bd6e02f7f4b086bf1",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/412384b558e99e5f5b10205bd6e02f7f4b086bf1"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Illusionary.ast/Distribution/Illusionary_VRC.unitypackage",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bd1b17060c1d32632292c2437d64a34fde1c693f",
+      "size": 1488074,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/bd1b17060c1d32632292c2437d64a34fde1c693f"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Illusionary.ast/Picture1.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8e927f5784c6ea6afda7600831b2d1a3036f03a",
+      "size": 9633134,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/e8e927f5784c6ea6afda7600831b2d1a3036f03a"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Illusionary.ast/info.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3c9198c8631818545800f406a1c33b5173371797",
+      "size": 490,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/3c9198c8631818545800f406a1c33b5173371797"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Luminosity.ast",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9f18dbf1aa2de9ba6cd3a3074aa991d517eb5a68",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/9f18dbf1aa2de9ba6cd3a3074aa991d517eb5a68"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Luminosity.ast/Distribution",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7fe8384c14648e2d9f59495c6c3f43ba021f9ef1",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/7fe8384c14648e2d9f59495c6c3f43ba021f9ef1"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Luminosity.ast/Distribution/Luminosity_V2(NoAbility).unitypackage",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5bd92dec88c859f492cae517bfe38d109928511f",
+      "size": 25220050,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/5bd92dec88c859f492cae517bfe38d109928511f"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Luminosity.ast/Picture1.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b8d803dcc945c55183db84eae6dbd75f371912bc",
+      "size": 9176609,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/b8d803dcc945c55183db84eae6dbd75f371912bc"
+    },
+    {
+      "path": "Avatar.cat/Aura.cat/Luminosity.ast/info.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cd2444e5192cc325e3180eeb95285c3752eb02fa",
+      "size": 487,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/cd2444e5192cc325e3180eeb95285c3752eb02fa"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b46943e8e32b0e7e3cff933052a4be55921d5082",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/b46943e8e32b0e7e3cff933052a4be55921d5082"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat/EQUINOX AFK.ast",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "978ecae2ae843f80168bc1f276b7e70e9435dbed",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/978ecae2ae843f80168bc1f276b7e70e9435dbed"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat/EQUINOX AFK.ast/Distribution",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "43deee7564e4d98b7ffb820b2e5e88b2e2281461",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/43deee7564e4d98b7ffb820b2e5e88b2e2281461"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat/EQUINOX AFK.ast/Distribution/EQUINOX_AFK.unitypackage",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "88a4f2751f5d77b0fb4b2d02030ef474adbf9174",
+      "size": 2973007,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/88a4f2751f5d77b0fb4b2d02030ef474adbf9174"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat/EQUINOX AFK.ast/Picture1.png",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c9d377f0c87fda906d5d1a2643353d54469e38bf",
+      "size": 8643676,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/c9d377f0c87fda906d5d1a2643353d54469e38bf"
+    },
+    {
+      "path": "Avatar.cat/Motion.cat/EQUINOX AFK.ast/info.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3831f198e84b821fff9ddd61b76445ab2e1eae88",
+      "size": 413,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/3831f198e84b821fff9ddd61b76445ab2e1eae88"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "daed7754d8982bd2054dca490918b8693c0e599a",
+      "size": 21,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/daed7754d8982bd2054dca490918b8693c0e599a"
+    },
+    {
+      "path": "World.cat",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e5df928a0457edb5409b1f644c13266d67b10799",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/e5df928a0457edb5409b1f644c13266d67b10799"
+    },
+    {
+      "path": "World.cat/3DModel",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "de29f81d80a6e90326c2e344189cfd68512f408b",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/de29f81d80a6e90326c2e344189cfd68512f408b"
+    },
+    {
+      "path": "World.cat/3DModel/Empty",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "World.cat/Udon.cat",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "de29f81d80a6e90326c2e344189cfd68512f408b",
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/trees/de29f81d80a6e90326c2e344189cfd68512f408b"
+    },
+    {
+      "path": "World.cat/Udon.cat/Empty",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/SuperZero1288/Zeroichiba-Workshop/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    }
+  ],
+  "truncated": false
+}
