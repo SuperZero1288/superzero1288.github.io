@@ -424,6 +424,9 @@ test('AetherOS windows restore focus and respect reduced-motion screensaver sett
   await expect(page.locator('.aether-screensaver')).toBeHidden();
   await page.emulateMedia({reducedMotion: 'no-preference'});
   await page.clock.runFor(121000);
+  // The MediaQueryList change event reaches the page as a separate task, so the idle timer can be
+  // (re)scheduled after the clock has already moved. Advance once more before asserting.
+  await page.clock.runFor(121000);
   await expect(page.locator('.aether-screensaver')).toBeVisible();
   await page.emulateMedia({reducedMotion: 'reduce'});
   await expect(page.locator('.aether-screensaver')).toBeHidden();
