@@ -1,15 +1,15 @@
 /* The catalogue keeps the site's themes, but has its own readable library layout. */
 body.asset-catalog-page {
-  --catalog-bg: #141218;
-  --catalog-surface: #1d1a22;
-  --catalog-card: #28242f;
-  --catalog-soft: #24202a;
-  --catalog-text: #f1edf5;
-  --catalog-muted: #b8b1c3;
-  --catalog-line: #403948;
+  --catalog-bg: transparent;
+  --catalog-surface: var(--ui-bg);
+  --catalog-card: var(--card-bg);
+  --catalog-soft: var(--theme-control);
+  --catalog-text: var(--theme-text);
+  --catalog-muted: var(--theme-muted);
+  --catalog-line: var(--theme-card-border);
   --catalog-accent: color-mix(in srgb, var(--accent-color, #ff8fa3) 75%, #fff);
-  --focus-ring-color: var(--catalog-accent);
-  --catalog-radius: min(var(--radius-card, 24px), 24px);
+  --focus-ring-color: var(--accent-color);
+  --catalog-radius: var(--radius-card);
   height: 100vh;
   height: 100svh;
   overflow: hidden;
@@ -17,21 +17,13 @@ body.asset-catalog-page {
   background: var(--catalog-bg);
 }
 body.asset-catalog-page.light-theme {
-  --catalog-bg: #eeedf3;
-  --catalog-surface: #faf9fc;
-  --catalog-card: #fff;
-  --catalog-soft: #f0edf5;
-  --catalog-text: #29232f;
-  --catalog-muted: #686071;
-  --catalog-line: #d7d0e0;
   --catalog-accent: color-mix(in srgb, var(--accent-color) 45%, #331725);
 }
-body.asset-catalog-page .links-backdrop { background: var(--catalog-bg); }
 body.asset-catalog-page .asset-catalog-shell {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  width: min(1200px, calc(100% - 64px));
+  width: min(1100px, calc(100% - 32px));
   height: 100vh;
   height: 100svh;
   margin: 0 auto;
@@ -42,11 +34,7 @@ body.asset-catalog-page .catalog-hero {
   flex: 0 0 auto;
   min-height: 0;
   gap: 24px;
-  padding: 0 4px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  padding: 16px 22px;
   color: var(--catalog-text);
 }
 .catalog-brand { min-width: 0; }
@@ -82,10 +70,12 @@ body.asset-catalog-page .catalog-panel {
   margin: 0;
   padding: 24px 24px 14px;
   overflow: hidden;
-  border: 1px solid var(--catalog-line);
-  border-radius: var(--catalog-radius);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-main);
   background: var(--catalog-surface);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, .12);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   color: var(--catalog-text);
 }
 body.asset-catalog-page .catalog-heading-row { flex: 0 0 auto; align-items: center; gap: 20px; margin: 0; }
@@ -94,7 +84,7 @@ body.asset-catalog-page .catalog-heading-row h2 { font-size: 1.12rem; line-heigh
 .catalog-repo-link { min-height: 38px; padding: 8px 13px; font-size: .75rem; }
 .catalog-repo-link > span { color: var(--catalog-accent); }
 .catalog-stage { display: flex; flex: 1; min-height: 0; flex-direction: column; overflow: hidden; border-top: 1px solid var(--catalog-line); }
-.catalog-stage-nav { display: flex; flex: 0 0 auto; align-items: center; gap: 16px; min-height: 66px; padding: 10px 0; border-bottom: 1px solid var(--catalog-line); }
+.catalog-stage-nav { display: flex; flex: 0 0 auto; align-items: center; gap: 16px; min-height: 60px; padding: 10px 0; border-bottom: 1px solid var(--catalog-line); }
 .catalog-back-button, .catalog-refresh-button, .catalog-breadcrumbs button {
   display: inline-flex;
   align-items: center;
@@ -125,7 +115,7 @@ body.asset-catalog-page .catalog-heading-row h2 { font-size: 1.12rem; line-heigh
 .catalog-file-list {
   flex: 1;
   min-height: 0;
-  padding: 24px 5px 20px;
+  padding: 24px 24px 20px;
   overflow: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -145,7 +135,7 @@ body.asset-catalog-page .catalog-heading-row h2 { font-size: 1.12rem; line-heigh
   height: 1px;
   margin: 24px 0 0;
   border: 0;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--catalog-accent) 40%, var(--catalog-line)) 14%, var(--catalog-line) 86%, transparent);
+  background: var(--catalog-line);
 }
 /* Higher specificity than .catalog-section-title:not(:first-child) so the divider owns the spacing. */
 #catalogFileList > .catalog-section-divider + .catalog-section-title { margin-top: 16px; }
@@ -170,9 +160,9 @@ body.asset-catalog-page .catalog-category-card {
 }
 /* The first two cards sit at the top of the library, so they get more room. */
 body.asset-catalog-page .catalog-category-card.is-featured {
-  min-height: 152px;
+  min-height: 146px;
   gap: 20px;
-  padding: 24px 26px;
+  padding: 22px 26px;
 }
 body.asset-catalog-page .catalog-category-card.is-featured .catalog-category-artwork { width: 78px; height: 78px; border-radius: 20px; }
 body.asset-catalog-page .catalog-category-card.is-featured .catalog-category-artwork svg { width: 50px; height: 50px; }
@@ -311,7 +301,7 @@ body.asset-catalog-page .catalog-category-card:hover, body.asset-catalog-page .c
   body.asset-catalog-page .catalog-category-card { min-height: 92px; padding: 12px 18px; }
   .catalog-category-artwork { width: 52px; height: 52px; }
   .catalog-section-title:not(:first-child) { margin-top: 22px; }
-  .catalog-item-art { height: clamp(140px, calc(100svh - 735px), 210px); aspect-ratio: auto; }
+  .catalog-item-art { height: clamp(130px, calc(100svh - 760px), 200px); aspect-ratio: auto; }
   .catalog-item-copy { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 12px 16px; }
   .catalog-item-copy strong { grid-column: 1 / -1; }
   .catalog-item-meta { grid-column: 1; grid-row: 2; }
@@ -330,7 +320,7 @@ body.asset-catalog-page .catalog-category-card:hover, body.asset-catalog-page .c
 }
 @media (max-width: 760px) {
   body.asset-catalog-page .asset-catalog-shell { width: calc(100% - 24px); padding: 88px 0 12px; gap: 18px; }
-  body.asset-catalog-page .catalog-hero { align-items: flex-start; flex-direction: column; gap: 14px; padding: 0 6px; }
+  body.asset-catalog-page .catalog-hero { align-items: flex-start; flex-direction: column; gap: 14px; padding: 18px; }
   body.asset-catalog-page .links-home { align-self: flex-start; min-height: 38px; padding: 7px 12px; font-size: .73rem; }
   body.asset-catalog-page .catalog-panel { padding: 18px 16px 12px; gap: 12px; }
   body.asset-catalog-page .catalog-heading-row { flex-direction: row; align-items: center; gap: 12px; }

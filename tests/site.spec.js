@@ -121,7 +121,7 @@ test('the library shows a divider between sections and enlarges its leading card
   expect(await page.locator('.catalog-section-divider').evaluate((element) => element.getBoundingClientRect().width > 0)).toBe(true);
   const featured = page.locator('.catalog-category-card.is-featured');
   await expect(featured).toHaveCount(2);
-  expect(await featured.evaluateAll((cards) => cards.every((card) => card.getBoundingClientRect().height >= 152))).toBe(true);
+  expect(await featured.evaluateAll((cards) => cards.every((card) => card.getBoundingClientRect().height >= 146))).toBe(true);
   // The category cards keep their name and count only; the explanatory line is gone.
   await expect(page.locator('.catalog-category-copy > span')).toHaveCount(0);
   await expect(page.locator('.catalog-brand')).toHaveText('VRChat向けアセット');
