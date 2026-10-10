@@ -128,21 +128,10 @@
     return '<svg viewBox="0 0 120 120" focusable="false" aria-hidden="true"><circle cx="60" cy="42" r="17"/><path d="M25 99c3-21 16-32 35-32s32 11 35 32"/><circle class="catalog-art-spark" cx="93" cy="27" r="5"/></svg>';
   }
 
-  function categoryDescription(category) {
-    const descriptions = {
-      avatar: 'アバター向けのオーラ・モーション',
-      world: 'ワールド制作向けのアセット',
-      aura: 'アバターを彩るオーラ表現',
-      motion: 'AFKや動きの表現を追加',
-      udon: 'ワールドの仕組みをつくる'
-    };
-    return descriptions[displayName(category).toLowerCase()] || 'このカテゴリのアセットを探す';
-  }
-
-  function makeCategoryCard(category) {
+  function makeCategoryCard(category, {featured = false} = {}) {
     const card = document.createElement('button');
     card.type = 'button';
-    card.className = 'catalog-category-card';
+    card.className = `catalog-category-card${featured ? ' is-featured' : ''}`;
     card.dataset.openCategory = category.path;
     card.dataset.kind = category.path.toLowerCase().includes('world') ? 'world' : 'avatar';
     const artwork = document.createElement('span');
@@ -152,7 +141,7 @@
     const copy = document.createElement('span');
     copy.className = 'catalog-category-copy';
     const count = descendantAssets(category.path).length;
-    copy.append(textElement('strong', displayName(category)), textElement('span', categoryDescription(category)),
+    copy.append(textElement('strong', displayName(category)),
       textElement('small', count ? `${count} アセット` : '配布準備中'));
     const arrow = textElement('span', '→', 'catalog-card-arrow');
     arrow.setAttribute('aria-hidden', 'true');
@@ -230,6 +219,12 @@
     return header;
   }
 
+  function sectionDivider() {
+    const divider = document.createElement('hr');
+    divider.className = 'catalog-section-divider';
+    return divider;
+  }
+
   function emptyState(title, message) {
     const state = document.createElement('div');
     state.className = 'catalog-empty-state';
@@ -253,10 +248,12 @@
     if (categories.length) {
       const grid = document.createElement('div');
       grid.className = 'catalog-category-grid';
-      categories.forEach((category) => grid.append(makeCategoryCard(category)));
+      // The two leading categories are the top cards of the page, so they are drawn larger.
+      categories.forEach((category, index) => grid.append(makeCategoryCard(category, {featured: index < 2})));
       fragment.append(grid);
     }
     if (assets.length) {
+      if (categories.length) fragment.append(sectionDivider());
       if (!currentPath || categories.length) fragment.append(sectionHeading(currentPath ? 'このカテゴリのアセット' : 'すべてのアセット', `${assets.length} 件`));
       const grid = document.createElement('div');
       grid.className = 'catalog-item-grid';

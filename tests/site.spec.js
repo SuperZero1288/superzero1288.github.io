@@ -108,6 +108,34 @@ test('direct asset links, parent navigation and invalid paths are handled', asyn
   await expect(page).toHaveURL(/\/vrchat-assets\/$/);
 });
 
+test('the library shows a divider between sections and enlarges its leading cards', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page);
+  const order = await page.locator('#catalogFileList > *').evaluateAll((nodes) => nodes.map((node) => {
+    if (node.matches('.catalog-section-divider')) return 'divider';
+    if (node.matches('.catalog-category-grid')) return 'categories';
+    if (node.matches('.catalog-item-grid')) return 'assets';
+    return node.querySelector('h3').textContent;
+  }));
+  expect(order).toEqual(['カテゴリから探す', 'categories', 'divider', 'すべてのアセット', 'assets']);
+  expect(await page.locator('.catalog-section-divider').evaluate((element) => element.getBoundingClientRect().width > 0)).toBe(true);
+  const featured = page.locator('.catalog-category-card.is-featured');
+  await expect(featured).toHaveCount(2);
+  expect(await featured.evaluateAll((cards) => cards.every((card) => card.getBoundingClientRect().height >= 152))).toBe(true);
+  // The category cards keep their name and count only; the explanatory line is gone.
+  await expect(page.locator('.catalog-category-copy > span')).toHaveCount(0);
+  await expect(page.locator('.catalog-brand')).toHaveText('VRChat向けアセット');
+  await expect(page.locator('.catalog-kicker')).toHaveCount(0);
+  expect(await page.locator('body').innerText()).not.toContain('いつもの空間に');
+  await expectNoHorizontalOverflow(page);
+  // Catalogue cards react through the shared home page tilt rather than a local lift.
+  expect(await page.locator('.catalog-item-card').first()
+    .evaluate((element) => getComputedStyle(element).transform)).not.toBe('none');
+  await page.locator('.catalog-item-card').first().hover();
+  await expect.poll(() => page.locator('.catalog-item-card').first()
+    .evaluate((element) => element.style.getPropertyValue('--card-scale'))).toBe('1.06');
+});
+
 test('download section has a keyboard-accessible jump target', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844});
   await mockNetwork(page);
@@ -395,6 +423,9 @@ test('AetherOS windows restore focus and respect reduced-motion screensaver sett
   await page.clock.runFor(121000);
   await expect(page.locator('.aether-screensaver')).toBeHidden();
   await page.emulateMedia({reducedMotion: 'no-preference'});
+  await page.clock.runFor(121000);
+  // The MediaQueryList change event reaches the page as a separate task, so the idle timer can be
+  // (re)scheduled after the clock has already moved. Advance once more before asserting.
   await page.clock.runFor(121000);
   await expect(page.locator('.aether-screensaver')).toBeVisible();
   await page.emulateMedia({reducedMotion: 'reduce'});
