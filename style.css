@@ -3433,3 +3433,9 @@ body.style-default .future-action-live{border:1px solid color-mix(in srgb,var(--
 body.style-default .future-action-live:hover{border-color:var(--accent-color);background:color-mix(in srgb,var(--card-bg) 62%,var(--accent-color))}
 body.style-default.light-theme .future-action-live{border:1px solid color-mix(in srgb,var(--accent-color) 46%,var(--card-border));background:color-mix(in srgb,var(--card-bg) 78%,var(--accent-color))}
 body.style-default.light-theme .future-action-live:hover{border-color:var(--accent-color);background:color-mix(in srgb,var(--card-bg) 62%,var(--accent-color))}
+
+.future-action-live{position:relative;align-items:center;justify-content:center;gap:10px;text-align:center}
+body.style-default .future-action-live{align-items:center;justify-content:center;gap:10px;text-align:center}
+body.style-default .future-action-live>span{position:absolute;top:12px;left:14px}
+.future-action-live .future-action-logo{display:block;width:54px;height:56px;flex:0 0 auto;object-fit:contain;filter:grayscale(1) brightness(0) invert(1)}
+body.light-theme .future-action-live .future-action-logo{filter:grayscale(1) brightness(0)}
