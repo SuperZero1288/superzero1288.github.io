@@ -6,6 +6,11 @@
   const dialogs = [];
   const inertBackground = new Map();
 
+  document.addEventListener('keydown', (event) => {
+    if (!['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) document.body?.classList.add('keyboard-navigation');
+  }, true);
+  document.addEventListener('pointerdown', () => document.body?.classList.remove('keyboard-navigation'), true);
+
   const isAvailable = (element) => element instanceof HTMLElement && element.isConnected
     && !element.closest('[inert], [hidden], [aria-hidden="true"]')
     && !element.matches(':disabled') && element.getClientRects().length > 0
