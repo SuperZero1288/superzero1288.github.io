@@ -3454,3 +3454,13 @@ body.light-theme .future-action-live:hover{color:var(--theme-text);background:va
 body.style-default.light-theme .future-action-live{color:var(--theme-text);border:0;background:var(--theme-surface-soft)}
 body.style-default.light-theme .future-action-live:hover{background:var(--theme-control-hover)}
 .future-action-live .future-action-logo,.future-action-live strong{transform:translateY(6px)}
+
+/* Use the exact shared 3D card transform for the featured collection link. */
+@media (hover:hover) and (pointer:fine){
+body.style-default .future-action-live.card-hover-target:hover{
+transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
+}
+}
+body.style-default .future-action-live.card-hover-target:focus-visible{
+transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
+}
