@@ -190,13 +190,6 @@
         loader.remove();
         const showWingTabGuide = () => {
           if (!document.getElementById('deviceWingTab') || !document.getElementById('navigationWingTab')) return;
-          const guideKey = 'zero-wing-tabs-guide-seen-v1';
-          try {
-            if (localStorage.getItem(guideKey) === '1') return;
-            localStorage.setItem(guideKey, '1');
-          } catch (error) {
-            // Keep the one-time guide usable if local storage is unavailable.
-          }
           document.body.classList.add('wing-guide-active');
           setTimeout(() => document.body.classList.remove('wing-guide-active'), 1000);
         };
