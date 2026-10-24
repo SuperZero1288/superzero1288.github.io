@@ -3443,3 +3443,14 @@ body.light-theme .future-action-live .future-action-logo{filter:grayscale(1) bri
 /* Keep the Unity mark visually separated from the card label. */
 .future-action-live{gap:16px}
 body.style-default .future-action-live{gap:16px}
+
+/* Make the live collection card follow the site's shared card palette and hover motion. */
+.future-action-live{color:#aaa6b0;border:1px dashed var(--card-border);background:rgba(0,0,0,.2);transition:transform .2s,border-color .2s,border-radius .3s}
+.future-action-live:hover{color:inherit;transform:translateY(-2px);border-color:var(--accent-color);background:var(--theme-control-hover,rgba(255,255,255,.05))}
+body.style-default .future-action-live{color:#aaa6b0;border:0;background:rgba(0,0,0,.2)}
+body.style-default .future-action-live:hover{background:#2b2f37}
+body.light-theme .future-action-live{color:var(--theme-text);border:1px solid var(--theme-card-border);background:var(--theme-surface-soft)}
+body.light-theme .future-action-live:hover{color:var(--theme-text);background:var(--theme-control-hover)}
+body.style-default.light-theme .future-action-live{color:var(--theme-text);border:0;background:var(--theme-surface-soft)}
+body.style-default.light-theme .future-action-live:hover{background:var(--theme-control-hover)}
+.future-action-live .future-action-logo,.future-action-live strong{transform:translateY(6px)}
