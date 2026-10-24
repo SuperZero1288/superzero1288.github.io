@@ -3464,3 +3464,70 @@ transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0
 body.style-default .future-action-live.card-hover-target:focus-visible{
 transform:perspective(900px) translate3d(0,0,22px) rotateX(var(--card-rotate-x,0deg)) rotateY(var(--card-rotate-y,0deg)) scale(1.06)
 }
+
+/* Side tabs stay discoverable without covering the slideshow. */
+:root{--wing-tab-width:38px;--wing-tab-overlap:22px}
+.edge-wing-tab{
+top:calc(50% - 66px);
+bottom:auto;
+height:132px;
+width:calc(var(--wing-tab-width) + var(--wing-tab-overlap));
+padding:0;
+background:color-mix(in srgb,var(--ui-bg) 78%,#05070b);
+}
+.edge-wing-tab-left{left:calc(0px - var(--wing-tab-overlap))}
+.edge-wing-tab-right{right:calc(0px - var(--wing-tab-overlap))}
+.edge-wing-tab span.edge-wing-tab-label{
+position:absolute;
+top:50%;
+left:calc(var(--wing-tab-overlap) + var(--wing-tab-width)/2);
+width:auto;
+height:auto;
+display:block;
+padding:10px 7px;
+border-radius:999px;
+background:transparent;
+box-shadow:none;
+color:var(--text-color,#f0edf5);
+font-size:.72rem;
+font-weight:700;
+letter-spacing:.08em;
+line-height:1;
+white-space:nowrap;
+writing-mode:vertical-rl;
+transform:translate(-50%,-50%);
+}
+.edge-wing-tab span.edge-wing-tab-label::before,
+.edge-wing-tab span.edge-wing-tab-label::after{content:none}
+body.wing-tabs-idle:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing){
+opacity:1;
+visibility:visible;
+pointer-events:auto;
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity .24s ease,visibility 0s
+}
+@media(max-width:520px){
+.edge-wing-tab{display:block!important;top:calc(50% - 58px);height:116px}
+}
+body.wing-guide-active #heroSlider::after{
+position:absolute;
+inset:0;
+z-index:3;
+background:rgba(0,0,0,.58);
+content:"";
+pointer-events:none;
+animation:wing-guide-dim 1s ease-in-out both
+}
+body.wing-guide-active .edge-wing-tab{animation:wing-guide-tab-emphasis 1s ease-in-out both}
+@keyframes wing-guide-dim{
+0%,100%{opacity:0}
+26%,76%{opacity:1}
+}
+@keyframes wing-guide-tab-emphasis{
+0%,100%{filter:none}
+25%,76%{filter:brightness(1.55) drop-shadow(0 0 12px color-mix(in srgb,var(--accent-color) 72%,transparent))}
+}
+@media(prefers-reduced-motion:reduce){
+body.wing-guide-active #heroSlider::after,
+body.wing-guide-active .edge-wing-tab{animation:none}
+body.wing-guide-active #heroSlider::after{opacity:.5}
+}
