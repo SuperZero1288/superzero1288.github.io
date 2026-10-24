@@ -3537,7 +3537,7 @@ body.wing-guide-active #heroSlider::after{opacity:.5}
 .edge-wing-tab{top:var(--edge-card-inset);bottom:var(--edge-card-inset);height:auto;width:calc(var(--wing-tab-width) + var(--wing-tab-overlap))}
 body.wing-tabs-idle:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing){
 opacity:0;
-visibility:hidden;
+visibility:visible;
 pointer-events:none;
 transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity var(--wing-tab-fade-duration) ease,visibility 0s linear var(--wing-tab-fade-duration)
 }
