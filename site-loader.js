@@ -189,7 +189,7 @@
       setTimeout(() => {
         loader.remove();
         const showWingTabGuide = () => {
-          if (!document.getElementById('deviceWingTab') || !document.getElementById('navigationWingTab')) return;
+          if (!document.getElementById('deviceWingTab') || !document.getElementById('navigationWingTab') || matchMedia('(max-width:850px)').matches) return;
           document.body.classList.add('wing-guide-active');
           setTimeout(() => document.body.classList.remove('wing-guide-active'), 1000);
         };
