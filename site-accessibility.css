@@ -137,3 +137,11 @@ body.light-theme .links-footer > span { color: #68616f; }
     transform: none !important;
   }
 }
+
+/* On touch layouts, suppress tap focus frames; keep the ring for keyboard navigation. */
+@media (max-width:520px){
+  body:not(.keyboard-navigation) :where(a,button,input,select,textarea,[tabindex]):focus-visible{
+    outline:none!important;
+    outline-offset:0!important;
+  }
+}
