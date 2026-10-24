@@ -3420,3 +3420,11 @@ body.light-theme .explorer-count{color:var(--theme-text)}
 @media(prefers-reduced-motion:reduce){
 body.light-theme .blur-overlay{transition:none}
 }
+
+.app-window input:focus,.app-window textarea:focus,.terminal-command-line:focus-within,.terminal-command-line input:focus,.floating-search-box input:focus,.floating-bookmark-editor input:focus{outline:0!important;border-color:transparent!important;box-shadow:none!important}
+.future-action-live{align-items:flex-start;justify-content:space-between;color:var(--text-color,#f0edf5);border:1px solid color-mix(in srgb,var(--accent-color) 46%,var(--card-border));background:color-mix(in srgb,var(--card-bg) 78%,var(--accent-color));cursor:pointer;opacity:1;text-decoration:none;transition:transform .18s ease,border-color .18s ease,background .18s ease}
+.future-action-live:hover{color:var(--text-color,#fff);transform:translateY(-2px);border-color:var(--accent-color);background:color-mix(in srgb,var(--card-bg) 62%,var(--accent-color))}
+.future-action-live strong{font-size:.78rem;line-height:1.3}
+.future-action-live small{color:var(--accent-color);font-size:.66rem;font-weight:800}
+.future-action-live .future-action-logo{width:34px;height:34px;flex:0 0 auto;object-fit:contain;filter:grayscale(1) brightness(0) invert(1)}
+body.light-theme .future-action-live .future-action-logo{filter:grayscale(1) brightness(0)}
