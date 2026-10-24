@@ -3439,3 +3439,7 @@ body.style-default .future-action-live{align-items:center;justify-content:center
 body.style-default .future-action-live>span{position:absolute;top:12px;left:14px}
 .future-action-live .future-action-logo{display:block;width:54px;height:56px;flex:0 0 auto;object-fit:contain;filter:grayscale(1) brightness(0) invert(1)}
 body.light-theme .future-action-live .future-action-logo{filter:grayscale(1) brightness(0)}
+
+/* Keep the Unity mark visually separated from the card label. */
+.future-action-live{gap:16px}
+body.style-default .future-action-live{gap:16px}
