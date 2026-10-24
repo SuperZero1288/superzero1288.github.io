@@ -3531,3 +3531,67 @@ body.wing-guide-active #heroSlider::after,
 body.wing-guide-active .edge-wing-tab{animation:none}
 body.wing-guide-active #heroSlider::after{opacity:.5}
 }
+
+/* Restore the original full-height wing tabs; only the first-load guide reveals them. */
+:root{--wing-tab-width:clamp(36px,calc(48px + 3vw - 5.333vh),64px);--wing-tab-overlap:32px;--wing-tab-overlap-half:16px}
+.edge-wing-tab{top:var(--edge-card-inset);bottom:var(--edge-card-inset);height:auto;width:calc(var(--wing-tab-width) + var(--wing-tab-overlap))}
+body.wing-tabs-idle:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing){
+opacity:0;
+visibility:hidden;
+pointer-events:none;
+transition:transform var(--edge-motion-duration) var(--edge-motion-easing),background .25s,border-color .25s,opacity var(--wing-tab-fade-duration) ease,visibility 0s linear var(--wing-tab-fade-duration)
+}
+body.wing-tabs-idle.wing-guide-active:not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing){
+opacity:1;
+visibility:visible;
+pointer-events:none;
+animation:wing-guide-tab-emphasis 1s ease-in-out both
+}
+body.wing-tabs-idle:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing):focus-visible{
+opacity:1!important;
+visibility:visible;
+pointer-events:auto
+}
+body.wing-guide-active .edge-wing-tab::after{
+position:absolute;
+top:50%;
+z-index:2;
+color:#fff;
+font:600 .78rem/1.4 var(--font-family,'Helvetica Neue',Arial,sans-serif);
+letter-spacing:.04em;
+text-shadow:0 2px 12px rgba(0,0,0,.8);
+white-space:nowrap;
+opacity:0;
+pointer-events:none;
+animation:wing-guide-tab-label 1s ease-in-out both
+}
+body.wing-guide-active .edge-wing-tab-left::after{left:100%;margin-left:14px;content:"アプリ・端末情報";transform:translateY(-50%)}
+body.wing-guide-active .edge-wing-tab-right::after{right:100%;margin-right:14px;content:"追加リンク";transform:translateY(-50%)}
+@keyframes wing-guide-tab-emphasis{
+0%,100%{opacity:0;filter:none}
+22%,78%{opacity:1;filter:brightness(1.5) drop-shadow(0 0 10px color-mix(in srgb,var(--accent-color) 68%,transparent))}
+}
+@keyframes wing-guide-tab-label{
+0%,100%{opacity:0}
+22%,78%{opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+body.wing-tabs-idle.wing-guide-active:not(.edge-interactions-disabled) .edge-wing-tab:not(.is-open):not(.is-closing){opacity:1;animation:none}
+body.wing-guide-active .edge-wing-tab::after{opacity:1;animation:none}
+}
+@media(max-width:520px){
+.future-actions{grid-template-rows:none;grid-auto-rows:minmax(116px,auto);align-items:stretch}
+.future-action-live{
+min-width:0;
+min-height:116px;
+padding:12px 7px;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:8px;
+text-align:center;
+overflow:hidden
+}
+.future-action-live .future-action-logo{width:36px;height:36px;max-width:100%;transform:none}
+.future-action-live strong{display:block;width:100%;max-width:100%;font-size:.68rem;line-height:1.35;overflow-wrap:anywhere;transform:none}
+}
