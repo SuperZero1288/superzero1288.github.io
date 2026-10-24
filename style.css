@@ -3595,3 +3595,11 @@ overflow:hidden
 .future-action-live .future-action-logo{width:36px;height:36px;max-width:100%;transform:none}
 .future-action-live strong{display:block;width:100%;max-width:100%;font-size:.68rem;line-height:1.35;overflow-wrap:anywhere;transform:none}
 }
+
+@media(max-width:520px){
+body:not(.edge-card-open):not(.edge-interactions-disabled) .edge-wing-tab:focus{
+opacity:1!important;
+visibility:visible!important;
+pointer-events:auto!important
+}
+}
