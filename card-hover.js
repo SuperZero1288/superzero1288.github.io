@@ -1,6 +1,7 @@
 (() => {
   const selector = [
     '.grid-item',
+    '.future-action-live',
     '.note-article[href]',
     '.note-profile-link[href]',
     '.profile-more-button',
