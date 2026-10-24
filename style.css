@@ -3428,3 +3428,8 @@ body.light-theme .blur-overlay{transition:none}
 .future-action-live small{color:var(--accent-color);font-size:.66rem;font-weight:800}
 .future-action-live .future-action-logo{width:34px;height:34px;flex:0 0 auto;object-fit:contain;filter:grayscale(1) brightness(0) invert(1)}
 body.light-theme .future-action-live .future-action-logo{filter:grayscale(1) brightness(0)}
+
+body.style-default .future-action-live{border:1px solid color-mix(in srgb,var(--accent-color) 46%,var(--card-border));background:color-mix(in srgb,var(--card-bg) 78%,var(--accent-color))}
+body.style-default .future-action-live:hover{border-color:var(--accent-color);background:color-mix(in srgb,var(--card-bg) 62%,var(--accent-color))}
+body.style-default.light-theme .future-action-live{border:1px solid color-mix(in srgb,var(--accent-color) 46%,var(--card-border));background:color-mix(in srgb,var(--card-bg) 78%,var(--accent-color))}
+body.style-default.light-theme .future-action-live:hover{border-color:var(--accent-color);background:color-mix(in srgb,var(--card-bg) 62%,var(--accent-color))}
