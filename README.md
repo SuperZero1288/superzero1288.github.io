@@ -34,6 +34,10 @@ python3 scripts/build-hero-images.py 元画像のフォルダ
 
 共有カード用の `assets/og-image.jpg`、`favicon.ico`、`apple-touch-icon.png` は自動更新の対象外です。プロフィール画像を変えたときは、必要に応じて作り直してください。
 
+## 新デザイン（試作）
+
+`/next/` に試作中の新デザインを置いています。トップページの「coming next」の02から開けます。検索結果には出さないよう `noindex` を付けています。note記事とGitHubの更新情報は、同期済みの `blog/articles.json` と `blog/latest-links.json` を読み込んで表示します。
+
 ## アセット配布ライブラリ
 
 `/vrchat-assets/` は `SuperZero1288/Zeroichiba-Workshop` の公開ツリーを読み込み、`.cat` をカテゴリ、`.ast` をアセットとして表示します。`info.txt` が説明と導入条件、`Distribution/` 内のファイルが配布ファイルです。配布物そのものはこのサイトへコピーせず、GitHub上の原本へリンクします。
