@@ -136,7 +136,7 @@
 
   const getAssetLabel = (url) => {
     const value = url.toLowerCase();
-    if (value.includes('i.ibb.co')) return '背景画像';
+    if (value.includes('/assets/hero/')) return '背景画像';
     if (value.includes('/blog/') || value.includes('/cover-')) return '記事画像';
     if (value.includes('avatar') || value.includes('profile')) return 'プロフィール画像';
     if (/\.(svg|ico)(?:[?#]|$)/.test(value)) return 'サービスアイコン';

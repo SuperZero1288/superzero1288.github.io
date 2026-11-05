@@ -9,6 +9,9 @@ const rssUrl = `${noteProfileUrl}/rss`;
 const youtubeChannelUrl = 'https://www.youtube.com/@ZErrrrrO_VRC';
 const youtubeFeedUrl = process.env.YOUTUBE_FEED_URL || 'https://www.youtube.com/feeds/videos.xml?channel_id=UCNmVWvED9bw_QJMNL2s1Erg';
 const githubReposUrl = 'https://api.github.com/users/SuperZero1288/repos?sort=updated&per_page=6';
+const ownRepositoryName = 'superzero1288.github.io';
+const ownCommitsUrl = `https://api.github.com/repos/SuperZero1288/${ownRepositoryName}/commits?per_page=100`;
+const syncBotName = 'github-actions[bot]';
 const maxHomeArticles = 3;
 const maxYoutubeVideos = 3;
 const maxGithubRepositories = 3;
@@ -387,6 +390,26 @@ async function updateHomePage(articles) {
   await writeFile(indexPath, next);
 }
 
+// 同期のpushでこのリポジトリのpushed_atが変わると、次の同期でまた差分が出てコミットが止まりません。
+// このリポジトリだけは、同期以外の最新コミットの日時を更新日として扱います。
+async function withStableOwnDate(repositories, previousRepositories = []) {
+  const own = repositories.find((repository) => repository.name === ownRepositoryName);
+  if (!own) return repositories;
+
+  let date = null;
+  try {
+    const commits = await fetchJson(ownCommitsUrl);
+    date = commits.find((entry) => entry.commit.author.name !== syncBotName)?.commit.committer.date ?? null;
+  } catch (error) {
+    console.warn(`このリポジトリの更新日を取得できませんでした: ${error.message}`);
+  }
+  date ??= previousRepositories.find((repository) => repository.name === ownRepositoryName)?.pushed_at ?? own.pushed_at;
+
+  return repositories
+    .map((repository) => (repository === own ? { ...repository, pushed_at: date } : repository))
+    .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
+}
+
 async function updateLatestLinksData(youtubeVideos, githubRepositories) {
   const outputPath = path.join(projectRoot, 'blog', 'latest-links.json');
   let previous = {};
@@ -396,9 +419,12 @@ async function updateLatestLinksData(youtubeVideos, githubRepositories) {
     // 初回同期では空のデータから作成します。
   }
 
+  const repositories = githubRepositories
+    ? await withStableOwnDate(githubRepositories, previous.githubRepositories)
+    : previous.githubRepositories ?? [];
   const data = {
     youtubeVideos: (youtubeVideos ?? previous.youtubeVideos ?? []).slice(0, maxYoutubeVideos),
-    githubRepositories: (githubRepositories ?? previous.githubRepositories ?? []).slice(0, maxGithubRepositories).map((repository) => ({
+    githubRepositories: repositories.slice(0, maxGithubRepositories).map((repository) => ({
       name: repository.name,
       html_url: repository.html_url,
       description: repository.description,
