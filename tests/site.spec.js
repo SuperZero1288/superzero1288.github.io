@@ -596,3 +596,40 @@ test('search and calendar remain visible and usable while a modeless app is open
   expect(await page.locator('#desktopLayer').evaluate((element) => element.inert)).toBe(false);
   await expect(page.locator('.app-window')).toHaveCount(1);
 });
+
+test('the second coming-next card opens the new design preview', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  const card = page.locator('.future-action[href="/next/"]');
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText('02');
+  await expect(card).toHaveAccessibleName(/新デザイン/);
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`new design preview is accessible without horizontal scroll at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    await mockNetwork(page);
+    await page.goto('/next/');
+    await expect(page.locator('h1')).toContainText('ぜろくん');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await expect(page.locator('#noteList .note-card').first()).toHaveAttribute('href', /^\/blog\/n[0-9a-f]+\.html$/);
+    await expect(page.locator('#repoList a').first()).toHaveAttribute('href', /^https:\/\/github\.com\//);
+    await expectNoHorizontalOverflow(page);
+    await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
+    await page.waitForTimeout(800);
+    expect(await audit(page)).toEqual([]);
+  });
+}
+
+test('new design preview stops its motion when reduced motion is requested', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await mockNetwork(page);
+  await page.goto('/next/');
+  const state = await page.evaluate(() => ({
+    shapes: [...document.querySelectorAll('.shape, .marquee-track, .hero-avatar')].map((element) => getComputedStyle(element).animationName),
+    hidden: [...document.querySelectorAll('.reveal')].filter((element) => getComputedStyle(element).opacity !== '1').length
+  }));
+  expect(state.shapes.every((name) => name === 'none')).toBe(true);
+  expect(state.hidden).toBe(0);
+});
