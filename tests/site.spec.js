@@ -68,6 +68,62 @@ test('the photo-first hero, existing article link and loader remain in place', a
   await expect(page.locator('script[src^="site-loader.js"]')).toHaveAttribute('src', /^site-loader\.js\?v=/);
 });
 
+function heroPhotoRequests(page) {
+  const requested = [];
+  page.on('request', (request) => {
+    const {pathname} = new URL(request.url());
+    if (pathname.startsWith('/assets/hero/')) requested.push(pathname.replace('/assets/hero/', ''));
+  });
+  return requested;
+}
+
+test('hero photos are hosted here and load one at a time ahead of their turn', async ({page}) => {
+  expect(fs.readFileSync(path.join(rootPath, 'style.css'), 'utf8')).not.toContain('i.ibb.co');
+  const requested = heroPhotoRequests(page);
+  await mockNetwork(page);
+  await ready(page, '/');
+  expect(requested[0]).toBe('01-wide.webp');
+  expect(requested).not.toContain('05-wide.webp');
+  const second = page.locator('.slides').nth(1);
+  await expect.poll(() => second.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain('/assets/hero/02-wide.webp');
+  expect(await page.locator('.slides').first().evaluate((element) => getComputedStyle(element).backgroundImage)).toContain('/assets/hero/01-wide.webp');
+});
+
+test('portrait screens use the cropped hero photos', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  const requested = heroPhotoRequests(page);
+  await mockNetwork(page);
+  await ready(page, '/');
+  await expect.poll(() => requested.includes('02-tall.webp')).toBe(true);
+  expect(requested.filter((name) => name.endsWith('-wide.webp'))).toEqual([]);
+});
+
+test('reduced motion only downloads the first hero photo', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  const requested = heroPhotoRequests(page);
+  await mockNetwork(page);
+  await ready(page, '/');
+  await page.waitForTimeout(1500);
+  expect(requested).toEqual(['01-wide.webp']);
+});
+
+test('the homepage can be shared and crawled', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /ポートフォリオ/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://superzero1288.github.io/');
+  const shareImage = await page.locator('meta[property="og:image"]').getAttribute('content');
+  expect(shareImage).toBe('https://superzero1288.github.io/assets/og-image.jpg');
+  for (const file of ['assets/og-image.jpg', 'favicon.ico', 'apple-touch-icon.png']) {
+    expect(fs.existsSync(path.join(rootPath, file))).toBe(true);
+  }
+  const robots = await page.request.get('/robots.txt');
+  expect(await robots.text()).toContain('Sitemap: https://superzero1288.github.io/sitemap.xml');
+  const sitemap = await page.request.get('/sitemap.xml');
+  expect(await sitemap.text()).toContain('<loc>https://superzero1288.github.io/vrchat-assets/</loc>');
+});
+
 test('catalogue can be opened with Enter and Back restores the selected card', async ({page}) => {
   await mockNetwork(page);
   await ready(page);
