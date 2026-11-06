@@ -1,5 +1,5 @@
-/* ZERO — トップページ（ヒーロー、左右のシート、ダッシュボード、プロフィール）。共通部分は base.css にあります。 */
-html{scroll-snap-type:y proximity}
+/* ZERO — トップページ（ヒーロー、左右のシート、ダッシュボード、プロフィール）。共通部分は base.css にあります。
+   スクロールのスナップは、スマホでゆっくりスクロールすると先頭へ引き戻されるため使っていません。 */
 
 /* ===== 左右のタブとサイドシート ===== */
 .wing-tab{position:fixed;top:50%;z-index:45;display:flex;flex-direction:column;align-items:center;gap:10px;width:56px;padding:18px 0;border:0;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--elev-2);cursor:pointer;translate:0 -50%;transition:translate .5s var(--spring),opacity .3s var(--effects),visibility .3s,border-radius .45s var(--spring-fast),width .45s var(--spring-fast)}
@@ -39,7 +39,7 @@ html{scroll-snap-type:y proximity}
 .sheet-nav a:hover .nav-shape{rotate:45deg;clip-path:var(--shape-circle)}
 
 /* ===== ヒーロー ===== */
-.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:clamp(24px,4vw,56px);min-height:100svh;padding:96px clamp(72px,8vw,120px) 110px;scroll-snap-align:start}
+.hero{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:clamp(24px,4vw,56px);min-height:100svh;padding:96px clamp(72px,8vw,120px) 110px}
 .hero-title{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(3rem,7.4vw,8.6rem);line-height:1.04;letter-spacing:-.01em}
 .hero-line{display:block;white-space:nowrap}
 .hero-title-visual{display:block}
@@ -65,6 +65,11 @@ html{scroll-snap-type:y proximity}
 .photo-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s var(--effects)}
 .photo-layer.is-current{opacity:1}
 .photo-counter{position:absolute;top:2%;right:-4%;padding:6px 14px;background:var(--surface-container-lowest);color:var(--on-surface);border-radius:999px;box-shadow:var(--elev-2);font-family:var(--flex);font-weight:800;font-size:.78rem;letter-spacing:.06em;font-variation-settings:'wdth' 115}
+/* 写真を一定のリズムで押すと、ここにBPMが出ます（隠し要素） */
+.photo-counter{transition:background-color .3s var(--effects),color .3s var(--effects)}
+.photo-counter.is-bpm{background:var(--primary);color:var(--on-primary)}
+.photo-counter.is-beat{animation:beat .4s var(--spring-fast)}
+@keyframes beat{0%{scale:1.22}100%{scale:1}}
 .hero-avatar{position:absolute;left:-8%;bottom:-6%;margin:0;width:34%;animation:bob 5s ease-in-out infinite alternate}
 .hero-avatar img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;background:var(--surface-container-lowest);clip-path:var(--shape-clover8);transition:clip-path .7s var(--spring),rotate .7s var(--spring)}
 .hero-avatar:hover img{clip-path:var(--shape-circle);rotate:-12deg}
@@ -89,7 +94,7 @@ html{scroll-snap-type:y proximity}
 @keyframes marquee{to{transform:translateX(-50%)}}
 
 /* ===== メイン画面（いつものポートフォリオ画面） ===== */
-.content{position:relative;padding:0 0 48px;scroll-snap-align:start;outline:none}
+.content{position:relative;padding:0 0 48px;outline:none}
 .dashboard{display:grid;grid-template-columns:minmax(260px,330px) minmax(0,1fr);grid-template-areas:"profile links" "updates next";gap:16px}
 
 .profile-card{grid-area:profile;display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--surface-container-high)}
@@ -123,7 +128,7 @@ html{scroll-snap-type:y proximity}
 .slot small{color:var(--on-surface-variant);font-family:var(--flex);font-weight:700;font-size:.68rem;letter-spacing:.12em}
 .slot-num{position:absolute;top:10px;left:14px;color:var(--primary);font-family:var(--flex);font-weight:900;font-variation-settings:'wdth' 125}
 .slot-live{background:var(--tone);color:var(--on-pop);transition:border-radius .45s var(--spring-fast),transform .45s var(--spring)}
-.slot-live:hover{border-radius:40px;transform:translateY(-3px)}
+.slot-live:hover{border-radius:40px}
 .slot-live .slot-num{color:var(--on-pop)}
 .slot-live strong{font-size:.78rem;line-height:1.35;text-wrap:balance;word-break:auto-phrase}
 .slot-icon{display:grid;place-items:center;width:58px;height:58px;background:color-mix(in oklch,#fff 60%,var(--tone));color:var(--on-pop);clip-path:var(--shape);transition:clip-path .6s var(--spring),rotate .6s var(--spring)}
@@ -137,7 +142,7 @@ html{scroll-snap-type:y proximity}
 .footer-title{margin:2px 0;font-family:var(--display);font-size:clamp(1.2rem,2.4vw,1.6rem);line-height:1.3}
 .footer-text{margin:0;font-weight:700;font-size:.9rem}
 .footer-links{display:flex;flex-wrap:wrap;gap:8px}
-.footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;background:color-mix(in oklch,var(--surface-container-lowest) 70%,transparent);color:var(--on-surface);border-radius:999px;font-weight:900;text-decoration:none;transition:border-radius .4s var(--spring-fast),background-color .2s}
+.footer-links a{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;background:color-mix(in oklch,var(--surface-container-lowest) 70%,transparent);color:var(--on-surface);border-radius:22px;font-weight:900;text-decoration:none;transition:border-radius .4s var(--spring-fast),background-color .2s}
 .footer-links a:hover{background:var(--surface-container-lowest);border-radius:14px}
 
 /* ===== プロフィールのダイアログ ===== */
@@ -174,8 +179,7 @@ html{scroll-snap-type:y proximity}
 /* スマホ・タブレット: 写真を名前の後ろに重ねて、自己紹介カードより上を1画面に収める */
 .hero{display:block;min-height:100svh;padding:74px 40px 150px;--photo:min(60vw,380px)}
 .hero-copy{position:relative;z-index:2}
-.assist-chip{margin-bottom:0;white-space:nowrap}
-.hero-visual{position:absolute;top:124px;right:40px;z-index:1;width:var(--photo)}
+.hero-visual{position:absolute;top:88px;right:40px;z-index:1;width:var(--photo)}
 .hero-title{margin-top:calc(12px + var(--photo) * .6);font-size:clamp(2.9rem,14.5vw,6.4rem);text-shadow:0 0 .12em var(--surface),0 0 .32em var(--surface)}
 .hero-line-pop{text-shadow:none}
 .hero-lead{margin-top:20px}
@@ -188,7 +192,7 @@ html{scroll-snap-type:y proximity}
 }
 @media(max-width:560px){
 .hero{padding:72px 40px 150px}
-.hero-visual{top:120px}
+.hero-visual{top:84px}
 .wing-tab{width:34px;padding:14px 0;gap:6px}
 .wing-tab:hover{width:38px}
 .wing-tab svg{width:18px;height:18px}

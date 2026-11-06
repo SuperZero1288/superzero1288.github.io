@@ -26,14 +26,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
-<link rel="stylesheet" href="/site/base.css?v=20261108-1">
-<link rel="stylesheet" href="/site/home.css?v=20261108-1">
-<link rel="stylesheet" href="/site/desktop.css?v=20261108-1">
-<script src="/site/theme.js?v=20261108-1"></script>
-<script src="/site/common.js?v=20261108-1" defer></script>
-<script src="/site/home.js?v=20261108-1" defer></script>
+<link rel="stylesheet" href="/site/base.css?v=20261109-1">
+<link rel="stylesheet" href="/site/home.css?v=20261109-1">
+<link rel="stylesheet" href="/site/desktop.css?v=20261109-1">
+<script src="/site/theme.js?v=20261109-1"></script>
+<script src="/site/common.js?v=20261109-1" defer></script>
+<script src="/site/home.js?v=20261109-1" defer></script>
 <script src="/zero-filesystem.js?v=20261107-1" defer></script>
-<script src="/site/desktop.js?v=20261108-1" defer></script>
+<script src="/site/desktop.js?v=20261109-1" defer></script>
 <script src="/aether-boot.js?v=1.0.1" defer></script>
 <script src="/vastique-boot.js?v=1.0.0" defer></script>
 </head>
@@ -118,7 +118,6 @@
 <nav class="sheet-nav" aria-label="ほかのページ">
 <a href="/links.html"><span class="nav-shape" style="--shape:var(--shape-cookie9);--tone:var(--pop-pink)" aria-hidden="true"></span><span><strong>リンク集</strong><small>SNS・ショップ・プロフィール</small></span></a>
 <a href="/vrchat-assets/"><span class="nav-shape" style="--shape:var(--shape-clover4);--tone:var(--pop-blue)" aria-hidden="true"></span><span><strong>VRChat向けアセット</strong><small>配布ライブラリ</small></span></a>
-<a href="https://note.com/zerrrrro_1288" target="_blank" rel="noopener"><span class="nav-shape" style="--shape:var(--shape-flower);--tone:var(--pop-mint)" aria-hidden="true"></span><span><strong>note</strong><small>記事をすべて見る ↗</small></span></a>
 <a href="/blog/n8d41d4a76214.html" id="latestArticleLink"><span class="nav-shape" style="--shape:var(--shape-gem);--tone:var(--pop-yellow)" aria-hidden="true"></span><span><strong>最新の記事</strong><small>サイト内で読む</small></span></a>
 </nav>
 </aside>
@@ -126,9 +125,8 @@
 <main id="main">
 <section class="hero" id="hero" aria-labelledby="heroTitle">
 <div class="hero-copy">
-<p class="assist-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 11C6.523 11 11 6.523 11 1h2c0 5.523 4.477 10 10 10v2c-5.523 0-10 4.477-10 10h-2c0-5.523-4.477-10-10-10z"/></svg>PORTFOLIO / ZErrrrrO</p>
 <h1 class="hero-title" id="heroTitle"><span class="visually-hidden">ぜろくんでんせつ</span><span class="hero-title-visual" aria-hidden="true"><span class="hero-line">ぜろくん</span><span class="hero-line hero-line-pop" id="heroLegend"><span class="hero-legend-text">でんせつ</span></span></span></h1>
-<p class="hero-lead"><span class="phrase">Unity と VRChat で、</span><span class="phrase">つくって、あそぶ。</span><br><span class="phrase"><strong>ZErrrrrO</strong> の</span><span class="phrase">ポートフォリオです。</span></p>
+<p class="hero-lead"><span class="phrase hero-message" data-random-line="/content/hero-messages.txt">Perfect VRChatter.</span><br><span class="phrase"><strong>ZErrrrrO</strong> の</span><span class="phrase">ポートフォリオです。</span></p>
 <div class="hero-actions">
 <a class="btn btn-filled" href="#content">リンクを見る<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></a>
 <a class="btn btn-tonal" href="/vrchat-assets/">アセット配布<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></a>
@@ -141,6 +139,7 @@
 <img class="photo-layer" alt="" width="1080" height="1440">
 </button>
 <span class="photo-counter" id="photoCounter" aria-hidden="true">PHOTO 01 / 13</span>
+<span class="visually-hidden" id="photoBpm" role="status" aria-live="polite"></span>
 <figure class="hero-avatar">
 <img src="/assets/social-x.jpg" alt="ZErrrrrOのプロフィールアイコン" width="200" height="200">
 <figcaption>@ZErrrrrO_VRC</figcaption>
@@ -226,7 +225,7 @@
 
 <footer class="site-footer reveal">
 <span class="footer-shape" aria-hidden="true"></span>
-<div><p class="eyebrow">ZERO / PORTFOLIO</p><p class="footer-title">ぜろくんでんせつ</p><p class="footer-text">Unity と VRChat で、つくって、あそぶ。</p></div>
+<div><p class="eyebrow">ZERO / PORTFOLIO</p><p class="footer-title">ぜろくんでんせつ</p><p class="footer-text" data-random-line="/content/hero-messages.txt">Perfect VRChatter.</p></div>
 <nav class="footer-links" aria-label="フッター">
 <a href="/links.html">リンク集</a>
 <a href="/vrchat-assets/">アセット配布</a>
@@ -247,7 +246,7 @@
 <div class="spec-grid">
 <section class="spec-card" aria-labelledby="pcTitle">
 <p class="eyebrow">WORKSTATION</p><h3 id="pcTitle">PC環境</h3>
-<dl class="spec-list">
+<dl class="spec-list" data-spec-source="/content/profile-pc.txt">
 <div><dt>CPU</dt><dd>AMD Ryzen 7 3700X</dd></div>
 <div><dt>GPU</dt><dd>NVIDIA GeForce GTX 1660 Ti / 8 GB</dd></div>
 <div><dt>MEMORY</dt><dd>DDR4 / 32 GB</dd></div>
@@ -259,7 +258,7 @@
 </section>
 <section class="spec-card spec-card-alt" aria-labelledby="deviceTitle">
 <p class="eyebrow">DEVICE LINEUP</p><h3 id="deviceTitle">スマホ布陣</h3>
-<dl class="spec-list">
+<dl class="spec-list" data-spec-source="/content/profile-phones.txt">
 <div><dt>MAIN</dt><dd>Google Pixel 9a</dd></div>
 <div><dt>SUB</dt><dd>Samsung Galaxy Z Flip5</dd></div>
 <div><dt>TABLET</dt><dd>Apple iPad mini 6</dd></div>

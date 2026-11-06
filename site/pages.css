@@ -27,7 +27,7 @@
 .link-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .link-group-grid>.card:first-child .link-list{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .link-row{display:flex;align-items:center;gap:14px;min-height:72px;padding:10px 16px 10px 10px;background:var(--surface-container-high);border-radius:24px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s var(--effects),translate .45s var(--spring)}
-.link-row:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:40px;translate:0 -2px}
+.link-row:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:40px}
 .link-row:active{border-radius:16px}
 .link-icon{display:grid;flex:0 0 auto;place-items:center;width:52px;height:52px;background:color-mix(in oklch,var(--tone) 40%,#fff);clip-path:var(--shape-cookie12);transition:clip-path .6s var(--spring),rotate .6s var(--spring)}
 .link-row:hover .link-icon{clip-path:var(--shape-circle);rotate:-14deg}
@@ -38,18 +38,21 @@
 .link-row:hover .link-copy small{color:var(--on-surface)}
 .link-arrow{flex:0 0 auto;color:var(--primary);font-weight:900}
 
-.latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:16px}
-.latest-grid .card-head{align-items:center;margin-bottom:12px}
+.latest-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:auto;column-gap:16px;row-gap:16px}
+/* 見出しと3件ぶんの行を subgrid で列どうしそろえます（noteが3件ある前提。少ないときは空いた行になります） */
+.latest-card{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:10px}
+.latest-card .card-head{align-items:center;margin:0}
 .latest-title{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--display);font-weight:400;font-size:1.3rem;line-height:1.3}
 .latest-title .link-icon{width:40px;height:40px}
 .latest-title .link-icon img{width:20px;height:20px}
-.latest-grid .text-link{margin-top:0}
-.latest-grid .note-card{grid-template-columns:96px 1fr}
-.video-list{display:grid;gap:10px}
-.video-card{display:grid;gap:8px;padding:8px 8px 12px;background:var(--surface-container-high);border-radius:24px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s,translate .45s var(--spring)}
-.video-card:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:36px;translate:0 -2px}
-.video-card img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:18px}
-.video-card .note-copy{padding:0 6px}
+.latest-card .text-link{margin-top:0}
+.latest-list{display:grid;grid-row:span 3;grid-template-rows:subgrid;margin:0;padding:0;list-style:none}
+.latest-list>li{display:grid}
+/* noteとYouTubeは同じ大きさのサムネイル、文字は2行まで */
+.latest-list .note-card{grid-template-columns:104px 1fr}
+.latest-list .note-card img{aspect-ratio:16/10}
+.latest-list .note-copy strong,.latest-list.repo-list small{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.latest-list.repo-list a{align-content:center}
 .empty-card{display:grid;gap:4px;padding:18px;background:var(--surface-container-high);border:2px dashed var(--outline-variant);border-radius:24px;text-decoration:none}
 .empty-card .eyebrow{color:var(--on-surface-variant)}
 .empty-card strong{font-weight:900}
@@ -101,7 +104,7 @@
 .article-body [data-table-of-contents] a:hover{text-decoration:underline}
 .article-embed-card{display:grid;gap:2px;margin:1.2em 0;padding:16px 20px;background:var(--secondary-container);color:var(--on-secondary-container);border-radius:24px;text-decoration:none;transition:border-radius .45s var(--spring-fast),translate .45s var(--spring)}
 .article-body .article-embed-card{color:var(--on-secondary-container);font-weight:500}
-.article-embed-card:hover{border-radius:36px;translate:0 -2px}
+.article-embed-card:hover{border-radius:36px}
 .article-embed-card strong{background:none;line-height:1.5}
 .article-embed-card span{font-family:var(--flex);font-weight:800;font-size:.8rem}
 .article-end{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:2.4em;padding-top:1.4em;border-top:2px dashed var(--outline-variant)}
@@ -124,7 +127,7 @@
 .error-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:6px}
 .legacy-door[hidden]{display:none}
 .legacy-door{display:flex;align-items:center;gap:16px;width:100%;margin-top:8px;padding:14px 20px 14px 14px;background:var(--inverse-surface);color:var(--inverse-on-surface);border-radius:32px;text-align:left;text-decoration:none;transition:border-radius .45s var(--spring-fast),translate .45s var(--spring)}
-.legacy-door:hover{border-radius:48px;translate:0 -3px}
+.legacy-door:hover{border-radius:48px}
 .legacy-door.is-revealed{animation:doorIn .7s var(--spring)}
 .legacy-door-shape{flex:0 0 auto;width:52px;height:52px;background:var(--pop-yellow);clip-path:var(--shape-pentagon);animation:spin 18s linear infinite}
 .legacy-door span:last-child{display:grid}
@@ -136,7 +139,7 @@
 /* ===== 画面幅ごとの調整 ===== */
 @media(max-width:980px){
 .latest-grid{grid-template-columns:1fr 1fr}
-.latest-grid>.card:last-child{grid-column:1 / -1}
+.latest-grid>.latest-card:last-child{grid-column:1 / -1}
 .article-hero{grid-template-columns:1fr}
 .article-cover{order:-1;rotate:0deg;max-width:640px}
 }

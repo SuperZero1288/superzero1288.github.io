@@ -122,7 +122,7 @@
     next.classList.add('is-current');
     current.classList.remove('is-current');
     photoIndex = index;
-    counter.textContent = `PHOTO ${String(index + 1).padStart(2, '0')} / ${PHOTO_COUNT}`;
+    if (!counter.classList.contains('is-bpm')) counter.textContent = `PHOTO ${String(index + 1).padStart(2, '0')} / ${PHOTO_COUNT}`;
     switching = false;
   };
   const scheduleSlide = () => {
@@ -133,10 +133,56 @@
       scheduleSlide();
     }, 5500);
   };
+  /* 隠し要素: 写真を一定のリズムで押し続けると、そのテンポ（BPM）を表示します */
+  const bpmStatus = $('photoBpm');
+  const BPM_RANGE = {min: 40, max: 240};
+  const BEATS_TO_SHOW = 4;
+  let taps = [];
+  let bpmTimer = 0;
+  let announcedBpm = 0;
+  const photoLabel = () => `PHOTO ${String(photoIndex + 1).padStart(2, '0')} / ${PHOTO_COUNT}`;
+  const hideBpm = () => {
+    taps = [];
+    announcedBpm = 0;
+    counter.classList.remove('is-bpm');
+    counter.textContent = photoLabel();
+  };
+  const recordTap = () => {
+    const now = performance.now();
+    const last = taps.at(-1);
+    // 間があきすぎたら、そこから数え直す
+    if (last !== undefined && now - last > 60000 / BPM_RANGE.min) taps = [];
+    taps = [...taps, now].slice(-9);
+    clearTimeout(bpmTimer);
+    const intervals = taps.slice(1).map((time, index) => time - taps[index]);
+    const recent = intervals.slice(-(BEATS_TO_SHOW - 1));
+    const average = recent.reduce((sum, value) => sum + value, 0) / (recent.length || 1);
+    const steady = recent.length >= BEATS_TO_SHOW - 1 && recent.every((value) => Math.abs(value - average) <= average * 0.2);
+    const bpm = Math.round(60000 / (intervals.reduce((sum, value) => sum + value, 0) / intervals.length));
+    if (steady && bpm >= BPM_RANGE.min && bpm <= BPM_RANGE.max) {
+      counter.classList.add('is-bpm');
+      counter.textContent = `♪ ${bpm} BPM`;
+      counter.classList.remove('is-beat');
+      void counter.offsetWidth;
+      counter.classList.add('is-beat');
+      if (Math.abs(bpm - announcedBpm) >= 5) {
+        announcedBpm = bpm;
+        bpmStatus.textContent = `${bpm} BPM`;
+      }
+    } else if (!steady && counter.classList.contains('is-bpm')) {
+      // リズムが崩れたら、この1回から数え直す
+      hideBpm();
+      taps = [now];
+    }
+    bpmTimer = setTimeout(hideBpm, Math.max(2500, average * 2.5));
+  };
   frame.addEventListener('click', async () => {
+    recordTap();
     await showPhoto((photoIndex + 1) % PHOTO_COUNT);
+    if (!counter.classList.contains('is-bpm')) counter.textContent = photoLabel();
     scheduleSlide();
   });
+  counter.addEventListener('animationend', () => counter.classList.remove('is-beat'));
   reducedMotion.addEventListener('change', scheduleSlide);
   scheduleSlide();
 
@@ -272,6 +318,18 @@
   addEventListener('offline', renderDevice);
 
   /* ---------- プロフィールのダイアログ ---------- */
+  // PC環境とスマホ布陣は content/profile-pc.txt・profile-phones.txt の「見出し: 内容」を1行ずつ並べます。
+  document.querySelectorAll('[data-spec-source]').forEach((list) => {
+    site.readLines(list.dataset.specSource).then((lines) => {
+      const rows = lines.map((line) => {
+        const match = line.match(/^(.*?)\s*[:：]\s*(.*)$/);
+        const row = document.createElement('div');
+        row.append(site.element('dt', '', match ? match[1] : ''), site.element('dd', '', match ? match[2] : line));
+        return row;
+      });
+      if (rows.length) list.replaceChildren(...rows);
+    }).catch((error) => console.warn('プロフィールのファイルを読み込めなかったため、ページ内の内容を使います', error));
+  });
   const dialog = $('profileDialog');
   const openProfile = () => { if (!dialog.open) dialog.showModal(); };
   $('profileButton').addEventListener('click', openProfile);

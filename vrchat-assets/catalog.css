@@ -5,7 +5,7 @@
 
 /* ===== 上の操作列（戻る・現在地・再読み込み） ===== */
 .catalog-stage-nav{display:flex;align-items:center;gap:8px;padding:6px;background:var(--surface-container);border-radius:999px}
-.catalog-back-button{display:inline-flex;flex:0 0 auto;align-items:center;gap:6px;min-height:44px;padding:0 18px 0 14px;border:0;background:var(--secondary-container);color:var(--on-secondary-container);border-radius:999px;font-weight:900;cursor:pointer;transition:border-radius .4s var(--spring-fast),opacity .2s}
+.catalog-back-button{display:inline-flex;flex:0 0 auto;align-items:center;gap:6px;min-height:44px;padding:0 18px 0 14px;border:0;background:var(--secondary-container);color:var(--on-secondary-container);border-radius:22px;font-weight:900;cursor:pointer;transition:border-radius .4s var(--spring-fast),opacity .2s}
 .catalog-back-button svg{width:20px;height:20px}
 .catalog-back-button:active{border-radius:14px}
 .catalog-back-button:disabled{background:transparent;color:var(--on-surface-variant);cursor:default}
@@ -16,7 +16,7 @@
 .catalog-breadcrumbs button:hover{background:var(--surface-container-highest)}
 .catalog-breadcrumbs [aria-current]{background:var(--primary);color:var(--on-primary)}
 .catalog-breadcrumb-separator{flex:0 0 auto;color:var(--on-surface-variant);font-weight:700}
-.catalog-refresh-button{display:inline-grid;flex:0 0 auto;place-items:center;width:44px;height:44px;padding:0;border:0;background:var(--surface-container-highest);color:var(--on-surface);border-radius:999px;cursor:pointer;transition:border-radius .4s var(--spring-fast),rotate .6s var(--spring)}
+.catalog-refresh-button{display:inline-grid;flex:0 0 auto;place-items:center;width:44px;height:44px;padding:0;border:0;background:var(--surface-container-highest);color:var(--on-surface);border-radius:22px;cursor:pointer;transition:border-radius .4s var(--spring-fast),rotate .6s var(--spring)}
 .catalog-refresh-button svg{width:22px;height:22px}
 .catalog-refresh-button:hover{rotate:-90deg}
 .catalog-refresh-button:active{border-radius:14px}
@@ -25,7 +25,8 @@
 /* ===== 一覧 ===== */
 .catalog-file-list{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-height:240px;outline:none}
 .catalog-file-list.is-entering{animation:catalogEnter .45s var(--spring)}
-@keyframes catalogEnter{from{opacity:0;transform:translateY(10px) scale(.99)}to{opacity:1;transform:none}}
+/* 文字の濃さ（コントラスト）が途中で薄くならないよう、透明度は変えずに動きだけにしています */
+@keyframes catalogEnter{from{transform:translateY(10px) scale(.99)}to{transform:none}}
 .catalog-section-title{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
 .catalog-section-title h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.25rem,2.4vw,1.6rem);line-height:1.3;outline:none}
 .catalog-section-title span{padding:2px 12px;background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:999px;font-family:var(--flex);font-weight:800;font-size:.8rem}
@@ -34,7 +35,7 @@
 .catalog-category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .catalog-category-card{display:flex;align-items:center;gap:14px;min-height:104px;padding:14px 18px 14px 14px;border:0;background:var(--surface-container-high);color:var(--on-surface);border-radius:28px;text-align:left;cursor:pointer;--tone:var(--pop-pink);--shape:var(--shape-cookie9);transition:border-radius .45s var(--spring-fast),background-color .25s var(--effects),translate .45s var(--spring)}
 .catalog-category-card[data-kind="world"]{--tone:var(--pop-blue);--shape:var(--shape-clover4)}
-.catalog-category-card:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:40px;translate:0 -3px}
+.catalog-category-card:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:40px}
 .catalog-category-card:active{border-radius:18px}
 .catalog-category-card.is-featured{min-height:150px;padding:20px 24px 20px 20px;background:var(--tone);color:var(--on-pop)}
 .catalog-category-card.is-featured:hover{background:color-mix(in oklch,var(--tone) 80%,#fff)}
@@ -55,7 +56,7 @@
 .catalog-item-card:nth-child(4n+2){--tone:var(--pop-mint)}
 .catalog-item-card:nth-child(4n+3){--tone:var(--pop-yellow)}
 .catalog-item-card:nth-child(4n+4){--tone:var(--pop-orange)}
-.catalog-item-card:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:36px;box-shadow:var(--elev-2);translate:0 -3px}
+.catalog-item-card:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container-high));border-radius:36px;box-shadow:var(--elev-2)}
 .catalog-item-card:active{border-radius:20px}
 .catalog-item-art{display:grid;place-items:center;width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--tone);clip-path:var(--shape-square);transition:clip-path .7s var(--spring)}
 .catalog-item-card:hover .catalog-item-art{clip-path:var(--shape-cookie12)}
@@ -75,7 +76,7 @@
 .catalog-empty-state p{margin:0;max-width:34em;color:var(--on-surface-variant);font-weight:700}
 .catalog-spinner{display:inline-block;flex:0 0 auto;width:48px;height:48px;background:var(--primary);clip-path:var(--shape-cookie9);animation:loaderMorph 2.6s var(--spring) infinite,loaderSpin 2.6s linear infinite}
 .catalog-empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px}
-.catalog-retry-button,.catalog-primary-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;background:var(--primary);color:var(--on-primary);border-radius:999px;font-weight:900;cursor:pointer;transition:border-radius .45s var(--spring-fast),transform .45s var(--spring-fast)}
+.catalog-retry-button,.catalog-primary-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border:0;background:var(--primary);color:var(--on-primary);border-radius:24px;font-weight:900;cursor:pointer;transition:border-radius .45s var(--spring-fast),transform .45s var(--spring-fast)}
 .catalog-retry-button:active,.catalog-primary-link:active{border-radius:16px;transform:scale(.97)}
 .catalog-repo-link{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;background:var(--secondary-container);color:var(--on-secondary-container);border-radius:999px;font-weight:900;text-decoration:none}
 .catalog-status{margin:0;padding:10px 18px;background:var(--surface-container);color:var(--on-surface-variant);border-radius:20px;font-weight:700;font-size:.86rem}
@@ -125,7 +126,7 @@
 .catalog-download-meta{display:flex;flex-wrap:wrap;gap:6px}
 .catalog-file-format{padding:0 10px;background:var(--primary-container);color:var(--on-primary-container);border-radius:8px;font-family:var(--flex);font-weight:800;font-size:.76rem}
 .catalog-row-size{color:var(--on-surface-variant);font-family:var(--flex);font-weight:700;font-size:.8rem}
-.catalog-download-link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;background:var(--primary);color:var(--on-primary);border-radius:999px;font-weight:900;text-decoration:none;transition:border-radius .45s var(--spring-fast),transform .45s var(--spring-fast)}
+.catalog-download-link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;background:var(--primary);color:var(--on-primary);border-radius:24px;font-weight:900;text-decoration:none;transition:border-radius .45s var(--spring-fast),transform .45s var(--spring-fast)}
 .catalog-download-link:hover{border-radius:18px}
 .catalog-download-link:active{transform:scale(.97)}
 .catalog-license-note{margin:0;font-weight:700;font-size:.84rem;opacity:.9}

@@ -6,8 +6,9 @@
   const {element, safeUrl, formatDate, loadJson, noteCard} = site;
   const $ = (id) => document.getElementById(id);
 
+  // noteの記事カードと同じ形（同じ大きさのサムネイル）にして、行の高さをそろえます。
   const videoCard = (video) => {
-    const link = element('a', 'video-card');
+    const link = element('a', 'note-card video-card');
     link.href = safeUrl(video.sourceUrl, 'https://www.youtube.com/@ZErrrrrO_VRC');
     link.target = '_blank';
     link.rel = 'noopener';

@@ -91,31 +91,106 @@
     if (!silent) notify(next === 'dark' ? 'ダークモード' : 'ライトモード');
     return true;
   };
-  const currentHue = () => HUES.find((item) => item.hue === (Number(getComputedStyle(root).getPropertyValue('--h')) || HUES[0].hue)) || HUES[0];
+  // 色の切り替え中（アニメーション中）でも次の色を正しく選べるよう、今の色はここで覚えておきます。
+  let hueState = HUES.find((item) => item.hue === Number(getComputedStyle(root).getPropertyValue('--h'))) || HUES[0];
+  const currentHue = () => hueState;
   const getAppearance = () => ({mode: isDark() ? 'dark' : 'light', ...currentHue()});
-  const setHue = (value, {silent = false} = {}) => {
+  const hueButton = $('hueButton');
+
+  /* テーマカラーを変えるときの演出: 押したボタンから、新しい色の画面が図形の形で回りながら広がります。
+     shapes.css の図形（割合で書いた点）を、ボタンを中心にした画面上の位置に直して clip-path で動かします。 */
+  const REVEAL_SHAPES = ['cookie12', 'flower', 'clover8', 'burst', 'cookie9'];
+  let revealCount = 0;
+  let activeReveal = null;
+  const shapePoints = (name) => [...getComputedStyle(root).getPropertyValue(`--shape-${name}`).matchAll(/(-?[\d.]+)%\s+(-?[\d.]+)%/g)]
+    .map(([, x, y]) => [Number(x) / 100 - 0.5, Number(y) / 100 - 0.5]);
+  const shapeAt = (points, x, y, size, angle) => {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return `polygon(${points.map(([px, py]) => `${(x + (px * cos - py * sin) * size).toFixed(1)}px ${(y + (px * sin + py * cos) * size).toFixed(1)}px`).join(',')})`;
+  };
+  const playHueReveal = (applyHue, origin) => {
+    hueButton.classList.remove('is-spinning');
+    void hueButton.offsetWidth;
+    hueButton.classList.add('is-spinning');
+    const points = shapePoints(REVEAL_SHAPES[revealCount++ % REVEAL_SHAPES.length]);
+    if (!document.startViewTransition || reducedMotion.matches || document.hidden || points.length < 3) { applyHue(); return; }
+    activeReveal?.skipTransition();
+    const rect = (origin || hueButton).getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    // 図形のくぼみ（中心から約0.4）でも、画面のいちばん遠い角まで届く大きさ
+    const size = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) / 0.4;
+    root.classList.add('is-hue-reveal');
+    const transition = document.startViewTransition(applyHue);
+    activeReveal = transition;
+    transition.ready.then(() => {
+      root.animate({clipPath: [
+        shapeAt(points, x, y, 1, 0),
+        shapeAt(points, x, y, size * 0.35, Math.PI * 0.35),
+        shapeAt(points, x, y, size, Math.PI * 0.6),
+      ]}, {duration: 900, easing: 'cubic-bezier(.3,.7,.2,1)', pseudoElement: '::view-transition-new(root)'});
+    }).catch(() => {});
+    transition.finished.finally(() => {
+      if (activeReveal !== transition) return;
+      activeReveal = null;
+      root.classList.remove('is-hue-reveal');
+    });
+  };
+  const setHue = (value, {silent = false, origin = null} = {}) => {
     const next = typeof value === 'number' ? HUES.find((item) => item.hue === value) : HUES.find((item) => item.name.toLowerCase() === String(value).toLowerCase());
     if (!next) return null;
-    root.style.setProperty('--h', next.hue);
+    hueState = next;
     saveAppearance({hue: next.hue});
+    playHueReveal(() => {
+      root.style.setProperty('--h', next.hue);
+      syncThemeUi();
+    }, origin);
     requestAnimationFrame(() => { syncThemeUi(); announceAppearance(); });
     if (!silent) notify(`テーマカラー: ${next.name}`);
     return next;
   };
+  hueButton.addEventListener('animationend', () => hueButton.classList.remove('is-spinning'));
   themeButton.addEventListener('click', () => setMode('toggle'));
   prefersDark.addEventListener('change', () => { syncThemeUi(); announceAppearance(); });
-  $('hueButton').addEventListener('click', () => setHue(HUES[(HUES.indexOf(currentHue()) + 1) % HUES.length].hue));
+  hueButton.addEventListener('click', () => setHue(HUES[(HUES.indexOf(currentHue()) + 1) % HUES.length].hue, {origin: hueButton}));
   // 別のタブで設定を変えたときも合わせる
   addEventListener('storage', (event) => {
     if (event.key !== STORAGE_KEY) return;
     const saved = readAppearance();
     if (saved.mode === 'light' || saved.mode === 'dark') root.dataset.theme = saved.mode;
-    if (typeof saved.hue === 'number') root.style.setProperty('--h', saved.hue);
+    if (typeof saved.hue === 'number') {
+      root.style.setProperty('--h', saved.hue);
+      hueState = HUES.find((item) => item.hue === saved.hue) || hueState;
+    }
     requestAnimationFrame(() => { syncThemeUi(); announceAppearance(); });
   });
   syncThemeUi();
 
-  /* ---------- ロード画面（フォントと data-preload の画像を待つ） ---------- */
+  /* ---------- テキストファイルから文章を入れる（content/ フォルダ） ---------- */
+  // data-random-line="ファイル" の要素に、ファイルの中の1行をランダムに入れます。
+  // 同じファイルを指す要素には同じ行を入れ、前回読み込んだときと同じ行は続けて選びません。
+  const readLines = (url) => fetch(url, {cache: 'no-cache'}).then((response) => {
+    if (!response.ok) throw new Error(`${url}: ${response.status}`);
+    return response.text();
+  }).then((text) => text.replace(/^\uFEFF/, '').split(/\r?\n/).map((line) => line.trim()).filter(Boolean));
+  const randomLineTargets = new Map();
+  document.querySelectorAll('[data-random-line]').forEach((target) => {
+    const source = target.dataset.randomLine;
+    randomLineTargets.set(source, [...(randomLineTargets.get(source) || []), target]);
+  });
+  const randomLinesReady = Promise.all([...randomLineTargets].map(([source, targets]) => readLines(source).then((lines) => {
+    if (!lines.length) return;
+    const memoryKey = `zero-random-line:${source}`;
+    let previous = null;
+    try { previous = localStorage.getItem(memoryKey); } catch {}
+    const choices = lines.length > 1 ? lines.filter((line) => line !== previous) : lines;
+    const line = choices[Math.floor(Math.random() * choices.length)];
+    try { localStorage.setItem(memoryKey, line); } catch {}
+    targets.forEach((target) => { target.textContent = line; });
+  }).catch((error) => console.warn('文章ファイルを読み込めなかったため、ページ内の文章を使います', error))));
+
+  /* ---------- ロード画面（フォントと data-preload の画像、文章ファイルを待つ） ---------- */
   const loader = $('siteLoader');
   if (loader) {
     const bar = loader.querySelector('.loader-bar');
@@ -132,6 +207,7 @@
     const steps = [
       [document.fonts ? document.fonts.ready : Promise.resolve(), 'フォントを読み込んでいます'],
       ...[...document.querySelectorAll('img[data-preload]')].map((image) => [decode(image), image.dataset.preload || '画像を読み込んでいます']),
+      ...(randomLineTargets.size ? [[randomLinesReady, 'メッセージを選んでいます']] : []),
     ];
     let done = 0;
     setProgress(0, steps[0][1]);
@@ -354,5 +430,6 @@
     safeUrl,
     loadJson,
     noteCard,
+    readLines,
   };
 })();

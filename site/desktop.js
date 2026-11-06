@@ -749,12 +749,14 @@
 
   /* ===== ターミナル ===== */
   const bootSystems = {visible: [], hidden: []};
+  // 一覧に出さないOS。コードネームを入力すれば起動できます（前のデザインの一覧はそのまま）。
+  const UNLISTED_BOOT_SYSTEMS = new Set(['vastique']);
   const registerBootSystem = (definition, {hidden = false} = {}) => {
     const source = typeof definition === 'string' ? {codename: definition, label: definition} : definition || {};
     const codename = String(source.codename || '').trim();
     if (!codename) return null;
     const entry = {...source, codename, label: String(source.label || codename)};
-    const target = hidden ? bootSystems.hidden : bootSystems.visible;
+    const target = hidden || UNLISTED_BOOT_SYSTEMS.has(codename.toLowerCase()) ? bootSystems.hidden : bootSystems.visible;
     const existing = target.findIndex((item) => item.codename.toLowerCase() === codename.toLowerCase());
     if (existing >= 0) target[existing] = entry; else target.push(entry);
     return entry;

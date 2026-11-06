@@ -658,6 +658,7 @@ test('the homepage keeps the familiar controls: side sheets, clock, profile and 
 
   await page.locator('#rightTab').click();
   await expect(page.locator('#rightSheet a[href="/links.html"]')).toBeVisible();
+  await expect(page.locator('#rightSheet a[href*="note.com"]')).toHaveCount(0);
   await page.keyboard.press('Escape');
 
   const clock = page.locator('#clock');
@@ -692,8 +693,9 @@ test('the site remembers dark mode and the theme colour', async ({page}) => {
   await page.locator('#themeButton').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('#hueButton').click();
+  // The colour switches inside an animated view transition, so wait for it to land.
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).not.toBe('5');
   const hue = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim());
-  expect(hue).not.toBe('5');
   await ready(page, '/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe(hue);
@@ -733,8 +735,9 @@ test('homepage desktop apps open from the side sheet and can be driven with the 
   await prompt.fill('1');
   await prompt.press('Enter');
   await expect(terminal.locator('.terminal-output')).toContainText('AetherOS 1.0 (aetheros)');
-  await expect(terminal.locator('.terminal-output')).toContainText('Vastique 1.0 (vastique)');
-  await prompt.fill('3');
+  // Vastique is no longer listed in the current design (it can still be booted by typing its codename).
+  await expect(terminal.locator('.terminal-output')).not.toContainText('Vastique');
+  await prompt.fill('2');
   await prompt.press('Enter');
   await expect(terminal.locator('.terminal-output')).toContainText('Boot Manager exited.');
 
@@ -793,7 +796,6 @@ for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {w
     await mockNetwork(page);
     await ready(page, '/');
     const layout = await page.evaluate(() => ({
-      chip: document.querySelector('.assist-chip').getBoundingClientRect().bottom,
       title: document.querySelector('.hero-title').getBoundingClientRect().bottom,
       photo: document.querySelector('.photo-frame').getBoundingClientRect().bottom,
       lead: document.querySelector('.hero-lead').getBoundingClientRect().top,
@@ -803,7 +805,7 @@ for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {w
     expect(layout.photo).toBeLessThanOrEqual(layout.height);
     expect(layout.lead).toBeGreaterThan(layout.photo);
     expect(layout.lead).toBeLessThan(layout.height);
-    expect(layout.chip).toBeLessThan(layout.photo);
+    await expect(page.locator('#hero .assist-chip')).toHaveCount(0);
     await expectNoHorizontalOverflow(page);
   });
 }
@@ -977,6 +979,7 @@ test('dark mode and the theme colour carry over to every page', async ({page}) =
   await ready(page, '/links.html');
   await page.locator('#themeButton').click();
   await page.locator('#hueButton').click();
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).not.toBe('5');
   const hue = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim());
   for (const url of ['/', '/vrchat-assets/', '/blog/n8d41d4a76214.html', '/404.html']) {
     await ready(page, url);
@@ -994,3 +997,155 @@ test('the homepage passes the accessibility audit with the mint theme colour in 
   await page.waitForTimeout(800);
   expect(await audit(page)).toEqual([]);
 });
+
+/* ===== content/ のテキストファイル ===== */
+const contentLines = (name) => fs.readFileSync(path.join(rootPath, 'content', name), 'utf8').split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+
+test('the hero message comes from content/hero-messages.txt and changes on every reload', async ({page}) => {
+  const messages = contentLines('hero-messages.txt');
+  expect(messages.length).toBeGreaterThan(1);
+  await mockNetwork(page);
+  const seen = [];
+  for (let i = 0; i < 4; i += 1) {
+    await ready(page, '/');
+    const text = await page.locator('.hero-message').textContent();
+    expect(messages).toContain(text);
+    await expect(page.locator('.footer-text')).toHaveText(text);
+    seen.push(text);
+  }
+  expect(seen.every((text, index) => !index || text !== seen[index - 1])).toBe(true);
+  expect(await page.locator('body').innerText()).not.toContain('つくって、あそぶ');
+});
+
+test('the profile lists are read from the content text files', async ({page}) => {
+  await mockNetwork(page);
+  await page.route('**/content/profile-phones.txt', (route) => route.fulfill({status: 200, contentType: 'text/plain; charset=utf-8', body: 'MAIN: テスト端末\n\nWATCH：Galaxy Watch\n'}));
+  await ready(page, '/');
+  await page.locator('#profileButton').click();
+  const pc = contentLines('profile-pc.txt').map((line) => line.split(/\s*[:：]\s*/));
+  await expect(page.locator('[data-spec-source$="profile-pc.txt"] dt')).toHaveText(pc.map(([label]) => label));
+  await expect(page.locator('[data-spec-source$="profile-pc.txt"] dd')).toHaveText(pc.map(([, value]) => value));
+  await expect(page.locator('[data-spec-source$="profile-phones.txt"] dt')).toHaveText(['MAIN', 'WATCH']);
+  await expect(page.locator('[data-spec-source$="profile-phones.txt"] dd')).toHaveText(['テスト端末', 'Galaxy Watch']);
+  expect(await audit(page)).toEqual([]);
+});
+
+/* ===== 隠し要素: 写真をリズムよく押すとBPM ===== */
+test('tapping the photo at a steady beat shows the BPM, and it goes back after a pause', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await mockNetwork(page);
+  await ready(page, '/');
+  const counter = page.locator('#photoCounter');
+  // Uneven taps do not count as a beat.
+  await page.locator('#photoFrame').evaluate(async (element) => {
+    for (const wait of [150, 900, 300, 1200]) { element.click(); await new Promise((resolve) => setTimeout(resolve, wait)); }
+  });
+  await expect(counter).toHaveText(/^PHOTO \d{2} \/ 13$/);
+  await page.waitForTimeout(3000);
+  await page.locator('#photoFrame').evaluate(async (element) => {
+    for (let i = 0; i < 6; i += 1) { element.click(); await new Promise((resolve) => setTimeout(resolve, 500)); }
+  });
+  await expect(counter).toHaveText(/^♪ (11[0-9]|12[0-9]|130) BPM$/);
+  await expect(counter).toHaveClass(/is-bpm/);
+  await expect(page.locator('#photoBpm')).toHaveText(/^\d+ BPM$/);
+  await expect(counter).toHaveText(/^PHOTO \d{2} \/ 13$/, {timeout: 6000});
+});
+
+/* ===== ホバー: 持ち上がらず、角丸も0にならない ===== */
+async function hoverSample(page, locator) {
+  await locator.scrollIntoViewIfNeeded();
+  await page.mouse.move(1, 1);
+  await page.waitForTimeout(700);
+  const box = await locator.boundingBox();
+  const sampling = locator.evaluate((element) => new Promise((resolve) => {
+    const startedAt = performance.now();
+    // Measure the centre so that rotating or scaling on hover does not count as lifting.
+    const centre = () => { const rect = element.getBoundingClientRect(); return rect.top + rect.height / 2; };
+    const start = centre();
+    let minRadius = Infinity;
+    let lift = 0;
+    const tick = () => {
+      minRadius = Math.min(minRadius, parseFloat(getComputedStyle(element).borderTopLeftRadius));
+      lift = Math.max(lift, start - centre());
+      if (performance.now() - startedAt < 1000) requestAnimationFrame(tick); else resolve({minRadius, lift});
+    };
+    tick();
+  }));
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.waitForTimeout(500);
+  await page.mouse.move(1, 1);
+  return sampling;
+}
+
+for (const {url, selectors} of [
+  {url: '/', selectors: ['#noteList .note-card', '.slot-live', '.footer-links a', '.hero-actions .btn-filled', '#rightTab']},
+  {url: '/links.html', selectors: ['.link-row', '#latestNoteFeed .note-card', '#latestGithubFeed a']},
+  {url: '/vrchat-assets/', selectors: ['.catalog-category-card', '.catalog-item-card', '#catalogRefresh']},
+  {url: `/vrchat-assets/?asset=${encodeURIComponent(assetPath)}`, selectors: ['.catalog-download-link', '.catalog-primary-link']},
+]) {
+  test(`hovering on ${url} neither lifts cards nor flattens their corners`, async ({page}) => {
+    await mockNetwork(page);
+    await ready(page, url);
+    await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
+    for (const selector of selectors) {
+      const result = await hoverSample(page, page.locator(selector).first());
+      expect(result.lift, `${selector} lift`).toBeLessThan(0.5);
+      expect(result.minRadius, `${selector} radius`).toBeGreaterThan(4);
+    }
+  });
+}
+
+/* ===== テーマカラーの演出・スクロール・リンク集の並び ===== */
+test('changing the theme colour plays the shape reveal, except with reduced motion', async ({page}) => {
+  await mockNetwork(page);
+  await page.addInitScript(() => {
+    window.revealCount = 0;
+    const original = document.startViewTransition?.bind(document);
+    if (original) document.startViewTransition = (callback) => { window.revealCount += 1; return original(callback); };
+  });
+  await ready(page, '/links.html');
+  await page.locator('#hueButton').click();
+  await expect.poll(() => page.evaluate(() => window.revealCount)).toBe(1);
+  await expect.poll(() => page.evaluate(() => document.documentElement.classList.contains('is-hue-reveal'))).toBe(false);
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe('255');
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await page.locator('#hueButton').click();
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe('165');
+  expect(await page.evaluate(() => window.revealCount)).toBe(1);
+});
+
+test('the homepage scrolls freely without snapping back to the top', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)).toBe('none');
+  await page.evaluate(() => scrollTo(0, 140));
+  await page.waitForTimeout(600);
+  expect(await page.evaluate(() => scrollY)).toBe(140);
+});
+
+for (const width of [1440, 820]) {
+  test(`the latest updates line up row by row at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    await mockNetwork(page);
+    await ready(page, '/links.html');
+    await expect(page.locator('#latestYoutubeFeed .note-card')).toHaveCount(1);
+    const rows = await page.evaluate(() => ['#latestNoteFeed', '#latestYoutubeFeed', '#latestGithubFeed'].map((id) => {
+      const first = document.querySelector(`${id} > *`).getBoundingClientRect();
+      const list = document.querySelector(id).getBoundingClientRect();
+      const image = document.querySelector(`${id} img`)?.getBoundingClientRect();
+      return {top: Math.round(first.top), height: Math.round(first.height), list: Math.round(list.height), image: image && Math.round(image.height)};
+    }));
+    const [note, youtube, github] = rows;
+    const close = (a, b) => expect(Math.abs(a - b)).toBeLessThanOrEqual(1);
+    close(youtube.top, note.top);
+    close(youtube.height, note.height);
+    close(youtube.image, note.image);
+    close(youtube.list, note.list);
+    if (width === 1440) {
+      close(github.top, note.top);
+      close(github.height, note.height);
+      // Three rows are reserved for note even while fewer articles exist.
+      close(github.list, note.list);
+    }
+  });
+}
