@@ -610,7 +610,7 @@ for (const width of [320, 390, 1440]) {
   test(`new design preview is accessible without horizontal scroll at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
-    await page.goto('/next/');
+    await ready(page, '/next/');
     await expect(page.locator('h1')).toContainText('ぜろくん');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
     await expect(page.locator('#noteList .note-card').first()).toHaveAttribute('href', /^\/blog\/n[0-9a-f]+\.html$/);
@@ -619,17 +619,81 @@ for (const width of [320, 390, 1440]) {
     await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
     await page.waitForTimeout(800);
     expect(await audit(page)).toEqual([]);
+    await page.locator('#content').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(400);
+    expect(await audit(page)).toEqual([]);
   });
 }
+
+test('new design keeps the familiar controls: side sheets, clock, profile and update tabs', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/next/');
+  const leftTab = page.locator('#leftTab');
+  await leftTab.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#leftSheet')).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('#leftSheet [data-close-sheet]')).toBeFocused();
+  await expect(page.locator('#deviceList dt').first()).toHaveText('OS');
+  expect(await page.locator('#main').evaluate((element) => element.inert)).toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#leftSheet')).toHaveAttribute('aria-hidden', 'true');
+  await expect(leftTab).toBeFocused();
+
+  await page.locator('#rightTab').click();
+  await expect(page.locator('#rightSheet a[href="/links.html"]')).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  const clock = page.locator('#clock');
+  await clock.click();
+  await expect(clock).toHaveText(/^(AM|PM) \d{1,2}:\d{2}$/);
+  await clock.focus();
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('.calendar-day[aria-current="date"]')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(clock).toBeFocused();
+
+  const profileButton = page.locator('#profileButton');
+  await profileButton.click();
+  await expect(page.locator('#profileDialog')).toBeVisible();
+  await expect(page.locator('#profileDialog')).toContainText('Ryzen 7 3700X');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#profileDialog')).toBeHidden();
+  await expect(profileButton).toBeFocused();
+
+  await page.locator('#repoTab').click();
+  await expect(page.locator('#repoPanel')).toBeVisible();
+  await expect(page.locator('#notePanel')).toBeHidden();
+  await page.locator('#repoTab').press('ArrowLeft');
+  await expect(page.locator('#noteTab')).toBeFocused();
+  await expect(page.locator('#notePanel')).toBeVisible();
+});
+
+test('new design remembers dark mode and the theme colour', async ({page}) => {
+  await page.emulateMedia({colorScheme: 'light'});
+  await mockNetwork(page);
+  await ready(page, '/next/');
+  await page.locator('#themeButton').click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.locator('#hueButton').click();
+  const hue = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim());
+  expect(hue).not.toBe('5');
+  await ready(page, '/next/');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe(hue);
+  await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
+  await page.waitForTimeout(800);
+  expect(await audit(page)).toEqual([]);
+});
 
 test('new design preview stops its motion when reduced motion is requested', async ({page}) => {
   await page.emulateMedia({reducedMotion: 'reduce'});
   await mockNetwork(page);
-  await page.goto('/next/');
+  await ready(page, '/next/');
   const state = await page.evaluate(() => ({
-    shapes: [...document.querySelectorAll('.shape, .marquee-track, .hero-avatar')].map((element) => getComputedStyle(element).animationName),
+    shapes: [...document.querySelectorAll('.stage-shape, .stage-dots, .marquee-track, .hero-avatar, .beta-shape, .scroll-arrow')].map((element) => getComputedStyle(element).animationName),
     hidden: [...document.querySelectorAll('.reveal')].filter((element) => getComputedStyle(element).opacity !== '1').length
   }));
+  expect(state.shapes.length).toBeGreaterThan(5);
   expect(state.shapes.every((name) => name === 'none')).toBe(true);
   expect(state.hidden).toBe(0);
 });
