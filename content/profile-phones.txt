@@ -2,3 +2,6 @@ MAIN: Google Pixel 9a
 SUB: Samsung Galaxy Z Flip5
 TABLET: Apple iPad mini 6
 DEV / TOY: Google Pixel 6a
+TOY2: BALMUDA Phone
+TOY3: AQUOS CRYSTAL 305SH
+TOY4: Freetel MUSASHI 
