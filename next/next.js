@@ -41,23 +41,28 @@
     themeButton.setAttribute('aria-label', dark ? 'ライトモードにする' : 'ダークモードにする');
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', getComputedStyle(document.body).backgroundColor);
   };
-  themeButton.addEventListener('click', () => {
-    const next = isDark() ? 'light' : 'dark';
+  const setMode = (mode, {silent = false} = {}) => {
+    const next = mode === 'toggle' ? (isDark() ? 'light' : 'dark') : mode;
+    if (next !== 'dark' && next !== 'light') return false;
     root.dataset.theme = next;
     saveAppearance({mode: next});
-    requestAnimationFrame(syncThemeUi);
-    notify(next === 'dark' ? 'ダークモード' : 'ライトモード');
-  });
-  prefersDark.addEventListener('change', syncThemeUi);
-  $('hueButton').addEventListener('click', () => {
-    const current = Number(getComputedStyle(root).getPropertyValue('--h')) || HUES[0].hue;
-    const index = HUES.findIndex((item) => item.hue === current);
-    const next = HUES[(index + 1) % HUES.length];
+    requestAnimationFrame(() => { syncThemeUi(); renderDevice(); });
+    if (!silent) notify(next === 'dark' ? 'ダークモード' : 'ライトモード');
+    return true;
+  };
+  const currentHue = () => HUES.find((item) => item.hue === (Number(getComputedStyle(root).getPropertyValue('--h')) || HUES[0].hue)) || HUES[0];
+  const setHue = (value, {silent = false} = {}) => {
+    const next = typeof value === 'number' ? HUES.find((item) => item.hue === value) : HUES.find((item) => item.name.toLowerCase() === String(value).toLowerCase());
+    if (!next) return null;
     root.style.setProperty('--h', next.hue);
     saveAppearance({hue: next.hue});
     requestAnimationFrame(syncThemeUi);
-    notify(`テーマカラー: ${next.name}`);
-  });
+    if (!silent) notify(`テーマカラー: ${next.name}`);
+    return next;
+  };
+  themeButton.addEventListener('click', () => setMode('toggle'));
+  prefersDark.addEventListener('change', syncThemeUi);
+  $('hueButton').addEventListener('click', () => setHue(HUES[(HUES.indexOf(currentHue()) + 1) % HUES.length].hue));
   syncThemeUi();
 
   /* ---------- ロード画面 ---------- */
@@ -171,6 +176,14 @@
   clockWrap.addEventListener('focusout', (event) => {
     if (!clockWrap.contains(event.relatedTarget)) closeCalendar(false);
   });
+  const setClockMode = (mode) => {
+    if (mode !== '12' && mode !== '24') return false;
+    is24Hour = mode === '24';
+    thursdayMode = false;
+    renderClock();
+    notify(`${mode}時間表示`);
+    return true;
+  };
   renderClock();
   setInterval(renderClock, 1000);
 
@@ -280,9 +293,9 @@
   const sheets = {left: $('leftSheet'), right: $('rightSheet')};
   const tabs = {left: leftTab, right: rightTab};
   const scrim = $('scrim');
-  const background = [$('main'), toolbar, leftTab, rightTab];
+  const background = () => [$('main'), toolbar, leftTab, rightTab, $('desktopLayer')].filter(Boolean);
   let openSide = null;
-  const setSheet = (side) => {
+  const setSheet = (side, {returnFocus = true} = {}) => {
     const previous = openSide;
     openSide = side;
     Object.entries(sheets).forEach(([key, sheet]) => {
@@ -292,7 +305,7 @@
       sheet.setAttribute('aria-hidden', String(!open));
       tabs[key].setAttribute('aria-expanded', String(open));
     });
-    background.forEach((element) => { element.inert = Boolean(side); });
+    background().forEach((element) => { element.inert = Boolean(side); });
     root.style.overflow = side ? 'hidden' : '';
     if (side) {
       scrim.hidden = false;
@@ -301,7 +314,7 @@
     } else {
       scrim.classList.remove('is-visible');
       setTimeout(() => { if (!openSide) scrim.hidden = true; }, 300);
-      if (previous) tabs[previous].focus();
+      if (previous && returnFocus) tabs[previous].focus();
     }
   };
   leftTab.addEventListener('click', () => setSheet(openSide === 'left' ? null : 'left'));
@@ -345,10 +358,36 @@
     if (/Linux/.test(ua)) return 'Linux';
     return '不明';
   };
+  const HACK_KEY = 'zero-site-device-hack';
+  const HACK_OS = {windows: 'Windows', macos: 'macOS', linux: 'Linux'};
+  const readHack = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(HACK_KEY) || '{}');
+      return Object.hasOwn(HACK_OS, saved.os) ? saved.os : 'auto';
+    } catch { return 'auto'; }
+  };
+  const getDeviceState = () => {
+    const hack = readHack();
+    const effectiveOs = hack === 'auto' ? osName() : HACK_OS[hack];
+    return {actualOs: osName(), effectiveOs, osHack: hack, hacked: hack !== 'auto', windowSystem: effectiveOs === 'macOS' ? 'macos' : 'windows', browser: browserName()};
+  };
+  const setDeviceOsHack = (os) => {
+    const value = String(os || '').toLowerCase();
+    if (value !== 'auto' && !Object.hasOwn(HACK_OS, value)) return false;
+    try {
+      if (value === 'auto') localStorage.removeItem(HACK_KEY);
+      else localStorage.setItem(HACK_KEY, JSON.stringify({os: value}));
+    } catch {}
+    root.dataset.windowSystem = getDeviceState().windowSystem;
+    renderDevice();
+    dispatchEvent(new CustomEvent('zero:devicehackchange', {detail: getDeviceState()}));
+    return true;
+  };
   const renderDevice = () => {
     const connection = navigator.connection;
+    const device = getDeviceState();
     const rows = [
-      ['OS', osName()],
+      ['OS', device.effectiveOs, device.hacked],
       ['ブラウザ', browserName()],
       ['画面', `${screen.width} × ${screen.height}`],
       ['表示領域', `${innerWidth} × ${innerHeight}`],
@@ -358,25 +397,32 @@
       ['時刻帯', Intl.DateTimeFormat().resolvedOptions().timeZone || '不明'],
       ['テーマ', isDark() ? 'ダーク' : 'ライト'],
     ];
-    $('deviceList').replaceChildren(...rows.map(([label, value]) => {
+    $('deviceList').replaceChildren(...rows.map(([label, value, hacked]) => {
       const row = document.createElement('div');
       const term = document.createElement('dt');
       const description = document.createElement('dd');
       term.textContent = label;
       description.textContent = value;
+      if (hacked) {
+        const badge = document.createElement('span');
+        badge.className = 'hacked-badge';
+        badge.textContent = 'ハック済み';
+        description.append(badge);
+      }
       row.append(term, description);
       return row;
     }));
   };
+  root.dataset.windowSystem = getDeviceState().windowSystem;
   renderDevice();
   addEventListener('resize', renderDevice, {passive: true});
   addEventListener('online', renderDevice);
   addEventListener('offline', renderDevice);
-  themeButton.addEventListener('click', () => requestAnimationFrame(renderDevice));
 
   /* ---------- プロフィールのダイアログ ---------- */
   const dialog = $('profileDialog');
-  $('profileButton').addEventListener('click', () => dialog.showModal());
+  const openProfile = () => { if (!dialog.open) dialog.showModal(); };
+  $('profileButton').addEventListener('click', openProfile);
   $('dialogClose').addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
 
@@ -488,4 +534,20 @@
       return item;
     }));
   }).catch((error) => console.warn('GitHubの更新情報はページ内の表示を使います', error));
+
+  /* ---------- アプリ（desktop.js）から使う窓口 ---------- */
+  window.zeroNext = {
+    notify,
+    hues: HUES.map((item) => ({...item})),
+    getAppearance: () => ({mode: isDark() ? 'dark' : 'light', ...currentHue()}),
+    setMode,
+    setHue,
+    getClockMode: () => (is24Hour ? '24' : '12'),
+    setClockMode,
+    getDeviceState,
+    setDeviceOsHack,
+    closeSheets: () => setSheet(null, {returnFocus: false}),
+    openProfile,
+    latestNoteUrl: () => document.querySelector('#noteList a.note-card')?.href || new URL('/blog/n8d41d4a76214.html', location.href).href,
+  };
 })();
