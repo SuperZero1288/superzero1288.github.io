@@ -15,16 +15,39 @@
   const rightTab = $('rightTab');
   const indicator = $('scrollIndicator');
   const atHero = () => scrollY < 120;
+  let scrollFrame = 0;
   const onScroll = () => {
+    scrollFrame = 0;
     const ratio = Math.min(scrollY / innerHeight, 1);
-    stageBlur.style.setProperty('--blur', `${(ratio * 18).toFixed(1)}px`);
-    stageBlur.style.setProperty('--veil', `${Math.round(ratio * 35)}%`);
+    // スマホでは毎フレームのぼかし直しが重くスクロールが引っかかるので、ぼかさずに色を重ねるだけにします
+    const blur = finePointer.matches ? ratio * 18 : 0;
+    stageBlur.style.setProperty('--blur', `${blur.toFixed(1)}px`);
+    stageBlur.style.setProperty('--veil', `${Math.round(ratio * (finePointer.matches ? 35 : 50))}%`);
     const away = !atHero();
     [leftTab, rightTab].forEach((tab) => tab.classList.toggle('is-away', away));
     indicator.classList.toggle('is-hidden', away);
   };
-  addEventListener('scroll', onScroll, {passive: true});
+  addEventListener('scroll', () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(onScroll); }, {passive: true});
   onScroll();
+
+  /* ---------- PC: ヒーローと下の帯のあいだは、ホイール1回で帯まで（上なら先頭まで）移動 ---------- */
+  // CSSのスナップ（home.css）だけだと、小さくホイールを回したときに近いほうの先頭へ戻ってしまうためです。
+  const pagedScroll = matchMedia('(min-width: 821px) and (hover: hover) and (pointer: fine)');
+  const content = $('content');
+  let paging = false;
+  addEventListener('wheel', (event) => {
+    if (!pagedScroll.matches || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    if (root.style.overflow === 'hidden' || $('profileDialog').open || event.target.closest?.('.app-window, .side-sheet, .calendar')) return;
+    const band = content.getBoundingClientRect().top + scrollY;
+    const down = event.deltaY > 0;
+    const betweenHeroAndBand = down ? scrollY < band - 2 : scrollY > 0 && scrollY <= band + 2;
+    if (!betweenHeroAndBand) return;
+    event.preventDefault();
+    if (paging) return;
+    paging = true;
+    scrollTo({top: down ? band : 0, behavior: reducedMotion.matches ? 'auto' : 'smooth'});
+    setTimeout(() => { paging = false; }, 700);
+  }, {passive: false});
 
   /* ---------- ひまなの？（ヒーローで何度もスクロールしようとしたとき） ---------- */
   let attempts = 0;

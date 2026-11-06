@@ -1,5 +1,5 @@
 /* ZERO — トップページ（ヒーロー、左右のシート、ダッシュボード、プロフィール）。共通部分は base.css にあります。
-   スクロールのスナップは、スマホでゆっくりスクロールすると先頭へ引き戻されるため使っていません。 */
+   スクロールのスナップはPCだけ。スマホではゆっくりスクロールすると先頭へ引き戻されるため使いません。 */
 
 /* ===== 左右のタブとサイドシート ===== */
 .wing-tab{position:fixed;top:50%;z-index:45;display:flex;flex-direction:column;align-items:center;gap:10px;width:56px;padding:18px 0;border:0;background:var(--primary-container);color:var(--on-primary-container);box-shadow:var(--elev-2);cursor:pointer;translate:0 -50%;transition:translate .5s var(--spring),opacity .3s var(--effects),visibility .3s,border-radius .45s var(--spring-fast),width .45s var(--spring-fast)}
@@ -167,6 +167,12 @@
 .spec-list dd{margin:0;font-weight:700;font-size:.9rem}
 
 
+/* ===== PCだけ: ヒーローと下の帯（自己紹介カードのある画面）の境目でスクロールをスナップ ===== */
+@media(min-width:821px) and (hover:hover) and (pointer:fine){
+html{scroll-snap-type:y mandatory}
+.hero,.content{scroll-snap-align:start}
+}
+
 /* ===== 画面幅ごとの調整 ===== */
 @media(max-width:1080px){
 .dashboard{grid-template-columns:1fr 1fr;grid-template-areas:"profile profile" "links links" "updates next"}
@@ -176,23 +182,28 @@
 .profile-card .btn-block,.profile-card .profile-desc,.profile-card .chips{grid-column:2}
 }
 @media(max-width:820px){
-/* スマホ・タブレット: 写真を名前の後ろに重ねて、自己紹介カードより上を1画面に収める */
-.hero{display:block;min-height:100svh;padding:74px 40px 150px;--photo:min(60vw,380px)}
-.hero-copy{position:relative;z-index:2}
-.hero-visual{position:absolute;top:88px;right:40px;z-index:1;width:var(--photo)}
-.hero-title{margin-top:calc(12px + var(--photo) * .6);font-size:clamp(2.9rem,14.5vw,6.4rem);text-shadow:0 0 .12em var(--surface),0 0 .32em var(--surface)}
-.hero-line-pop{text-shadow:none}
-.hero-lead{margin-top:20px}
-.hero-actions{margin-top:16px}
-.hero-avatar{left:auto;right:-6%;bottom:-10%;width:27%}
+/* スマホ・タブレット: 写真 → 名前 → 一言 → ボタン（横並び）を、重ねずに中央へそろえて縦に並べる */
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6svh,24px);min-height:100svh;padding:76px 44px 112px;text-align:center;--photo:min(54vw,34svh,320px)}
+.hero-visual{order:-1;width:var(--photo)}
+.hero-copy{display:flex;flex-direction:column;align-items:center;gap:clamp(12px,2.2svh,20px);width:100%}
+.hero-title{font-size:clamp(2.5rem,12.5vw,5.2rem)}
+.hero-line-pop{margin-inline:auto}
+.hero-lead{margin:0;padding:12px 20px}
+.hero-actions{justify-content:center;gap:10px;margin:0}
+.hero-avatar{left:auto;right:-12%;bottom:0;width:30%}
 .hero-avatar figcaption{display:none}
-.photo-counter{top:4%;right:auto;left:-10%}
+.photo-counter{top:0;right:auto;left:-14%}
+.scroll-indicator{width:max-content;max-width:calc(100% - 32px);padding:8px 18px}
 .dashboard{grid-template-columns:1fr;grid-template-areas:"profile" "links" "updates" "next"}
 .tile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:560px){
-.hero{padding:72px 40px 150px}
-.hero-visual{top:84px}
+.hero{padding:70px 36px 104px}
+.hero-lead{font-size:.95rem}
+/* ボタンは2つ横並びのまま、狭い画面では少し詰める */
+.hero-actions{flex-wrap:nowrap}
+.hero-actions .btn{flex:0 1 auto;min-height:48px;padding:0 16px;gap:6px;font-size:.92rem;white-space:nowrap}
+.hero-actions .btn svg{width:18px;height:18px}
 .wing-tab{width:34px;padding:14px 0;gap:6px}
 .wing-tab:hover{width:38px}
 .wing-tab svg{width:18px;height:18px}
@@ -203,4 +214,7 @@
 .slot-icon{width:48px;height:48px}
 .spec-grid{grid-template-columns:1fr}
 }
-
+@media(max-width:360px){
+.hero-actions .btn{padding:0 14px}
+.hero-actions .btn svg{display:none}
+}

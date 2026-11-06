@@ -806,6 +806,12 @@ for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {w
     expect(layout.lead).toBeGreaterThan(layout.photo);
     expect(layout.lead).toBeLessThan(layout.height);
     await expect(page.locator('#hero .assist-chip')).toHaveCount(0);
+    // The two buttons sit side by side in the middle of the screen.
+    const buttons = await page.locator('.hero-actions .btn').evaluateAll((elements) => elements.map((element) => element.getBoundingClientRect()));
+    expect(buttons).toHaveLength(2);
+    expect(Math.abs(buttons[0].top - buttons[1].top)).toBeLessThan(1);
+    expect(Math.abs(buttons[0].left - (viewport.width - buttons[1].right))).toBeLessThan(3);
+    expect(buttons[0].right).toBeLessThan(buttons[1].left);
     await expectNoHorizontalOverflow(page);
   });
 }
@@ -1114,7 +1120,8 @@ test('changing the theme colour plays the shape reveal, except with reduced moti
   expect(await page.evaluate(() => window.revealCount)).toBe(1);
 });
 
-test('the homepage scrolls freely without snapping back to the top', async ({page}) => {
+test('on phones the homepage scrolls freely without snapping back to the top', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
   await mockNetwork(page);
   await ready(page, '/');
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)).toBe('none');
@@ -1149,3 +1156,29 @@ for (const width of [1440, 820]) {
     }
   });
 }
+
+test('on PC a small wheel turn snaps from the hero to the band, and back', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)).toBe('y mandatory');
+  const bandTop = await page.locator('#content').evaluate((element) => element.getBoundingClientRect().top + scrollY);
+  await page.mouse.move(700, 450);
+  await page.mouse.wheel(0, 120);
+  await expect.poll(() => page.evaluate((top) => Math.abs(scrollY - top) < 2, bandTop)).toBe(true);
+  await expect(page.locator('.profile-card')).toBeInViewport();
+  await page.mouse.wheel(0, -120);
+  await expect.poll(() => page.evaluate(() => scrollY < 2)).toBe(true);
+});
+
+test('the background stays the full screen height so it does not move with the address bar', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await mockNetwork(page);
+  await ready(page, '/');
+  const stage = await page.locator('.stage').evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {position: style.position, top: style.top, height: element.getBoundingClientRect().height};
+  });
+  expect(stage).toEqual({position: 'fixed', top: '0px', height: 844});
+  // Fewer decorative shapes on phones.
+  for (const selector of ['.s-pill', '.s-gem', '.s-tri', '.stage-dots']) await expect(page.locator(selector)).toBeHidden();
+});
