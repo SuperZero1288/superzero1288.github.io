@@ -23,11 +23,11 @@ file:'TXT'
 };
 
 const SEARCH_ENGINES={
-google:{label:'Google',action:'https://www.google.com/search',parameter:'q',icon:'assets/search-engines/google.svg'},
-duckduckgo:{label:'DuckDuckGo',action:'https://duckduckgo.com/',parameter:'q',icon:'assets/search-engines/duckduckgo.svg'},
-brave:{label:'Brave',action:'https://search.brave.com/search',parameter:'q',icon:'assets/search-engines/brave.svg'},
-bing:{label:'Bing',action:'https://www.bing.com/search',parameter:'q',icon:'assets/search-engines/bing.svg'},
-mojeek:{label:'Mojeek',action:'https://www.mojeek.com/search',parameter:'q',icon:'assets/search-engines/mojeek.svg'}
+google:{label:'Google',action:'https://www.google.com/search',parameter:'q',icon:'/assets/search-engines/google.svg'},
+duckduckgo:{label:'DuckDuckGo',action:'https://duckduckgo.com/',parameter:'q',icon:'/assets/search-engines/duckduckgo.svg'},
+brave:{label:'Brave',action:'https://search.brave.com/search',parameter:'q',icon:'/assets/search-engines/brave.svg'},
+bing:{label:'Bing',action:'https://www.bing.com/search',parameter:'q',icon:'/assets/search-engines/bing.svg'},
+mojeek:{label:'Mojeek',action:'https://www.mojeek.com/search',parameter:'q',icon:'/assets/search-engines/mojeek.svg'}
 };
 
 const layer=document.createElement('div');
@@ -359,11 +359,11 @@ return aliases[key]||controller.styles.find(style=>style.id===value)?.id||null;
 }
 
 const destinations={
-home:{label:'トップページ',url:'/'},
-links:{label:'リンク一覧',url:'/links.html'},
-article:{label:'note記事',url:'/blog/n8d41d4a76214.html'},
+home:{label:'トップページ',url:'/legacy/'},
+links:{label:'リンク一覧',url:'/legacy/links.html'},
+article:{label:'note記事',url:'/legacy/blog/n8d41d4a76214.html'},
 blog:{label:'ブログ一覧（準備中）',url:'/blog-list/'},
-assets:{label:'VRChatアセット（準備中）',url:'/vrchat-assets/'},
+assets:{label:'VRChatアセット（準備中）',url:'/legacy/vrchat-assets/'},
 note:{label:'note',url:'https://note.com/zerrrrro_1288'},
 x:{label:'X',url:'https://x.com/ZErrrrrO_VRC'},
 youtube:{label:'YouTube',url:'https://www.youtube.com/@ZErrrrrO_VRC'},
@@ -427,7 +427,7 @@ content.classList.add('profile-app');
 content.tabIndex=-1;
 content.innerHTML=`
 <header class="profile-app-hero">
-<img src="assets/social-x.jpg" alt="ZErrrrrOのXプロフィールアイコン">
+<img src="/assets/social-x.jpg" alt="ZErrrrrOのXプロフィールアイコン">
 <div>
 <p>LOCAL USER</p>
 <h2>ぜろくんでんせつ</h2>
@@ -522,7 +522,7 @@ build:(content)=>buildProfile(content)
 
 function getLatestNoteUrl(){
 const latest=document.querySelector('#noteArticles .note-article[href],#latestNoteFeed .note-article[href],a.note-article[href]');
-return latest?latest.href:new URL('/blog/n8d41d4a76214.html',location.href).href;
+return latest?latest.href:new URL('/legacy/blog/n8d41d4a76214.html',location.href).href;
 }
 
 function navigateSite(url,label='ページを開いています'){
@@ -1070,7 +1070,7 @@ content.innerHTML=`
 </div>
 </form>
 <div class="browser-start">
-<div class="browser-mark" aria-hidden="true"><img src="assets/search-engines/google.svg" alt=""></div>
+<div class="browser-mark" aria-hidden="true"><img src="/assets/search-engines/google.svg" alt=""></div>
 <h2>ウェブを検索</h2>
 <p class="browser-mode-note">Googleの検索結果を新しいタブで開きます。</p>
 <section class="browser-recent" aria-labelledby="browser-recent-title"><h3 id="browser-recent-title">最近の検索</h3><div></div></section>

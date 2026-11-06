@@ -4,40 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#fff7f8">
 <title>404 / ぜろくんでんせつ</title>
-<link rel="stylesheet" href="/style.css?v=20260921-thememotion7">
-<link rel="stylesheet" href="/site-accessibility.css?v=20261010-a11y1">
-<script src="/site-accessibility.js?v=20261010-a11y1" defer></script>
-<script src="/site-loader.js?v=20260910-os1" defer></script>
-<script src="/card-hover.js?v=20261010-a11y1" defer></script>
-<script src="/page-bar.js?v=20261010-a11y1" defer></script>
-<script src="/site-search.js?v=20261010-a11y1" defer></script>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
+<link rel="stylesheet" href="/site/base.css?v=20261108-1">
+<link rel="stylesheet" href="/site/pages.css?v=20261108-1">
+<script src="/site/theme.js?v=20261108-1"></script>
+<script src="/site/common.js?v=20261108-1" defer></script>
+<script src="/site/error.js?v=20261108-1" defer></script>
 </head>
-<body class="style-default error-page">
-<div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
-<div class="site-loader-content">
-<div class="site-loader-meta"><p class="site-loader-status">ページを準備中</p><span class="site-loader-percent">0%</span></div>
-<div class="site-loader-progress" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+<body class="page page-error">
+<a class="skip-link" href="#main">本文へ移動</a>
+
+<div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="ページを読み込んでいます">
+<div class="loader-shape" aria-hidden="true"></div>
+<div class="loader-meta"><p class="loader-status">ページを準備中</p><span class="loader-percent">0%</span></div>
+<div class="loader-bar" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
 </div>
-</div>
-<main class="error-stage">
-<section class="error-card" aria-labelledby="error-title">
-<div class="error-code" aria-hidden="true"><span>4</span><span class="error-zero">0</span><span>4</span></div>
-<h1 id="error-title">このページは、まだ存在しないみたいです。</h1>
+
+<main id="main" class="page-main error-main">
+<section class="error-card" aria-labelledby="errorTitle">
+<p class="error-code"><span class="error-digit" aria-hidden="true">4</span><button class="error-zero" id="errorZero" type="button" aria-label="0"><span class="error-zero-shape" aria-hidden="true"></span></button><span class="error-digit" aria-hidden="true">4</span></p>
+<h1 class="error-title" id="errorTitle">このページは、まだ存在しないみたいです。</h1>
 <p class="error-message">リンクが変わったか、これから作られるページかもしれません。</p>
+<p class="error-path" id="errorPath"></p>
 <div class="error-actions">
-<a class="error-primary" href="/">トップページへ戻る</a>
-<button class="error-secondary" type="button" id="historyBack">ひとつ前へ戻る</button>
+<a class="btn btn-filled" href="/">トップページへ戻る</a>
+<button class="btn btn-tonal" type="button" id="historyBack">ひとつ前へ戻る</button>
 </div>
+<a class="legacy-door" id="legacyDoor" href="/legacy/" hidden>
+<span class="legacy-door-shape" aria-hidden="true"></span>
+<span><small>LEGACY ARCHIVE</small><strong>前のデザインのサイト</strong><em>ここにそのまま残してあります →</em></span>
+</a>
 </section>
 </main>
-
-<script>
-document.getElementById('historyBack').addEventListener('click',()=>{
-  if(history.length>1)history.back();
-  else location.href='/';
-});
-
-</script>
 </body>
 </html>

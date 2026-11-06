@@ -31,7 +31,7 @@
   const renderNote = (article) => {
     const link = document.createElement('a');
     link.className = 'note-article';
-    link.href = article.generated ? `/blog/${article.id}.html` : article.sourceUrl;
+    link.href = article.generated ? `/legacy/blog/${article.id}.html` : article.sourceUrl;
     if (!article.generated) {
       link.target = '_blank';
       link.rel = 'noopener';

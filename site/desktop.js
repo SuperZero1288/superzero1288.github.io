@@ -1,9 +1,9 @@
 // デスクトップアプリ風UI（ウィンドウ、タスクバー、6つのアプリ）
-// いつものサイト（site-desktop.js）の機能を、新デザイン用に作り直したものです。
-// 仮想ファイルシステム（/zero-filesystem.js）と保存データは、いつものサイトと共有します。
+// 前のデザイン（/legacy/site-desktop.js）の機能を、今のデザイン用に作り直したものです。
+// 仮想ファイルシステム（/zero-filesystem.js）と保存データは、前のデザインと共有します。
 (() => {
   'use strict';
-  const site = window.zeroNext;
+  const site = window.zeroSite;
   const vfs = window.zeroVfs;
   if (!site || !vfs) return;
 
@@ -321,7 +321,7 @@
     }
     if (entry.dynamic === 'settings') {
       const appearance = site.getAppearance();
-      return [`design=next`, `mode=${appearance.mode}`, `color=${appearance.name.toLowerCase()}`, `os=${device.osHack}`, `window=${device.windowSystem}`, `clock=${site.getClockMode()}`].join('\n');
+      return [`design=m3`, `mode=${appearance.mode}`, `color=${appearance.name.toLowerCase()}`, `os=${device.osHack}`, `window=${device.windowSystem}`, `clock=${site.getClockMode()}`].join('\n');
     }
     return '';
   };
@@ -631,13 +631,13 @@
     return {focusTarget: canvas};
   }});
 
-  /* ===== メモ帳（いつものサイトと同じ保存場所に自動保存） ===== */
+  /* ===== メモ帳（前のデザインと同じ保存場所に自動保存） ===== */
   const NOTE_KEY = 'zero-notepad-document';
   const openNotepad = () => createWindow({appId: 'notepad', build: (content) => {
     content.classList.add('notepad-app');
     content.innerHTML = `
 <div class="notepad-toolbar"><label class="paint-field">ファイル名<input type="text" aria-label="ファイル名"></label><button type="button" class="pill-btn">TXTで保存</button></div>
-<textarea aria-label="メモ本文" placeholder="ここにメモを書けます。内容はこのブラウザに自動保存され、いつものデザインのメモ帳とも共有されます。" spellcheck="true"></textarea>
+<textarea aria-label="メモ本文" placeholder="ここにメモを書けます。内容はこのブラウザに自動保存されます。" spellcheck="true"></textarea>
 <div class="notepad-status"><span>自動保存</span><output>0文字 / 1行</output></div>`;
     const filename = content.querySelector('input');
     const textarea = content.querySelector('textarea');
@@ -760,7 +760,7 @@
     return entry;
   };
   const destinations = {
-    home: {label: 'いつものトップページ', url: '/'}, next: {label: '新デザイン', url: '/next/'},
+    home: {label: 'トップページ', url: '/'},
     links: {label: 'リンク一覧', url: '/links.html'}, article: {label: 'note記事', url: '/blog/n8d41d4a76214.html'},
     assets: {label: 'VRChatアセット', url: '/vrchat-assets/'}, note: {label: 'note', url: 'https://note.com/zerrrrro_1288'},
     x: {label: 'X', url: 'https://x.com/ZErrrrrO_VRC'}, youtube: {label: 'YouTube', url: 'https://www.youtube.com/@ZErrrrrO_VRC'},
@@ -854,7 +854,7 @@
       if (all) { write(''); write('隠しコマンド', 'accent'); write('  matrix / fortune / sudo / boot / bootmgr'); write('隠しファイルは ls -a または dir /a で表示できます', 'muted'); }
     };
 
-    /* Boot Manager（いつものサイトと同じ流れで AetherOS / Vastique を起動） */
+    /* Boot Manager（前のデザインと同じ流れで AetherOS / Vastique を起動） */
     const showBootMenu = () => { bootState = {screen: 'menu'}; updatePrompt(); write('ZERO SITE BOOT MANAGER', 'accent'); write('[1.Select from list]'); write('[2.Type to select]'); write('[3.Quit]'); write('Select an option (1/2/3):', 'muted'); };
     const showBootList = () => { bootState = {screen: 'list'}; write('Bootable operating systems', 'accent'); if (!bootSystems.visible.length) write('No bootable OS is installed.', 'muted'); bootSystems.visible.forEach((entry, index) => write(`${index + 1}. ${entry.label} (${entry.codename})`)); write(`${bootSystems.visible.length + 1}. Quit`); write('Select an OS number (or Q to return):', 'muted'); };
     const showBootType = () => { bootState = {screen: 'type'}; write('Type an OS codename (Q or Quit to return):', 'muted'); };

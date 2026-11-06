@@ -7,7 +7,7 @@
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const portrait = matchMedia('(orientation: portrait)');
 
-  const photoPath = (index, shape) => `assets/hero/${String(index + 1).padStart(2, '0')}-${shape}.webp`;
+  const photoPath = (index, shape) => `/assets/hero/${String(index + 1).padStart(2, '0')}-${shape}.webp`;
 
   const loadPhoto = async (index) => {
     const image = new Image();

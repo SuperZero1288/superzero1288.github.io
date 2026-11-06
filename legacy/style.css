@@ -761,7 +761,7 @@ html.site-is-loading .slides{animation-play-state:paused}
 
 /* 1枚目だけここで指定し、最初から見えるようにフェードイン分(8%)進めておく。
    2枚目以降の写真は hero-slides.js が出番の前に読み込む。 */
-.slides:nth-child(1){--slide-wide:url('assets/hero/01-wide.webp');--slide-tall:url('assets/hero/01-tall.webp');animation-delay:-4.16s}
+.slides:nth-child(1){--slide-wide:url('/assets/hero/01-wide.webp');--slide-tall:url('/assets/hero/01-tall.webp');animation-delay:-4.16s}
 .slides:nth-child(2){animation-delay:4s}
 .slides:nth-child(3){animation-delay:8s}
 .slides:nth-child(4){animation-delay:12s}
@@ -1372,11 +1372,11 @@ color:var(--accent-hover);
 background-color:rgba(0,0,0,.6)
 }
 
-#gallery-twitter{background-image:url('assets/social-x.jpg')}
-#gallery-youtube{background-image:url('assets/social-youtube.jpg'),url('assets/social-x.jpg')}
-#gallery-booth{background-image:url('assets/social-booth.jpg')}
-#gallery-vrchat{background-image:url('assets/social-vrchat.png')}
-#gallery-github{background-image:url('assets/social-github.png')}
+#gallery-twitter{background-image:url('/assets/social-x.jpg')}
+#gallery-youtube{background-image:url('/assets/social-youtube.jpg'),url('/assets/social-x.jpg')}
+#gallery-booth{background-image:url('/assets/social-booth.jpg')}
+#gallery-vrchat{background-image:url('/assets/social-vrchat.png')}
+#gallery-github{background-image:url('/assets/social-github.png')}
 #gallery-more{
 background-image:
 radial-gradient(circle at 24% 18%,color-mix(in srgb,var(--accent-color) 52%,transparent),transparent 34%),

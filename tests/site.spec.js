@@ -58,13 +58,13 @@ async function expectNoHorizontalOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
 
-test('the photo-first hero, existing article link and loader remain in place', async ({page}) => {
+test('the legacy photo-first hero, existing article link and loader remain in place', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   expect(await page.locator('.slides').count()).toBe(13);
   expect(await page.locator('#hero h1, #hero h2, #hero a, #hero button').count()).toBe(0);
   expect(await page.locator('#snapContainer').evaluate((element) => element.scrollTop)).toBe(0);
-  await expect(page.locator('#noteArticles a').first()).toHaveAttribute('href', /^blog\/n[0-9a-f]+\.html$/);
+  await expect(page.locator('#noteArticles a').first()).toHaveAttribute('href', /^\/legacy\/blog\/n[0-9a-f]+\.html$/);
   await expect(page.locator('script[src^="site-loader.js"]')).toHaveAttribute('src', /^site-loader\.js\?v=/);
 });
 
@@ -77,11 +77,11 @@ function heroPhotoRequests(page) {
   return requested;
 }
 
-test('hero photos are hosted here and load one at a time ahead of their turn', async ({page}) => {
-  expect(fs.readFileSync(path.join(rootPath, 'style.css'), 'utf8')).not.toContain('i.ibb.co');
+test('legacy hero photos are hosted here and load one at a time ahead of their turn', async ({page}) => {
+  expect(fs.readFileSync(path.join(rootPath, 'legacy/style.css'), 'utf8')).not.toContain('i.ibb.co');
   const requested = heroPhotoRequests(page);
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   expect(requested[0]).toBe('01-wide.webp');
   expect(requested).not.toContain('05-wide.webp');
   const second = page.locator('.slides').nth(1);
@@ -89,20 +89,20 @@ test('hero photos are hosted here and load one at a time ahead of their turn', a
   expect(await page.locator('.slides').first().evaluate((element) => getComputedStyle(element).backgroundImage)).toContain('/assets/hero/01-wide.webp');
 });
 
-test('portrait screens use the cropped hero photos', async ({page}) => {
+test('legacy portrait screens use the cropped hero photos', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844});
   const requested = heroPhotoRequests(page);
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await expect.poll(() => requested.includes('02-tall.webp')).toBe(true);
   expect(requested.filter((name) => name.endsWith('-wide.webp'))).toEqual([]);
 });
 
-test('reduced motion only downloads the first hero photo', async ({page}) => {
+test('legacy reduced motion only downloads the first hero photo', async ({page}) => {
   await page.emulateMedia({reducedMotion: 'reduce'});
   const requested = heroPhotoRequests(page);
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await page.waitForTimeout(1500);
   expect(requested).toEqual(['01-wide.webp']);
 });
@@ -113,6 +113,7 @@ test('the homepage can be shared and crawled', async ({page}) => {
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /ポートフォリオ/);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://superzero1288.github.io/');
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
   const shareImage = await page.locator('meta[property="og:image"]').getAttribute('content');
   expect(shareImage).toBe('https://superzero1288.github.io/assets/og-image.jpg');
   for (const file of ['assets/og-image.jpg', 'favicon.ico', 'apple-touch-icon.png']) {
@@ -164,9 +165,10 @@ test('direct asset links, parent navigation and invalid paths are handled', asyn
   await expect(page).toHaveURL(/\/vrchat-assets\/$/);
 });
 
-test('the library shows a divider between sections and enlarges its leading cards', async ({page}) => {
+for (const base of ['', '/legacy']) {
+  test(`the library shows a divider between sections and enlarges its leading cards${base ? ' (legacy)' : ''}`, async ({page}) => {
   await mockNetwork(page);
-  await ready(page);
+  await ready(page, `${base}/vrchat-assets/`);
   const order = await page.locator('#catalogFileList > *').evaluateAll((nodes) => nodes.map((node) => {
     if (node.matches('.catalog-section-divider')) return 'divider';
     if (node.matches('.catalog-category-grid')) return 'categories';
@@ -184,13 +186,15 @@ test('the library shows a divider between sections and enlarges its leading card
   await expect(page.locator('.catalog-kicker')).toHaveCount(0);
   expect(await page.locator('body').innerText()).not.toContain('いつもの空間に');
   await expectNoHorizontalOverflow(page);
+  if (!base) return;
   // Catalogue cards react through the shared home page tilt rather than a local lift.
   expect(await page.locator('.catalog-item-card').first()
     .evaluate((element) => getComputedStyle(element).transform)).not.toBe('none');
   await page.locator('.catalog-item-card').first().hover();
   await expect.poll(() => page.locator('.catalog-item-card').first()
     .evaluate((element) => element.style.getPropertyValue('--card-scale'))).toBe('1.06');
-});
+  });
+}
 
 test('download section has a keyboard-accessible jump target', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844});
@@ -262,14 +266,14 @@ test('local previews match source SHAs and stay small', async ({page}) => {
   expect(await page.locator('.catalog-item-art img').evaluateAll((images) => images.every((image) => image.src.includes('/vrchat-assets/previews/')))).toBe(true);
 });
 
-for (const viewport of [{width: 320, height: 640}, {width: 390, height: 844}, {width: 768, height: 1024}, {width: 844, height: 390}, {width: 1440, height: 900}]) {
-  test(`catalogue layout and detail fit ${viewport.width}×${viewport.height}`, async ({page}) => {
+for (const base of ['', '/legacy']) for (const viewport of [{width: 320, height: 640}, {width: 390, height: 844}, {width: 768, height: 1024}, {width: 844, height: 390}, {width: 1440, height: 900}]) {
+  test(`catalogue layout and detail fit ${viewport.width}×${viewport.height}${base ? ' (legacy)' : ''}`, async ({page}) => {
     await page.setViewportSize(viewport);
     await mockNetwork(page);
-    await ready(page);
+    await ready(page, `${base}/vrchat-assets/`);
     await expectNoHorizontalOverflow(page);
     await expect(page.locator('#catalogRefresh svg')).toBeVisible();
-    if (viewport.width === 1440) await expect(page.locator('.catalog-item-copy strong').last()).toBeInViewport();
+    if (base && viewport.width === 1440) await expect(page.locator('.catalog-item-copy strong').last()).toBeInViewport();
     await page.locator(`[data-open-asset="${assetPath}"]`).click();
     await expect(page.locator('.catalog-info-sections')).toHaveAttribute('aria-busy', 'false');
     await expectNoHorizontalOverflow(page);
@@ -286,10 +290,24 @@ const appearances = [
   {style: 'style-vrchat', light: false}, {style: 'style-unity', light: false}
 ];
 for (const appearance of appearances) {
-  test(`catalogue contrast and semantics: ${appearance.style} ${appearance.light ? 'light' : 'dark'}`, async ({page}) => {
+  test(`legacy catalogue contrast and semantics: ${appearance.style} ${appearance.light ? 'light' : 'dark'}`, async ({page}) => {
     await mockNetwork(page);
     await page.addInitScript((state) => localStorage.setItem('zero-site-appearance', JSON.stringify(state)), appearance);
+    await ready(page, '/legacy/vrchat-assets/');
+    expect(await audit(page)).toEqual([]);
+    await page.locator(`[data-open-asset="${assetPath}"]`).click();
+    await expect(page.locator('.catalog-info-sections')).toHaveAttribute('aria-busy', 'false');
+    expect(await audit(page)).toEqual([]);
+  });
+}
+
+const colourModes = ['light', 'dark'].flatMap((mode) => [5, 255, 165, 300, 55].map((hue) => ({mode, hue})));
+for (const appearance of colourModes) {
+  test(`catalogue contrast and semantics: ${appearance.mode} hue ${appearance.hue}`, async ({page}) => {
+    await mockNetwork(page);
+    await page.addInitScript((state) => localStorage.setItem('zero-next-appearance', JSON.stringify(state)), appearance);
     await ready(page);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', appearance.mode);
     expect(await audit(page)).toEqual([]);
     await page.locator(`[data-open-asset="${assetPath}"]`).click();
     await expect(page.locator('.catalog-info-sections')).toHaveAttribute('aria-busy', 'false');
@@ -300,7 +318,7 @@ for (const appearance of appearances) {
 test('mobile profile contains Tab/Shift+Tab, excludes background and restores its opener', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844});
   await mockNetwork(page);
-  await ready(page, '/#main-content');
+  await ready(page, '/legacy/#main-content');
   const opener = page.locator('[data-open-profile]');
   await opener.press('Enter');
   const close = page.locator('[data-close-profile]');
@@ -321,7 +339,7 @@ test('mobile profile contains Tab/Shift+Tab, excludes background and restores it
 
 test('search modal traps focus, handles bookmark cancellation and restores its toggle', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/links.html');
+  await ready(page, '/legacy/links.html');
   const toggle = page.locator('.floating-search-toggle');
   await toggle.press('Enter');
   const surface = page.locator('.floating-search-surface');
@@ -343,10 +361,10 @@ test('search modal traps focus, handles bookmark cancellation and restores its t
 });
 
 for (const width of [390, 1440]) {
-  test(`hero tabs can be reached with the keyboard and closed with Esc at ${width}px`, async ({page}) => {
+  test(`legacy hero tabs can be reached with the keyboard and closed with Esc at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
-    await ready(page, '/');
+    await ready(page, '/legacy/');
     const tab = page.locator('#navigationWingTab');
     await page.keyboard.press('Tab');
     await tab.focus();
@@ -364,9 +382,9 @@ for (const width of [390, 1440]) {
   });
 }
 
-test('device panel uses valid definition lists and contains keyboard focus', async ({page}) => {
+test('legacy device panel uses valid definition lists and contains keyboard focus', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await page.locator('#deviceWingTab').press('Enter');
   await expect(page.locator('#deviceCard')).toHaveAttribute('aria-hidden', 'false');
   expect(await audit(page)).toEqual([]);
@@ -374,7 +392,7 @@ test('device panel uses valid definition lists and contains keyboard focus', asy
   await expect(page.locator('#deviceWingTab')).toBeFocused();
 });
 
-for (const url of ['/', '/links.html']) {
+for (const url of ['/legacy/', '/legacy/links.html']) {
   test(`clock and calendar work without a mouse on ${url}`, async ({page, context}) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await mockNetwork(page);
@@ -394,9 +412,9 @@ for (const url of ['/', '/links.html']) {
   });
 }
 
-test('minimized and closed apps leave no hidden focused controls', async ({page}) => {
+test('legacy minimized and closed apps leave no hidden focused controls', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await page.keyboard.press('Control+Alt+t');
   const command = page.getByRole('textbox', {name: 'コマンド'});
   await expect(command).toBeFocused();
@@ -413,10 +431,10 @@ test('minimized and closed apps leave no hidden focused controls', async ({page}
   expect(await page.evaluate(() => Boolean(document.activeElement.closest('[inert]')))).toBe(false);
 });
 
-test('reduced motion retains a photo, stops idle animation and clears pointer tilts', async ({page}) => {
+test('legacy reduced motion retains a photo, stops idle animation and clears pointer tilts', async ({page}) => {
   await mockNetwork(page);
   await page.emulateMedia({reducedMotion: 'reduce'});
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   const motion = () => page.evaluate(() => ({
     slides: [...document.querySelectorAll('.slides')].map((element) => ({animation: getComputedStyle(element).animationName, opacity: getComputedStyle(element).opacity})),
     guide: getComputedStyle(document.querySelector('#scrollIndicator')).animationName,
@@ -445,7 +463,7 @@ test('reduced motion also disables catalogue entering animations', async ({page}
   expect(await page.locator('#catalogFileList').evaluate((element) => getComputedStyle(element).animationName)).toBe('none');
 });
 
-for (const url of ['/links.html', '/blog/n8d41d4a76214.html', '/404.html']) {
+for (const url of ['/links.html', '/blog/n8d41d4a76214.html', '/404.html', '/legacy/links.html', '/legacy/blog/n8d41d4a76214.html', '/legacy/404.html']) {
   test(`shared page remains accessible: ${url}`, async ({page}) => {
     await mockNetwork(page);
     await ready(page, url);
@@ -534,9 +552,9 @@ test('repository descriptions cannot inject HTML or javascript links', async ({p
   await expect(page.locator('.catalog-markdown a')).toHaveAttribute('href', 'https://example.com/');
 });
 
-test('closing an app while another is minimized returns to the remaining task button', async ({page}) => {
+test('legacy: closing an app while another is minimized returns to the remaining task button', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await page.keyboard.press('Control+Alt+t');
   await page.locator('.app-window [data-window-action="minimize"]').click();
   await page.keyboard.press('Control+Alt+t');
@@ -553,7 +571,7 @@ test('closing an app while another is minimized returns to the remaining task bu
 test('bookmark limit and deletion do not leave focus in hidden or removed controls', async ({page}) => {
   await mockNetwork(page);
   await page.addInitScript(() => localStorage.setItem('zero-browser-bookmarks', JSON.stringify(Array.from({length: 11}, (_, index) => ({name: `Site ${index}`, url: `https://example.com/?item=${index}`})))));
-  await ready(page, '/links.html');
+  await ready(page, '/legacy/links.html');
   await page.locator('.floating-search-toggle').press('Enter');
   await page.locator('.floating-bookmark-add').click();
   await page.locator('[name="bookmarkName"]').fill('Last site');
@@ -568,9 +586,9 @@ test('bookmark limit and deletion do not leave focus in hidden or removed contro
 });
 
 
-test('search and calendar remain visible and usable while a modeless app is open', async ({page}) => {
+test('legacy search and calendar remain visible and usable while a modeless app is open', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
+  await ready(page, '/legacy/');
   await page.keyboard.press('Control+Alt+t');
   await expect(page.getByRole('textbox', {name: 'コマンド'})).toBeFocused();
   await page.locator('.clock-button').focus();
@@ -597,22 +615,21 @@ test('search and calendar remain visible and usable while a modeless app is open
   await expect(page.locator('.app-window')).toHaveCount(1);
 });
 
-test('the second coming-next card opens the new design preview', async ({page}) => {
+test('the legacy second coming-next card opens the current design', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/');
-  const card = page.locator('.future-action[href="/next/"]');
+  await ready(page, '/legacy/');
+  const card = page.locator('.future-action[href="/"]');
   await expect(card).toHaveCount(1);
   await expect(card).toContainText('02');
   await expect(card).toHaveAccessibleName(/新デザイン/);
 });
 
 for (const width of [320, 390, 1440]) {
-  test(`new design preview is accessible without horizontal scroll at ${width}px`, async ({page}) => {
+  test(`the homepage is accessible without horizontal scroll at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
-    await ready(page, '/next/');
-    await expect(page.locator('h1')).toContainText('ぜろくん');
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await ready(page, '/');
+    await expect(page.locator('h1')).toHaveAccessibleName('ぜろくんでんせつ');
     await expect(page.locator('#noteList .note-card').first()).toHaveAttribute('href', /^\/blog\/n[0-9a-f]+\.html$/);
     await expect(page.locator('#repoList a').first()).toHaveAttribute('href', /^https:\/\/github\.com\//);
     await expectNoHorizontalOverflow(page);
@@ -625,9 +642,9 @@ for (const width of [320, 390, 1440]) {
   });
 }
 
-test('new design keeps the familiar controls: side sheets, clock, profile and update tabs', async ({page}) => {
+test('the homepage keeps the familiar controls: side sheets, clock, profile and update tabs', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/next/');
+  await ready(page, '/');
   const leftTab = page.locator('#leftTab');
   await leftTab.focus();
   await page.keyboard.press('Enter');
@@ -668,16 +685,16 @@ test('new design keeps the familiar controls: side sheets, clock, profile and up
   await expect(page.locator('#notePanel')).toBeVisible();
 });
 
-test('new design remembers dark mode and the theme colour', async ({page}) => {
+test('the site remembers dark mode and the theme colour', async ({page}) => {
   await page.emulateMedia({colorScheme: 'light'});
   await mockNetwork(page);
-  await ready(page, '/next/');
+  await ready(page, '/');
   await page.locator('#themeButton').click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.locator('#hueButton').click();
   const hue = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim());
   expect(hue).not.toBe('5');
-  await ready(page, '/next/');
+  await ready(page, '/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe(hue);
   await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
@@ -685,12 +702,12 @@ test('new design remembers dark mode and the theme colour', async ({page}) => {
   expect(await audit(page)).toEqual([]);
 });
 
-test('new design preview stops its motion when reduced motion is requested', async ({page}) => {
+test('the homepage stops its motion when reduced motion is requested', async ({page}) => {
   await page.emulateMedia({reducedMotion: 'reduce'});
   await mockNetwork(page);
-  await ready(page, '/next/');
+  await ready(page, '/');
   const state = await page.evaluate(() => ({
-    shapes: [...document.querySelectorAll('.stage-shape, .stage-dots, .marquee-track, .hero-avatar, .beta-shape, .scroll-arrow')].map((element) => getComputedStyle(element).animationName),
+    shapes: [...document.querySelectorAll('.stage-shape, .stage-dots, .marquee-track, .hero-avatar, .footer-shape, .scroll-arrow')].map((element) => getComputedStyle(element).animationName),
     hidden: [...document.querySelectorAll('.reveal')].filter((element) => getComputedStyle(element).opacity !== '1').length
   }));
   expect(state.shapes.length).toBeGreaterThan(5);
@@ -698,9 +715,9 @@ test('new design preview stops its motion when reduced motion is requested', asy
   expect(state.hidden).toBe(0);
 });
 
-test('new design desktop apps open from the side sheet and can be driven with the keyboard', async ({page}) => {
+test('homepage desktop apps open from the side sheet and can be driven with the keyboard', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/next/');
+  await ready(page, '/');
   await page.locator('#leftTab').click();
   await page.locator('[data-launch-app="terminal"]').click();
   const terminal = page.locator('.app-window[data-app="terminal"]');
@@ -750,9 +767,9 @@ test('new design desktop apps open from the side sheet and can be driven with th
   expect(await audit(page)).toEqual([]);
 });
 
-test('new design apps share saved data with the classic site and explore the virtual files', async ({page}) => {
+test('homepage apps share saved data with the legacy site and explore the virtual files', async ({page}) => {
   await mockNetwork(page);
-  await ready(page, '/next/');
+  await ready(page, '/');
   await page.locator('#leftTab').click();
   await page.locator('[data-launch-app="notepad"]').click();
   const notepad = page.locator('.app-window[data-app="notepad"]');
@@ -771,10 +788,10 @@ test('new design apps share saved data with the classic site and explore the vir
 });
 
 for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {width: 390, height: 844}]) {
-  test(`new design phone hero shows the name and photo without scrolling at ${viewport.width}x${viewport.height}`, async ({page}) => {
+  test(`homepage phone hero shows the name and photo without scrolling at ${viewport.width}x${viewport.height}`, async ({page}) => {
     await page.setViewportSize(viewport);
     await mockNetwork(page);
-    await ready(page, '/next/');
+    await ready(page, '/');
     const layout = await page.evaluate(() => ({
       chip: document.querySelector('.assist-chip').getBoundingClientRect().bottom,
       title: document.querySelector('.hero-title').getBoundingClientRect().bottom,
@@ -790,3 +807,190 @@ for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {w
     await expectNoHorizontalOverflow(page);
   });
 }
+
+/* ===== トップページの隠し要素: 「でんせつ」が押すたびに変わる ===== */
+const LEGEND_WORDS = ['でんせつ', '伝説', 'Legend', '传说', '전설'];
+const LEGEND_RARE = ['縺ｧ繧薙○縺､', 'e4bc9de8aaac'];
+
+test('clicking でんせつ swaps it for another of the seven words, with the garbled ones rarer', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  const legend = page.locator('#heroLegend');
+  await expect(legend).toHaveText('でんせつ');
+  const seen = await legend.evaluate((element) => {
+    const texts = [];
+    for (let i = 0; i < 600; i += 1) {
+      element.click();
+      texts.push(element.textContent);
+    }
+    return texts;
+  });
+  const counts = Object.fromEntries([...LEGEND_WORDS, ...LEGEND_RARE].map((word) => [word, seen.filter((text) => text === word).length]));
+  expect(seen.every((text) => text in counts)).toBe(true);
+  expect(seen.every((text, index) => text !== (index ? seen[index - 1] : 'でんせつ'))).toBe(true);
+  for (const word of [...LEGEND_WORDS, ...LEGEND_RARE]) expect(counts[word]).toBeGreaterThan(0);
+  for (const rare of LEGEND_RARE) for (const word of LEGEND_WORDS) expect(counts[rare]).toBeLessThan(counts[word]);
+  expect((counts[LEGEND_RARE[0]] + counts[LEGEND_RARE[1]]) / seen.length).toBeLessThan(0.15);
+  // The heading itself keeps the real name for screen readers.
+  await expect(page.locator('h1')).toHaveAccessibleName('ぜろくんでんせつ');
+});
+
+for (const width of [320, 1440]) {
+  test(`the longest でんせつ variants stay on one line inside the hero at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: width === 320 ? 640 : 900});
+    await mockNetwork(page);
+    await ready(page, '/');
+    const legend = page.locator('#heroLegend');
+    const height = await legend.evaluate((element) => element.offsetHeight);
+    // 0.999 picks the hex string from でんせつ, then 0.99 picks the garbled text from the hex string.
+    for (const random of [0.999, 0.99]) {
+      await page.evaluate((value) => {
+        const original = Math.random;
+        Math.random = () => value;
+        document.getElementById('heroLegend').click();
+        Math.random = original;
+      }, random);
+      await expect(legend).toHaveText(new RegExp(`^(${LEGEND_RARE.join('|')})$`));
+      const box = await legend.evaluate((element) => ({
+        width: element.offsetWidth,
+        available: element.parentElement.clientWidth,
+        height: element.offsetHeight,
+        lines: Math.round(element.querySelector('.hero-legend-text').getClientRects().length),
+      }));
+      expect(box.width).toBeLessThanOrEqual(box.available + 1);
+      expect(box.height).toBe(height);
+      expect(box.lines).toBe(1);
+      await expectNoHorizontalOverflow(page);
+    }
+  });
+}
+
+/* ===== 404の隠し扉と、前のデザイン（/legacy/） ===== */
+test('pressing the 0 of the 404 five times reveals the door to the legacy site', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/404.html');
+  const zero = page.getByRole('button', {name: '0', exact: true});
+  const door = page.locator('#legacyDoor');
+  await expect(door).toBeHidden();
+  for (let i = 0; i < 4; i += 1) await zero.click();
+  await expect(door).toBeHidden();
+  await zero.press('Enter');
+  await expect(door).toBeVisible();
+  await expect(door).toBeFocused();
+  await expect(door).toHaveAttribute('href', '/legacy/');
+  expect(await audit(page)).toEqual([]);
+  await door.click();
+  await expect(page).toHaveURL(/\/legacy\/$/);
+  await expect(page.locator('#siteLoader')).toHaveCount(0);
+  await expect(page.locator('.slides')).toHaveCount(13);
+});
+
+for (const url of ['/legacy/', '/legacy/links.html', '/legacy/vrchat-assets/', '/legacy/blog/n8d41d4a76214.html', '/legacy/404.html']) {
+  test(`the legacy page ${url} is hidden from search and stays inside /legacy/`, async ({page}) => {
+    const missing = [];
+    page.on('response', (response) => {
+      const target = new URL(response.url());
+      if (['127.0.0.1', 'localhost'].includes(target.hostname) && response.status() >= 400) missing.push(target.pathname);
+    });
+    await mockNetwork(page);
+    await ready(page, url);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    const internal = await page.locator('a[href]').evaluateAll((links) => links
+      .map((link) => new URL(link.href))
+      .filter((target) => target.origin === location.origin && target.pathname !== location.pathname)
+      .map((target) => target.pathname));
+    // "/" is the legacy home's link to the current design; /blog-list/ was already a placeholder in the legacy site.
+    expect(internal.filter((pathname) => !pathname.startsWith('/legacy/') && !['/', '/blog-list/'].includes(pathname))).toEqual([]);
+    expect(missing).toEqual([]);
+  });
+}
+
+test('the old /next/ address forwards to the homepage', async ({page}) => {
+  await mockNetwork(page);
+  await page.goto('/next/');
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator('#heroLegend')).toBeVisible();
+});
+
+/* ===== 今のデザインのリンク集・記事・アセット配布 ===== */
+for (const width of [320, 390, 1440]) {
+  test(`the link directory fits ${width}px and shows the synced updates`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    await mockNetwork(page);
+    await ready(page, '/links.html');
+    await expect(page.locator('#toolbar a[href="/"]')).toHaveAccessibleName('トップページへ戻る');
+    await expect(page.locator('#latestNoteFeed .note-card').first()).toHaveAttribute('href', /^\/blog\/n[0-9a-f]+\.html$/);
+    await expect(page.locator('#latestGithubFeed a')).toHaveCount(3);
+    await expect(page.locator('#latestYoutubeFeed .video-card').first()).toHaveAttribute('href', /^https:\/\/www\.youtube\.com\//);
+    await expect(page.locator('.link-row[target="_blank"]')).toHaveCount(10);
+    await expectNoHorizontalOverflow(page);
+  });
+}
+
+for (const mode of ['light', 'dark']) {
+  for (const url of ['/links.html', '/blog/n8d41d4a76214.html', '/404.html']) {
+    test(`${url} passes the accessibility audit in ${mode} mode`, async ({page}) => {
+      await page.emulateMedia({colorScheme: mode});
+      await mockNetwork(page);
+      await ready(page, url);
+      await expect(page.locator('#themeButton')).toHaveAccessibleName(mode === 'dark' ? 'ライトモードにする' : 'ダークモードにする');
+      expect(await audit(page)).toEqual([]);
+    });
+  }
+}
+
+test('the synced article uses the current design and its table of contents links work', async ({page}) => {
+  await page.setViewportSize({width: 320, height: 640});
+  await mockNetwork(page);
+  await ready(page, '/blog/n8d41d4a76214.html');
+  await expect(page.locator('link[rel="stylesheet"][href^="/site/pages.css"]')).toHaveCount(1);
+  await expect(page.locator('h1')).toContainText('305SH');
+  const targets = await page.locator('[data-table-of-contents] a[href^="#"]').evaluateAll((links) => links.map((link) => link.getAttribute('href').slice(1)));
+  expect(targets.length).toBeGreaterThan(3);
+  expect(await page.evaluate((ids) => ids.every((id) => document.getElementById(id)?.matches('.article-body h2, .article-body h3, .article-body h4')), targets)).toBe(true);
+  expect(await page.locator('.article-body img').evaluateAll((images) => images.every((image) => new URL(image.src).pathname.startsWith('/blog/assets/')))).toBe(true);
+  await expectNoHorizontalOverflow(page);
+});
+
+for (const url of ['/links.html', '/vrchat-assets/', '/blog/n8d41d4a76214.html', '/404.html']) {
+  test(`the shared toolbar clock and calendar work on ${url}`, async ({page, context}) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await mockNetwork(page);
+    await ready(page, url);
+    const clock = page.locator('#clock');
+    await expect(clock).toHaveText(/^\d{2}:\d{2}$/);
+    await clock.click();
+    await expect(clock).toHaveText(/^(AM|PM) \d{1,2}:\d{2}$/);
+    await clock.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(page.locator('.calendar-day[aria-current="date"]')).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#snackbar')).toContainText('コピーしました');
+    await page.keyboard.press('Escape');
+    await expect(clock).toBeFocused();
+  });
+}
+
+test('dark mode and the theme colour carry over to every page', async ({page}) => {
+  await page.emulateMedia({colorScheme: 'light'});
+  await mockNetwork(page);
+  await ready(page, '/links.html');
+  await page.locator('#themeButton').click();
+  await page.locator('#hueButton').click();
+  const hue = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim());
+  for (const url of ['/', '/vrchat-assets/', '/blog/n8d41d4a76214.html', '/404.html']) {
+    await ready(page, url);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--h').trim())).toBe(hue);
+  }
+});
+
+test('the homepage passes the accessibility audit with the mint theme colour in light mode', async ({page}) => {
+  await mockNetwork(page);
+  await page.addInitScript(() => localStorage.setItem('zero-next-appearance', JSON.stringify({mode: 'light', hue: 165})));
+  await ready(page, '/');
+  await page.evaluate(() => document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible')));
+  await page.locator('#content').scrollIntoViewIfNeeded();
+  await page.waitForTimeout(800);
+  expect(await audit(page)).toEqual([]);
+});

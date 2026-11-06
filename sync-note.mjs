@@ -251,7 +251,7 @@ async function localizeImages(bodyHtml, articleId, articleUrl) {
     try {
       const absoluteSource = new URL(source, articleUrl).href;
       const localSource = await downloadImage(absoluteSource, articleId, `image-${index + 1}`);
-      let replacement = setAttribute(originalTag, 'src', localSource)
+      let replacement = setAttribute(originalTag, 'src', `/blog/${localSource}`)
         .replace(/\s(?:data-src|data-original|srcset|data-srcset)\s*=\s*(?:"[^"]*"|'[^']*')/gi, '')
         .replace(/\sloading\s*=\s*(?:"[^"]*"|'[^']*')/gi, '');
       replacement = setAttribute(replacement, 'loading', 'lazy');
@@ -297,6 +297,25 @@ function sanitizeArticleHtml(html, sourceUrl) {
   return result;
 }
 
+// noteの目次は見出しのidへのリンクですが、sanitizeArticleHtmlでidを外すため、
+// 目次の文字と同じ見出しにだけ、目次側のidを付け直します（英数字とハイフンのidだけ）。
+function restoreTocAnchors(html) {
+  const toc = html.match(/<div\b[^>]*data-table-of-contents[^>]*>[\s\S]*?<\/nav>\s*<\/div>/i);
+  if (!toc) return html;
+  const tocEnd = toc.index + toc[0].length;
+  let rest = html.slice(tocEnd);
+  for (const [, id, label] of toc[0].matchAll(/<a\b[^>]*href="#([\w-]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    const text = textFromHtml(label);
+    let done = false;
+    rest = rest.replace(/<(h[2-4])\b([^>]*)>([\s\S]*?)<\/\1>/gi, (heading, tag, attributes, inner) => {
+      if (done || /\sid=/i.test(attributes) || textFromHtml(inner) !== text) return heading;
+      done = true;
+      return `<${tag} id="${escapeAttribute(id)}"${attributes}>${inner}</${tag}>`;
+    });
+  }
+  return html.slice(0, tocEnd) + rest;
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '';
@@ -305,30 +324,108 @@ function formatDate(dateString) {
   }).format(date).replaceAll('/', '.');
 }
 
+const BODY_START = '<!-- ARTICLE_BODY_START -->';
+const BODY_END = '<!-- ARTICLE_BODY_END -->';
+const isoDate = (value) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+};
+
+// 今のデザインの記事ページ（/blog/記事ID.html）
 function articleDocument(article, bodyHtml, coverPath) {
   const title = escapeHtml(article.title);
   const description = escapeAttribute(article.description.slice(0, 160));
   const publishedLabel = formatDate(article.publishedAt);
-  const coverMarkup = coverPath
-    ? `<img class="article-cover" src="${escapeAttribute(coverPath)}" alt="" fetchpriority="high">`
+  const source = escapeAttribute(article.sourceUrl);
+  const cover = coverPath ? `/blog/${coverPath}` : '';
+  const coverMarkup = cover
+    ? `<figure class="article-cover"><img src="${escapeAttribute(cover)}" alt="" fetchpriority="high" data-preload="記事の画像を読み込んでいます"></figure>`
+    : '<span class="page-hero-shape" aria-hidden="true" style="--tone:var(--pop-mint);--shape:var(--shape-flower)"></span>';
+
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title} | ぜろくんでんせつ</title>
+<meta name="description" content="${description}">
+<meta name="theme-color" content="#fff7f8">
+<link rel="canonical" href="${source}">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
+<link rel="stylesheet" href="/site/base.css?v=20261108-1">
+<link rel="stylesheet" href="/site/pages.css?v=20261108-1">
+<script src="/site/theme.js?v=20261108-1"></script>
+<script src="/site/common.js?v=20261108-1" defer></script>
+</head>
+<body class="page page-article">
+<a class="skip-link" href="#main">本文へ移動</a>
+
+<div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="ページを読み込んでいます">
+<div class="loader-shape" aria-hidden="true"></div>
+<div class="loader-meta"><p class="loader-status">記事を準備中</p><span class="loader-percent">0%</span></div>
+<div class="loader-bar" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+</div>
+
+<main id="main" class="page-main">
+<article aria-labelledby="articleTitle">
+<header class="page-hero article-hero">
+<div class="page-hero-copy">
+<p class="assist-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 11C6.523 11 11 6.523 11 1h2c0 5.523 4.477 10 10 10v2c-5.523 0-10 4.477-10 10h-2c0-5.523-4.477-10-10-10z"/></svg>NOTE ARTICLE</p>
+<h1 class="page-title article-title" id="articleTitle">${title}</h1>
+<ul class="article-meta" aria-label="記事の情報"><li>ぜろ</li><li><time datetime="${escapeAttribute(isoDate(article.publishedAt))}">${publishedLabel}</time></li><li>noteから自動同期</li></ul>
+<div class="page-actions">
+<a class="btn btn-filled" href="${source}" target="_blank" rel="noopener">noteで見る <span aria-hidden="true">↗</span></a>
+<a class="btn btn-tonal" href="/#content">ポートフォリオへ戻る</a>
+</div>
+</div>
+${coverMarkup}
+</header>
+<div class="article-sheet">
+<div class="article-body">
+${BODY_START}${bodyHtml}${BODY_END}
+</div>
+<footer class="article-end"><a class="text-link" href="${source}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a><a class="btn btn-tonal" href="/links.html">ほかのリンクも見る</a></footer>
+</div>
+</article>
+<footer class="page-footer"><span>ZERO / NOTE</span><a href="/">ぜろくんでんせつ</a></footer>
+</main>
+</body>
+</html>
+`;
+}
+
+// 前のデザインの記事ページ（/legacy/blog/記事ID.html）。隠し要素として残しているデザインです。
+function legacyArticleDocument(article, bodyHtml, coverPath) {
+  const title = escapeHtml(article.title);
+  const description = escapeAttribute(article.description.slice(0, 160));
+  const publishedLabel = formatDate(article.publishedAt);
+  const cover = coverPath ? `/blog/${coverPath}` : '';
+  const coverMarkup = cover
+    ? `<img class="article-cover" src="${escapeAttribute(cover)}" alt="" fetchpriority="high">`
     : '';
-  const backdropStyle = coverPath ? ` style="background-image:url('${escapeAttribute(coverPath)}')"` : '';
+  const backdropStyle = cover ? ` style="background-image:url('${escapeAttribute(cover)}')"` : '';
 
   return `<!DOCTYPE html>
 <html lang="ja" class="article-document">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
 <title>${title} | ぜろくんでんせつ</title>
 <meta name="description" content="${description}">
 <link rel="canonical" href="${escapeAttribute(article.sourceUrl)}">
-<link rel="stylesheet" href="../style.css?v=20260921-thememotion7">
-<link rel="stylesheet" href="/site-accessibility.css?v=20261010-a11y1">
-<script src="/site-accessibility.js?v=20261010-a11y1" defer></script>
-<script src="../site-loader.js?v=20260910-os1" defer></script>
-<script src="../card-hover.js?v=20261010-a11y1" defer></script>
-<script src="../page-bar.js?v=20261010-a11y1" defer></script>
-<script src="../site-search.js?v=20261010-a11y1" defer></script>
+<link rel="stylesheet" href="/legacy/style.css?v=20260921-thememotion7">
+<link rel="stylesheet" href="/legacy/site-accessibility.css?v=20261010-a11y1">
+<script src="/legacy/site-accessibility.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/site-loader.js?v=20260910-os1" defer></script>
+<script src="/legacy/card-hover.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/page-bar.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/site-search.js?v=20261010-a11y1" defer></script>
 </head>
 <body class="style-default article-page">
 <div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
@@ -341,13 +438,13 @@ function articleDocument(article, bodyHtml, coverPath) {
 <main class="article-shell">
 <article class="article-card">
 <nav class="article-nav" aria-label="記事ナビゲーション">
-<a href="../index.html#main-content">← portfolio</a>
+<a href="/legacy/#main-content">← portfolio</a>
 <a href="${escapeAttribute(article.sourceUrl)}" target="_blank" rel="noopener">noteで見る ↗</a>
 </nav>
 ${coverMarkup}
 <h1 class="article-title">${title}</h1>
-<div class="article-meta"><span>ぜろ</span><time datetime="${escapeAttribute(new Date(article.publishedAt).toISOString())}">${publishedLabel}</time><span>noteから自動同期</span></div>
-<div class="article-body">${bodyHtml}</div>
+<div class="article-meta"><span>ぜろ</span><time datetime="${escapeAttribute(isoDate(article.publishedAt))}">${publishedLabel}</time><span>noteから自動同期</span></div>
+<div class="article-body">${BODY_START}${bodyHtml}${BODY_END}</div>
 <footer class="article-footer"><a href="${escapeAttribute(article.sourceUrl)}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a></footer>
 </article>
 </main>
@@ -356,10 +453,30 @@ ${coverMarkup}
 `;
 }
 
+async function writeArticlePages(article, bodyHtml) {
+  const body = restoreTocAnchors(bodyHtml);
+  await mkdir(path.join(projectRoot, 'blog'), { recursive: true });
+  await mkdir(path.join(projectRoot, 'legacy', 'blog'), { recursive: true });
+  await writeFile(path.join(projectRoot, 'blog', `${article.id}.html`), articleDocument(article, body, article.coverPath));
+  await writeFile(path.join(projectRoot, 'legacy', 'blog', `${article.id}.html`), legacyArticleDocument(article, body, article.coverPath));
+}
+
+// トップページのnote欄（今のデザイン）
 function homeArticleMarkup(article) {
-  const localUrl = article.generated ? `blog/${article.id}.html` : article.sourceUrl;
+  const localUrl = article.generated ? `/blog/${article.id}.html` : article.sourceUrl;
+  const thumbnail = article.coverPath ? `/blog/${article.coverPath}` : article.thumbnail;
+  const image = thumbnail ? `\n<img src="${escapeAttribute(thumbnail)}" alt="" loading="lazy">` : '';
+  const target = article.generated ? '' : ' target="_blank" rel="noopener"';
+  return `<a class="note-card" href="${escapeAttribute(localUrl)}"${target}>${image}
+<span class="note-copy"><time datetime="${escapeAttribute(article.publishedAt)}">${formatDate(article.publishedAt)}</time><strong>${escapeHtml(article.title)}</strong><small>${article.generated ? 'サイト内で読む →' : 'noteで読む ↗'}</small></span>
+</a>`;
+}
+
+// 前のデザインのトップページのnote欄（/legacy/index.html）
+function legacyHomeArticleMarkup(article) {
+  const localUrl = article.generated ? `/legacy/blog/${article.id}.html` : article.sourceUrl;
   const thumbnail = article.coverPath
-    ? `blog/${article.coverPath}`
+    ? `/blog/${article.coverPath}`
     : article.thumbnail;
   const image = thumbnail
     ? `<img class="note-article-thumb" src="${escapeAttribute(thumbnail)}" alt="" loading="lazy">`
@@ -375,19 +492,20 @@ ${image}
 </a>`;
 }
 
-async function updateHomePage(articles) {
-  const indexPath = path.join(projectRoot, 'index.html');
-  const current = await readFile(indexPath, 'utf8');
-  const startMarker = '<!-- NOTE_ARTICLES_START -->';
-  const endMarker = '<!-- NOTE_ARTICLES_END -->';
+async function replaceBetweenMarkers(relativePath, startMarker, endMarker, content) {
+  const filePath = path.join(projectRoot, relativePath);
+  const current = await readFile(filePath, 'utf8');
   const start = current.indexOf(startMarker);
   const end = current.indexOf(endMarker);
-  if (start < 0 || end < 0 || end < start) throw new Error('index.htmlのnote更新位置が見つかりません');
+  if (start < 0 || end < 0 || end < start) throw new Error(`${relativePath}のnote更新位置が見つかりません`);
+  const next = current.slice(0, start) + `${startMarker}\n${content}\n${endMarker}` + current.slice(end + endMarker.length);
+  await writeFile(filePath, next);
+}
 
-  const cards = articles.slice(0, maxHomeArticles).map(homeArticleMarkup).join('\n');
-  const replacement = `${startMarker}\n${cards}\n${endMarker}`;
-  const next = current.slice(0, start) + replacement + current.slice(end + endMarker.length);
-  await writeFile(indexPath, next);
+async function updateHomePage(articles) {
+  const latest = articles.slice(0, maxHomeArticles);
+  await replaceBetweenMarkers('index.html', '<!-- NOTE_LIST_START -->', '<!-- NOTE_LIST_END -->', latest.map(homeArticleMarkup).join('\n'));
+  await replaceBetweenMarkers(path.join('legacy', 'index.html'), '<!-- NOTE_ARTICLES_START -->', '<!-- NOTE_ARTICLES_END -->', latest.map(legacyHomeArticleMarkup).join('\n'));
 }
 
 // 同期のpushでこのリポジトリのpushed_atが変わると、次の同期でまた差分が出てコミットが止まりません。
@@ -452,8 +570,7 @@ async function syncArticle(article) {
       coverPath,
       generated: true,
     };
-    await mkdir(path.join(projectRoot, 'blog'), { recursive: true });
-    await writeFile(path.join(projectRoot, 'blog', `${article.id}.html`), articleDocument(enriched, body, coverPath));
+    await writeArticlePages(enriched, body);
     console.log(`同期完了: ${enriched.title}`);
     return enriched;
   } catch (error) {
@@ -494,7 +611,41 @@ async function main() {
   console.log(`全${synced.length}件を確認しました。`);
 }
 
-main().catch((error) => {
+// 保存済みの本文から、記事ページとトップページのnote欄だけを作り直します（通信しません）。
+// デザインを変えたときに使います: node sync-note.mjs --rebuild
+async function readSavedBody(articleId) {
+  for (const relativePath of [path.join('blog', `${articleId}.html`), path.join('legacy', 'blog', `${articleId}.html`)]) {
+    let html;
+    try { html = await readFile(path.join(projectRoot, relativePath), 'utf8'); } catch { continue; }
+    const start = html.indexOf(BODY_START);
+    const end = html.indexOf(BODY_END);
+    if (start >= 0 && end > start) return html.slice(start + BODY_START.length, end);
+    // マーカーを入れる前に作った記事ページ
+    const opening = '<div class="article-body">';
+    const legacyStart = html.indexOf(opening);
+    const legacyEnd = html.lastIndexOf('</div>\n<footer class="article-footer">');
+    if (legacyStart >= 0 && legacyEnd > legacyStart) {
+      return html.slice(legacyStart + opening.length, legacyEnd).replace(/(<img\b[^>]*\ssrc=")assets\//gi, '$1/blog/assets/');
+    }
+  }
+  return null;
+}
+
+async function rebuild() {
+  const articles = JSON.parse(await readFile(path.join(projectRoot, 'blog', 'articles.json'), 'utf8'));
+  for (const article of articles.filter((entry) => entry.generated)) {
+    const body = await readSavedBody(article.id);
+    if (body === null) {
+      console.warn(`保存済みの本文が見つからないため飛ばしました: ${article.id}`);
+      continue;
+    }
+    await writeArticlePages(article, body);
+    console.log(`作り直しました: ${article.title}`);
+  }
+  await updateHomePage(articles);
+}
+
+(process.argv.includes('--rebuild') ? rebuild() : main()).catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

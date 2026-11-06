@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>404 / ぜろくんでんせつ</title>
+<link rel="stylesheet" href="/legacy/style.css?v=20260921-thememotion7">
+<link rel="stylesheet" href="/legacy/site-accessibility.css?v=20261010-a11y1">
+<script src="/legacy/site-accessibility.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/site-loader.js?v=20260910-os1" defer></script>
+<script src="/legacy/card-hover.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/page-bar.js?v=20261010-a11y1" defer></script>
+<script src="/legacy/site-search.js?v=20261010-a11y1" defer></script>
+</head>
+<body class="style-default error-page">
+<div class="site-loader" id="siteLoader" role="status" aria-live="polite" aria-label="画像を読み込んでいます">
+<div class="site-loader-content">
+<div class="site-loader-meta"><p class="site-loader-status">ページを準備中</p><span class="site-loader-percent">0%</span></div>
+<div class="site-loader-progress" role="progressbar" aria-label="読み込みの進捗" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+</div>
+</div>
+<main class="error-stage">
+<section class="error-card" aria-labelledby="error-title">
+<div class="error-code" aria-hidden="true"><span>4</span><span class="error-zero">0</span><span>4</span></div>
+<h1 id="error-title">このページは、まだ存在しないみたいです。</h1>
+<p class="error-message">リンクが変わったか、これから作られるページかもしれません。</p>
+<div class="error-actions">
+<a class="error-primary" href="/legacy/">トップページへ戻る</a>
+<button class="error-secondary" type="button" id="historyBack">ひとつ前へ戻る</button>
+</div>
+</section>
+</main>
+
+<script>
+document.getElementById('historyBack').addEventListener('click',()=>{
+  if(history.length>1)history.back();
+  else location.href='/legacy/';
+});
+
+</script>
+</body>
+</html>
