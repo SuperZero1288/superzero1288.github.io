@@ -1182,3 +1182,14 @@ test('the background stays the full screen height so it does not move with the a
   // Fewer decorative shapes on phones.
   for (const selector of ['.s-pill', '.s-gem', '.s-tri', '.stage-dots']) await expect(page.locator(selector)).toBeHidden();
 });
+
+test('the AetherOS page shows the AetherOS logo as its tab icon', async ({page}) => {
+  await mockNetwork(page);
+  await page.addInitScript(() => sessionStorage.setItem('aether-boot-ticket', JSON.stringify({expiresAt: Date.now() + 120000})));
+  await page.goto('/os/aether/');
+  const icon = page.locator('link[rel="icon"]');
+  await expect(icon).toHaveAttribute('href', '/assets/aether/aetheros-logo.svg');
+  const response = await page.request.get('/assets/aether/aetheros-logo.svg');
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain('<title>AetherOS</title>');
+});
