@@ -9,7 +9,7 @@ const entries=[
 {path:'/home/blog',type:'directory',label:'ブログ',icon:'▤'},
 {path:'/home/blog/latest',type:'page',label:'最新のnote記事',action:'latest-note',icon:'N'},
 {path:'/home/blog/n8d41d4a76214',type:'page',label:'305SHを今更MIUI化',url:'/blog/n8d41d4a76214.html',icon:'N'},
-{path:'/home/vrchat-assets',type:'page',label:'VRChat向けアセット',url:'/vrchat-assets/',icon:'V',planned:true},
+{path:'/home/vrchat-assets',type:'page',label:'VRChat向けアセット',url:'/vrchat-assets/',icon:'V'},
 {path:'/home/apps',type:'directory',label:'アプリ',icon:'▦'},
 {path:'/home/apps/terminal',type:'app',label:'ターミナル',app:'terminal',icon:'>_'},
 {path:'/home/apps/explorer',type:'app',label:'ファイル エクスプローラー',app:'explorer',icon:'▣'},

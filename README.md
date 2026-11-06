@@ -40,6 +40,8 @@ python3 scripts/build-hero-images.py 元画像のフォルダ
 
 いつものサイトの構成（全画面のヒーロー、時計付きの浮かぶバー、左右のタブから開くパネル、プロフィール・リンク・更新情報の画面）を、Material 3 Expressive風の色・形・動きで作り直しています。右上のボタンでダーク/ライトとテーマカラーを切り替えられ、設定はブラウザに保存されます。
 
+左のタブから開くシートには、いつものサイトと同じデスクトップアプリ（ターミナル・電卓・ペイント・メモ帳・ブラウザ・ファイル）があります。ウィンドウ管理とアプリは `next/desktop.js` / `next/desktop.css` で、仮想ファイルシステム（`zero-filesystem.js`）と隠しOSの起動スクリプト（`aether-boot.js` / `vastique-boot.js`）はいつものサイトと共通です。メモ帳の内容、ターミナルの履歴、検索履歴、`hack os` の設定はブラウザ内で両方のデザインに共有されます。
+
 図形は `next/shapes.css` にあり、すべて同じ点の数の `clip-path` なので、どの形からどの形へも滑らかに変形できます。形を増やしたり変えたりするときは `scripts/build-next-shapes.py` を編集して `python3 scripts/build-next-shapes.py` を実行します。
 
 ## アセット配布ライブラリ

@@ -697,3 +697,96 @@ test('new design preview stops its motion when reduced motion is requested', asy
   expect(state.shapes.every((name) => name === 'none')).toBe(true);
   expect(state.hidden).toBe(0);
 });
+
+test('new design desktop apps open from the side sheet and can be driven with the keyboard', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/next/');
+  await page.locator('#leftTab').click();
+  await page.locator('[data-launch-app="terminal"]').click();
+  const terminal = page.locator('.app-window[data-app="terminal"]');
+  await expect(terminal).toBeVisible();
+  await expect(page.locator('#leftSheet')).toHaveAttribute('aria-hidden', 'true');
+  const prompt = terminal.locator('input');
+  await expect(prompt).toBeFocused();
+  await prompt.fill('ls');
+  await prompt.press('Enter');
+  await expect(terminal.locator('.terminal-output')).toContainText('apps/');
+  await prompt.fill('bootmgr');
+  await prompt.press('Enter');
+  await prompt.fill('1');
+  await prompt.press('Enter');
+  await expect(terminal.locator('.terminal-output')).toContainText('AetherOS 1.0 (aetheros)');
+  await expect(terminal.locator('.terminal-output')).toContainText('Vastique 1.0 (vastique)');
+  await prompt.fill('3');
+  await prompt.press('Enter');
+  await expect(terminal.locator('.terminal-output')).toContainText('Boot Manager exited.');
+
+  await prompt.fill('calc');
+  await prompt.press('Enter');
+  const calculator = page.locator('.app-window[data-app="calculator"]');
+  const display = calculator.locator('.calc-display input');
+  await expect(display).toBeFocused();
+  await display.fill('1+2×3');
+  await display.press('Enter');
+  await expect(display).toHaveValue('7');
+  await expect(page.locator('.task-item')).toHaveCount(2);
+
+  await calculator.locator('[data-window-action="minimize"]').click();
+  await expect(calculator).toBeHidden();
+  const calculatorTask = page.locator('.task-item', {hasText: '電卓'});
+  await expect(calculatorTask).toHaveAttribute('aria-label', /を復元$/);
+  await calculatorTask.click();
+  await expect(calculator).toBeVisible();
+  await expect(display).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(display).toHaveValue('0');
+  await page.keyboard.press('Escape');
+  await expect(calculator).toHaveCount(0);
+  await expect(prompt).toBeFocused();
+
+  await page.keyboard.press('Control+Alt+T');
+  await expect(page.locator('.app-window[data-app="terminal"]')).toHaveCount(2);
+  await expect(page.locator('.task-count')).toHaveText('2');
+  expect(await audit(page)).toEqual([]);
+});
+
+test('new design apps share saved data with the classic site and explore the virtual files', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/next/');
+  await page.locator('#leftTab').click();
+  await page.locator('[data-launch-app="notepad"]').click();
+  const notepad = page.locator('.app-window[data-app="notepad"]');
+  await notepad.locator('textarea').fill('新デザインから書いたメモ');
+  await notepad.locator('[data-window-action="close"]').click();
+  expect(await page.evaluate(() => localStorage.getItem('zero-notepad-document'))).toBe('新デザインから書いたメモ');
+
+  await page.locator('#leftTab').click();
+  await page.locator('[data-launch-app="explorer"]').click();
+  const explorer = page.locator('.app-window[data-app="explorer"]');
+  await expect(explorer.locator('.explorer-item')).toContainText(['profile', 'links', 'blog']);
+  await explorer.locator('.explorer-item', {hasText: 'apps'}).click();
+  await expect(explorer.locator('.explorer-view h2')).toHaveText('アプリ');
+  await explorer.locator('.explorer-item', {hasText: 'notepad'}).click();
+  await expect(page.locator('.app-window[data-app="notepad"] textarea')).toHaveValue('新デザインから書いたメモ');
+});
+
+for (const viewport of [{width: 320, height: 640}, {width: 375, height: 667}, {width: 390, height: 844}]) {
+  test(`new design phone hero shows the name and photo without scrolling at ${viewport.width}x${viewport.height}`, async ({page}) => {
+    await page.setViewportSize(viewport);
+    await mockNetwork(page);
+    await ready(page, '/next/');
+    const layout = await page.evaluate(() => ({
+      chip: document.querySelector('.assist-chip').getBoundingClientRect().bottom,
+      title: document.querySelector('.hero-title').getBoundingClientRect().bottom,
+      photo: document.querySelector('.photo-frame').getBoundingClientRect().bottom,
+      lead: document.querySelector('.hero-lead').getBoundingClientRect().top,
+      height: innerHeight
+    }));
+    expect(layout.title).toBeLessThanOrEqual(layout.height);
+    expect(layout.photo).toBeLessThanOrEqual(layout.height);
+    expect(layout.lead).toBeGreaterThan(layout.photo);
+    expect(layout.lead).toBeLessThan(layout.height);
+    expect(layout.chip).toBeLessThan(layout.photo);
+    await expectNoHorizontalOverflow(page);
+  });
+}
