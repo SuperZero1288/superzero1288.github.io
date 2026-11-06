@@ -38,6 +38,10 @@ python3 scripts/build-hero-images.py 元画像のフォルダ
 
 `/next/` に試作中の新デザインを置いています。トップページの「coming next」の02から開けます。検索結果には出さないよう `noindex` を付けています。note記事とGitHubの更新情報は、同期済みの `blog/articles.json` と `blog/latest-links.json` を読み込んで表示します。
 
+いつものサイトの構成（全画面のヒーロー、時計付きの浮かぶバー、左右のタブから開くパネル、プロフィール・リンク・更新情報の画面）を、Material 3 Expressive風の色・形・動きで作り直しています。右上のボタンでダーク/ライトとテーマカラーを切り替えられ、設定はブラウザに保存されます。
+
+図形は `next/shapes.css` にあり、すべて同じ点の数の `clip-path` なので、どの形からどの形へも滑らかに変形できます。形を増やしたり変えたりするときは `scripts/build-next-shapes.py` を編集して `python3 scripts/build-next-shapes.py` を実行します。
+
 ## アセット配布ライブラリ
 
 `/vrchat-assets/` は `SuperZero1288/Zeroichiba-Workshop` の公開ツリーを読み込み、`.cat` をカテゴリ、`.ast` をアセットとして表示します。`info.txt` が説明と導入条件、`Distribution/` 内のファイルが配布ファイルです。配布物そのものはこのサイトへコピーせず、GitHub上の原本へリンクします。
