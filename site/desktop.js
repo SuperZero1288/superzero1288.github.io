@@ -741,6 +741,8 @@
       readSettings(); recent = readRecent(); updateUi(false); renderRecent();
     };
     addEventListener('storage', onStorage);
+    // ツールバーの検索（search.js）で検索エンジンや最近の検索が変わったときも合わせる
+    addEventListener('zero:browserdatachange', (event) => { if (event.detail?.type !== 'bookmarks') onStorage({key: 'zero-browser-settings'}); });
     readSettings();
     updateUi(false);
     renderRecent();

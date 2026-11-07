@@ -6,10 +6,10 @@
 .launcher-head span{color:var(--on-surface-variant);font-family:var(--flex);font-weight:800;font-size:.8rem}
 .launcher-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .launcher-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;padding:12px 6px 10px;border:0;border-radius:24px;background:var(--surface-container-high);color:var(--on-surface);font-weight:800;font-size:.78rem;cursor:pointer;transition:border-radius .4s var(--spring-fast),background-color .2s var(--effects),transform .4s var(--spring)}
-.launcher-item:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:34px}
+@media(hover:hover){.launcher-item:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:34px}}
 .launcher-item:active{border-radius:14px;transform:scale(.95)}
 .launcher-icon{display:grid;place-items:center;width:48px;height:48px;background:var(--tone);color:var(--on-pop);clip-path:var(--shape);transition:clip-path .6s var(--spring),rotate .6s var(--spring)}
-.launcher-item:hover .launcher-icon{clip-path:var(--shape-circle);rotate:-20deg}
+@media(hover:hover){.launcher-item:hover .launcher-icon{clip-path:var(--shape-circle);rotate:-20deg}}
 .launcher-item.is-empty{background:transparent;box-shadow:inset 0 0 0 2px var(--outline-variant);color:var(--on-surface-variant);font-family:var(--flex);cursor:default}
 .launcher-icon svg,.window-icon svg,.task-icon svg,.window-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sheet-section-title{margin:4px 0 10px;font-family:var(--display);font-weight:400;font-size:1.2rem}
@@ -31,9 +31,9 @@
 .app-window.is-focused .window-icon{rotate:-12deg}
 .window-controls{display:flex;gap:4px}
 .window-btn{display:grid;place-items:center;width:38px;height:38px;padding:0;border:0;border-radius:19px;background:transparent;color:var(--on-surface-variant);cursor:pointer;transition:border-radius .35s var(--spring-fast),background-color .2s var(--effects),color .2s}
-.window-btn:hover{background:color-mix(in oklch,var(--on-surface) 10%,transparent)}
+@media(hover:hover){.window-btn:hover{background:color-mix(in oklch,var(--on-surface) 10%,transparent)}}
 .window-btn:active{border-radius:10px}
-.window-btn-close:hover{background:oklch(.58 .2 25);color:#fff}
+@media(hover:hover){.window-btn-close:hover{background:oklch(.58 .2 25);color:#fff}}
 .window-content{min-width:0;min-height:0;margin:0 8px 8px;overflow:auto;background:var(--surface-container-lowest);border-radius:22px}
 /* hack os macos でmacOS風のボタンになる */
 html[data-window-system="macos"] .window-bar{justify-content:flex-start}
@@ -43,7 +43,8 @@ html[data-window-system="macos"] .window-btn svg{width:10px;height:10px;stroke-w
 html[data-window-system="macos"] .window-btn-close{order:-3;background:#ff5f57}
 html[data-window-system="macos"] .window-btn[data-window-action="minimize"]{order:-2;background:#febc2e}
 html[data-window-system="macos"] .window-btn[data-window-action="maximize"]{background:#28c840}
-html[data-window-system="macos"] .window-controls:hover .window-btn,html[data-window-system="macos"] .window-btn:focus-visible{color:rgb(0 0 0 / .6)}
+html[data-window-system="macos"] .window-btn:focus-visible{color:rgb(0 0 0 / .6)}
+@media(hover:hover){html[data-window-system="macos"] .window-controls:hover .window-btn{color:rgb(0 0 0 / .6)}}
 
 /* ===== タスクバー ===== */
 .taskbar{position:fixed;left:50%;bottom:16px;display:flex;align-items:center;gap:6px;max-width:calc(100vw - 24px);padding:6px;background:var(--glass);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-radius:999px;box-shadow:var(--elev-3);pointer-events:auto;opacity:0;visibility:hidden;translate:-50% calc(100% + 32px);transition:translate .5s var(--spring),opacity .25s var(--effects),visibility 0s linear .5s}
@@ -52,7 +53,7 @@ body.has-windows .taskbar{opacity:1;visibility:visible;translate:-50% 0;transiti
 .task-home.is-active,.task-home:active{border-radius:14px}
 .task-items{display:flex;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
 .task-item{display:flex;align-items:center;gap:8px;flex:0 0 auto;height:44px;padding:0 14px 0 6px;border:0;border-radius:22px;background:transparent;color:var(--on-surface);font-weight:800;font-size:.82rem;white-space:nowrap;cursor:pointer;transition:background-color .2s var(--effects),border-radius .4s var(--spring-fast)}
-.task-item:hover{background:color-mix(in oklch,var(--on-surface) 8%,transparent)}
+@media(hover:hover){.task-item:hover{background:color-mix(in oklch,var(--on-surface) 8%,transparent)}}
 .task-item:active{border-radius:14px}
 .task-item.is-active{background:var(--secondary-container);color:var(--on-secondary-container)}
 .task-item.is-minimized b{opacity:.7}
@@ -75,7 +76,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .window-content input[type="text"],.window-content input[type="search"],.window-content select{min-width:0;height:40px;padding:0 14px;border:0;border-radius:999px;background:var(--surface-container-high);color:var(--on-surface);font:inherit;font-weight:700}
 .window-content input[type="color"]{width:40px;height:32px;padding:0;border:0;background:none;cursor:pointer}
 .chip-btn{padding:6px 14px;border:0;border-radius:10px;background:var(--secondary-container);color:var(--on-secondary-container);font-weight:800;font-size:.8rem;cursor:pointer;transition:border-radius .35s var(--spring-fast)}
-.chip-btn:hover{border-radius:16px}
+@media(hover:hover){.chip-btn:hover{border-radius:16px}}
 
 /* ===== ターミナル ===== */
 .window-content.terminal-app{display:grid;grid-template-rows:minmax(0,1fr) auto;overflow:hidden;background:#17131a;color:#ece6f0;font-family:ui-monospace,'Cascadia Mono','Consolas','BIZ UDGothic',monospace;font-size:.86rem}
@@ -104,7 +105,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .calc-display:focus-within{box-shadow:inset 0 0 0 2px var(--primary)}
 .calc-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(44px,1fr);gap:8px}
 .calc-key{border:0;border-radius:30px;background:var(--surface-container-high);color:var(--on-surface);font-family:var(--flex);font-weight:800;font-size:1.15rem;cursor:pointer;transition:border-radius .35s var(--spring-fast),background-color .2s,transform .35s var(--spring-fast)}
-.calc-key:hover{background:var(--surface-container-highest)}
+@media(hover:hover){.calc-key:hover{background:var(--surface-container-highest)}}
 .calc-key:active{border-radius:16px;transform:scale(.95)}
 .calc-key.is-utility{background:var(--secondary-container);color:var(--on-secondary-container)}
 .calc-key.is-operator{background:var(--tertiary-container);color:var(--on-tertiary-container)}
@@ -153,7 +154,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .explorer-body{display:grid;grid-template-columns:170px minmax(0,1fr);min-height:0}
 .explorer-sidebar{display:grid;align-content:start;gap:4px;padding:12px 8px;background:var(--surface-container-low);overflow:auto}
 .explorer-sidebar button{display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:20px;background:transparent;color:var(--on-surface);font-weight:800;font-size:.85rem;text-align:left;cursor:pointer;transition:background-color .2s,border-radius .35s var(--spring-fast)}
-.explorer-sidebar button:hover{background:var(--secondary-container);color:var(--on-secondary-container)}
+@media(hover:hover){.explorer-sidebar button:hover{background:var(--secondary-container);color:var(--on-secondary-container)}}
 .explorer-sidebar button:active{border-radius:12px}
 .explorer-view{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
 .explorer-view>header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px;padding:14px 16px 8px}
@@ -162,7 +163,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .explorer-kind{padding:2px 10px;background:var(--surface-container-high);border-radius:999px;color:var(--on-surface-variant);font-family:var(--flex);font-weight:700;font-size:.75rem}
 .explorer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));align-content:start;gap:8px;padding:8px 16px 16px;overflow-y:auto}
 .explorer-item{display:flex;align-items:center;gap:10px;padding:10px;border:0;border-radius:20px;background:var(--surface-container-high);color:var(--on-surface);text-align:left;cursor:pointer;transition:border-radius .4s var(--spring-fast),background-color .2s}
-.explorer-item:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:30px}
+@media(hover:hover){.explorer-item:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:30px}}
 .explorer-item:active{border-radius:12px}
 .explorer-item-icon{display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;background:var(--pop-orange);color:var(--on-pop);clip-path:var(--shape-cookie9);font-family:var(--flex);font-weight:900;font-size:.82rem}
 .explorer-item.is-directory .explorer-item-icon{background:var(--pop-yellow);clip-path:var(--shape-square)}
@@ -172,7 +173,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .explorer-item-copy{display:grid;min-width:0}
 .explorer-item-copy strong{overflow:hidden;font-size:.9rem;text-overflow:ellipsis;white-space:nowrap}
 .explorer-item-copy small{color:var(--on-surface-variant);font-family:var(--body);font-size:.75rem;letter-spacing:0}
-.explorer-item:hover small{color:inherit}
+@media(hover:hover){.explorer-item:hover small{color:inherit}}
 .explorer-view>footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;padding:8px 16px;background:var(--surface-container-low);color:var(--on-surface-variant);font-size:.75rem;font-weight:700}
 .explorer-empty{grid-column:1/-1;display:grid;justify-items:center;gap:6px;padding:28px 12px;text-align:center}
 .explorer-empty>span{display:grid;place-items:center;width:56px;height:56px;background:var(--pop-pink);color:var(--on-pop);clip-path:var(--shape-burst);font-weight:900;font-size:1.4rem}

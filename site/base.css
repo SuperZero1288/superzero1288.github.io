@@ -115,8 +115,8 @@ button{font:inherit;color:inherit}
 /* ===== ボタン（押すと角の丸みが変わる、M3 Expressiveの形の変化） ===== */
 .btn{position:relative;display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 26px;border:0;border-radius:28px;font-weight:900;font-size:1rem;text-decoration:none;cursor:pointer;isolation:isolate;overflow:hidden;transition:border-radius .45s var(--spring-fast),transform .45s var(--spring-fast),box-shadow .2s var(--effects)}
 .btn::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:currentColor;opacity:0;transition:opacity .2s var(--effects)}
-.btn:hover::after{opacity:.08}
-.btn:hover{box-shadow:var(--elev-1)}
+@media(hover:hover){.btn:hover::after{opacity:.08}}
+@media(hover:hover){.btn:hover{box-shadow:var(--elev-1)}}
 .btn:active{border-radius:18px;transform:scale(.97)}
 .btn svg{width:20px;height:20px;flex:0 0 auto}
 .btn-filled{background:var(--primary);color:var(--on-primary)}
@@ -126,12 +126,12 @@ button{font:inherit;color:inherit}
 .btn-block:active{border-radius:40px}
 .icon-btn{position:relative;display:inline-grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:22px;background:transparent;color:var(--on-surface-variant);cursor:pointer;isolation:isolate;transition:border-radius .4s var(--spring-fast),background-color .2s var(--effects),color .2s}
 .icon-btn::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:currentColor;opacity:0;transition:opacity .2s var(--effects)}
-.icon-btn:hover::after{opacity:.1}
+@media(hover:hover){.icon-btn:hover::after{opacity:.1}}
 .icon-btn:active{border-radius:12px}
 .icon-btn svg{width:22px;height:22px}
 .icon-btn-tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
 .text-link{display:inline-block;margin-top:14px;color:var(--primary);font-weight:900;text-decoration:none}
-.text-link:hover{text-decoration:underline}
+@media(hover:hover){.text-link:hover{text-decoration:underline}}
 
 /* ===== ロード画面（形が変わり続けるローディングインジケーター） ===== */
 .site-loader{position:fixed;inset:0;z-index:300;display:grid;place-content:center;justify-items:center;gap:22px;background:var(--surface);transition:opacity .45s var(--effects),visibility .45s}
@@ -179,7 +179,7 @@ button{font:inherit;color:inherit}
 .calendar-weekdays .sun,.calendar-day.sun{color:oklch(.55 .17 25)}
 .calendar-weekdays .sat,.calendar-day.sat{color:oklch(.5 .14 255)}
 .calendar-day{display:grid;place-items:center;aspect-ratio:1;padding:0;border:0;border-radius:50%;background:transparent;font-family:var(--flex);font-weight:700;font-size:.85rem;cursor:pointer;transition:border-radius .35s var(--spring-fast),background-color .2s}
-.calendar-day:hover{background:var(--secondary-container)}
+@media(hover:hover){.calendar-day:hover{background:var(--secondary-container)}}
 .calendar-day:active{border-radius:10px}
 .calendar-day.is-today{background:var(--primary);color:var(--on-primary)}
 
@@ -206,19 +206,70 @@ main{position:relative;z-index:1}
 /* note記事とGitHubの一覧 */
 .note-list{display:grid;gap:10px}
 .note-card{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center;padding:8px;background:var(--surface-container-high);border-radius:24px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s,translate .45s var(--spring)}
-.note-card:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:36px}
+@media(hover:hover){.note-card:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:36px}}
 .note-card img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px}
 .note-copy{display:grid;gap:2px}
 .note-copy time{width:fit-content;padding:0 10px;background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:999px;font-family:var(--flex);font-weight:800;font-size:.74rem}
 .note-copy strong{font-size:.98rem;line-height:1.5}
 .note-copy small{color:var(--primary);font-weight:900}
-.note-card:hover .note-copy small{color:inherit}
+@media(hover:hover){.note-card:hover .note-copy small{color:inherit}}
 .repo-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .repo-list a{display:grid;gap:2px;padding:12px 18px;background:var(--surface-container-high);border-radius:20px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s,translate .45s var(--spring)}
-.repo-list a:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:32px;translate:4px 0}
+@media(hover:hover){.repo-list a:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:32px;translate:4px 0}}
 .repo-list strong{font-family:var(--flex);font-weight:800;font-variation-settings:'wdth' 108}
 .repo-list small{color:var(--on-surface-variant);font-weight:700}
-.repo-list a:hover small{color:inherit}
+@media(hover:hover){.repo-list a:hover small{color:inherit}}
+
+/* ===== 検索（ツールバーの検索ボタンから開く「新しいタブ」。site/search.js） ===== */
+.search-dialog{width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 96px);margin:76px auto auto;padding:clamp(18px,3vw,26px);border:0;background:var(--surface-container-high);color:var(--on-surface);border-radius:36px;box-shadow:var(--elev-3);overflow-y:auto}
+.search-dialog[open]{animation:searchIn .45s var(--spring)}
+.search-dialog::backdrop{background:var(--scrim)}
+@keyframes searchIn{from{opacity:0;transform:translateY(-12px) scale(.96)}to{opacity:1;transform:none}}
+.search-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.search-head h2{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:1.5rem;line-height:1.3}
+.search-box{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 8px;background:var(--surface-container-lowest);border-radius:28px;box-shadow:inset 0 0 0 2px var(--outline-variant);transition:box-shadow .2s var(--effects)}
+.search-box:focus-within{box-shadow:inset 0 0 0 2px var(--primary)}
+.search-engine-mark{display:grid;flex:0 0 auto;place-items:center;width:40px;height:40px;background:#fff;clip-path:var(--shape-cookie9)}
+.search-engine-mark img{width:22px;height:22px}
+.search-box input{flex:1;min-width:0;height:44px;padding:0 4px;border:0;background:transparent;color:inherit;font:inherit;font-size:1.05rem;font-weight:700;outline:none}
+.search-submit{display:grid;flex:0 0 auto;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:22px;background:var(--primary);color:var(--on-primary);cursor:pointer;transition:border-radius .4s var(--spring-fast)}
+.search-submit svg{width:22px;height:22px}
+.search-submit:active{border-radius:12px}
+.search-options{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;margin-top:12px}
+.search-engine{display:flex;align-items:center;gap:8px;color:var(--on-surface-variant);font-weight:700;font-size:.86rem}
+.search-engine select{min-height:40px;padding:0 14px;border:0;border-radius:20px;background:var(--secondary-container);color:var(--on-secondary-container);font:inherit;font-weight:800;cursor:pointer}
+.search-open-mode{color:var(--on-surface-variant);font-weight:700;font-size:.8rem}
+.search-recent{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.search-recent-label{color:var(--on-surface-variant);font-family:var(--flex);font-weight:800;font-size:.74rem;letter-spacing:.1em}
+.search-recent-chip{max-width:16em;min-height:34px;padding:0 14px;overflow:hidden;border:0;border-radius:10px;background:var(--surface-container-highest);color:var(--on-surface);font:inherit;font-weight:700;font-size:.84rem;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:border-radius .35s var(--spring-fast)}
+.search-recent-chip:active{border-radius:17px}
+.search-bookmarks{margin-top:18px;padding-top:16px;border-top:2px dashed var(--outline-variant)}
+.search-bookmarks-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.search-bookmarks-head h3{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:1.2rem;line-height:1.3}
+.search-bookmark-add{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 12px;border:0;border-radius:20px;background:var(--secondary-container);color:var(--on-secondary-container);font:inherit;font-weight:900;cursor:pointer;transition:border-radius .35s var(--spring-fast)}
+.search-bookmark-add svg{width:20px;height:20px}
+.search-bookmark-add:active{border-radius:12px}
+.search-bookmark-add:disabled{opacity:.5;cursor:default}
+.search-bookmark-editor{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;padding:14px;background:var(--surface-container);border-radius:24px}
+.search-bookmark-editor[hidden]{display:none}
+.search-bookmark-editor label{display:grid;gap:4px;color:var(--on-surface-variant);font-weight:800;font-size:.8rem}
+.search-bookmark-editor input{min-height:44px;padding:0 14px;border:2px solid var(--outline-variant);border-radius:14px;background:var(--surface-container-lowest);color:var(--on-surface);font:inherit;font-weight:700}
+.search-bookmark-editor input:focus{border-color:var(--primary);outline:none}
+.search-bookmark-actions{display:flex;grid-column:1 / -1;justify-content:flex-end;gap:8px}
+.search-bookmark-actions .btn{min-height:44px;padding:0 20px;border-radius:22px}
+.search-bookmark-error{grid-column:1 / -1;margin:0;padding:6px 12px;background:oklch(.93 .05 25);color:oklch(.38 .14 25);border-radius:12px;font-weight:700;font-size:.82rem}
+.search-bookmark-error:empty{display:none}
+.search-bookmark-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:8px}
+.search-bookmark{position:relative}
+.search-bookmark a{display:grid;justify-items:center;gap:4px;padding:14px 10px 12px;background:var(--surface-container);border-radius:24px;text-align:center;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s var(--effects)}
+.search-bookmark-icon{display:grid;place-items:center;width:44px;height:44px;background:var(--tone);color:var(--on-pop);clip-path:var(--shape-cookie9);font-family:var(--display);font-size:1.2rem}
+.search-bookmark strong,.search-bookmark small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search-bookmark strong{font-weight:900;font-size:.88rem}
+.search-bookmark small{color:var(--on-surface-variant);font-weight:700;font-size:.72rem}
+.search-bookmark-remove{position:absolute;top:6px;right:6px;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:14px;background:var(--surface-container-highest);color:var(--on-surface-variant);font-weight:900;cursor:pointer}
+.search-bookmark-empty{margin:0;color:var(--on-surface-variant);font-weight:700;font-size:.86rem}
+@media(hover:hover){.search-bookmark a:hover{background:color-mix(in oklch,var(--tone) 35%,var(--surface-container));border-radius:32px}}
+@media(max-width:560px){.search-dialog{margin-top:66px;border-radius:28px}.search-bookmark-editor{grid-template-columns:1fr}}
 
 /* ===== テーマカラー切り替えの演出（common.js が新しい画面の clip-path を図形の形で広げます） ===== */
 html.is-hue-reveal::view-transition-old(root),html.is-hue-reveal::view-transition-new(root){animation:none;mix-blend-mode:normal}

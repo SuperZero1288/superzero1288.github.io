@@ -1193,3 +1193,91 @@ test('the AetherOS page shows the AetherOS logo as its tab icon', async ({page})
   expect(response.ok()).toBe(true);
   expect(await response.text()).toContain('<title>AetherOS</title>');
 });
+
+/* ===== ツールバーの検索（新しいタブ） ===== */
+for (const url of ['/', '/links.html', '/blog/n8d41d4a76214.html']) {
+  test(`the toolbar search opens a new-tab search on ${url}, shared with the legacy site`, async ({page}) => {
+    await mockNetwork(page);
+    await page.addInitScript(() => {
+      window.openedUrls = [];
+      window.open = (target) => { window.openedUrls.push(String(target)); return null; };
+      localStorage.setItem('zero-browser-recent', JSON.stringify(['前のデザインで検索した言葉']));
+    });
+    await ready(page, url);
+    const button = page.locator('#searchButton');
+    await expect(button).toHaveAccessibleName('新しいタブを開く');
+    await button.click();
+    const dialog = page.locator('#searchDialog');
+    await expect(dialog).toBeVisible();
+    const input = dialog.getByRole('searchbox', {name: 'Googleで検索'});
+    await expect(input).toBeFocused();
+    await expect(dialog.locator('.search-recent-chip')).toHaveText(['前のデザインで検索した言葉']);
+    expect(await audit(page)).toEqual([]);
+    await input.fill('Sol\'s RNG aura');
+    await input.press('Enter');
+    expect(await page.evaluate(() => window.openedUrls)).toEqual(['https://www.google.com/search?q=Sol%27s+RNG+aura']);
+    await dialog.locator('select[name="engine"]').selectOption('duckduckgo');
+    await expect(dialog.locator('#searchTitle')).toHaveText('DuckDuckGoで検索');
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('zero-browser-settings')).engine)).toBe('duckduckgo');
+    await dialog.locator('.search-bookmark-add').click();
+    await expect(dialog.locator('[name="bookmarkName"]')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.locator('.search-bookmark-add')).toBeFocused();
+    await dialog.locator('.search-bookmark-add').click();
+    await dialog.locator('[name="bookmarkName"]').fill('ぜろいちば');
+    await dialog.locator('[name="bookmarkUrl"]').fill('zerrrrro.booth.pm');
+    await dialog.locator('.search-bookmark-editor button[type="submit"]').click();
+    await expect(dialog.locator('.search-bookmark a')).toHaveAttribute('href', 'https://zerrrrro.booth.pm/');
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('zero-browser-bookmarks')))).toEqual([{name: 'ぜろいちば', url: 'https://zerrrrro.booth.pm/'}]);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(button).toBeFocused();
+  });
+}
+
+/* ===== スマホではホバー演出なし ===== */
+test('touch screens get no hover effects after a tap', async ({browser}) => {
+  const context = await browser.newContext({viewport: {width: 390, height: 844}, isMobile: true, hasTouch: true});
+  const page = await context.newPage();
+  await mockNetwork(page);
+  await ready(page, '/');
+  expect(await page.evaluate(() => matchMedia('(hover: hover)').matches)).toBe(false);
+  const frame = page.locator('#photoFrame');
+  await frame.tap();
+  // The press animation settles back to normal size; a hover effect would keep it at 1.03.
+  await expect.poll(() => frame.evaluate((element) => getComputedStyle(element).scale)).toBe('none');
+  await page.waitForTimeout(400);
+  expect(await frame.evaluate((element) => getComputedStyle(element).scale)).toBe('none');
+  const legend = page.locator('#heroLegend');
+  await legend.tap();
+  await page.waitForTimeout(800);
+  expect(await legend.evaluate((element) => getComputedStyle(element).rotate)).toBe('-3deg');
+  await context.close();
+});
+
+test('on PC the same elements still react to hover', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  await page.locator('#photoFrame').hover();
+  await expect.poll(() => page.locator('#photoFrame').evaluate((element) => getComputedStyle(element).scale)).toBe('1.03');
+});
+
+/* ===== COMING SOON は404へ ===== */
+test('the COMING SOON slots lead to the 404 page', async ({page}) => {
+  await mockNetwork(page);
+  const notFound = fs.readFileSync(path.join(rootPath, '404.html'), 'utf8');
+  // GitHub Pages answers unknown paths with 404.html; the local test server does not, so imitate it.
+  await page.route('**/coming-soon/**', (route) => route.fulfill({status: 404, contentType: 'text/html; charset=utf-8', body: notFound}));
+  await ready(page, '/');
+  const slots = page.locator('.slot-soon');
+  await expect(slots).toHaveCount(5);
+  await expect(slots.first()).toHaveAccessibleName('02 COMING SOON');
+  expect(await slots.evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['02', '03', '04', '05', '06'].map((number) => `/coming-soon/${number}/`));
+  await slots.nth(1).scrollIntoViewIfNeeded();
+  await slots.nth(1).click();
+  await expect(page).toHaveURL(/\/coming-soon\/03\/$/);
+  await expect(page.locator('#errorTitle')).toHaveText('このページは、まだ存在しないみたいです。');
+  await expect(page.locator('#errorPath')).toHaveText('/coming-soon/03/');
+  await expect(page.locator('#errorZero')).toBeVisible();
+});
