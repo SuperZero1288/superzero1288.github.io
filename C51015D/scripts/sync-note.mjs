@@ -10,18 +10,20 @@
 //   blog/articles.json          記事の一覧データ
 //   blog/index.html             記事一覧（<!-- ARTICLE_LIST_START/END --> の間）
 //   index.html                  トップページのnote欄（<!-- NOTE_LIST_START/END --> の間）
+//   assets/avatar.*             noteのアイコン（トップページの <!-- AVATAR_START/END --> の間に入ります）
 // ページ同士のリンクや画像はすべて相対パスなので、このフォルダごと別の場所へ移しても動きます。
 // 有料記事や限定公開の部分は取得しないでください（公開されているページだけを読みます）。
 
 import {createHash} from 'node:crypto';
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, readdir, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const siteRoot = process.env.C51015D_SITE_ROOT || path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const config = JSON.parse(await readFile(path.join(siteRoot, 'config.json'), 'utf8'));
 const siteName = config.siteName || 'C51015D';
-const noteUser = String(process.env.C51015D_NOTE_USER || config.note?.user || '').trim().replace(/^@/, '');
+// 環境変数 C51015D_NOTE_USER があればそちらを使う（空なら「設定なし」。テストで使います）
+const noteUser = String(process.env.C51015D_NOTE_USER ?? config.note?.user ?? '').trim().replace(/^@/, '');
 const homeCount = Number(config.note?.homeCount) || 3;
 const noindex = config.noindex !== false;
 const userAgent = 'c51015d-note-sync/1.0 (+GitHub Actions)';
@@ -142,6 +144,46 @@ async function localizeImages(bodyHtml, articleId, articleUrl) {
   return result;
 }
 
+/* ---------- noteのアイコン ---------- */
+// 1. noteのAPI  2. プロフィールページに埋め込まれたデータ  3. RSSの画像 の順に探す
+const AVATAR_TYPES = {'image/png': '.png', 'image/jpeg': '.jpg', 'image/webp': '.webp', 'image/gif': '.gif', 'image/avif': '.avif'};
+const isNoteImage = (url) => { try { return /(^|\.)st-note\.com$/.test(new URL(url).hostname); } catch { return false; } };
+async function findAvatarUrl(user, rss) {
+  try {
+    const response = await fetch(`https://note.com/api/v2/creators/${encodeURIComponent(user)}`, {headers: {'User-Agent': userAgent, Accept: 'application/json'}});
+    if (response.ok) {
+      const url = (await response.json())?.data?.profileImageUrl;
+      if (isNoteImage(url)) return url;
+    }
+  } catch { /* 次の方法で探す */ }
+  try {
+    const html = await fetchText(`https://note.com/${encodeURIComponent(user)}`);
+    const raw = html.match(/"profileImageUrl"\s*:\s*"([^"]+)"/)?.[1];
+    const url = raw && JSON.parse(`"${raw}"`);
+    if (isNoteImage(url)) return url;
+  } catch { /* 次の方法で探す */ }
+  const channelImage = readTag(readTag(rss.split(/<item>/i)[0], 'image'), 'url');
+  return isNoteImage(channelImage) ? channelImage : '';
+}
+async function syncAvatar(user, rss) {
+  const found = await findAvatarUrl(user, rss);
+  if (!found) { console.warn('noteのアイコンが見つからなかったため、今のアイコンのままにしました。'); return; }
+  const url = new URL(found);
+  url.searchParams.set('width', '240'); // 表示は72px。高解像度の画面でもきれいに見える大きさで受け取る
+  const response = await fetch(url.href, {headers: {'User-Agent': userAgent}});
+  const type = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (!response.ok || !AVATAR_TYPES[type]) { console.warn(`noteのアイコンを取得できませんでした (${response.status} ${type})`); return; }
+  const data = Buffer.from(await response.arrayBuffer());
+  const fileName = `avatar${AVATAR_TYPES[type]}`;
+  const assets = path.join(siteRoot, 'assets');
+  for (const name of await readdir(assets)) if (/^avatar\./.test(name) && name !== fileName) await rm(path.join(assets, name));
+  await writeFile(path.join(assets, fileName), data);
+  const version = createHash('sha256').update(data).digest('hex').slice(0, 10);
+  await replaceBetweenMarkers('index.html', '<!-- AVATAR_START -->', '<!-- AVATAR_END -->',
+    `<div class="avatar" aria-hidden="true"><img src="assets/${fileName}?v=${version}" alt="" width="72" height="72"></div>`);
+  console.log('noteのアイコンを反映しました。');
+}
+
 /* ---------- 本文を安全な形に ---------- */
 function sanitizeArticleHtml(html, sourceUrl) {
   let result = html.replace(/<figure\b([^>]*\bembedded-service[^>]*)>[\s\S]*?<\/figure>/gi, (figure, attributes) => {
@@ -217,9 +259,9 @@ ${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical
 <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=2">
-<script src="../assets/theme.js?v=2"></script>
-<script src="../assets/site.js?v=2" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=3">
+<script src="../assets/theme.js?v=3"></script>
+<script src="../assets/site.js?v=3" defer></script>
 </head>
 <body data-page="article">
 <a class="skip" href="#main">本文へ移動</a>
@@ -311,7 +353,9 @@ async function sync() {
     return;
   }
   if (!/^[\w-]+$/.test(noteUser)) throw new Error(`noteのアカウント名が正しくありません: ${noteUser}`);
-  const articles = parseRss(await fetchText(`https://note.com/${noteUser}/rss`));
+  const rss = await fetchText(`https://note.com/${noteUser}/rss`);
+  try { await syncAvatar(noteUser, rss); } catch (error) { console.warn(`noteのアイコンを反映できませんでした: ${error.message}`); }
+  const articles = parseRss(rss);
   const synced = [];
   for (const article of articles) synced.push(await syncArticle(article));
   await writeFile(path.join(siteRoot, 'blog', 'articles.json'), `${JSON.stringify(synced, null, 2)}\n`);

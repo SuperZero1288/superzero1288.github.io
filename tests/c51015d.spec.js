@@ -87,8 +87,8 @@ for (const width of [320, 390, 1440]) {
       await scrollSettled(page);
     }
     await expect(page.locator('#note')).toBeInViewport();
-    // スマホのタブは上に貼りつく
-    if (width < 900) expect((await nav.boundingBox()).y).toBeLessThan(2);
+    // スマホのタブは、上から少し離れたところに浮かんで貼りつく
+    if (width < 900) expect((await nav.boundingBox()).y).toBeCloseTo(8, 0);
     // 自分でスクロールしたら、位置で決める（いちばん下なら最後、いちばん上なら最初）
     await page.mouse.move(width / 2, 450);
     await page.mouse.wheel(0, 20000);
@@ -101,15 +101,107 @@ for (const width of [320, 390, 1440]) {
   });
 }
 
-test('C51015D: glass is used only for the bars that content scrolls under', async ({page}) => {
+test('C51015D: the panels are LiquidGlass on the wallpaper, and the profile sits centered', async ({page}) => {
+  await page.setViewportSize({width: 1440, height: 900});
+  await page.goto('/C51015D/');
+  // 背景の写真は画面に固定
+  const wallpaper = await page.evaluate(() => { const style = getComputedStyle(document.body, '::before'); return {image: style.backgroundImage, position: style.position}; });
+  expect(wallpaper.image).toContain('wallpaper.webp');
+  expect(wallpaper.position).toBe('fixed');
+  // ガラスの板: ぼかし + 半透明の色
+  const panels = await page.evaluate(() => [...document.querySelectorAll('.profile, .section, body > .layout .footer')].map((element) => {
+    const style = getComputedStyle(element);
+    return {blur: /blur\(/.test(style.backdropFilter), alpha: Number((style.backgroundColor.match(/[\d.]+(?=\))/) || ['1'])[0])};
+  }));
+  expect(panels).toHaveLength(6);
+  for (const panel of panels) { expect(panel.blur).toBe(true); expect(panel.alpha).toBeLessThan(1); }
+  // プロフィールは画面の上下の真ん中で、中身は中央揃え
+  const profile = await page.locator('.profile').boundingBox();
+  expect(Math.abs(profile.y + profile.height / 2 - 450)).toBeLessThan(2);
+  for (const selector of ['.avatar', '.name', '.handle', '.bio', '.toc a >> nth=0']) {
+    const box = await page.locator(`.profile ${selector}`).first().boundingBox();
+    expect(Math.abs(box.x + box.width / 2 - (profile.x + profile.width / 2)), selector).toBeLessThan(2);
+  }
+  expect(await page.locator('.profile').evaluate((element) => getComputedStyle(element).textAlign)).toBe('center');
+  // 本文をスクロールしても、プロフィールは真ん中のまま
+  await page.mouse.move(900, 450);
+  await page.mouse.wheel(0, 400);
+  await scrollSettled(page);
+  expect(await page.evaluate(() => scrollY)).toBeGreaterThan(0);
+  const after = await page.locator('.profile').boundingBox();
+  expect(Math.abs(after.y - profile.y)).toBeLessThan(1);
+});
+
+test('C51015D: on phones the tab bar floats as glass, and the top edge blurs only while content passes under it', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844});
   await page.goto('/C51015D/');
-  await page.evaluate(() => scrollTo(0, 600));
-  const glass = await page.evaluate(() => [...document.querySelectorAll('body *')]
-    .filter((element) => getComputedStyle(element).backdropFilter !== 'none')
-    .map((element) => element.className));
-  expect(glass).toEqual(['tabbar is-scrolled']);
-  await expect(page.locator('.blob, .glass, .bento')).toHaveCount(0);
+  const tabbar = page.locator('.tabbar');
+  expect(await tabbar.evaluate((element) => /blur\(/.test(getComputedStyle(element).backdropFilter))).toBe(true);
+  expect(await page.locator('.profile').evaluate((element) => getComputedStyle(element).textAlign)).toBe('center');
+  await expect(page.locator('body')).not.toHaveClass(/has-edge/);
+  await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; scrollTo(0, 900); });
+  await expect(page.locator('body')).toHaveClass(/has-edge/);
+  await page.evaluate(() => scrollTo(0, 0));
+  await expect(page.locator('body')).not.toHaveClass(/has-edge/);
+});
+
+test('C51015D: text keeps its contrast on the glass over the wallpaper', async ({page}) => {
+  // axe は背景が写真のときコントラストを測れないので、文字を消した画面から実際の背景の色を測る
+  for (const [width, height] of [[1440, 900], [390, 844]]) {
+    for (const scheme of ['light', 'dark']) {
+      await page.setViewportSize({width, height});
+      await page.emulateMedia({colorScheme: scheme});
+      await page.goto('/C51015D/');
+      await page.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+      const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+      for (const y of [0, Math.round(max / 2), max]) {
+        await page.evaluate((top) => scrollTo(0, top), y);
+        await page.waitForTimeout(300);
+        const texts = await page.evaluate(() => {
+          const found = [];
+          const walker = document.createTreeWalker(document.querySelector('.layout'), NodeFilter.SHOW_TEXT);
+          while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (!node.textContent.trim()) continue;
+            const element = node.parentElement;
+            const style = getComputedStyle(element);
+            const range = document.createRange();
+            range.selectNodeContents(node);
+            for (const rect of range.getClientRects()) {
+              if (rect.width < 2 || rect.top < 0 || rect.bottom > innerHeight) continue;
+              const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+              if (!hit || !(element.contains(hit) || hit.contains(element))) continue;
+              found.push({text: node.textContent.trim().slice(0, 20), color: style.color, large: parseFloat(style.fontSize) >= 24 || (parseFloat(style.fontSize) >= 18.66 && Number(style.fontWeight) >= 700), rect: {x: rect.left, y: rect.top, width: rect.width, height: rect.height}});
+            }
+          }
+          return found;
+        });
+        const hide = await page.addStyleTag({content: '*{transition:none!important;color:transparent!important;text-decoration-color:transparent!important}'});
+        const shot = (await page.screenshot()).toString('base64');
+        await hide.evaluate((element) => element.remove());
+        const low = await page.evaluate(async ({shot, texts}) => {
+          const bitmap = await createImageBitmap(await (await fetch(`data:image/png;base64,${shot}`)).blob());
+          const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+          const context = canvas.getContext('2d');
+          context.drawImage(bitmap, 0, 0);
+          const channel = (value) => { const v = value / 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+          const luminance = (r, g, b) => 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+          const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+          return texts.map((text) => {
+            const [r, g, b] = text.color.match(/[\d.]+/g).map(Number);
+            const color = luminance(r, g, b);
+            const {data} = context.getImageData(Math.floor(text.rect.x), Math.floor(text.rect.y), Math.max(1, Math.ceil(text.rect.width)), Math.max(1, Math.ceil(text.rect.height)));
+            const background = [];
+            for (let index = 0; index < data.length; index += 4) background.push(luminance(data[index], data[index + 1], data[index + 2]));
+            background.sort((a, b) => a - b);
+            const worst = Math.min(ratio(color, background[Math.floor(background.length * 0.03)]), ratio(color, background[Math.floor(background.length * 0.97)]));
+            return {text: text.text, worst: Math.round(worst * 100) / 100, need: text.large ? 3 : 4.5};
+          }).filter((item) => item.worst < item.need);
+        }, {shot, texts});
+        expect(low, `${width}px ${scheme} y=${y}`).toEqual([]);
+      }
+    }
+  }
 });
 
 for (const mode of ['light', 'dark']) {
@@ -192,6 +284,10 @@ test('C51015D: the note sync builds safe article pages, the list and the home ca
   expect(articleHtml).toContain('入れ子の本文');
   expect(articleHtml).toMatch(/<h2 id="abc-123">はじめに<\/h2>/);
   expect(fs.readdirSync(path.join(work, 'blog', 'assets', 'ntest1')).sort()).toEqual(expect.arrayContaining([expect.stringMatching(/^cover-/), expect.stringMatching(/^image-1-/)]));
+  // noteのアイコンを保存して、トップページのアイコンにする
+  expect(output).toContain('noteのアイコンを反映しました');
+  expect(fs.existsSync(path.join(work, 'assets', 'avatar.png'))).toBe(true);
+  expect(fs.readFileSync(path.join(work, 'index.html'), 'utf8')).toMatch(/<!-- AVATAR_START -->\n<div class="avatar" aria-hidden="true"><img src="assets\/avatar\.png\?v=[0-9a-f]{10}" alt="" width="72" height="72"><\/div>\n<!-- AVATAR_END -->/);
 
   // --rebuild で作り直しても同じになる
   const before = articleHtml;
@@ -200,6 +296,7 @@ test('C51015D: the note sync builds safe article pages, the list and the home ca
 
   await serveWork(page, work);
   await page.goto('/c51015d-work/');
+  await expect.poll(() => page.locator('.avatar img').evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
   const homeCards = page.locator('#noteList a.row');
   await expect(homeCards).toHaveCount(2);
   await expect(homeCards.first()).toHaveAttribute('href', 'blog/ntest1.html');

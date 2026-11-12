@@ -10,19 +10,22 @@
 <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css?v=2">
-<script src="assets/theme.js?v=2"></script>
-<script src="assets/site.js?v=2" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=3">
+<script src="assets/theme.js?v=3"></script>
+<script src="assets/site.js?v=3" defer></script>
 </head>
 <body data-page="home">
 <a class="skip" href="#main">本文へ移動</a>
 <div class="layout">
 
-<!-- ===== 左: プロフィールと目次（スマホでは上に並び、目次は上に貼りつくタブになります） ===== -->
+<!-- ===== 左: プロフィールと目次（PCでは画面の上下の真ん中。スマホでは上に並び、目次は上に浮かぶタブになります） ===== -->
 <aside class="sidebar" aria-label="プロフィール">
+<div class="profile">
 <div class="identity">
-<!-- アイコン画像を使うときは「C5」を <img src="assets/avatar.jpg" alt=""> に置き換えます -->
+<!-- アイコンは、noteの同期（scripts/sync-note.mjs）が noteのアイコンを assets/ に保存して、ここに自動で入れます -->
+<!-- AVATAR_START -->
 <div class="avatar" aria-hidden="true">C5</div>
+<!-- AVATAR_END -->
 <h1 class="name">C51015D</h1>
 <p class="handle">@your_id</p>
 <p class="bio">ここに一言の自己紹介が入ります。</p>
@@ -36,6 +39,7 @@
 <li><a href="#links">Links</a></li>
 </ol>
 </nav>
+</div>
 </aside>
 
 <main id="main" class="content">
@@ -79,7 +83,7 @@
 <ul class="rows links">
 <li><div class="row"><span class="row-title">X</span><span class="row-sub muted">未設定</span></div></li>
 <li><div class="row"><span class="row-title">YouTube</span><span class="row-sub muted">未設定</span></div></li>
-<li><div class="row"><span class="row-title">note</span><span class="row-sub muted">未設定</span></div></li>
+<li><a class="row" href="https://note.com/roritec" target="_blank" rel="noopener"><span class="row-title">note</span><span class="row-sub">note.com/roritec</span><span class="row-go" aria-hidden="true">↗</span></a></li>
 </ul>
 </section>
 

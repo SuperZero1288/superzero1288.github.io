@@ -1,7 +1,7 @@
 // C51015D — どのページでも使う動き
 //  - 表示（自動・ライト・ダーク）の切り替え
 //  - トップページ: スマホ用のタブ（左の目次から作る）と、今読んでいる場所の表示
-//  - 上部のバー: スクロールしたら下に区切り線を出す
+//  - 上に浮かぶバー: 本文が下を通るあいだは、画面の上のふちをぼかす
 //  - 404: 開こうとしたアドレスを出す
 (() => {
   'use strict';
@@ -34,9 +34,17 @@
   addEventListener('storage', (event) => { if (event.key === THEME_KEY) applyTheme(readTheme()); });
   applyTheme(readTheme());
 
-  /* ---------- 上部のバー: スクロールしたら区切り線 ---------- */
+  /* ---------- 上に浮かぶバー: スクロールしたら印を付け、本文が下を通るあいだは画面の上のふちをぼかす ---------- */
   const bars = () => document.querySelectorAll('.appbar, .tabbar');
-  const onScroll = () => bars().forEach((bar) => bar.classList.toggle('is-scrolled', scrollY > 4));
+  const onScroll = () => {
+    let edge = false;
+    bars().forEach((bar) => {
+      bar.classList.toggle('is-scrolled', scrollY > 4);
+      // 表示されていて、上に貼りついている（それ以上は上に行かない）バー
+      if (scrollY > 4 && bar.getClientRects().length && bar.getBoundingClientRect().top <= (parseFloat(getComputedStyle(bar).top) || 0) + 0.5) edge = true;
+    });
+    document.body.classList.toggle('has-edge', edge);
+  };
 
   /* ---------- トップページ: スマホ用のタブと、今いる場所 ---------- */
   const toc = document.querySelector('.sidebar .toc');
