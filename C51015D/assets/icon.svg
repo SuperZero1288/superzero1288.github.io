@@ -1,7 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <title>C51015D</title>
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7aa7ff"/><stop offset=".55" stop-color="#ff8fd1"/><stop offset="1" stop-color="#ffd36e"/></linearGradient></defs>
-  <rect x="2" y="2" width="60" height="60" rx="22" fill="url(#g)"/>
-  <rect x="2" y="2" width="60" height="30" rx="22" fill="#fff" opacity=".22"/>
-  <text x="32" y="41" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="25" font-weight="800" fill="#fff">C5</text>
+  <style>.bg{fill:#1c1b18}.fg{fill:#f7f6f3}@media (prefers-color-scheme:dark){.bg{fill:#ecebe7}.fg{fill:#121211}}</style>
+  <rect class="bg" x="4" y="4" width="56" height="56" rx="14"/>
+  <text class="fg" x="32" y="41" text-anchor="middle" font-family="-apple-system,'Helvetica Neue',Arial,sans-serif" font-size="24" font-weight="700">C5</text>
 </svg>

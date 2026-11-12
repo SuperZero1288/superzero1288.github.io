@@ -55,21 +55,33 @@ async function serveWork(page, work) {
 }
 
 for (const width of [320, 390, 1440]) {
-  test(`C51015D: the template home page fits ${width}px with its own dock`, async ({page}) => {
+  test(`C51015D: the template home page fits ${width}px with its section navigation`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await page.goto('/C51015D/');
     await expect(page.locator('h1')).toHaveText('C51015D');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
-    const dock = page.getByRole('navigation', {name: 'サイトのメニュー'});
-    // スマホでは下のタブバーに収めるため、左上の「C5」は出さない
-    await expect(dock.getByRole('link')).toHaveText([...(width < 800 ? [] : ['C5']), 'About', 'Works', 'note記事', 'Links']);
-    await expect(page.locator('#noteList .note-empty')).toBeVisible();
+    // PCは左の目次、スマホは上に貼りつくタブ
+    const nav = page.getByRole('navigation', {name: width < 900 ? 'ページ内の移動（タブ）' : 'ページ内の移動', exact: true});
+    await expect(nav.getByRole('link')).toHaveText(['About', 'Works', 'note記事', 'Links']);
+    await expect(page.locator('#noteList .empty')).toHaveText('まだ記事はありません。');
     expect(await noHorizontalOverflow(page)).toBe(true);
-    const box = await dock.boundingBox();
-    if (width < 800) expect(box.y + box.height).toBeGreaterThan(900 - 90);
-    else expect(box.x).toBeLessThan(40);
+    await nav.getByRole('link', {name: 'Links'}).click();
+    await expect(page.locator('#links')).toBeInViewport();
+    await expect(nav.getByRole('link', {name: 'Links'})).toHaveAttribute('aria-current', 'true');
+    if (width < 900) expect((await nav.boundingBox()).y).toBeLessThan(2);
   });
 }
+
+test('C51015D: glass is used only for the bars that content scrolls under', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/C51015D/');
+  await page.evaluate(() => scrollTo(0, 600));
+  const glass = await page.evaluate(() => [...document.querySelectorAll('body *')]
+    .filter((element) => getComputedStyle(element).backdropFilter !== 'none')
+    .map((element) => element.className));
+  expect(glass).toEqual(['tabbar is-scrolled']);
+  await expect(page.locator('.blob, .glass, .bento')).toHaveCount(0);
+});
 
 for (const mode of ['light', 'dark']) {
   for (const url of ['/C51015D/', '/C51015D/blog/', '/C51015D/404.html']) {
@@ -81,17 +93,20 @@ for (const mode of ['light', 'dark']) {
   }
 }
 
-test('C51015D: the theme toggle keeps its own storage, apart from the other site', async ({page}) => {
+test('C51015D: the appearance setting keeps its own storage, apart from the other site', async ({page}) => {
   await page.emulateMedia({colorScheme: 'light'});
   await page.goto('/C51015D/');
-  const toggle = page.locator('#themeToggle');
-  await expect(toggle).toHaveAccessibleName('ダークモードにする');
-  await toggle.click();
+  await expect(page.getByRole('radio', {name: '自動'})).toBeChecked();
+  await page.getByRole('radio', {name: 'ダーク'}).check();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.evaluate(() => Object.keys(localStorage))).toEqual(['c51015d:theme']);
   await page.goto('/C51015D/blog/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await expect(page.locator('#themeToggle')).toHaveAccessibleName('ライトモードにする');
+  await expect(page.getByRole('radio', {name: 'ダーク'})).toBeChecked();
+  // 「自動」に戻すと保存を消して、OSの設定に従う
+  await page.getByRole('radio', {name: '自動'}).check();
+  await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/);
+  expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
 });
 
 test('C51015D: the site and the other site do not link to each other', async () => {
@@ -156,7 +171,7 @@ test('C51015D: the note sync builds safe article pages, the list and the home ca
 
   await serveWork(page, work);
   await page.goto('/c51015d-work/');
-  const homeCards = page.locator('#noteList .note-card');
+  const homeCards = page.locator('#noteList a.row');
   await expect(homeCards).toHaveCount(2);
   await expect(homeCards.first()).toHaveAttribute('href', 'blog/ntest1.html');
   await expect(homeCards.nth(1)).toHaveAttribute('href', 'https://note.com/testuser/n/nbroken');
@@ -166,9 +181,11 @@ test('C51015D: the note sync builds safe article pages, the list and the home ca
   await expect.poll(() => page.locator('.article-body img').evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth > 0))).toBe(true);
   expect(await page.evaluate(() => document.getElementById('abc-123')?.textContent)).toBe('はじめに');
   expect(await audit(page)).toEqual([]);
-  await page.locator('.article-end a', {hasText: '記事一覧へ'}).click();
+  await expect(page.locator('.appbar-action')).toHaveAttribute('href', 'https://note.com/testuser/n/ntest1');
+  await page.locator('.article-end a', {hasText: '記事一覧'}).click();
   await expect(page).toHaveURL(/\/c51015d-work\/blog\/$/);
-  await expect(page.locator('#articleList .note-card')).toHaveCount(2);
-  await expect(page.locator('#articleList .note-desc').first()).toContainText('テスト用の記事');
+  await expect(page.locator('#articleList a.row')).toHaveCount(2);
+  await expect(page.locator('#articleList .row-sub').first()).toContainText('テスト用の記事');
+  await expect(page.locator('#articleList a.row').nth(1)).toContainText('note ↗');
   expect(await noHorizontalOverflow(page)).toBe(true);
 });

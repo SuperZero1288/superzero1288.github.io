@@ -1,29 +1,31 @@
 /* ZERO — 下のページ（リンク集・note記事・アセット配布・404）の共通レイアウト。色や部品は base.css を使います。 */
 
 /* ===== ページの骨組み ===== */
-.stage-page .stage-blur{--blur:3px;--veil:14%}
+/* 下のページは文字が背景の図形に直接重なるので、図形はぼかしてうすい色にとどめる */
+.stage-page .stage-blur{--blur:28px;--veil:62%}
 .page-main{position:relative;z-index:1;width:min(1180px,calc(100% - 2 * clamp(12px,3vw,40px)));margin:0 auto;padding:88px 0 32px}
-.page-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(16px,3vw,40px);margin:0 0 16px;padding:clamp(22px,4vw,44px);background:var(--glass);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);border-radius:clamp(28px,4vw,48px);box-shadow:var(--elev-2)}
+/* 見出しはカードにせず、ページの上に直接置く */
+.page-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:clamp(16px,3vw,40px);margin:0 0 20px;padding:clamp(8px,2vw,20px) clamp(4px,1vw,12px) 8px}
 .page-hero-copy{display:grid;justify-items:start;gap:14px;min-width:0}
-.page-hero .assist-chip{margin:0}
-.page-title{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2.2rem,6vw,4.4rem);line-height:1.15;overflow-wrap:anywhere}
+.page-hero .eyebrow{color:var(--on-surface-variant)}
+.page-title{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2rem,4.6vw,3.2rem);line-height:1.2;overflow-wrap:anywhere}
 .page-title-pop{display:inline-block;margin-left:.08em;padding:.02em .22em .08em;background:var(--primary-container);color:var(--on-primary-container);border-radius:.36em;rotate:-2deg;transition:border-radius .6s var(--spring),rotate .6s var(--spring)}
 @media(hover:hover){.page-title-pop:hover{border-radius:.12em;rotate:2deg}}
 .page-lead{max-width:42em;margin:0;font-weight:700;color:var(--on-surface-variant)}
 .page-actions{display:flex;flex-wrap:wrap;gap:10px}
-.page-hero-shape{display:block;width:clamp(120px,17vw,210px);aspect-ratio:1;background:var(--tone,var(--pop-yellow));clip-path:var(--shape,var(--shape-cookie12));animation:spin 40s linear infinite;transition:clip-path .8s var(--spring)}
-@media(hover:hover){.page-hero:hover .page-hero-shape{clip-path:var(--hover-shape,var(--shape-flower))}}
 .page-screen{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-inline:0}
+/* パネルの中ではカードを重ねず、見出しと余白で区切る */
+.page-screen .card{padding:0;background:none;border-radius:0}
+.page-screen>section+section{padding-top:20px;border-top:1px solid var(--outline-variant)}
 .page-section-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px;margin:0 0 14px}
-.page-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-top:16px;padding:18px 24px;background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:999px;font-family:var(--flex);font-weight:800;font-variation-settings:'wdth' 110}
-.page-footer a{color:inherit;font-weight:900;text-decoration:none}
+.page-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;margin-top:24px;padding:18px 8px 0;border-top:1px solid var(--outline-variant);color:var(--on-surface-variant);font-family:var(--flex);font-weight:700;font-size:.85rem;font-variation-settings:'wdth' 110}
+.page-footer a{color:var(--on-surface);font-weight:900;text-decoration:none}
 @media(hover:hover){.page-footer a:hover{text-decoration:underline}}
 
 /* ===== リンク集 ===== */
 .link-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:16px}
 .link-group-grid>.card:first-child{grid-column:1 / -1}
-.group-title{display:flex;align-items:center;gap:12px;margin:0 0 14px;font-family:var(--display);font-weight:400;font-size:1.25rem;line-height:1.3}
-.group-shape{flex:0 0 auto;width:34px;height:34px;background:var(--tone);clip-path:var(--shape);animation:spin 24s linear infinite}
+.group-title{margin:0 0 12px;font-family:var(--display);font-weight:400;font-size:1.2rem;line-height:1.3}
 .link-list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
 .link-group-grid>.card:first-child .link-list{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .link-row{display:flex;align-items:center;gap:14px;min-height:72px;padding:10px 16px 10px 10px;background:var(--surface-container-high);border-radius:24px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .2s var(--effects),translate .45s var(--spring)}
@@ -64,10 +66,8 @@
 .article-meta{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
 .article-meta li{padding:2px 12px;background:var(--secondary-container);color:var(--on-secondary-container);border-radius:10px;font-weight:700;font-size:.82rem}
 .article-meta time{font-family:var(--flex);font-weight:800}
-.article-cover{margin:0;justify-self:stretch;rotate:2deg;transition:rotate .6s var(--spring),border-radius .6s var(--spring)}
-.article-cover img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:36px;box-shadow:var(--elev-2);transition:border-radius .6s var(--spring)}
-@media(hover:hover){.article-hero:hover .article-cover{rotate:-1deg}}
-@media(hover:hover){.article-hero:hover .article-cover img{border-radius:64px 18px 64px 18px}}
+.article-cover{margin:0;justify-self:stretch}
+.article-cover img{width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;border-radius:20px}
 .article-sheet{max-width:860px;margin:0 auto;padding:clamp(20px,4vw,48px);background:var(--surface-container-lowest);border-radius:clamp(28px,4vw,40px);box-shadow:var(--elev-1)}
 .article-body{font-size:1.02rem;line-height:1.95;overflow-wrap:anywhere}
 .article-body>:first-child{margin-top:0}
@@ -158,13 +158,11 @@
 .latest-grid{grid-template-columns:1fr 1fr}
 .latest-grid>.latest-card:last-child{grid-column:1 / -1}
 .article-hero{grid-template-columns:1fr}
-.article-cover{order:-1;rotate:0deg;max-width:640px}
+.article-cover{order:-1;max-width:640px}
 }
 @media(max-width:700px){
 .page-hero{grid-template-columns:1fr}
-.page-hero-shape{display:none}
 .link-group-grid,.latest-grid{grid-template-columns:1fr}
-.page-footer{border-radius:28px}
 }
 @media(max-width:560px){
 .page-main{padding-top:76px}

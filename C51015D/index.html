@@ -4,90 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>C51015D</title>
-<meta name="description" content="C51015Dのウェブサイトです。（準備中）">
+<meta name="description" content="C51015Dのウェブサイトです。">
 <!-- 中身が決まるまでは検索結果に出さない設定です。公開するときはこの行を消してください（README.md） -->
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#eef1f8">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/style.css?v=1">
-<script src="assets/theme.js?v=1"></script>
-<script src="assets/site.js?v=1" defer></script>
+<link rel="stylesheet" href="assets/style.css?v=2">
+<script src="assets/theme.js?v=2"></script>
+<script src="assets/site.js?v=2" defer></script>
 </head>
-<body data-root="./" data-page="home">
+<body data-page="home">
 <a class="skip" href="#main">本文へ移動</a>
-<div class="backdrop" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+<div class="layout">
 
-<main id="main" class="page">
-
-<!-- ===== プロフィール ===== -->
-<header class="hero glass" id="top">
-<!-- アイコン画像を使うときは、文字の「C5」を <img src="assets/avatar.jpg" alt=""> に置き換えます -->
-<div class="hero-avatar" aria-hidden="true">C5</div>
-<div class="hero-copy">
-<p class="status-chip">準備中のサイトです</p>
-<h1 class="hero-name">C51015D</h1>
-<p class="hero-handle">@your_id</p>
-<p class="hero-lead placeholder">ここに一言の自己紹介が入ります。好きなことや、このサイトでしていることを書きましょう。</p>
-<ul class="hero-tags" aria-label="すきなこと">
-<li class="pill">タグ 1</li>
-<li class="pill">タグ 2</li>
-<li class="pill">タグ 3</li>
-</ul>
+<!-- ===== 左: プロフィールと目次（スマホでは上に並び、目次は上に貼りつくタブになります） ===== -->
+<aside class="sidebar" aria-label="プロフィール">
+<div class="identity">
+<!-- アイコン画像を使うときは「C5」を <img src="assets/avatar.jpg" alt=""> に置き換えます -->
+<div class="avatar" aria-hidden="true">C5</div>
+<h1 class="name">C51015D</h1>
+<p class="handle">@your_id</p>
+<p class="bio">ここに一言の自己紹介が入ります。</p>
+<p class="notice">このサイトは準備中です。</p>
 </div>
-</header>
+<nav class="toc" aria-label="ページ内の移動">
+<ol>
+<li><a href="#about">About</a></li>
+<li><a href="#works">Works</a></li>
+<li><a href="#note">note記事</a></li>
+<li><a href="#links">Links</a></li>
+</ol>
+</nav>
+</aside>
+
+<main id="main" class="content">
 
 <!-- ===== About ===== -->
-<section class="section card glass" id="about" aria-labelledby="aboutTitle">
-<div class="section-head"><div><p class="kicker">ABOUT</p><h2 class="section-title" id="aboutTitle">自己紹介</h2></div></div>
-<div class="about-grid">
-<div class="about-text placeholder">
-<p>ここに自己紹介の文章が入ります。どんな人なのか、何をしているのかを、いくつかの段落で書けます。</p>
-<p>2つ目の段落です。最近ハマっていることや、これから作りたいものなど。</p>
+<section class="section" id="about" aria-labelledby="aboutTitle">
+<div class="section-head"><h2 id="aboutTitle">About</h2></div>
+<div class="prose">
+<p class="muted">ここに自己紹介の文章が入ります。どんな人なのか、何をしているのかを書きます。</p>
+<p class="muted">2つ目の段落です。最近ハマっていることや、これから作りたいものなど。</p>
 </div>
 <dl class="facts">
-<div><dt>名前</dt><dd>C51015D</dd></div>
-<div><dt>すきなこと</dt><dd class="placeholder">未設定</dd></div>
-<div><dt>活動</dt><dd class="placeholder">未設定</dd></div>
-<div><dt>使っているもの</dt><dd class="placeholder">未設定</dd></div>
+<div><dt>すきなこと</dt><dd class="muted">未設定</dd></div>
+<div><dt>活動</dt><dd class="muted">未設定</dd></div>
+<div><dt>使っているもの</dt><dd class="muted">未設定</dd></div>
 </dl>
-</div>
 </section>
 
-<!-- ===== Works ===== -->
-<section class="section card glass" id="works" aria-labelledby="worksTitle">
-<div class="section-head"><div><p class="kicker">WORKS</p><h2 class="section-title" id="worksTitle">作ったもの</h2></div><p class="section-sub">大きいタイルほど目立ちます</p></div>
-<ul class="bento">
-<li class="glass"><span class="num">01</span><strong>作品のタイトル</strong><small>ここに作品の説明が入ります</small></li>
-<li class="glass"><span class="num">02</span><strong>作品のタイトル</strong><small>ここに作品の説明が入ります</small></li>
-<li class="glass"><span class="num">03</span><strong>作品のタイトル</strong><small>説明</small></li>
-<li class="glass"><span class="num">04</span><strong>作品のタイトル</strong><small>説明</small></li>
-</ul>
+<!-- ===== Works（作品ができたら、サンプルの行を書きかえるか、同じ形で行を足します） ===== -->
+<section class="section" id="works" aria-labelledby="worksTitle">
+<div class="section-head"><h2 id="worksTitle">Works</h2></div>
+<ol class="rows works">
+<li><div class="row"><span class="row-index">01</span><span class="row-main"><span class="row-title">作品のタイトル<span class="sample">サンプル</span></span><span class="row-sub">どんな作品かを1行で説明します。</span></span><span class="row-meta num">2026</span></div></li>
+<li><div class="row"><span class="row-index">02</span><span class="row-main"><span class="row-title">作品のタイトル<span class="sample">サンプル</span></span><span class="row-sub">リンクにするときは div を a に変えて href を書きます。</span></span><span class="row-meta num">2026</span></div></li>
+</ol>
 </section>
 
-<!-- ===== note（scripts/sync-note.mjs が自動で書きかえます） ===== -->
-<section class="section card glass" id="note" aria-labelledby="noteTitle">
-<div class="section-head"><div><p class="kicker">NOTE</p><h2 class="section-title" id="noteTitle">note記事</h2></div><p class="section-sub">noteから自動で同期します</p></div>
-<ol class="note-list" id="noteList">
+<!-- ===== note記事（scripts/sync-note.mjs が自動で書きかえます） ===== -->
+<section class="section" id="note" aria-labelledby="noteTitle">
+<div class="section-head"><h2 id="noteTitle">note記事</h2><a href="blog/">すべての記事 →</a></div>
+<ol class="rows posts" id="noteList">
 <!-- NOTE_LIST_START -->
-<li class="note-empty">まだ記事はありません。config.json に noteのアカウントを書くと、ここに新しい記事が並びます。</li>
+<li class="empty">まだ記事はありません。</li>
 <!-- NOTE_LIST_END -->
 </ol>
-<p class="note-more"><a class="text-link" href="blog/">記事一覧へ →</a></p>
 </section>
 
-<!-- ===== Links ===== -->
-<section class="section card glass" id="links" aria-labelledby="linksTitle">
-<div class="section-head"><div><p class="kicker">LINKS</p><h2 class="section-title" id="linksTitle">リンク</h2></div><p class="section-sub">外部サイトは新しいタブで開きます</p></div>
-<!-- 決まったら <li><a class="link-row" href="https://..." target="_blank" rel="noopener">…</a></li> の形にします -->
-<ul class="link-list">
-<li class="link-row"><span class="link-icon" aria-hidden="true">X</span><span class="link-copy"><strong>X (Twitter)</strong><small class="placeholder">未設定</small></span></li>
-<li class="link-row"><span class="link-icon" aria-hidden="true">▶</span><span class="link-copy"><strong>YouTube</strong><small class="placeholder">未設定</small></span></li>
-<li class="link-row"><span class="link-icon" aria-hidden="true">n</span><span class="link-copy"><strong>note</strong><small class="placeholder">未設定</small></span></li>
-<li class="link-row"><span class="link-icon" aria-hidden="true">＋</span><span class="link-copy"><strong>そのほか</strong><small class="placeholder">未設定</small></span></li>
+<!-- ===== Links（決まったら <li><a class="row" href="https://..." target="_blank" rel="noopener">…</a></li> の形にします） ===== -->
+<section class="section" id="links" aria-labelledby="linksTitle">
+<div class="section-head"><h2 id="linksTitle">Links</h2><span class="meta">外部サイトは新しいタブで開きます</span></div>
+<ul class="rows links">
+<li><div class="row"><span class="row-title">X</span><span class="row-sub muted">未設定</span></div></li>
+<li><div class="row"><span class="row-title">YouTube</span><span class="row-sub muted">未設定</span></div></li>
+<li><div class="row"><span class="row-title">note</span><span class="row-sub muted">未設定</span></div></li>
 </ul>
 </section>
 
-<footer class="foot glass"><span>© C51015D</span><a href="#top">ページの先頭へ ↑</a></footer>
+<footer class="footer">
+<span>© C51015D</span>
+<fieldset class="appearance">
+<legend>表示</legend>
+<div class="segmented">
+<label><input type="radio" name="appearance" value="auto" checked><span>自動</span></label>
+<label><input type="radio" name="appearance" value="light"><span>ライト</span></label>
+<label><input type="radio" name="appearance" value="dark"><span>ダーク</span></label>
+</div>
+</fieldset>
+</footer>
 </main>
+</div>
 </body>
 </html>

@@ -7,31 +7,41 @@
 <meta name="description" content="C51015Dがnoteに書いた記事の一覧です。">
 <!-- 中身が決まるまでは検索結果に出さない設定です。公開するときはこの行を消してください（README.md） -->
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#eef1f8">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1">
-<script src="../assets/theme.js?v=1"></script>
-<script src="../assets/site.js?v=1" defer></script>
+<link rel="stylesheet" href="../assets/style.css?v=2">
+<script src="../assets/theme.js?v=2"></script>
+<script src="../assets/site.js?v=2" defer></script>
 </head>
-<body data-root="../" data-page="blog">
+<body data-page="blog">
 <a class="skip" href="#main">本文へ移動</a>
-<div class="backdrop" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
-<main id="main" class="page">
-<header class="page-head glass">
-<a class="back-link" href="../">← C51015D</a>
-<p class="kicker">NOTE</p>
-<h1>note記事</h1>
-<p class="section-sub">noteに書いた記事を、このサイトの中で読めます。新しい記事は自動で追加されます。</p>
+<header class="appbar">
+<a class="appbar-back" href="../">← C51015D</a>
+<span class="appbar-title" aria-hidden="true">note記事</span>
+<span></span>
 </header>
-<section class="section card glass" aria-labelledby="listTitle">
-<div class="section-head"><h2 class="section-title" id="listTitle">記事一覧</h2><p class="section-sub">新しい順</p></div>
-<ol class="article-list" id="articleList">
+<main id="main" class="doc">
+<div class="doc-head">
+<h1>note記事</h1>
+<p class="doc-meta">noteに書いた記事を、このサイトの中で読めます。新しい順に並んでいます。</p>
+</div>
+<ol class="rows posts" id="articleList">
 <!-- ARTICLE_LIST_START -->
-<li class="note-empty">まだ記事はありません。config.json に noteのアカウントを書くと、ここに記事が並びます。</li>
+<li class="empty">まだ記事はありません。</li>
 <!-- ARTICLE_LIST_END -->
 </ol>
-</section>
-<footer class="foot glass"><span>© C51015D</span><a href="../">ホームへ</a></footer>
+<footer class="footer">
+<a href="../">C51015D</a>
+<fieldset class="appearance">
+<legend>表示</legend>
+<div class="segmented">
+<label><input type="radio" name="appearance" value="auto" checked><span>自動</span></label>
+<label><input type="radio" name="appearance" value="light"><span>ライト</span></label>
+<label><input type="radio" name="appearance" value="dark"><span>ダーク</span></label>
+</div>
+</fieldset>
+</footer>
 </main>
 </body>
 </html>

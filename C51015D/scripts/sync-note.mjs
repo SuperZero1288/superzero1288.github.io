@@ -193,62 +193,73 @@ function restoreTocAnchors(html) {
 /* ---------- ページのひな形 ---------- */
 const BODY_START = '<!-- ARTICLE_BODY_START -->';
 const BODY_END = '<!-- ARTICLE_BODY_END -->';
-const headCommon = (prefix) => `<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-${noindex ? '<meta name="robots" content="noindex">\n' : ''}<meta name="theme-color" content="#eef1f8">
-<link rel="icon" href="${prefix}assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="${prefix}assets/style.css?v=1">
-<script src="${prefix}assets/theme.js?v=1"></script>
-<script src="${prefix}assets/site.js?v=1" defer></script>`;
-const backdrop = '<div class="backdrop" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>';
+const appearanceControl = `<fieldset class="appearance">
+<legend>表示</legend>
+<div class="segmented">
+<label><input type="radio" name="appearance" value="auto" checked><span>自動</span></label>
+<label><input type="radio" name="appearance" value="light"><span>ライト</span></label>
+<label><input type="radio" name="appearance" value="dark"><span>ダーク</span></label>
+</div>
+</fieldset>`;
 
 function articleDocument(article, bodyHtml) {
   const title = escapeHtml(article.title);
   const source = escapeHtml(article.sourceUrl);
-  const cover = article.coverPath ? `<figure class="article-cover"><img src="${escapeHtml(article.coverPath)}" alt="" fetchpriority="high"></figure>\n` : '';
+  const cover = article.coverPath ? `<figure class="doc-cover"><img src="${escapeHtml(article.coverPath)}" alt="" fetchpriority="high"></figure>\n` : '';
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
-${headCommon('../')}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>${title} | ${escapeHtml(siteName)}</title>
 <meta name="description" content="${escapeHtml(article.description.slice(0, 160))}">
-<link rel="canonical" href="${source}">
+${noindex ? '<meta name="robots" content="noindex">\n' : ''}<link rel="canonical" href="${source}">
+<meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121211" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=2">
+<script src="../assets/theme.js?v=2"></script>
+<script src="../assets/site.js?v=2" defer></script>
 </head>
-<body data-root="../" data-page="article">
+<body data-page="article">
 <a class="skip" href="#main">本文へ移動</a>
-${backdrop}
-<main id="main" class="page">
-<article aria-labelledby="articleTitle">
-<header class="page-head glass">
-<a class="back-link" href="./">← 記事一覧</a>
-<h1 id="articleTitle">${title}</h1>
-<p class="article-meta"><time datetime="${escapeHtml(isoDate(article.publishedAt))}">${formatDate(article.publishedAt)}</time><span>noteから自動同期</span></p>
-${cover}<div class="actions"><a class="pill is-accent" href="${source}" target="_blank" rel="noopener">noteで見る ↗</a><a class="pill" href="../">ホームへ</a></div>
+<header class="appbar">
+<a class="appbar-back" href="./">← 記事一覧</a>
+<span class="appbar-title" aria-hidden="true">${title}</span>
+<a class="appbar-action" href="${source}" target="_blank" rel="noopener">noteで開く ↗</a>
 </header>
-<div class="article-sheet glass">
+<main id="main" class="doc">
+<article aria-labelledby="articleTitle">
+<div class="doc-head">
+<h1 id="articleTitle">${title}</h1>
+<p class="doc-meta"><time class="num" datetime="${escapeHtml(isoDate(article.publishedAt))}">${formatDate(article.publishedAt)}</time><span>noteから同期</span></p>
+${cover}</div>
 <div class="article-body">
 ${BODY_START}${bodyHtml}${BODY_END}
 </div>
-<footer class="article-end"><a class="text-link" href="${source}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a><a class="text-link" href="./">記事一覧へ →</a></footer>
-</div>
+<footer class="article-end"><a href="./">← 記事一覧</a><a href="${source}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a></footer>
 </article>
-<footer class="foot glass"><span>© ${escapeHtml(siteName)}</span><a href="../">ホームへ</a></footer>
+<footer class="footer">
+<a href="../">${escapeHtml(siteName)}</a>
+${appearanceControl}
+</footer>
 </main>
 </body>
 </html>
 `;
 }
 
-// 記事カード（prefix はページから blog/ フォルダまでの相対パス）
-function articleCard(article, prefix, {description = false} = {}) {
+// 記事の行（prefix はページから blog/ フォルダまでの相対パス）。日付・タイトルと説明・サムネイルの3列
+function postRow(article, prefix, {description = false} = {}) {
   const href = article.generated ? `${prefix}${article.id}.html` : article.sourceUrl;
   const image = article.coverPath ? `${prefix}${article.coverPath}` : article.thumbnail;
   const external = article.generated ? '' : ' target="_blank" rel="noopener"';
   const text = (article.description || '').replace(/\s+/g, ' ').trim();
   const excerpt = text.length > 120 ? `${text.slice(0, 120)}…` : text;
-  return `<li><a class="note-card" href="${escapeHtml(href)}"${external}>
-${image ? `<span class="note-cover"><img src="${escapeHtml(image)}" alt="" loading="lazy"></span>\n` : ''}<span class="note-copy"><time datetime="${escapeHtml(isoDate(article.publishedAt))}">${formatDate(article.publishedAt)}</time><strong>${escapeHtml(article.title)}</strong>${description && excerpt ? `<span class="note-desc">${escapeHtml(excerpt)}</span>` : ''}<small>${article.generated ? 'サイト内で読む →' : 'noteで読む ↗'}</small></span>
-</a></li>`;
+  const sub = description && excerpt ? `<span class="row-sub">${escapeHtml(excerpt)}</span>` : '';
+  const mark = article.generated ? '' : ' <span class="external">note ↗</span>';
+  const thumb = image ? `<span class="row-thumb"><img src="${escapeHtml(image)}" alt="" loading="lazy"></span>` : '';
+  return `<li><a class="row" href="${escapeHtml(href)}"${external}><time class="num" datetime="${escapeHtml(isoDate(article.publishedAt))}">${formatDate(article.publishedAt)}</time><span class="row-main"><span class="row-title">${escapeHtml(article.title)}${mark}</span>${sub}</span>${thumb}</a></li>`;
 }
 
 async function replaceBetweenMarkers(relativePath, startMarker, endMarker, content) {
@@ -261,11 +272,11 @@ async function replaceBetweenMarkers(relativePath, startMarker, endMarker, conte
 }
 
 async function updateLists(articles) {
-  const empty = '<li class="note-empty">まだ記事はありません。</li>';
+  const empty = '<li class="empty">まだ記事はありません。</li>';
   await replaceBetweenMarkers('index.html', '<!-- NOTE_LIST_START -->', '<!-- NOTE_LIST_END -->',
-    articles.length ? articles.slice(0, homeCount).map((article) => articleCard(article, 'blog/')).join('\n') : empty);
+    articles.length ? articles.slice(0, homeCount).map((article) => postRow(article, 'blog/', {description: true})).join('\n') : empty);
   await replaceBetweenMarkers(path.join('blog', 'index.html'), '<!-- ARTICLE_LIST_START -->', '<!-- ARTICLE_LIST_END -->',
-    articles.length ? articles.map((article) => articleCard(article, '', {description: true})).join('\n') : empty);
+    articles.length ? articles.map((article) => postRow(article, '', {description: true})).join('\n') : empty);
 }
 
 async function writeArticlePage(article, body) {

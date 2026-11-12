@@ -2,7 +2,16 @@
 
 `https://superzero1288.github.io/C51015D/` で公開している、独立したサイトです。
 ぜろくんでんせつ のリポジトリに置いていますが、あちらのサイトからはリンクしておらず、サイトマップにも載せていません。
-デザインは、ぜろくんでんせつ のサイトの前のデザインにあった「LiquidGlass」（すりガラス）をもとに、レイアウトを独自にしたものです。
+デザインは、ぜろくんでんせつ のサイトの前のデザインにあった「LiquidGlass」（すりガラス）をもとにしています。
+
+## デザインの考え方
+
+- 主役は中身（文章・作品・記事・リンク）。カードを並べず、細い線で区切った一覧と表で見せます。
+- すりガラスは、本文がその下をスクロールしていく上部のバー（スマホのタブ、記事ページのバー）だけに使います。
+- 色は「背景・文字・補助の文字・線・アクセント」の5つ。アクセント（朱色）は「今いる場所」と「操作できるもの」にだけ使います。
+- トップページはPCだと左にプロフィールと目次、右に本文。スマホではプロフィールが上に来て、目次は上に貼りつくタブになります。
+- 記事一覧・記事・404は、上のバーと1つの列だけの読みやすいページです。
+- 表示（自動・ライト・ダーク）はページのいちばん下で切り替えられます。「自動」はOSの設定に従います。
 
 今は中身が決まっていないので、テンプレート（仮の文章）になっています。
 
@@ -10,13 +19,13 @@
 
 | ファイル | 内容 |
 |---|---|
-| `index.html` | トップページ（プロフィール・About・Works・note記事・Links） |
+| `index.html` | トップページ（左にプロフィールと目次、右に About・Works・note記事・Links） |
 | `blog/index.html` | note記事の一覧 |
 | `blog/記事ID.html` | noteから同期した記事（自動で作られます） |
 | `404.html` | このサイトの中で存在しないページを開いたときの画面 |
 | `config.json` | サイト名と、noteの同期の設定 |
-| `assets/style.css` | 見た目（色は先頭の `:root`、ガラスは `.glass`） |
-| `assets/site.js` | 背景・メニュー（ドック）・ダーク/ライト切り替え |
+| `assets/style.css` | 見た目（色は先頭の `:root`。すりガラスは `.appbar` と `.tabbar` だけ） |
+| `assets/site.js` | 表示の切り替え・スマホのタブ・今いる場所の表示 |
 | `assets/theme.js` | 保存したダーク/ライトを最初に反映 |
 | `assets/icon.svg` | タブのアイコン |
 | `scripts/sync-note.mjs` | noteの記事を同期するスクリプト |
@@ -27,10 +36,9 @@
 
 ## 中身を書きかえる
 
-- `index.html` を開き、`<!-- ===== プロフィール ===== -->` などの見出しの下にある仮の文章（灰色で表示される部分、`class="placeholder"`）を書きかえます。
-- アイコン画像は `assets/` に置き、`<div class="hero-avatar">C5</div>` の中を `<img src="assets/avatar.jpg" alt="">` にします。
-- リンクは、`<li class="link-row">…</li>` を `<li><a class="link-row" href="https://..." target="_blank" rel="noopener">…</a></li>` の形にします。
-- メニューの左上の「C5」は `assets/site.js` の `BRAND` で変えられます。
+- `index.html` を開き、各セクションの仮の文章（灰色で表示される部分、`class="muted"`）と、Works の「サンプル」の行を書きかえます。
+- アイコン画像は `assets/` に置き、`<div class="avatar">C5</div>` の中を `<img src="assets/avatar.jpg" alt="">` にします。
+- リンク（Links・Works）は、行の `<div class="row">…</div>` を `<a class="row" href="https://..." target="_blank" rel="noopener">…</a>` に変えます。最後に `<span class="row-go" aria-hidden="true">↗</span>` を足すと、外部リンクの印が付きます。
 
 ## noteの記事を同期する
 
