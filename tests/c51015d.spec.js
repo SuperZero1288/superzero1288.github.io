@@ -32,6 +32,10 @@ async function audit(page) {
   const result = await new AxeBuilder({page}).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
   return result.violations.map((item) => ({id: item.id, targets: item.nodes.map((node) => node.target)}));
 }
+// 本番のnoteから同期した記事（まだなければ空）
+const readSyncedArticles = () => {
+  try { return JSON.parse(fs.readFileSync(path.join(siteDir, 'blog', 'articles.json'), 'utf8')); } catch { return []; }
+};
 const noHorizontalOverflow = (page) => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
 
 // 同期スクリプトを、作業用にコピーしたサイトで動かす（リポジトリのファイルは変えない）
@@ -77,7 +81,10 @@ for (const width of [320, 390, 1440]) {
     // PCは左の目次、スマホは上に貼りつくタブ
     const nav = page.getByRole('navigation', {name: width < 900 ? 'ページ内の移動（タブ）' : 'ページ内の移動', exact: true});
     await expect(nav.getByRole('link')).toHaveText(['About', 'Works', 'note記事', 'Links']);
-    await expect(page.locator('#noteList .empty')).toHaveText('まだ記事はありません。');
+    // note欄: 同期した記事があれば新しい順に最大3件、なければ「まだ記事はありません。」
+    const synced = readSyncedArticles();
+    if (synced.length) await expect(page.locator('#noteList a.row')).toHaveCount(Math.min(synced.length, 3));
+    else await expect(page.locator('#noteList .empty')).toHaveText('まだ記事はありません。');
     expect(await noHorizontalOverflow(page)).toBe(true);
     // 目次で選んだ場所が「今いる場所」になる（短くて画面の上まで来られないセクションでも）
     for (const name of ['Links', 'note記事']) {
@@ -267,8 +274,12 @@ test('C51015D: an unknown address inside the site shows its own 404 page', async
 test('C51015D: the note sync does nothing until an account is set', async () => {
   const {work, output} = runSync([], {C51015D_NOTE_USER: ''});
   expect(output).toContain('同期しませんでした');
-  expect(fs.readFileSync(path.join(work, 'index.html'), 'utf8')).toBe(fs.readFileSync(path.join(siteDir, 'index.html'), 'utf8'));
-  expect(fs.existsSync(path.join(work, 'blog', 'articles.json'))).toBe(false);
+  // どのファイルも書きかえない
+  for (const file of ['index.html', path.join('blog', 'index.html'), path.join('blog', 'articles.json')]) {
+    const original = path.join(siteDir, file);
+    if (fs.existsSync(original)) expect(fs.readFileSync(path.join(work, file), 'utf8'), file).toBe(fs.readFileSync(original, 'utf8'));
+    else expect(fs.existsSync(path.join(work, file)), file).toBe(false);
+  }
 });
 
 test('C51015D: the note sync builds safe article pages, the list and the home cards', async ({page}) => {
