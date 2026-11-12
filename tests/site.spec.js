@@ -720,6 +720,67 @@ test('the homepage stops its motion when reduced motion is requested', async ({p
   expect(state.hidden).toBe(0);
 });
 
+test('the terminal only takes half-width letters, numbers and symbols, even with Japanese input on', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  await page.evaluate(() => localStorage.setItem('zero-terminal-history', JSON.stringify(['ｌｓ　ーａ'])));
+  await page.locator('#leftTab').click();
+  await page.locator('[data-launch-app="terminal"]').click();
+  const terminal = page.locator('.app-window[data-app="terminal"]');
+  const prompt = terminal.locator('input');
+  await expect(prompt).toBeFocused();
+  // スマホでは英字のキーボードを出す
+  await expect(prompt).toHaveAttribute('inputmode', 'email');
+
+  // 日本語入力（IME）を Chrome DevTools Protocol で再現する
+  const cdp = await page.context().newCDPSession(page);
+  const imeKey = async (code, composing) => {
+    await cdp.send('Input.dispatchKeyEvent', {type: 'rawKeyDown', key: 'Process', code, windowsVirtualKeyCode: 229, nativeVirtualKeyCode: 229});
+    await cdp.send('Input.imeSetComposition', {text: composing, selectionStart: composing.length, selectionEnd: composing.length});
+    await cdp.send('Input.dispatchKeyEvent', {type: 'keyUp', key: 'Process', code, windowsVirtualKeyCode: 229, nativeVirtualKeyCode: 229});
+  };
+  const imeCommit = async (text) => {
+    await cdp.send('Input.dispatchKeyEvent', {type: 'rawKeyDown', key: 'Process', code: 'Enter', windowsVirtualKeyCode: 229, nativeVirtualKeyCode: 229});
+    await cdp.send('Input.insertText', {text});
+    await cdp.send('Input.dispatchKeyEvent', {type: 'keyUp', key: 'Enter', code: 'Enter', windowsVirtualKeyCode: 13});
+  };
+
+  // 日本語入力のまま「cat」と打つと「かt」になるが、押したキーから cat に戻す
+  await imeKey('KeyC', 'c');
+  await imeKey('KeyA', 'か');
+  await imeKey('KeyT', 'かt');
+  await imeCommit('かt');
+  await expect(prompt).toHaveValue('cat');
+
+  // スペースで漢字に変換してしまっても、押したキーから戻す
+  await prompt.fill('');
+  for (const [code, composing] of [['KeyE', 'え'], ['KeyC', 'えc'], ['KeyH', 'えch'], ['KeyO', 'えちょ'], ['Space', '絵帳'], ['KeyH', '絵帳h'], ['KeyI', '絵帳ひ']]) await imeKey(code, composing);
+  await imeCommit('絵帳ひ');
+  await expect(prompt).toHaveValue('echo hi');
+
+  // 途中で消したときなど、キーから戻せないときは、かなをローマ字にする
+  await prompt.fill('');
+  for (const [code, composing] of [['KeyK', 'k'], ['KeyA', 'か'], ['KeyI', 'かい'], ['Backspace', 'か'], ['KeyO', 'かお']]) await imeKey(code, composing);
+  await imeCommit('かお');
+  await expect(prompt).toHaveValue('kao');
+
+  // 貼り付け: 全角の英数字・記号は半角に、かなはローマ字に、漢字は消す
+  await prompt.fill('');
+  await cdp.send('Input.insertText', {text: 'ｈｅｌｐ　こんにちは　ﾃｽﾄ　漢字ー１２３'});
+  await expect(prompt).toHaveValue('help konnnichiha tesuto -123');
+
+  // 全角で入れたコマンドも、半角になって動く
+  await prompt.fill('ｌｓ');
+  await expect(prompt).toHaveValue('ls');
+  await prompt.press('Enter');
+  await expect(terminal.locator('.terminal-output')).toContainText('apps/');
+
+  // 前に全角で打った履歴も、呼び出すと半角
+  await prompt.press('ArrowUp');
+  await prompt.press('ArrowUp');
+  await expect(prompt).toHaveValue('ls -a');
+});
+
 test('homepage desktop apps open from the side sheet and can be driven with the keyboard', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/');

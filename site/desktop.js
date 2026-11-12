@@ -750,6 +750,126 @@
   }});
 
   /* ===== ターミナル ===== */
+  // ターミナルに入るのは半角の英数字と記号だけ。
+  // 全角の英数字は半角に、日本語入力（IME）で打った文字は、押したキーから半角英字に戻す。
+  // キーから戻せないとき（貼り付け・スマホのかな入力など）は、かなをローマ字にし、漢字などの戻せない文字は消す。
+  const KANA_ROMAJI = {
+    あ: 'a', い: 'i', う: 'u', え: 'e', お: 'o', か: 'ka', き: 'ki', く: 'ku', け: 'ke', こ: 'ko',
+    さ: 'sa', し: 'shi', す: 'su', せ: 'se', そ: 'so', た: 'ta', ち: 'chi', つ: 'tsu', て: 'te', と: 'to',
+    な: 'na', に: 'ni', ぬ: 'nu', ね: 'ne', の: 'no', は: 'ha', ひ: 'hi', ふ: 'fu', へ: 'he', ほ: 'ho',
+    ま: 'ma', み: 'mi', む: 'mu', め: 'me', も: 'mo', や: 'ya', ゆ: 'yu', よ: 'yo',
+    ら: 'ra', り: 'ri', る: 'ru', れ: 're', ろ: 'ro', わ: 'wa', ゐ: 'wi', ゑ: 'we', を: 'wo', ん: 'n',
+    が: 'ga', ぎ: 'gi', ぐ: 'gu', げ: 'ge', ご: 'go', ざ: 'za', じ: 'ji', ず: 'zu', ぜ: 'ze', ぞ: 'zo',
+    だ: 'da', ぢ: 'di', づ: 'du', で: 'de', ど: 'do', ば: 'ba', び: 'bi', ぶ: 'bu', べ: 'be', ぼ: 'bo',
+    ぱ: 'pa', ぴ: 'pi', ぷ: 'pu', ぺ: 'pe', ぽ: 'po', ゔ: 'vu',
+    ぁ: 'la', ぃ: 'li', ぅ: 'lu', ぇ: 'le', ぉ: 'lo', ゃ: 'lya', ゅ: 'lyu', ょ: 'lyo', ゎ: 'lwa', っ: 'ltu', ゕ: 'lka', ゖ: 'lke',
+    ふぁ: 'fa', ふぃ: 'fi', ふぇ: 'fe', ふぉ: 'fo', ふゅ: 'fyu', ゔぁ: 'va', ゔぃ: 'vi', ゔぇ: 've', ゔぉ: 'vo',
+    てぃ: 'thi', てぇ: 'the', てゅ: 'thu', でぃ: 'dhi', でゅ: 'dhu', とぅ: 'twu', どぅ: 'dwu',
+    うぃ: 'wi', うぇ: 'we', うぉ: 'who', つぁ: 'tsa', つぃ: 'tsi', つぇ: 'tse', つぉ: 'tso', くぁ: 'kwa', ぐぁ: 'gwa',
+  };
+  // きゃ・しゅ・ちぇ などは、行ごとの書き出しから作る
+  Object.entries({き: 'ky', し: 'sh', ち: 'ch', に: 'ny', ひ: 'hy', み: 'my', り: 'ry', ぎ: 'gy', じ: 'j', ぢ: 'dy', び: 'by', ぴ: 'py'}).forEach(([kana, head]) => {
+    Object.entries({ゃ: 'a', ゅ: 'u', ぇ: 'e', ょ: 'o'}).forEach(([small, vowel]) => { KANA_ROMAJI[kana + small] = head + vowel; });
+  });
+  const KANA_SYMBOLS = {'ー': '-', '、': ',', '。': '.', '・': '/', '「': '[', '」': ']', '『': '[', '』': ']', '〜': '~', '¥': '\\', '“': '"', '”': '"', '‘': "'", '’': "'"};
+  const romajiAt = (text, index) => {
+    const pair = KANA_ROMAJI[text.slice(index, index + 2)];
+    if (pair) return {romaji: pair, length: 2};
+    const single = KANA_ROMAJI[text[index]];
+    return single ? {romaji: single, length: 1} : null;
+  };
+  const toTerminalText = (value) => {
+    // 全角の英数字・記号は半角に、半角カナは全角に（NFKC）。カタカナはひらがなにそろえてからローマ字にする
+    const text = String(value).normalize('NFKC').replace(/[\t\r\n]/g, ' ').replace(/[ァ-ヶ]/g, (char) => String.fromCharCode(char.charCodeAt(0) - 0x60));
+    let result = '';
+    for (let index = 0; index < text.length;) {
+      const char = text[index];
+      if (char === 'っ') {
+        // 小さい「っ」は、次の子音を重ねる（「っか」→ kka）
+        const next = romajiAt(text, index + 1);
+        result += next && /^[b-df-hj-np-tv-z]/.test(next.romaji) && next.romaji[0] !== 'n' ? next.romaji[0] : 'ltu';
+        index += 1;
+      } else if (char === 'ん') {
+        // 「ん」の次が母音・や行・な行なら nn（「おんあ」→ onna、「おんな」→ onnna）
+        const next = romajiAt(text, index + 1);
+        result += next && /^[aiueony]/.test(next.romaji) ? 'nn' : 'n';
+        index += 1;
+      } else {
+        const kana = romajiAt(text, index);
+        result += kana ? kana.romaji : (KANA_SYMBOLS[char] ?? char);
+        index += kana ? kana.length : 1;
+      }
+    }
+    return result.replace(/[^\x20-\x7e]/g, '');
+  };
+  // 日本語入力のあいだに押したキー（物理的なキーの位置）を、半角の文字にする。配列によって変わるキーは null
+  const typedCharacter = (event) => {
+    const shift = Boolean(event.shiftKey) !== Boolean(event.getModifierState?.('CapsLock'));
+    const letter = /^Key([A-Z])$/.exec(event.code || '');
+    if (letter) return shift ? letter[1] : letter[1].toLowerCase();
+    if (event.shiftKey) return null;
+    const digit = /^(?:Digit|Numpad)(\d)$/.exec(event.code || '');
+    if (digit) return digit[1];
+    return {Space: ' ', Minus: '-', Period: '.', Comma: ',', Slash: '/', Semicolon: ';', NumpadDecimal: '.', NumpadAdd: '+', NumpadSubtract: '-', NumpadMultiply: '*', NumpadDivide: '/'}[event.code] ?? null;
+  };
+  // 文字を変えないキー（確定・変換・修飾キーなど）
+  const IME_NEUTRAL_KEYS = /^(?:Enter|NumpadEnter|Escape|Shift|Control|Alt|Meta|CapsLock|Convert|NonConvert|KanaMode|Lang\d|F(?:6|7|8|9|10))/;
+  const limitToAscii = (input) => {
+    input.setAttribute('inputmode', 'email'); // スマホで、日本語に切り替えられない英字のキーボードを出す
+    input.setAttribute('lang', 'en');
+    input.setAttribute('autocorrect', 'off');
+    let composing = false;
+    let fixing = false; // 確定した文字を書きかえる前（その間の input では書きかえない）
+    let compositionStart = 0;
+    let keys = null; // 日本語入力のあいだに押したキー。戻せないキーが混ざったら false
+    const rewrite = (before, middle, after) => {
+      input.value = before + middle + after;
+      const caret = before.length + middle.length;
+      input.setSelectionRange(caret, caret);
+    };
+    const cleanAll = () => {
+      const caret = input.selectionStart ?? input.value.length;
+      const before = toTerminalText(input.value.slice(0, caret));
+      const after = toTerminalText(input.value.slice(caret));
+      if (before + after !== input.value) rewrite(before, '', after);
+    };
+    input.addEventListener('keydown', (event) => {
+      if (!(event.isComposing || event.keyCode === 229)) { keys = null; return; }
+      // 日本語入力が始まるキーは、compositionstart より前に来ることがあるので、ここで記録を始める
+      if (keys === null) keys = [];
+      if (keys === false) return;
+      if (IME_NEUTRAL_KEYS.test(event.code || '') || IME_NEUTRAL_KEYS.test(event.key || '')) return;
+      const char = typedCharacter(event);
+      if (char === null) keys = false; else keys.push(char);
+    });
+    input.addEventListener('compositionstart', () => {
+      composing = true;
+      compositionStart = input.selectionStart ?? input.value.length;
+      if (keys === null) keys = [];
+    });
+    input.addEventListener('compositionend', () => {
+      composing = false;
+      fixing = true;
+      const typed = keys;
+      keys = null;
+      // 確定した文字が入ってから書きかえる（ブラウザによって、入るのがこのあとになる）
+      setTimeout(() => {
+        fixing = false;
+        if (composing) return;
+        const end = input.selectionEnd ?? input.value.length;
+        const start = Math.min(compositionStart, end);
+        const committed = input.value.slice(start, end);
+        const plain = toTerminalText(committed);
+        // 英字のままの確定はそのまま、日本語に変わった確定は、押したキーから戻す（戻せなければ、かなをローマ字に）
+        const replacement = /[^\x20-\x7e]/.test(committed.normalize('NFKC')) && typed && typed.length ? typed.join('') : plain;
+        const before = toTerminalText(input.value.slice(0, start));
+        const after = toTerminalText(input.value.slice(end));
+        if (before + replacement + after !== input.value) rewrite(before, replacement, after);
+      }, 0);
+    });
+    input.addEventListener('input', (event) => { if (!composing && !fixing && !event.isComposing) cleanAll(); });
+  };
+
   const bootSystems = {visible: [], hidden: []};
   // 一覧に出さないOS。コードネームを入力すれば起動できます（前のデザインの一覧はそのまま）。
   const UNLISTED_BOOT_SYSTEMS = new Set(['vastique']);
@@ -789,6 +909,7 @@
     const prompt = form.querySelector('.terminal-prompt');
     const input = form.querySelector('input');
     prompt.htmlFor = input.id = `terminalInput${app.record.id}`;
+    limitToAscii(input);
     content.append(output, form);
 
     let history = [];
@@ -1058,8 +1179,9 @@
     };
     input.addEventListener('keydown', (event) => {
       const recall = () => requestAnimationFrame(() => input.setSelectionRange(input.value.length, input.value.length));
-      if (event.key === 'ArrowUp' && history.length) { event.preventDefault(); historyIndex = Math.max(0, historyIndex - 1); input.value = history[historyIndex] || ''; recall(); }
-      else if (event.key === 'ArrowDown' && history.length) { event.preventDefault(); historyIndex = Math.min(history.length, historyIndex + 1); input.value = history[historyIndex] || ''; recall(); }
+      // 履歴も半角にそろえて出す（前に日本語で打ったものが残っていることがある）
+      if (event.key === 'ArrowUp' && history.length) { event.preventDefault(); historyIndex = Math.max(0, historyIndex - 1); input.value = toTerminalText(history[historyIndex] || ''); recall(); }
+      else if (event.key === 'ArrowDown' && history.length) { event.preventDefault(); historyIndex = Math.min(history.length, historyIndex + 1); input.value = toTerminalText(history[historyIndex] || ''); recall(); }
       else if (event.key === 'l' && event.ctrlKey) { event.preventDefault(); output.replaceChildren(); }
       else if (event.key === 'Tab' && !event.shiftKey) { event.preventDefault(); complete(); }
     });
