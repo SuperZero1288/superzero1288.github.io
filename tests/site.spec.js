@@ -50,6 +50,9 @@ async function ready(page, url = '/vrchat-assets/') {
 async function audit(page) {
   // Give view-enter transitions time to finish before measuring color contrast.
   await page.waitForTimeout(250);
+  // Wait for finite transitions (for example the toolbar fading as the page scrolls); looping decorations are ignored.
+  await page.waitForFunction(() => document.getAnimations().every((animation) => animation.playState !== 'running'
+    || animation.effect?.getTiming().iterations === Infinity), null, {timeout: 3000}).catch(() => {});
   const result = await new AxeBuilder({page}).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
   return result.violations.map((item) => ({id: item.id, targets: item.nodes.map((node) => node.target)}));
 }
@@ -1225,6 +1228,7 @@ for (const url of ['/', '/links.html', '/blog/n8d41d4a76214.html']) {
     await expect(dialog).toBeVisible();
     await expect(dialog.locator('.search-bookmark-add')).toBeFocused();
     await dialog.locator('.search-bookmark-add').click();
+    await expect(dialog.locator('[name="bookmarkName"]')).toBeFocused();
     await dialog.locator('[name="bookmarkName"]').fill('ぜろいちば');
     await dialog.locator('[name="bookmarkUrl"]').fill('zerrrrro.booth.pm');
     await dialog.locator('.search-bookmark-editor button[type="submit"]').click();
