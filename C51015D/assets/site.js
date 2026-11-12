@@ -56,28 +56,60 @@
     tabbar.append(list);
     document.querySelector('.content')?.before(tabbar);
 
-    if ('IntersectionObserver' in window) {
-      const links = [...document.querySelectorAll('.toc a, .tabbar a')];
-      const sections = [...new Set(links.map((link) => link.getAttribute('href')))].map((href) => document.querySelector(href)).filter(Boolean);
-      const ratios = new Map();
-      const mark = () => {
-        // いちばん多く見えているセクション（同じなら上のもの）
-        let current = null;
-        let best = 0;
-        sections.forEach((section) => { const ratio = ratios.get(section) || 0; if (ratio > best + 0.001) { best = ratio; current = section; } });
-        links.forEach((link) => {
-          if (current && link.getAttribute('href') === `#${current.id}`) link.setAttribute('aria-current', 'true');
-          else link.removeAttribute('aria-current');
-        });
-        const active = tabbar.querySelector('[aria-current]');
-        if (active && tabbar.scrollWidth > tabbar.clientWidth) active.scrollIntoView({block: 'nearest', inline: 'nearest'});
-      };
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => ratios.set(entry.target, entry.isIntersecting ? entry.intersectionRect.height / innerHeight : 0));
-        mark();
-      }, {threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]});
-      sections.forEach((section) => observer.observe(section));
-    }
+    const links = [...document.querySelectorAll('.toc a, .tabbar a')];
+    const sections = [...new Set(links.map((link) => link.getAttribute('href')))].map((href) => document.querySelector(href)).filter(Boolean);
+    // 目次から選んだセクション。自分でスクロールするまでは、こちらを優先する
+    // （短いセクションは画面の上まで来られないので、位置だけでは選べないことがある）
+    let picked = null;
+    const pick = (hash) => { picked = sections.find((section) => `#${section.id}` === hash) || null; };
+    const release = () => { if (picked) { picked = null; spy(); } };
+    let marked;
+    const mark = (current) => {
+      if (current === marked) return;
+      marked = current;
+      links.forEach((link) => {
+        if (current && link.getAttribute('href') === `#${current.id}`) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+      // タブが横にはみ出しているときは、選んだタブが見えるようにタブだけを横に動かす
+      // （scrollIntoView はページのスクロールまで止めてしまうので使わない）
+      const active = tabbar.querySelector('[aria-current]');
+      if (active && list.scrollWidth > list.clientWidth) {
+        const box = active.getBoundingClientRect();
+        const view = list.getBoundingClientRect();
+        if (box.left < view.left) list.scrollLeft -= view.left - box.left + 8;
+        else if (box.right > view.right) list.scrollLeft += box.right - view.right + 8;
+      }
+    };
+    const spy = () => {
+      let current = picked;
+      if (!current) {
+        const scroller = document.scrollingElement || root;
+        if (scrollY > 0 && scrollY + innerHeight >= scroller.scrollHeight - 2) {
+          // いちばん下まで来たら、最後のセクション
+          current = sections[sections.length - 1];
+        } else {
+          // 上のタブ（スマホ）の少し下に引いた線を、見出しが越えた最後のセクション（まだ越えていなければ最初のセクション）
+          const top = tabbar.getBoundingClientRect().height ? tabbar.getBoundingClientRect().bottom : 0;
+          const line = top + Math.min(innerHeight * 0.3, 200);
+          current = sections[0] || null;
+          sections.forEach((section) => { if (section.getBoundingClientRect().top <= line) current = section; });
+        }
+      }
+      mark(current);
+    };
+    links.forEach((link) => link.addEventListener('click', () => { pick(link.getAttribute('href')); mark(picked); }));
+    ['wheel', 'touchstart', 'keydown'].forEach((type) => addEventListener(type, release, {passive: true}));
+    addEventListener('hashchange', () => { pick(location.hash); spy(); });
+    if (location.hash) pick(location.hash);
+    let queued = false;
+    addEventListener('scroll', () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; spy(); });
+    }, {passive: true});
+    addEventListener('resize', spy);
+    spy();
   }
 
   addEventListener('scroll', onScroll, {passive: true});

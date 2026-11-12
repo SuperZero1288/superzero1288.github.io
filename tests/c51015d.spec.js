@@ -54,6 +54,20 @@ async function serveWork(page, work) {
   });
 }
 
+// なめらかなスクロールが止まるまで待つ（止まる前に次の操作をすると、Playwright が要素を見える位置へ動かして割り込んでしまう）
+async function scrollSettled(page) {
+  await page.waitForFunction(() => new Promise((resolve) => {
+    let last = scrollY;
+    let still = 0;
+    const step = () => {
+      still = scrollY === last ? still + 1 : 0;
+      last = scrollY;
+      if (still >= 6) resolve(true); else requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }));
+}
+
 for (const width of [320, 390, 1440]) {
   test(`C51015D: the template home page fits ${width}px with its section navigation`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
@@ -65,10 +79,25 @@ for (const width of [320, 390, 1440]) {
     await expect(nav.getByRole('link')).toHaveText(['About', 'Works', 'note記事', 'Links']);
     await expect(page.locator('#noteList .empty')).toHaveText('まだ記事はありません。');
     expect(await noHorizontalOverflow(page)).toBe(true);
-    await nav.getByRole('link', {name: 'Links'}).click();
-    await expect(page.locator('#links')).toBeInViewport();
-    await expect(nav.getByRole('link', {name: 'Links'})).toHaveAttribute('aria-current', 'true');
+    // 目次で選んだ場所が「今いる場所」になる（短くて画面の上まで来られないセクションでも）
+    for (const name of ['Links', 'note記事']) {
+      await nav.getByRole('link', {name}).click();
+      await expect(nav.getByRole('link', {name})).toHaveAttribute('aria-current', 'true');
+      await expect(nav.locator('[aria-current]')).toHaveCount(1);
+      await scrollSettled(page);
+    }
+    await expect(page.locator('#note')).toBeInViewport();
+    // スマホのタブは上に貼りつく
     if (width < 900) expect((await nav.boundingBox()).y).toBeLessThan(2);
+    // 自分でスクロールしたら、位置で決める（いちばん下なら最後、いちばん上なら最初）
+    await page.mouse.move(width / 2, 450);
+    await page.mouse.wheel(0, 20000);
+    await scrollSettled(page);
+    await expect(nav.getByRole('link', {name: 'Links'})).toHaveAttribute('aria-current', 'true');
+    await page.mouse.wheel(0, -20000);
+    await scrollSettled(page);
+    expect(await page.evaluate(() => scrollY)).toBe(0);
+    await expect(nav.getByRole('link', {name: 'About'})).toHaveAttribute('aria-current', 'true');
   });
 }
 
