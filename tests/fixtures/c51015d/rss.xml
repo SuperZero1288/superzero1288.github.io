@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+<channel>
+<title>テストユーザー｜note</title>
+<item>
+<title><![CDATA[はじめての記事 & テスト]]></title>
+<link>https://note.com/testuser/n/ntest1</link>
+<description><![CDATA[<p>これはテスト用の記事です。同期の動きを確かめます。</p>続きをみる]]></description>
+<media:thumbnail>https://assets.st-note.com/production/uploads/images/1/cover.png</media:thumbnail>
+<pubDate>Tue, 10 Nov 2026 12:00:00 +0900</pubDate>
+</item>
+<item>
+<title>取得に失敗する記事</title>
+<link>https://note.com/testuser/n/nbroken</link>
+<description>本文を取得できない記事です。</description>
+<pubDate>Mon, 02 Nov 2026 09:00:00 +0900</pubDate>
+</item>
+</channel>
+</rss>

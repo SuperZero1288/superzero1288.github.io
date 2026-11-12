@@ -2,6 +2,12 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<script>
+// /C51015D/ は別のサイト（同じリポジトリに置いている独立したサイト）なので、そちらの404ページへ移動します
+if (/^\/C51015D(\/|$)/i.test(location.pathname) && !/^\/C51015D\/404\.html$/.test(location.pathname)) {
+  location.replace('/C51015D/404.html?path=' + encodeURIComponent(location.pathname));
+}
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#fff7f8">
@@ -11,12 +17,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
-<link rel="stylesheet" href="/site/base.css?v=20261112-2">
-<link rel="stylesheet" href="/site/pages.css?v=20261112-2">
-<script src="/site/theme.js?v=20261112-2"></script>
-<script src="/site/common.js?v=20261112-2" defer></script>
-<script src="/site/search.js?v=20261112-2" defer></script>
-<script src="/site/error.js?v=20261112-2" defer></script>
+<link rel="stylesheet" href="/site/base.css?v=20261112-3">
+<link rel="stylesheet" href="/site/pages.css?v=20261112-3">
+<script src="/site/theme.js?v=20261112-3"></script>
+<script src="/site/common.js?v=20261112-3" defer></script>
+<script src="/site/search.js?v=20261112-3" defer></script>
+<script src="/site/error.js?v=20261112-3" defer></script>
 </head>
 <body class="page page-error">
 <a class="skip-link" href="#main">本文へ移動</a>

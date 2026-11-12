@@ -168,7 +168,7 @@
     bookmarkEditor.hidden = false;
     bookmarkAdd.setAttribute('aria-expanded', 'true');
     bookmarkError.textContent = readBookmarks().length >= MAX_BOOKMARKS ? `ブックマークは${MAX_BOOKMARKS}件まで保存できます。` : '';
-    requestAnimationFrame(() => bookmarkName.focus({preventScroll: true}));
+    bookmarkName.focus({preventScroll: true});
   };
   const TONES = ['--pop-pink', '--pop-blue', '--pop-mint', '--pop-yellow', '--pop-violet', '--pop-orange'];
   function renderBookmarks() {
