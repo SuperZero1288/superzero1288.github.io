@@ -38,11 +38,11 @@
     file: {title: 'ファイル', tone: '--pop-blue', shape: 'square', width: 620, height: 420},
   };
   const SEARCH_ENGINES = {
-    google: {label: 'Google', action: 'https://www.google.com/search', parameter: 'q', icon: '/assets/search-engines/google.svg'},
-    duckduckgo: {label: 'DuckDuckGo', action: 'https://duckduckgo.com/', parameter: 'q', icon: '/assets/search-engines/duckduckgo.svg'},
-    brave: {label: 'Brave', action: 'https://search.brave.com/search', parameter: 'q', icon: '/assets/search-engines/brave.svg'},
-    bing: {label: 'Bing', action: 'https://www.bing.com/search', parameter: 'q', icon: '/assets/search-engines/bing.svg'},
-    mojeek: {label: 'Mojeek', action: 'https://www.mojeek.com/search', parameter: 'q', icon: '/assets/search-engines/mojeek.svg'},
+    google: {label: 'Google', action: 'https://www.google.com/search', parameter: 'q', icon: '/assets/search-engines/official/google.svg'},
+    duckduckgo: {label: 'DuckDuckGo', action: 'https://duckduckgo.com/', parameter: 'q', icon: '/assets/search-engines/official/duckduckgo.svg'},
+    brave: {label: 'Brave', action: 'https://search.brave.com/search', parameter: 'q', icon: '/assets/search-engines/official/brave.svg'},
+    bing: {label: 'Bing', action: 'https://www.bing.com/search', parameter: 'q', icon: '/assets/search-engines/official/bing.svg'},
+    mojeek: {label: 'Mojeek', action: 'https://www.mojeek.com/search', parameter: 'q', icon: '/assets/search-engines/official/mojeek.svg'},
   };
   const storage = {
     get: (key, fallback) => { try { const value = localStorage.getItem(key); return value === null ? fallback : value; } catch { return fallback; } },

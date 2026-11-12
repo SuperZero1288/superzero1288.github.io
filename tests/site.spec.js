@@ -1281,3 +1281,45 @@ test('the COMING SOON slots lead to the 404 page', async ({page}) => {
   await expect(page.locator('#errorPath')).toHaveText('/coming-soon/03/');
   await expect(page.locator('#errorZero')).toBeVisible();
 });
+
+/* ===== 検索エンジンの公式ロゴと、時計のピル ===== */
+test('the toolbar search shows the official logo of each search engine', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/links.html');
+  await page.locator('#searchButton').click();
+  const icon = page.locator('#searchDialog .search-engine-icon');
+  for (const engine of ['google', 'duckduckgo', 'brave', 'bing', 'mojeek']) {
+    await page.locator('#searchDialog select[name="engine"]').selectOption(engine);
+    await expect(icon).toHaveAttribute('src', `/assets/search-engines/official/${engine}.svg`);
+    await expect.poll(() => icon.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
+  }
+  // The legacy site keeps its own single-colour icons.
+  expect(fs.readFileSync(path.join(rootPath, 'legacy/site-search.js'), 'utf8')).toContain("'/assets/search-engines/google.svg'");
+});
+
+for (const width of [320, 1440]) {
+  test(`the clock pill keeps one line and the same width in 24h and 12h mode at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 800});
+    await mockNetwork(page);
+    await ready(page, '/');
+    const clock = page.locator('#clock');
+    const measure = () => clock.evaluate((element) => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return {lines: range.getClientRects().length, width: element.getBoundingClientRect().width, fits: range.getBoundingClientRect().width <= element.clientWidth - 2 * parseFloat(getComputedStyle(element).paddingLeft) + 0.5};
+    });
+    const twentyFour = await measure();
+    await clock.click();
+    await expect(clock).toHaveText(/^(AM|PM) \d{1,2}:\d{2}$/);
+    // Also try the widest possible 12-hour text.
+    await clock.evaluate((element) => { element.textContent = 'PM 10:08'; });
+    const twelve = await measure();
+    expect(twentyFour).toEqual({lines: 1, width: twelve.width, fits: true});
+    expect(twelve.lines).toBe(1);
+    expect(twelve.fits).toBe(true);
+    await expectNoHorizontalOverflow(page);
+    const toolbar = await page.locator('#toolbar').boundingBox();
+    expect(toolbar.x).toBeGreaterThanOrEqual(0);
+    expect(toolbar.x + toolbar.width).toBeLessThanOrEqual(width);
+  });
+}

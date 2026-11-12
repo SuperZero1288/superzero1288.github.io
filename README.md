@@ -41,7 +41,7 @@ GitHub Pagesで公開しているポートフォリオです。Material 3 Expres
 - `base.css`：色・文字・ボタン・ツールバー・カードなどの土台
 - `home.css` / `home.js`：トップページだけの部分
 - `pages.css`：リンク集・記事・404の部分（アセット配布は `vrchat-assets/catalog.css`）
-- `search.js`：ツールバーの検索ボタン（前のデザインと同じ「新しいタブ」。検索エンジンの切り替え・最近の検索・ブックマーク12件まで。保存データは前のデザインやブラウザアプリと共有）
+- `search.js`：ツールバーの検索ボタン（前のデザインと同じ「新しいタブ」。検索エンジンの切り替え・最近の検索・ブックマーク12件まで。保存データは前のデザインやブラウザアプリと共有。ロゴは各社の公式ロゴを `assets/search-engines/official/` に置いています）
 - `links.js`：リンク集の更新情報、`error.js`：404ページ
 - `desktop.css` / `desktop.js`：左のシートから開くデスクトップアプリ（ターミナル・電卓・ペイント・メモ帳・ブラウザ・ファイル）
 - `shapes.css`：図形。すべて同じ点の数の `clip-path` なので、どの形からどの形へも滑らかに変形できます。形を増やしたり変えたりするときは `scripts/build-shapes.py` を編集して `python3 scripts/build-shapes.py` を実行します。

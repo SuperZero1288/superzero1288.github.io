@@ -168,7 +168,8 @@ button{font:inherit;color:inherit}
 .toolbar.is-hidden{translate:-50% calc(-100% - 24px);opacity:0}
 .toolbar-group{display:flex;gap:2px}
 .clock-wrap{position:relative}
-.clock{min-width:112px;height:44px;padding:0 20px;border:0;border-radius:22px;background:var(--secondary-container);color:var(--on-secondary-container);font-family:var(--flex);font-weight:800;font-size:1.08rem;font-variation-settings:'wdth' 118;letter-spacing:.02em;cursor:pointer;transition:border-radius .4s var(--spring-fast),transform .4s var(--spring-fast)}
+/* 時計のピルは12時間表示（AM 12:59）でも24時間表示でも同じ幅・1行（数字は等幅） */
+.clock{flex:0 0 auto;width:120px;height:44px;padding:0 12px;border:0;border-radius:22px;background:var(--secondary-container);color:var(--on-secondary-container);font-family:var(--flex);font-weight:800;font-size:1.08rem;font-variation-settings:'wdth' 118;letter-spacing:.02em;cursor:pointer;transition:border-radius .4s var(--spring-fast),transform .4s var(--spring-fast);white-space:nowrap;overflow:hidden;text-align:center;font-variant-numeric:tabular-nums}
 .clock:active{border-radius:14px;transform:scale(.96)}
 .calendar{position:absolute;top:calc(100% + 12px);left:50%;width:286px;padding:16px;background:var(--surface-container-high);border-radius:28px;box-shadow:var(--elev-3);opacity:0;visibility:hidden;translate:-50% -8px;scale:.92;transform-origin:50% 0;transition:opacity .2s var(--effects),visibility 0s linear .2s,translate .45s var(--spring),scale .45s var(--spring)}
 .clock-wrap.is-open .calendar{opacity:1;visibility:visible;translate:-50% 0;scale:1;transition-delay:0s}
@@ -230,7 +231,7 @@ main{position:relative;z-index:1}
 .search-box{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 8px;background:var(--surface-container-lowest);border-radius:28px;box-shadow:inset 0 0 0 2px var(--outline-variant);transition:box-shadow .2s var(--effects)}
 .search-box:focus-within{box-shadow:inset 0 0 0 2px var(--primary)}
 .search-engine-mark{display:grid;flex:0 0 auto;place-items:center;width:40px;height:40px;background:#fff;clip-path:var(--shape-cookie9)}
-.search-engine-mark img{width:22px;height:22px}
+.search-engine-mark img{width:22px;height:22px;object-fit:contain}
 .search-box input{flex:1;min-width:0;height:44px;padding:0 4px;border:0;background:transparent;color:inherit;font:inherit;font-size:1.05rem;font-weight:700;outline:none}
 .search-submit{display:grid;flex:0 0 auto;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:22px;background:var(--primary);color:var(--on-primary);cursor:pointer;transition:border-radius .4s var(--spring-fast)}
 .search-submit svg{width:22px;height:22px}
@@ -294,7 +295,7 @@ html.is-hue-reveal::view-transition-old(root),html.is-hue-reveal::view-transitio
 @media(max-width:560px){
 .btn{min-height:50px;padding:0 20px}
 .toolbar{top:10px;gap:2px;padding:4px}
-.clock{min-width:96px;padding:0 14px}
+.clock{width:110px;padding:0 8px}
 .note-card{grid-template-columns:96px 1fr}
 .s-cookie{width:56vmin;right:-24vmin;top:14vh}
 }

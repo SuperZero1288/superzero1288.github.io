@@ -137,7 +137,7 @@ body.has-windows .scroll-indicator{opacity:0;pointer-events:none}
 .browser-search input{flex:1}
 .browser-start{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:24px;text-align:center}
 .browser-mark{display:grid;place-items:center;width:84px;height:84px;background:var(--surface-container-high);clip-path:var(--shape-cookie12)}
-.browser-mark img{width:44px;height:44px}
+.browser-mark img{width:44px;height:44px;object-fit:contain}
 .browser-start h2{margin:6px 0 0;font-family:var(--display);font-weight:400;font-size:1.5rem}
 .browser-note{margin:0;color:var(--on-surface-variant);font-weight:700;font-size:.86rem}
 .browser-recent{width:min(100%,520px);margin-top:14px}
