@@ -8,8 +8,10 @@ GitHub Pagesで公開しているポートフォリオです。Material 3 Expres
 |---|---|
 | `/` | トップページ（全画面のヒーロー、時計付きの浮かぶバー、左右のタブから開くシート、プロフィール・リンク・更新情報） |
 | `/links.html` | リンク集と、note・YouTube・GitHubの更新情報 |
+| `/blog/` | note記事の一覧（右のメニューの「note記事」） |
 | `/blog/記事ID.html` | noteから同期した記事 |
 | `/vrchat-assets/` | VRChat向けアセットの配布ライブラリ |
+| `/apps/` | 自作アプリの配布一覧（右のメニューの「自作アプリ」）。まだページがないので404ページになります。`apps/index.html` を作ればそのまま表示されます |
 | `/404.html` | 見つからないページ（隠し要素あり） |
 | `/legacy/` | 前のデザインのサイト一式（隠し要素。404ページから入れます） |
 | `/os/aether/`, `/os/vastique/` | ターミナルの `bootmgr` から起動する隠しOS |
@@ -68,6 +70,7 @@ GitHub Actionsの `note記事を同期` が6時間ごとに公開情報を確認
 - `blog/記事ID.html`（今のデザイン）と `legacy/blog/記事ID.html`（前のデザイン）にサイト内記事ページを生成
 - noteの目次から見出しへ飛べるよう、目次の文字と同じ見出しにidを付け直す
 - トップページ（`index.html` と `legacy/index.html`）のnote欄を最新3件に更新
+- 記事一覧（`blog/index.html`）を全件で更新
 - リンク集ページのnote・YouTube・GitHub最新欄を更新
 - X・YouTube・BOOTH・VRChat・GitHubの公開プロフィール画像を更新
 

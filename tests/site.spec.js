@@ -1323,3 +1323,58 @@ for (const width of [320, 1440]) {
     expect(toolbar.x + toolbar.width).toBeLessThanOrEqual(width);
   });
 }
+
+/* ===== 右のメニュー: note記事（記事一覧）と自作アプリ ===== */
+test('the right menu offers the article list and the (upcoming) app list', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  await page.locator('#rightTab').click();
+  const nav = page.locator('#rightSheet .sheet-nav a');
+  await expect(nav.locator('strong')).toHaveText(['リンク集', 'VRChat向けアセット', 'note記事', '自作アプリ']);
+  await expect(page.locator('#rightSheet a', {hasText: '最新の記事'})).toHaveCount(0);
+  await expect(nav.nth(2)).toHaveAttribute('href', '/blog/');
+  await expect(nav.nth(3)).toHaveAttribute('href', '/apps/');
+  expect(await audit(page)).toEqual([]);
+});
+
+test('the app list is not ready yet, so it shows the 404 page', async ({page}) => {
+  await mockNetwork(page);
+  expect(fs.existsSync(path.join(rootPath, 'apps'))).toBe(false);
+  const notFound = fs.readFileSync(path.join(rootPath, '404.html'), 'utf8');
+  await page.route('**/apps/', (route) => route.fulfill({status: 404, contentType: 'text/html; charset=utf-8', body: notFound}));
+  await ready(page, '/');
+  await page.locator('#rightTab').click();
+  await page.locator('#rightSheet a[href="/apps/"]').click();
+  await expect(page).toHaveURL(/\/apps\/$/);
+  await expect(page.locator('#errorPath')).toHaveText('/apps/');
+});
+
+for (const width of [320, 1440]) {
+  test(`the note article list shows every synced article at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    const articles = JSON.parse(fs.readFileSync(path.join(rootPath, 'blog/articles.json'), 'utf8'));
+    await mockNetwork(page);
+    await ready(page, '/blog/');
+    await expect(page.locator('h1')).toHaveText('note記事');
+    const cards = page.locator('#articleList .article-card');
+    await expect(cards).toHaveCount(articles.length);
+    await expect(cards.locator('strong')).toHaveText(articles.map((article) => article.title));
+    expect(await cards.evaluateAll((links) => links.map((link) => link.getAttribute('href'))))
+      .toEqual(articles.map((article) => (article.generated ? `/blog/${article.id}.html` : article.sourceUrl)));
+    await expectNoHorizontalOverflow(page);
+    await cards.first().click();
+    await expect(page).toHaveURL(new RegExp(`/blog/${articles[0].id}\\.html$`));
+    await expect(page.locator('#siteLoader')).toHaveCount(0);
+    await page.locator('.article-end a[href="/blog/"]').click();
+    await expect(page).toHaveURL(/\/blog\/$/);
+  });
+}
+
+for (const mode of ['light', 'dark']) {
+  test(`the note article list passes the accessibility audit in ${mode} mode`, async ({page}) => {
+    await page.emulateMedia({colorScheme: mode});
+    await mockNetwork(page);
+    await ready(page, '/blog/');
+    expect(await audit(page)).toEqual([]);
+  });
+}

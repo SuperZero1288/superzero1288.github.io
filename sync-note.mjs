@@ -357,11 +357,11 @@ function articleDocument(article, bodyHtml, coverPath) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
-<link rel="stylesheet" href="/site/base.css?v=20261112-1">
-<link rel="stylesheet" href="/site/pages.css?v=20261112-1">
-<script src="/site/theme.js?v=20261112-1"></script>
-<script src="/site/common.js?v=20261112-1" defer></script>
-<script src="/site/search.js?v=20261112-1" defer></script>
+<link rel="stylesheet" href="/site/base.css?v=20261112-2">
+<link rel="stylesheet" href="/site/pages.css?v=20261112-2">
+<script src="/site/theme.js?v=20261112-2"></script>
+<script src="/site/common.js?v=20261112-2" defer></script>
+<script src="/site/search.js?v=20261112-2" defer></script>
 </head>
 <body class="page page-article">
 <a class="skip-link" href="#main">本文へ移動</a>
@@ -390,7 +390,7 @@ ${coverMarkup}
 <div class="article-body">
 ${BODY_START}${bodyHtml}${BODY_END}
 </div>
-<footer class="article-end"><a class="text-link" href="${source}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a><a class="btn btn-tonal" href="/links.html">ほかのリンクも見る</a></footer>
+<footer class="article-end"><a class="text-link" href="${source}" target="_blank" rel="noopener">元の記事をnoteで読む ↗</a><a class="btn btn-tonal" href="/blog/">記事一覧へ</a></footer>
 </div>
 </article>
 <footer class="page-footer"><span>ZERO / NOTE</span><a href="/">ぜろくんでんせつ</a></footer>
@@ -493,6 +493,19 @@ ${image}
 </a>`;
 }
 
+// 記事一覧ページ（/blog/）の1件ぶん
+function articleListMarkup(article) {
+  const localUrl = article.generated ? `/blog/${article.id}.html` : article.sourceUrl;
+  const thumbnail = article.coverPath ? `/blog/${article.coverPath}` : article.thumbnail;
+  const cover = thumbnail ? `<span class="article-card-cover"><img src="${escapeAttribute(thumbnail)}" alt="" loading="lazy"></span>\n` : '';
+  const target = article.generated ? '' : ' target="_blank" rel="noopener"';
+  const description = (article.description || '').replace(/\s+/g, ' ').trim();
+  const excerpt = description.length > 140 ? `${description.slice(0, 140)}…` : description;
+  return `<li><a class="article-card" href="${escapeAttribute(localUrl)}"${target}>
+${cover}<span class="article-card-copy"><time datetime="${escapeAttribute(article.publishedAt)}">${formatDate(article.publishedAt)}</time><strong>${escapeHtml(article.title)}</strong><span class="article-card-desc">${escapeHtml(excerpt)}</span><small>${article.generated ? 'サイト内で読む →' : 'noteで読む ↗'}</small></span>
+</a></li>`;
+}
+
 async function replaceBetweenMarkers(relativePath, startMarker, endMarker, content) {
   const filePath = path.join(projectRoot, relativePath);
   const current = await readFile(filePath, 'utf8');
@@ -507,6 +520,7 @@ async function updateHomePage(articles) {
   const latest = articles.slice(0, maxHomeArticles);
   await replaceBetweenMarkers('index.html', '<!-- NOTE_LIST_START -->', '<!-- NOTE_LIST_END -->', latest.map(homeArticleMarkup).join('\n'));
   await replaceBetweenMarkers(path.join('legacy', 'index.html'), '<!-- NOTE_ARTICLES_START -->', '<!-- NOTE_ARTICLES_END -->', latest.map(legacyHomeArticleMarkup).join('\n'));
+  await replaceBetweenMarkers(path.join('blog', 'index.html'), '<!-- ARTICLE_LIST_START -->', '<!-- ARTICLE_LIST_END -->', articles.map(articleListMarkup).join('\n'));
 }
 
 // 同期のpushでこのリポジトリのpushed_atが変わると、次の同期でまた差分が出てコミットが止まりません。

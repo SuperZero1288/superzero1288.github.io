@@ -109,6 +109,23 @@
 .article-embed-card span{font-family:var(--flex);font-weight:800;font-size:.8rem}
 .article-end{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:2.4em;padding-top:1.4em;border-top:2px dashed var(--outline-variant)}
 
+/* ===== note記事の一覧（/blog/） ===== */
+.article-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin:0;padding:0;list-style:none}
+.article-list>li{display:grid}
+.article-card{display:flex;flex-direction:column;gap:12px;padding:10px 10px 16px;background:var(--surface-container-high);border-radius:28px;text-decoration:none;transition:border-radius .45s var(--spring-fast),background-color .25s var(--effects)}
+.article-card:active{border-radius:20px}
+.article-card-cover{display:block;overflow:hidden;aspect-ratio:16/10;background:var(--tertiary-container);border-radius:20px;transition:border-radius .6s var(--spring)}
+.article-card-cover img{width:100%;height:100%;object-fit:cover;transition:scale .7s var(--spring)}
+.article-card-copy{display:grid;gap:6px;padding:0 6px}
+.article-card-copy time{width:fit-content;padding:0 10px;background:var(--tertiary-container);color:var(--on-tertiary-container);border-radius:999px;font-family:var(--flex);font-weight:800;font-size:.74rem}
+.article-card-copy strong{font-family:var(--display);font-weight:400;font-size:1.15rem;line-height:1.45;overflow-wrap:anywhere}
+.article-card-desc{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:3;color:var(--on-surface-variant);font-weight:700;font-size:.85rem;line-height:1.6}
+.article-card-copy small{color:var(--primary);font-weight:900}
+@media(hover:hover){.article-card:hover{background:var(--secondary-container);color:var(--on-secondary-container);border-radius:36px}}
+@media(hover:hover){.article-card:hover .article-card-cover{border-radius:40px}}
+@media(hover:hover){.article-card:hover .article-card-cover img{scale:1.05}}
+@media(hover:hover){.article-card:hover .article-card-desc,.article-card:hover .article-card-copy small{color:inherit}}
+
 /* ===== 404 ===== */
 .error-main{display:grid;place-items:center;min-height:100svh;padding-block:88px 32px}
 .error-card{display:grid;justify-items:center;gap:14px;width:min(640px,100%);padding:clamp(26px,5vw,48px);background:var(--glass);backdrop-filter:blur(22px) saturate(1.3);-webkit-backdrop-filter:blur(22px) saturate(1.3);border-radius:clamp(32px,5vw,48px);box-shadow:var(--elev-2);text-align:center}

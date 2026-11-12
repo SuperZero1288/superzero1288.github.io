@@ -401,8 +401,6 @@
   site.loadJson('/blog/articles.json').then((articles) => {
     if (!articles.length) return;
     $('noteList').replaceChildren(...articles.slice(0, 3).map(site.noteCard));
-    const latest = $('latestArticleLink');
-    if (latest && articles[0].generated) latest.href = `/blog/${articles[0].id}.html`;
   }).catch((error) => console.warn('note記事はページ内の表示を使います', error));
   loadJson('/blog/latest-links.json').then((latest) => {
     const repositories = latest.githubRepositories?.slice(0, 3) || [];
