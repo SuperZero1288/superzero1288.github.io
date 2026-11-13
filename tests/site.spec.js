@@ -786,6 +786,24 @@ test('the terminal only takes half-width letters, numbers and symbols, even with
   await expect(prompt).toHaveValue('ls -a');
 });
 
+test('the terminal opens the note sync on GitHub so the articles can be updated by hand', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  await page.evaluate(() => { window.__opened = []; window.open = (url) => { window.__opened.push(String(url)); return null; }; });
+  await page.locator('#leftTab').click();
+  await page.locator('[data-launch-app="terminal"]').click();
+  const terminal = page.locator('.app-window[data-app="terminal"]');
+  const prompt = terminal.locator('input');
+  await expect(prompt).toBeFocused();
+  await prompt.fill('note sy');
+  await prompt.press('Tab');
+  await expect(prompt).toHaveValue('note sync ');
+  await prompt.press('Enter');
+  await expect(terminal.locator('.terminal-output')).toContainText('「note記事を同期」を新しいタブで開きました');
+  await expect(terminal.locator('.terminal-output')).toContainText('Run workflow');
+  expect(await page.evaluate(() => window.__opened)).toEqual(['https://github.com/SuperZero1288/superzero1288.github.io/actions/workflows/sync-note.yml']);
+});
+
 test('homepage desktop apps open from the side sheet and can be driven with the keyboard', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/');

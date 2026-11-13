@@ -890,6 +890,7 @@
     x: {label: 'X', url: 'https://x.com/ZErrrrrO_VRC'}, youtube: {label: 'YouTube', url: 'https://www.youtube.com/@ZErrrrrO_VRC'},
     booth: {label: 'BOOTH', url: 'https://zerrrrro.booth.pm/'}, github: {label: 'GitHub', url: 'https://github.com/SuperZero1288'},
   };
+  const NOTE_SYNC_URL = 'https://github.com/SuperZero1288/superzero1288.github.io/actions/workflows/sync-note.yml';
   const tokenize = (command) => {
     const tokens = [];
     command.replace(/"([^"]*)"|'([^']*)'|([^\s]+)/g, (_, double, single, bare) => { tokens.push(double ?? single ?? bare); return ''; });
@@ -974,7 +975,7 @@
     };
     const showHelp = (all) => {
       write('利用できるコマンド', 'accent');
-      ['  pwd / cd PATH                 現在地の表示・移動', '  ls [-a] [PATH] / dir [/a]     ファイル一覧', '  tree [-a] [PATH]              ディレクトリ構造', '  cat PATH / type PATH          ファイルを読む', '  access PATH                   ページ・アプリへ移動', '  explorer [PATH]               ファイルを表示', '  note latest                   最新note記事を開く', '  theme [list|next|NAME]        テーマカラー', '  mode dark|light|toggle / clock 12|24', '  hack os [macos|windows|linux|auto]', '  profile / device              プロフィール・端末情報', '  calc / paint / notepad / browser  アプリを開く', '  windows / window ACTION ID    ウィンドウ管理', '  bootmgr                       PC用 Boot Manager', '  history / clear / date / echo 基本コマンド'].forEach((line) => write(line));
+      ['  pwd / cd PATH                 現在地の表示・移動', '  ls [-a] [PATH] / dir [/a]     ファイル一覧', '  tree [-a] [PATH]              ディレクトリ構造', '  cat PATH / type PATH          ファイルを読む', '  access PATH                   ページ・アプリへ移動', '  explorer [PATH]               ファイルを表示', '  note latest / note sync       最新note記事を開く・記事を今すぐ同期', '  theme [list|next|NAME]        テーマカラー', '  mode dark|light|toggle / clock 12|24', '  hack os [macos|windows|linux|auto]', '  profile / device              プロフィール・端末情報', '  calc / paint / notepad / browser  アプリを開く', '  windows / window ACTION ID    ウィンドウ管理', '  bootmgr                       PC用 Boot Manager', '  history / clear / date / echo 基本コマンド'].forEach((line) => write(line));
       write('Tab: 補完  ↑↓: 履歴  Ctrl+L: 画面消去  Ctrl+Alt+T: 新しいターミナル', 'muted');
       if (all) { write(''); write('隠しコマンド', 'accent'); write('  matrix / fortune / sudo / boot / bootmgr'); write('隠しファイルは ls -a または dir /a で表示できます', 'muted'); }
     };
@@ -1052,7 +1053,13 @@
         case 'note':
           if (!sub || sub === 'latest') { navigateSite(site.latestNoteUrl()); write('最新のnote記事を開いています', 'success'); }
           else if (sub === 'profile' || sub === 'list') { window.open('https://note.com/zerrrrro_1288', '_blank', 'noopener'); write('noteを新しいタブで開きました', 'success'); }
-          else write('使い方: note latest | note profile', 'error');
+          else if (sub === 'sync' || sub === 'update') {
+            // 記事の同期（GitHub Actions）を今すぐ動かすページ。実行できるのはリポジトリの持ち主だけ
+            window.open(NOTE_SYNC_URL, '_blank', 'noopener');
+            write('GitHubの「note記事を同期」を新しいタブで開きました', 'success');
+            write('「Run workflow」→「Run workflow」を押すと、1〜2分でサイトに反映されます（リポジトリの持ち主だけが実行できます）', 'muted');
+          }
+          else write('使い方: note latest | note profile | note sync', 'error');
           break;
         case 'whoami': write('ぜろくんでんせつ / ZErrrrrO', 'accent'); write('趣味でUnityをしている一般高校生'); write('profile で詳しいプロフィールを表示できます', 'muted'); break;
         case 'date': write(new Intl.DateTimeFormat('ja-JP', {dateStyle: 'full', timeStyle: 'medium'}).format(new Date())); break;
@@ -1159,7 +1166,7 @@
       output.scrollTop = output.scrollHeight;
     });
     const baseCommands = ['help', 'pwd', 'cd', 'ls', 'dir', 'tree', 'cat', 'type', 'access', 'explorer', 'note', 'device', 'theme', 'mode', 'clock', 'settings', 'hack', 'open', 'new', 'profile', 'calculator', 'paint', 'notepad', 'browser', 'windows', 'window', 'bootmgr', 'minimize', 'maximize', 'close', 'date', 'whoami', 'ver', 'history', 'clear'];
-    const options = {theme: ['list', 'next', 'set', ...site.hues.map((hue) => hue.name.toLowerCase())], mode: ['dark', 'light', 'toggle'], clock: ['12', '24'], hack: ['os', 'status', 'reset'], note: ['latest', 'profile'], window: ['focus', 'close', 'minimize', 'maximize', 'restore'], history: ['clear']};
+    const options = {theme: ['list', 'next', 'set', ...site.hues.map((hue) => hue.name.toLowerCase())], mode: ['dark', 'light', 'toggle'], clock: ['12', '24'], hack: ['os', 'status', 'reset'], note: ['latest', 'profile', 'sync'], window: ['focus', 'close', 'minimize', 'maximize', 'restore'], history: ['clear']};
     const complete = () => {
       const source = input.value;
       const parts = source.trimStart().split(/\s+/);
