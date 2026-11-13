@@ -687,6 +687,11 @@ test('the homepage keeps the familiar controls: side sheets, clock, profile and 
   await page.locator('#repoTab').press('ArrowLeft');
   await expect(page.locator('#noteTab')).toBeFocused();
   await expect(page.locator('#notePanel')).toBeVisible();
+  // 「あたらしいもの」の note は、サイト内の記事一覧へ（同じタブで開く）
+  const allArticles = page.locator('#notePanel a.text-link');
+  await expect(allArticles).toHaveText('記事一覧で全部見る →');
+  await expect(allArticles).toHaveAttribute('href', '/blog/');
+  await expect(allArticles).not.toHaveAttribute('target', /.+/);
 });
 
 test('the site remembers dark mode and the theme colour', async ({page}) => {
