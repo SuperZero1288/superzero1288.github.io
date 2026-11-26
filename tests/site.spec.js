@@ -1425,16 +1425,105 @@ test('the right menu offers the article list and the (upcoming) app list', async
   expect(await audit(page)).toEqual([]);
 });
 
-test('the app list is not ready yet, so it shows the 404 page', async ({page}) => {
+/* ===== 自作アプリ（/apps/）と F Launcher の配布ページ ===== */
+test('the right menu opens the app list, which offers F Launcher', async ({page}) => {
   await mockNetwork(page);
-  expect(fs.existsSync(path.join(rootPath, 'apps'))).toBe(false);
-  const notFound = fs.readFileSync(path.join(rootPath, '404.html'), 'utf8');
-  await page.route('**/apps/', (route) => route.fulfill({status: 404, contentType: 'text/html; charset=utf-8', body: notFound}));
   await ready(page, '/');
   await page.locator('#rightTab').click();
   await page.locator('#rightSheet a[href="/apps/"]').click();
   await expect(page).toHaveURL(/\/apps\/$/);
-  await expect(page.locator('#errorPath')).toHaveText('/apps/');
+  await expect(page.locator('#siteLoader')).toHaveCount(0);
+  await expect(page.locator('h1')).toHaveText('自作アプリ');
+  const card = page.locator('#fLauncherCard');
+  await expect(card).toHaveAttribute('href', '/apps/f-launcher/');
+  await expect(card.locator('.app-name')).toHaveText('F Launcher');
+  await expect(card).toContainText('準備中');
+  expect(await page.locator('html').getAttribute('data-world')).toBeNull();
+  expect(await audit(page)).toEqual([]);
+});
+
+test('hovering F Launcher turns the whole app list into its world, and leaving turns it back', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/apps/');
+  const html = page.locator('html');
+  const world = page.locator('#flWorld');
+  const surface = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const before = await surface();
+  await expect(world).toBeHidden();
+
+  const card = page.locator('#fLauncherCard');
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + 140, box.y + box.height / 2);
+  await expect(html).toHaveAttribute('data-world', 'f');
+  await expect(world).toBeVisible();
+  // 世界は、カーソルのある場所から広がる
+  expect(await world.evaluate((element) => [element.style.getPropertyValue('--x'), element.style.getPropertyValue('--y')])).toEqual([`${Math.round(box.x + 140)}px`, `${Math.round(box.y + box.height / 2)}px`]);
+  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toHaveCSS('opacity', '1');
+  await expect(page.locator('.fl-widget-time')).toHaveText(/^\d{2}:\d{2}$/);
+  // ページの色も F Launcher の色（暗い色）になる
+  await expect.poll(surface, {timeout: 3000}).not.toBe(before);
+  expect(await audit(page)).toEqual([]);
+
+  await page.mouse.move(10, 10);
+  await expect(html).not.toHaveAttribute('data-world', /.+/);
+  await expect(world).toBeHidden({timeout: 3000});
+  await expect.poll(surface, {timeout: 3000}).toBe(before);
+
+  // 通り過ぎただけでは切り替わらない
+  await page.mouse.move(box.x + 10, box.y + box.height / 2);
+  await page.mouse.move(box.x - 40, box.y - 60, {steps: 1});
+  await page.waitForTimeout(250);
+  await expect(html).not.toHaveAttribute('data-world', /.+/);
+
+  // キーボードで選んだときも世界に入り、離れると戻る
+  await page.locator('a[href="/#content"]').focus();
+  await page.keyboard.press('Tab');
+  await expect(card).toBeFocused();
+  await expect(html).toHaveAttribute('data-world', 'f');
+  await page.keyboard.press('Shift+Tab');
+  await expect(html).not.toHaveAttribute('data-world', /.+/);
+});
+
+test('without hover (phones), the app list stays in the usual theme', async ({browser}) => {
+  const context = await browser.newContext({viewport: {width: 390, height: 844}, hasTouch: true, isMobile: true});
+  const page = await context.newPage();
+  await mockNetwork(page);
+  await ready(page, '/apps/');
+  await page.locator('#fLauncherCard').dispatchEvent('pointerenter', {pointerType: 'touch'});
+  await page.waitForTimeout(250);
+  await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
+  await expectNoHorizontalOverflow(page);
+  await context.close();
+});
+
+for (const width of [320, 1440]) {
+  test(`the F Launcher page is shown in its own world at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    await mockNetwork(page);
+    await ready(page, '/apps/');
+    await page.locator('#fLauncherCard').click();
+    await expect(page).toHaveURL(/\/apps\/f-launcher\/$/);
+    await expect(page.locator('html')).toHaveAttribute('data-world', 'f');
+    await expect(page.locator('h1')).toHaveText('F Launcher');
+    // まだ配布していないので、ダウンロードは押せない
+    await expect(page.getByRole('button', {name: /ダウンロード/})).toBeDisabled();
+    await expect(page.locator('.fl-spec')).toContainText('まだ公開していません');
+    await expect(page.locator('.fl-phone-time')).toHaveText(/^\d{2}:\d{2}$/);
+    // F Launcher の世界では、テーマカラーとダーク/ライトのボタンは出さない
+    await expect(page.locator('#hueButton')).toBeHidden();
+    await expect(page.locator('#themeButton')).toBeHidden();
+    await expectNoHorizontalOverflow(page);
+    expect(await audit(page)).toEqual([]);
+    await page.locator('.fl-back').click();
+    await expect(page).toHaveURL(/\/apps\/$/);
+    await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
+  });
+}
+
+test('the app pages are in the sitemap', async () => {
+  const sitemap = fs.readFileSync(path.join(rootPath, 'sitemap.xml'), 'utf8');
+  expect(sitemap).toContain('<loc>https://superzero1288.github.io/apps/</loc>');
+  expect(sitemap).toContain('<loc>https://superzero1288.github.io/apps/f-launcher/</loc>');
 });
 
 for (const width of [320, 1440]) {

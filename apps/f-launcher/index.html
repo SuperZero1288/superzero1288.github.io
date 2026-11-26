@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja" data-world="f">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F Launcher | ぜろくんでんせつ</title>
+<meta name="description" content="Android のホーム画面のアプリ「F Launcher」の配布ページです（準備中）。">
+<meta name="theme-color" content="#0b0c12">
+<link rel="canonical" href="https://superzero1288.github.io/apps/f-launcher/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
+<link rel="stylesheet" href="/site/base.css?v=20261113-1">
+<link rel="stylesheet" href="/site/pages.css?v=20261113-1">
+<link rel="stylesheet" href="/apps/apps.css?v=20261126-1">
+<script src="/site/theme.js?v=20261113-1"></script>
+<script>
+// 一覧から移ってきたとき: 押した場所から、この世界が円で広がる（一覧で世界に入っていたときは、そのままつなぐ）
+addEventListener('pagereveal', (event) => {
+  const root = document.documentElement;
+  const transition = event.viewTransition;
+  if (!transition) return;
+  root.classList.add('vt-arrived');
+  let origin = null;
+  try { origin = JSON.parse(sessionStorage.getItem('fl-enter')); sessionStorage.removeItem('fl-enter'); } catch {}
+  if (!origin || Date.now() - origin.t > 8000 || origin.world) return;
+  root.classList.add('fl-entering');
+  const radius = Math.hypot(Math.max(origin.x, innerWidth - origin.x), Math.max(origin.y, innerHeight - origin.y));
+  transition.ready.then(() => {
+    root.animate({clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${radius}px at ${origin.x}px ${origin.y}px)`]},
+      {duration: 850, easing: 'cubic-bezier(.16,.84,.24,1)', pseudoElement: '::view-transition-new(root)'});
+  }).catch(() => {});
+  transition.finished.finally(() => root.classList.remove('fl-entering'));
+});
+</script>
+<link rel="expect" href="#main" blocking="render">
+<script src="/site/common.js?v=20261113-1" defer blocking="render"></script>
+<script src="/site/search.js?v=20261113-1" defer></script>
+<script src="/apps/apps.js?v=20261126-1" defer></script>
+</head>
+<body class="page page-apps page-flauncher">
+<a class="skip-link" href="#main">本文へ移動</a>
+
+<div class="fl-world is-static" aria-hidden="true">
+<div class="fl-wall"></div>
+<svg class="fl-mark" viewBox="0 0 200 260"><defs><linearGradient id="flMarkStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="oklch(.91 .2 126)"/><stop offset="1" stop-color="oklch(.83 .12 215)"/></linearGradient></defs><path d="M40 20h130v42H86v40h70v42H86v96H40z"/></svg>
+</div>
+
+<main id="main" class="page-main fl-main">
+<header class="fl-hero">
+<div class="fl-hero-copy">
+<a class="fl-back" href="/apps/" style="--n:0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>自作アプリ</a>
+<span class="app-icon app-icon-f" style="--n:1" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h11v3.6h-7v3.4h6v3.6h-6v6.4H7z"/></svg><i class="app-icon-dot"></i></span>
+<p class="eyebrow" style="--n:2">ANDROID LAUNCHER</p>
+<h1 class="fl-title" style="--n:3">F Launcher</h1>
+<p class="fl-tagline" style="--n:4">Android のホーム画面のアプリです。いま作っているところなので、公開までもう少し待っていてください。</p>
+<ul class="fl-chips" style="--n:5" aria-label="アプリの情報"><li class="app-chip">Android</li><li class="app-chip">ホームアプリ</li><li class="app-chip app-chip-status">準備中</li></ul>
+<div class="fl-actions" style="--n:6">
+<button class="btn fl-download" type="button" disabled>ダウンロード <small>準備中</small></button>
+<a class="btn btn-tonal" href="/apps/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>アプリの一覧へ</a>
+</div>
+</div>
+<div class="fl-phone" aria-hidden="true">
+<div class="fl-phone-screen">
+<div class="fl-phone-status"><span data-fl-clock="time">--:--</span><span class="fl-status-icons"><svg viewBox="0 0 24 24"><path d="M2 22h20V2z" opacity=".9"/></svg><svg viewBox="0 0 24 24"><path d="M12 21 1 8.5a16 16 0 0 1 22 0z"/></svg><svg viewBox="0 0 24 24"><path d="M9 2h6v2h2a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h2z"/></svg></span></div>
+<div class="fl-phone-widget"><p class="fl-phone-time" data-fl-clock="time">--:--</p><p class="fl-phone-date" data-fl-clock="date"></p></div>
+<div class="fl-phone-grid"><span class="fl-app" style="--i:0;--c:var(--fl-lime)"><svg viewBox="0 0 24 24"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4.2A3 3 0 0 1 3 15V7a3 3 0 0 1 3-3z"/></svg></span><span class="fl-app" style="--i:1;--c:var(--fl-cyan)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9 4h6l1.6 2.2H20a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7.2a1 1 0 0 1 1-1h3.4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg></span><span class="fl-app" style="--i:2;--c:var(--fl-coral)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 13h12l-4.2-5.6-3.1 4-2.1-2.6zM8.5 6.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></span><span class="fl-app" style="--i:3;--c:var(--fl-violet)"><svg viewBox="0 0 24 24"><path d="M7 5.5 19 3v12.5h-2V7.1l-8 1.7v8.7H7zM6.5 15a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm10-2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg></span><span class="fl-app" style="--i:4;--c:var(--fl-amber)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a7 7 0 0 1 7 7c0 5.2-7 13-7 13S5 14.2 5 9a7 7 0 0 1 7-7zm0 4.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6z"/></svg></span><span class="fl-app" style="--i:5;--c:var(--fl-white)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3zM5 9v10h14V9z"/></svg></span><span class="fl-app" style="--i:6;--c:var(--fl-lime)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3 5h18v14H3zm2 2.2v.3l7 4.6 7-4.6v-.3l-7 4.4z"/></svg></span><span class="fl-app" style="--i:7;--c:var(--fl-cyan)"><svg viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 1 1 1.1-9.88A6 6 0 0 1 19.5 11.3 4 4 0 0 1 17.5 19z"/></svg></span><span class="fl-app" style="--i:8;--c:var(--fl-coral)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm-1 5v6.2l4.8 2.9 1-1.7-3.8-2.3V7z"/></svg></span><span class="fl-app" style="--i:9;--c:var(--fl-violet)"><svg viewBox="0 0 24 24"><path d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.3-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5z"/></svg></span><span class="fl-app" style="--i:10;--c:var(--fl-amber)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm4.5 5.5-6.2 2.8-2.8 6.2 6.2-2.8z"/></svg></span><span class="fl-app" style="--i:11;--c:var(--fl-white)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM10.5 2h3l.5 2.6 1.9.8 2.2-1.5 2.1 2.1-1.5 2.2.8 1.9 2.5.4v3l-2.6.5-.8 1.9 1.5 2.2-2.1 2.1-2.2-1.5-1.9.8-.4 2.5h-3l-.5-2.6-1.9-.8-2.2 1.5-2.1-2.1 1.5-2.2-.8-1.9L2 13.5v-3l2.6-.5.8-1.9-1.5-2.2L6 3.8l2.2 1.5 1.9-.8z"/></svg></span></div>
+<div class="fl-phone-dots"><i></i><i></i><i></i></div>
+<div class="fl-phone-dock"><span class="fl-app" style="--i:12;--c:var(--fl-coral)"><svg viewBox="0 0 24 24"><path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1 1 0 0 0-1.02.24l-2.2 2.2a15.05 15.05 0 0 1-6.59-6.59l2.2-2.21a.96.96 0 0 0 .25-1A11.36 11.36 0 0 1 8.5 4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1 17 17 0 0 0 17 17 1 1 0 0 0 1-1v-3.5a1 1 0 0 0-1-1z"/></svg></span><span class="fl-app" style="--i:13;--c:var(--fl-violet)"><svg viewBox="0 0 24 24"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4.2A3 3 0 0 1 3 15V7a3 3 0 0 1 3-3z"/></svg></span><span class="fl-app" style="--i:14;--c:var(--fl-amber)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm4.5 5.5-6.2 2.8-2.8 6.2 6.2-2.8z"/></svg></span><span class="fl-app" style="--i:15;--c:var(--fl-white)"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9 4h6l1.6 2.2H20a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7.2a1 1 0 0 1 1-1h3.4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg></span></div>
+</div>
+</div>
+</header>
+
+<div class="content-screen page-screen">
+<section aria-labelledby="featuresTitle">
+<div class="page-section-head"><h2 class="fl-section-title" id="featuresTitle">特長</h2></div>
+<ul class="fl-features">
+<li class="fl-feature"><span class="fl-app" style="--c:var(--fl-lime)" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm4.5 5.5-6.2 2.8-2.8 6.2 6.2-2.8z"/></svg></span><strong>特長 1</strong><p>ここに特長の説明が入ります（準備中）。</p></li><li class="fl-feature"><span class="fl-app" style="--c:var(--fl-cyan)" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM10.5 2h3l.5 2.6 1.9.8 2.2-1.5 2.1 2.1-1.5 2.2.8 1.9 2.5.4v3l-2.6.5-.8 1.9 1.5 2.2-2.1 2.1-2.2-1.5-1.9.8-.4 2.5h-3l-.5-2.6-1.9-.8-2.2 1.5-2.1-2.1 1.5-2.2-.8-1.9L2 13.5v-3l2.6-.5.8-1.9-1.5-2.2L6 3.8l2.2 1.5 1.9-.8z"/></svg></span><strong>特長 2</strong><p>ここに特長の説明が入ります（準備中）。</p></li><li class="fl-feature"><span class="fl-app" style="--c:var(--fl-coral)" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 13h12l-4.2-5.6-3.1 4-2.1-2.6zM8.5 6.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></span><strong>特長 3</strong><p>ここに特長の説明が入ります（準備中）。</p></li>
+</ul>
+</section>
+<section aria-labelledby="specTitle">
+<div class="page-section-head"><h2 class="fl-section-title" id="specTitle">配布情報</h2></div>
+<dl class="fl-spec">
+<div><dt>バージョン</dt><dd>まだ公開していません</dd></div>
+<div><dt>対応OS</dt><dd>Android（対応バージョンは未定）</dd></div>
+<div><dt>価格</dt><dd>未定</dd></div>
+<div><dt>公開日</dt><dd>未定</dd></div>
+</dl>
+</section>
+<section aria-labelledby="historyTitle">
+<div class="page-section-head"><h2 class="fl-section-title" id="historyTitle">更新履歴</h2></div>
+<p class="fl-note">まだ公開していません。公開したら、ここに更新の内容が並びます。</p>
+</section>
+</div>
+
+<footer class="page-footer"><span>ZERO / APPS / F LAUNCHER</span><a href="/">ぜろくんでんせつ</a></footer>
+</main>
+</body>
+</html>
