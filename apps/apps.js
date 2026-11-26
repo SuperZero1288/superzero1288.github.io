@@ -1,58 +1,74 @@
 // ZERO — 自作アプリ（/apps/）と F Launcher の配布ページの動き
-//  - ホーム画面の見本: セカンドスペースのテンプレートとテーマが、自動でランダムに入れかわる
-//    （F Launcher の編集画面のように、ガラスの枠とマスの点を出してから入れかえる）
+//  - ホーム画面の見本: 壁紙・テーマ（アイコンも）・セカンドスペースのテンプレートが、
+//    それぞれ別々の間隔で、自動でランダムに入れかわる
+//      壁紙: 図形が形・色・向きを変えながら次の壁紙になる（CSS）
+//      テーマ: 面とアイコンの色・透け方・形が変わり、アイコンが順に小さく弾む
+//      テンプレート: F Launcher の編集画面のように、ガラスの枠とマスの点を出してから入れかえる
 //  - 一覧: F Launcher のカードにカーソルを乗せる（キーボードで選ぶ）と、後ろにホーム画面が円で広がり、
 //          ページの部品は同じ位置のまま、色・角丸・面が Material 3 のものへなめらかに変わる（CSS）。
 //          書体だけはなめらかに変えられないので、文字だけその場で重ねて入れかえる（View Transitions）
 //  - 一覧: カードを押した場所を覚えておき、配布ページではそこから広がる（配布ページの head）
-//  - 配布ページ: 自動の入れかえを止める・動かすボタン。上のバーは、下へスクロールすると名前が出る
+//  - 配布ページ: 見本を押すと、自動の入れかえが止まる・動く。上のバーは、下へスクロールすると名前が出る
 (() => {
   'use strict';
   const root = document.documentElement;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const TEMPLATE_NAMES = {custom: 'カスタム', blank: '空白', clock: '時計', stripe: 'ストライプ', deck: 'デッキ'};
-  const STYLE_NAMES = {material: 'マテリアル', blur: 'ブラー', glass: 'Liquid Glass'};
-  const STYLES = Object.keys(STYLE_NAMES);
+  const STYLES = ['material', 'blur', 'glass'];
+  const WALLS = ['puffy', 'dusk', 'mint', 'mono', 'sunrise'];
   const pickOther = (list, current) => {
     const options = list.filter((item) => item !== current);
     return options[Math.floor(Math.random() * options.length)];
   };
+  const between = (min, max) => min + Math.random() * (max - min);
 
-  /* ---------- セカンドスペースを入れかえる ---------- */
-  const editTimers = new WeakMap();
-  const customize = (space, styleHost, template, style, onChange) => {
-    (editTimers.get(space) || []).forEach(clearTimeout);
-    space.classList.add('is-editing');
-    editTimers.set(space, [
-      setTimeout(() => {
-        space.dataset.template = template;
-        if (style) styleHost.dataset.style = style;
-        onChange?.();
-      }, 220),
-      setTimeout(() => space.classList.remove('is-editing'), 1000),
-    ]);
-  };
-  // テンプレートは毎回ちがうものに、テーマはときどき変える
-  const randomStep = (space, styleHost, templates, onChange) => {
-    const template = pickOther(templates, space.dataset.template);
-    const style = Math.random() < 0.45 ? pickOther(STYLES, styleHost.dataset.style) : null;
-    customize(space, styleHost, template, style, onChange);
+  /* ---------- ホーム画面の見本を、自動でランダムに入れかえる ---------- */
+  const showcase = (host, templates) => {
+    const space = host.querySelector('.fl-space');
+    host.querySelectorAll('.fl-icon').forEach((icon, index) => icon.style.setProperty('--i', String(index % 14)));
+    const timers = {};
+    const later = (name, ms, fn) => { clearTimeout(timers[name]); timers[name] = setTimeout(fn, ms); };
+    const steps = {
+      // テンプレート: 編集画面のようにガラスの枠を出し、中身を入れかえ（フェードスルーは CSS）、枠を消す
+      template: [2600, 4800, () => {
+        space.classList.add('is-editing');
+        later('swap', 220, () => { space.dataset.template = pickOther(templates, space.dataset.template); });
+        later('edited', 1000, () => space.classList.remove('is-editing'));
+      }],
+      // テーマ: 面とアイコンが変わり、アイコンが順に弾む
+      style: [3800, 7000, () => {
+        host.dataset.style = pickOther(STYLES, host.dataset.style);
+        host.classList.remove('is-restyling');
+        void host.offsetWidth;
+        host.classList.add('is-restyling');
+        later('restyled', 900, () => host.classList.remove('is-restyling'));
+      }],
+      // 壁紙: 図形が形を変えながら次の壁紙になる
+      wall: [5200, 9000, () => { host.dataset.wall = pickOther(WALLS, host.dataset.wall); }],
+    };
+    let running = false;
+    const loop = (name) => {
+      const [min, max, step] = steps[name];
+      later(name, between(min, max), () => { step(); loop(name); });
+    };
+    return {
+      start() { if (running) return; running = true; Object.keys(steps).forEach(loop); },
+      stop() { running = false; Object.values(timers).forEach(clearTimeout); space.classList.remove('is-editing'); host.classList.remove('is-restyling'); },
+      reset() { space.dataset.template = 'custom'; host.dataset.style = 'material'; host.dataset.wall = 'puffy'; },
+    };
   };
 
   /* ---------- 一覧: F Launcher の世界に入る・出る ---------- */
   const card = document.getElementById('fLauncherCard');
   const world = document.getElementById('flWorld');
   if (card && world) {
-    const space = world.querySelector('.fl-space');
-    const LIST_TEMPLATES = ['custom', 'clock', 'stripe', 'deck'];
+    const home = showcase(world, ['custom', 'clock', 'stripe', 'deck']);
     // 書体が変わる文字（その場で重ねて入れかえる）
-    const TEXTS = '.toolbar .clock, .apps-hero .eyebrow, .page-title, .page-lead, .page-actions .btn, .card-title, .card-sub, .app-name, .app-desc, .app-chip, .app-go, .app-icon-soon, .app-card-soon strong, .app-card-soon .app-copy > span, .page-footer > *';
+    const TEXTS = '.toolbar .clock, .apps-hero .eyebrow, .page-title, .page-lead, .page-actions .btn, .card-title, .card-sub, .app-name, .app-desc, .app-go, .app-icon-soon, .app-card-soon strong, .app-card-soon .app-copy > span, .page-footer > *';
     let desired = false;
     let running = null;
     let origin = null;
     let pointer = null;
     let intentTimer = 0;
-    let cycleTimer = 0;
     const isActive = () => root.dataset.world === 'f';
     // F Launcher の書体を先に読み込んでおく（初めてカーソルを乗せたときに、文字が2回変わらないように）
     addEventListener('load', () => {
@@ -71,16 +87,9 @@
       world.style.setProperty('--y', `${Math.round(y)}px`);
       world.style.setProperty('--r', `${Math.round(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 24)}px`);
     };
-    const stopCycle = () => clearInterval(cycleTimer);
-    const startCycle = () => {
-      stopCycle();
-      space.dataset.template = 'custom';
-      world.dataset.style = 'material';
-      cycleTimer = setInterval(() => randomStep(space, world, LIST_TEMPLATES), 2600);
-    };
     const apply = (on) => {
-      if (on) { root.dataset.world = 'f'; startCycle(); }
-      else { root.removeAttribute('data-world'); stopCycle(); space.classList.remove('is-editing'); }
+      if (on) { home.reset(); root.dataset.world = 'f'; home.start(); }
+      else { root.removeAttribute('data-world'); home.stop(); }
     };
     // 今の状態を、なってほしい状態に合わせる（切り替えの途中なら、終わってから合わせる）
     const sync = () => {
@@ -161,40 +170,23 @@
     });
   }
 
-  /* ---------- 配布ページ: ホーム画面の見本が自動でランダムに入れかわる（止められる） ---------- */
+  /* ---------- 配布ページ: ホーム画面の見本（押すと止まる・動く） ---------- */
   const phone = document.getElementById('flPhone');
-  const toggle = document.getElementById('flAutoplay');
-  if (phone && toggle) {
-    const phoneSpace = phone.querySelector('.fl-space');
-    const now = document.getElementById('flNow');
-    const label = toggle.querySelector('span');
-    const icon = toggle.querySelector('path');
-    const ICON_PAUSE = 'M6 5h4v14H6zm8 0h4v14h-4z';
-    const ICON_PLAY = 'M8 5.5v13a.8.8 0 0 0 1.2.7l10.3-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5z';
+  if (phone) {
+    const home = showcase(phone, ['custom', 'blank', 'clock', 'stripe', 'deck']);
     let paused = reducedMotion.matches; // 「動きを減らす」設定のときは、止めた状態から
     let visible = true;
-    let timer = 0;
-    const describe = () => {
-      if (now) now.innerHTML = `テンプレート: <b>${TEMPLATE_NAMES[phoneSpace.dataset.template]}</b>・テーマ: <b>${STYLE_NAMES[phone.dataset.style]}</b>`;
+    const update = () => {
+      if (paused || !visible || document.hidden) home.stop(); else home.start();
+      phone.setAttribute('aria-label', `F Launcher のホーム画面の見本。壁紙・テーマ・テンプレートが自動で入れかわります。${paused ? '止めています。押すと動きます。' : '押すと止まります。'}`);
+      phone.title = paused ? '押すと動きます' : '押すと止まります';
     };
-    const schedule = () => {
-      clearInterval(timer);
-      if (paused || !visible || document.hidden) return;
-      timer = setInterval(() => randomStep(phoneSpace, phone, Object.keys(TEMPLATE_NAMES), describe), 3200);
-    };
-    const render = () => {
-      // ボタンの文字で「一時停止」「再生」を表す（aria-pressed は付けない）
-      label.textContent = paused ? '再生' : '一時停止';
-      icon.setAttribute('d', paused ? ICON_PLAY : ICON_PAUSE);
-      schedule();
-    };
-    toggle.addEventListener('click', () => { paused = !paused; render(); });
-    document.addEventListener('visibilitychange', schedule);
+    phone.addEventListener('click', () => { paused = !paused; update(); });
+    document.addEventListener('visibilitychange', update);
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }).observe(phone);
+      new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; update(); }).observe(phone);
     }
-    describe();
-    render();
+    update();
   }
 
   /* ---------- 配布ページ: 上のバー（見出しが隠れたら、色を付けて名前を出す） ---------- */

@@ -23,14 +23,14 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 .fl-world{opacity:1;clip-path:circle(0 at var(--x,50%) var(--y,50%));transition:clip-path .35s var(--md-sys-motion-easing-emphasized-accelerate),visibility 0s .35s}
 :root[data-world="f"] .fl-world{clip-path:circle(var(--r,150vmax) at var(--x,50%) var(--y,50%));transition:clip-path .6s var(--md-sys-motion-easing-emphasized-decelerate),visibility 0s}
 /* ロックを外したときのように、壁紙が少し大きいところから落ち着く */
-.fl-world .fl-wall{scale:1.06;transition:scale .35s var(--md-sys-motion-easing-emphasized-accelerate)}
-:root[data-world="f"] .fl-world .fl-wall{scale:1;transition:scale .8s var(--md-sys-motion-easing-emphasized-decelerate)}
+.fl-world .fl-wall{scale:1.06;transition:scale .35s var(--md-sys-motion-easing-emphasized-accelerate),background-color 1.2s var(--md-sys-motion-easing-standard)}
+:root[data-world="f"] .fl-world .fl-wall{scale:1;transition:scale .8s var(--md-sys-motion-easing-emphasized-decelerate),background-color 1.2s var(--md-sys-motion-easing-standard)}
 }
-.fl-world .fl-shape-blue{--s:min(64vw,900px);right:-14vw;top:-36vw}
-.fl-world .fl-shape-red{--s:min(26vw,380px);right:8vw;top:26vh}
-.fl-world .fl-shape-orange{--s:min(40vw,560px);right:-10vw;top:44vh}
-.fl-world .fl-shape-pink{--s:min(24vw,340px);right:28vw;top:60vh}
-.fl-world .fl-shape-green{--s:min(46vw,640px);left:-14vw;bottom:-18vw}
+.fl-world .fl-shape-1{--s:min(64vw,900px);right:-14vw;top:-36vw}
+.fl-world .fl-shape-2{--s:min(26vw,380px);right:8vw;top:26vh}
+.fl-world .fl-shape-3{--s:min(40vw,560px);right:-10vw;top:44vh}
+.fl-world .fl-shape-4{--s:min(24vw,340px);right:28vw;top:60vh}
+.fl-world .fl-shape-5{--s:min(46vw,640px);left:-14vw;bottom:-18vw}
 .fl-world .fl-status{position:absolute;top:10px;left:16px;right:16px}
 .fl-world .fl-space{position:absolute;top:92px;right:max(36px,calc((100vw - 1180px) / 2 + 28px));width:min(330px,27vw)}
 /* ステータスバーとセカンドスペースは、円が広がってから出てくる */
@@ -57,10 +57,6 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 .app-copy{display:grid;justify-items:start;gap:6px;min-width:0}
 .app-name{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,2.4vw,1.8rem);line-height:1.25}
 .app-desc{color:var(--on-surface-variant);font-weight:700;font-size:.92rem}
-.app-meta{display:flex;flex-wrap:wrap;gap:6px}
-/* チップ: 高さ32・線の太さ1は、ふだんも同じ（世界に入っても大きさが変わらない） */
-.app-chip{display:inline-flex;align-items:center;height:32px;padding:0 14px;background:var(--surface-container-highest);border:1px solid transparent;border-radius:16px;color:var(--on-surface-variant);font-family:var(--flex);font-weight:800;font-size:.78rem;letter-spacing:.04em}
-.app-chip-status{background:var(--primary-container);color:var(--on-primary-container)}
 .app-go{display:inline-flex;align-items:center;gap:6px;margin-top:4px;color:var(--primary);font-weight:900;font-size:.92rem}
 .app-go svg{width:20px;height:20px;fill:currentColor}
 /* F Launcher のアイコン（配布ページと同じ。丸の中に F） */
@@ -82,7 +78,7 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 .page-apps main{isolation:isolate}
 
 /* ===== 色・角丸・面がなめらかに変わる（位置と大きさは変えない） ===== */
-.page-apps :is(.toolbar,.btn,.page-title-pop,.content-screen,.app-card,.app-chip,.app-card-soon,.page-footer,.eyebrow-swap+.eyebrow-swap){transition-property:background-color,color,border-color,border-radius,box-shadow,backdrop-filter,-webkit-backdrop-filter,rotate,opacity,translate,transform,scale;transition-duration:.45s;transition-timing-function:var(--md-sys-motion-easing-standard)}
+.page-apps :is(.toolbar,.btn,.page-title-pop,.content-screen,.app-card,.app-card-soon,.page-footer,.eyebrow-swap+.eyebrow-swap){transition-property:background-color,color,border-color,border-radius,box-shadow,backdrop-filter,-webkit-backdrop-filter,rotate,opacity,translate,transform,scale;transition-duration:.45s;transition-timing-function:var(--md-sys-motion-easing-standard)}
 .page-apps :is(.page-lead,.card-sub,.app-desc,.app-go,.app-name,.card-title,.page-title){transition:color .45s var(--md-sys-motion-easing-standard)}
 
 /* ===== 世界に入ったとき: Material 3 の色・角丸・面（Material Color Utilities で作った色） ===== */
@@ -124,9 +120,6 @@ color-scheme:dark
 :root[data-world="f"] .card-title,:root[data-world="f"] .app-name{font-weight:400}
 /* カード: Material 3 の filled card（surface-container-highest・角は medium の 12） */
 :root[data-world="f"] .app-card{background-color:var(--md-sys-color-surface-container-highest);border-radius:var(--md-sys-shape-corner-medium)}
-/* チップ: Material 3 の assist chip（線で囲み・角は small の 8） */
-:root[data-world="f"] .app-chip{background-color:transparent;border-color:var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-small);color:var(--md-sys-color-on-surface);font-weight:500;letter-spacing:.01em}
-:root[data-world="f"] .app-chip-status{background-color:var(--md-sys-color-secondary-container);border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
 :root[data-world="f"] .app-go,:root[data-world="f"] .app-card-soon strong{font-weight:500}
 :root[data-world="f"] .app-card-soon{box-shadow:inset 0 0 0 1px var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-medium)}
 :root[data-world="f"] .app-card-soon .app-copy>span{font-weight:400}
