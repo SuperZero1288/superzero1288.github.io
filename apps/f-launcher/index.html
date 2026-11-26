@@ -3,85 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F Launcher | ぜろくんでんせつ</title>
-<meta name="description" content="Launcher3 をもとにした、Material 3 Expressive のランチャー「F Launcher」の配布ページです（準備中）。">
-<meta name="theme-color" content="#131318">
-<link rel="canonical" href="https://superzero1288.github.io/apps/f-launcher/">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght,ROND@6..144,100..1000,0..100&family=Noto+Sans+JP:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="/site/shapes.css?v=20261106-2">
-<link rel="stylesheet" href="/apps/flauncher.css?v=20261126-5">
-<script>
-// 一覧から移ってきたとき: 押した場所から、このページが円で広がる（一覧で世界に入っていたときは、そのままつなぐ）
-addEventListener('pagereveal', (event) => {
-  const root = document.documentElement;
-  const transition = event.viewTransition;
-  if (!transition) return;
-  root.classList.add('vt-arrived');
-  let origin = null;
-  try { origin = JSON.parse(sessionStorage.getItem('fl-enter')); sessionStorage.removeItem('fl-enter'); } catch {}
-  if (!origin || Date.now() - origin.t > 8000 || origin.world) return;
-  root.classList.add('fl-entering');
-  const radius = Math.hypot(Math.max(origin.x, innerWidth - origin.x), Math.max(origin.y, innerHeight - origin.y));
-  transition.ready.then(() => {
-    root.animate({clipPath: [`circle(0px at ${origin.x}px ${origin.y}px)`, `circle(${radius}px at ${origin.x}px ${origin.y}px)`]},
-      {duration: 500, easing: 'cubic-bezier(.05,.7,.1,1)', pseudoElement: '::view-transition-new(root)'});
-  }).catch(() => {});
-  transition.finished.finally(() => root.classList.remove('fl-entering'));
-});
-</script>
-<link rel="expect" href="#main" blocking="render">
-<script src="/apps/apps.js?v=20261126-5" defer></script>
+<title>F Launcher のページは移動しました</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://superzero1288.github.io/f-launcher/">
+<meta http-equiv="refresh" content="0; url=/f-launcher/">
+<script>location.replace('/f-launcher/' + location.search + location.hash);</script>
 </head>
-<body class="fl-page">
-<a class="fl-skip md-label-large" href="#main">本文へ移動</a>
-<header class="md-top-app-bar" id="flAppBar">
-<a class="md-icon-button" href="/apps/" aria-label="自作アプリの一覧へ戻る" title="自作アプリの一覧へ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></a>
-<p class="md-top-app-bar-title md-title-large" aria-hidden="true">F Launcher</p>
-<a class="md-icon-button" href="/" aria-label="ぜろくんでんせつのトップページへ" title="トップページ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></a>
-</header>
-
-<main id="main" class="fl-main">
-<section class="fl-hero" aria-labelledby="flTitle">
-<div class="fl-hero-copy">
-<span class="fl-app-icon" style="--n:0" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h11v3.6h-7v3.4h6v3.6h-6v6.4H7z"/></svg></span>
-<p class="fl-label md-label-large" style="--n:1">Android ランチャー</p>
-<h1 class="fl-title md-display-medium" id="flTitle" style="--n:2">F Launcher</h1>
-<p class="fl-lead md-body-large" style="--n:3">Launcher3 をもとにした、Material 3 Expressive のランチャーです。とにかくカスタマイズできて、どのランチャーからでも移行できることを目指しています。</p>
-<div class="fl-actions" style="--n:4">
-<button class="md-button md-button-filled" type="button" disabled>ダウンロード（準備中）</button>
-<a class="md-button md-button-outlined" href="/apps/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>アプリの一覧へ</a>
-</div>
-</div>
-<div class="fl-demo">
-<button class="fl-phone" type="button" id="flPhone" data-style="material" data-wall="puffy" aria-label="F Launcher のホーム画面の見本。壁紙・テーマ・テンプレートが自動で入れかわります。押すと止まります。" title="押すと止まります"><span class="fl-phone-screen"><span class="fl-wall"><span class="fl-shape fl-shape-1"></span><span class="fl-shape fl-shape-2"></span><span class="fl-shape fl-shape-3"></span><span class="fl-shape fl-shape-4"></span><span class="fl-shape fl-shape-5"></span></span><span class="fl-phone-punch"></span><span class="fl-status"><span class="fl-status-left"><span class="fl-status-time"><i></i></span><svg viewBox="0 0 24 24"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4.2A3 3 0 0 1 3 15V7a3 3 0 0 1 3-3z"/></svg><svg viewBox="0 0 24 24"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4.2A3 3 0 0 1 3 15V7a3 3 0 0 1 3-3z"/></svg></span><span class="fl-status-icons"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M17.7 7.7 12 2h-1v7.6L6.4 5 5 6.4l5.6 5.6L5 17.6 6.4 19l4.6-4.6V22h1l5.7-5.7-4.3-4.3zM13 5.8l1.9 1.9L13 9.6zm1.9 10.5L13 18.2v-3.8z"/></svg><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm5 11H7v-2h10z"/></svg><svg viewBox="0 0 24 24"><path d="M12 21 1 8.5a16 16 0 0 1 22 0z"/></svg><svg viewBox="0 0 24 24"><path d="M8 4h2V2.5h4V4h2a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg></span></span><span class="fl-space" data-template="custom"><span class="fl-template fl-tpl-custom"><span class="fl-tile fl-c-clock"><i class="fl-line is-dim"></i><i class="fl-line"></i></span><span class="fl-ring fl-c-ring1" style="--p:8"><i class="fl-line"></i></span><span class="fl-ring fl-c-ring2" style="--p:62"><i class="fl-line"></i></span><span class="fl-tile is-pill fl-c-date"><i class="fl-line"></i><span><i class="fl-line"></i><i class="fl-line is-dim"></i></span></span><span class="fl-tile fl-c-music"><svg viewBox="0 0 24 24" class="fl-glyph" style="--gs:12cqi" aria-hidden="true"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z"/></svg><i class="fl-line is-dim"></i></span></span><span class="fl-template fl-tpl-blank"><span class="fl-k-blank"></span></span><span class="fl-template fl-tpl-clock"><span class="fl-tile fl-k-clock"><i class="fl-line" style="--lw:44%"></i><i class="fl-line" style="--lw:58%"></i><i class="fl-line" style="--lw:24%"></i></span><span class="fl-tile is-pill fl-k-apps"><span class="fl-icon has-badge"><svg viewBox="0 0 24 24"><path d="M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-5 4v-4.2A3 3 0 0 1 3 15V7a3 3 0 0 1 3-3z"/></svg></span><span class="fl-icon has-badge"><svg viewBox="0 0 24 24"><path d="M12 2c.5 4.5 3.5 9.5 10 10-6.5.5-9.5 5.5-10 10-.5-4.5-3.5-9.5-10-10 6.5-.5 9.5-5.5 10-10z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.3-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5z"/></svg></span><span class="fl-icon has-badge"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M3 5h18v14H3zm2 2.2v.3l7 4.6 7-4.6v-.3l-7 4.4z"/></svg></span></span></span><span class="fl-template fl-tpl-stripe"><span class="fl-tile fl-k-stripe"><svg viewBox="0 0 24 24" class="fl-glyph" style="--gs:12cqi" aria-hidden="true"><path d="M9 11.24V7.5a2.5 2.5 0 0 1 5 0v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/></svg></span></span><span class="fl-template fl-tpl-deck"><span class="fl-k-deck"><span class="fl-tile"></span><span class="fl-tile"><svg viewBox="0 0 24 24" class="fl-glyph" style="--gs:12cqi" aria-hidden="true"><path d="M7 19h10V4H7v15zm-5-2h4V6H2v11zM18 6v11h4V6h-4z"/></svg></span><span class="fl-tile"></span></span></span></span><span class="fl-cells fl-cells-1"><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M9 4h6l1.6 2.2H20a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7.2a1 1 0 0 1 1-1h3.4zm3 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4.6l2 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span><span class="fl-icon fl-folder has-badge"><i></i><i></i><i></i><i></i></span><span class="fl-icon fl-folder has-badge"><i></i><i></i><i></i><i></i></span></span><span class="fl-cells fl-cells-2"><span class="fl-tile is-pill fl-weather"><span><svg viewBox="0 0 24 24" class="fl-glyph" aria-hidden="true"><path d="M17.5 19H7a5 5 0 1 1 1.1-9.88A6 6 0 0 1 19.5 11.3 4 4 0 0 1 17.5 19z"/></svg><i class="fl-line" style="--lw:10cqi;--lh:3.6cqi"></i></span><span></span><i class="fl-line is-dim" style="--lw:14cqi;--lh:2.6cqi"></i><i class="fl-line is-dim" style="--lw:16cqi;--lh:2.6cqi"></i></span><span class="fl-tile is-pill fl-ai"><span class="fl-icon has-badge"><svg viewBox="0 0 24 24"><path d="M12 2c.5 4.5 3.5 9.5 10 10-6.5.5-9.5 5.5-10 10-.5-4.5-3.5-9.5-10-10 6.5-.5 9.5-5.5 10-10z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm4.5 5.5-6.2 2.8-2.8 6.2 6.2-2.8z"/></svg></span><span class="fl-ai-small"><span class="fl-icon"><svg viewBox="0 0 24 24"><path d="M12 2c.5 4.5 3.5 9.5 10 10-6.5.5-9.5 5.5-10 10-.5-4.5-3.5-9.5-10-10 6.5-.5 9.5-5.5 10-10z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h4.6l2 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></span></span><span class="fl-tile fl-apps"><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM10.5 2h3l.5 2.6 1.9.8 2.2-1.5 2.1 2.1-1.5 2.2.8 1.9 2.5.4v3l-2.6.5-.8 1.9 1.5 2.2-2.1 2.1-2.2-1.5-1.9.8-.4 2.5h-3l-.5-2.6-1.9-.8-2.2 1.5-2.1-2.1 1.5-2.2-.8-1.9L2 13.5v-3l2.6-.5.8-1.9-1.5-2.2L6 3.8l2.2 1.5 1.9-.8z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 2v16a8 8 0 0 0 0-16z"/></svg></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></span><span class="fl-icon fl-folder has-badge"><i></i><i></i><i></i><i></i></span></span></span><span class="fl-phone-spacer"></span><span class="fl-phone-dots"><i></i><i></i></span><span class="fl-dock"><span class="fl-icon fl-folder has-badge"><i></i><i></i><i></i><i></i></span><span class="fl-icon fl-folder has-badge"><i></i><i></i><i></i><i></i></span><span class="fl-icon"><svg viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm4.5 5.5-6.2 2.8-2.8 6.2 6.2-2.8z"/></svg></span><span class="fl-icon has-badge"><svg viewBox="0 0 24 24"><path d="M8 5.5v13a.8.8 0 0 0 1.2.7l10.3-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5z"/></svg></span></span></span></button>
-</div>
-</div>
-</section>
-
-<section class="fl-section" aria-labelledby="featuresTitle">
-<h2 class="md-headline-small" id="featuresTitle">特長</h2>
-<ul class="fl-features"><li class="fl-feature"><span class="fl-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01a1.5 1.5 0 0 1 1.13-2.49H16a5 5 0 0 0 5-5c0-4.42-4.03-8-9-8Zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z"/></svg></span><h3 class="md-title-medium">Material 3 Expressive</h3><p class="md-body-medium">Launcher3 をもとに、Material 3 Expressive のデザインで作っています。</p></li><li class="fl-feature"><span class="fl-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.7s-7 7.4-7 12.3a7 7 0 0 0 14 0c0-4.9-7-12.3-7-12.3z"/></svg></span><h3 class="md-title-medium">Liquid Glass とブラー</h3><p class="md-body-medium">Liquid Glass のテーマや、Material のブラーのテーマを選べます。</p></li><li class="fl-feature"><span class="fl-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z"/></svg></span><h3 class="md-title-medium">セカンドスペース</h3><p class="md-body-medium">ホーム画面の上半分を、時計・ストライプ・デッキなどのテンプレートで組みかえられます。</p></li><li class="fl-feature"><span class="fl-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.99 11 3 15l3.99 4v-3H14v-2H6.99zM21 9l-3.99-4v3H10v2h7.01v3z"/></svg></span><h3 class="md-title-medium">どこからでも移行</h3><p class="md-body-medium">とにかくカスタマイズできて、どのランチャーからでも移行できることを目指しています。</p></li></ul>
-</section>
-<section class="fl-section" aria-labelledby="specTitle">
-<h2 class="md-headline-small" id="specTitle">配布情報</h2>
-<dl class="fl-spec md-body-large">
-<div><dt>もとにしたもの</dt><dd>Launcher3（フォーク）</dd></div>
-<div><dt>デザイン</dt><dd>Material 3 Expressive</dd></div>
-<div><dt>テーマ</dt><dd>Liquid Glass ／ Material のブラー</dd></div>
-<div><dt>対応OS</dt><dd>Android（対応バージョンは未定）</dd></div>
-<div><dt>バージョン</dt><dd>まだ公開していません</dd></div>
-<div><dt>価格</dt><dd>未定</dd></div>
-</dl>
-</section>
-<section class="fl-section" aria-labelledby="historyTitle">
-<h2 class="md-headline-small" id="historyTitle">更新履歴</h2>
-<p class="fl-note md-body-large">まだ公開していません。公開したら、ここに更新の内容が並びます。</p>
-</section>
-<footer class="fl-footer md-body-small"><span>ZERO / APPS / F LAUNCHER</span><a href="/">ぜろくんでんせつ</a></footer>
-</main>
+<body>
+<p>F Launcher のページは <a href="/f-launcher/">/f-launcher/</a> に移動しました。</p>
 </body>
 </html>

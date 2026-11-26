@@ -1425,8 +1425,8 @@ test('the right menu offers the article list and the (upcoming) app list', async
   expect(await audit(page)).toEqual([]);
 });
 
-/* ===== 自作アプリ（/apps/）と F Launcher の配布ページ ===== */
-test('the right menu opens the app list, which offers F Launcher', async ({page}) => {
+/* ===== 自作アプリ（/apps/）と F Launcher のページ（/f-launcher/） ===== */
+test('the right menu opens the app list, which lists F Launcher by its icon and name', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/');
   await page.locator('#rightTab').click();
@@ -1434,87 +1434,96 @@ test('the right menu opens the app list, which offers F Launcher', async ({page}
   await expect(page).toHaveURL(/\/apps\/$/);
   await expect(page.locator('#siteLoader')).toHaveCount(0);
   await expect(page.locator('h1')).toHaveText('自作アプリ');
+  // リストの行は、アイコンと名前だけ。くわしい情報は閉じている
   const card = page.locator('#fLauncherCard');
-  await expect(card).toHaveAttribute('href', '/apps/f-launcher/');
-  await expect(card.locator('.app-name')).toHaveText('F Launcher');
-  await expect(card).toContainText('いま作っています');
+  await expect(card).toHaveJSProperty('tagName', 'BUTTON');
+  await expect(card).toHaveAttribute('aria-expanded', 'false');
+  await expect(card).toHaveText('F Launcher');
+  await expect(card.locator('.app-icon')).toBeVisible();
+  await expect(page.locator('#fLauncherDetail')).toBeHidden();
   expect(await page.locator('html').getAttribute('data-world')).toBeNull();
   expect(await audit(page)).toEqual([]);
 });
 
-test('hovering F Launcher turns the app list into its Material 3 home screen, and leaving turns it back', async ({page}) => {
+test('choosing F Launcher opens its details below and turns the app list into its M3E home screen', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/apps/');
   const html = page.locator('html');
   const world = page.locator('#flWorld');
   const space = world.locator('.fl-space');
+  const card = page.locator('#fLauncherCard');
+  const detail = page.locator('#fLauncherDetail');
+  const preview = page.locator('#appPreview');
   const surface = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  // 世界に入っても、見出し・ボタン・パネル・カードの位置と大きさは変わらない
-  const boxes = () => page.evaluate(() => ['.apps-hero', '.page-title', '.page-lead', '.page-actions .btn', '.content-screen', '#fLauncherCard', '.app-card-soon', '.page-footer'].map((selector) => {
+  // 選んでも、選んだ行より上の部品の位置と大きさは変わらない（行は下へのびる）
+  const boxes = () => page.evaluate(() => ['.apps-hero', '.page-title', '.page-lead', '.page-actions .btn', '.card-title', '#fLauncherCard'].map((selector) => {
     const rect = document.querySelector(selector).getBoundingClientRect();
     return [selector, Math.round(rect.x), Math.round(rect.y), Math.round(rect.width), Math.round(rect.height)];
   }));
   const before = await surface();
   const layout = await boxes();
+  const closedHeight = (await page.locator('#fLauncherItem').boundingBox()).height;
   await expect(world).toBeHidden();
 
-  const card = page.locator('#fLauncherCard');
+  // カーソルを乗せただけでは変わらない（押すと選ぶ）
   const box = await card.boundingBox();
   await page.mouse.move(box.x + 140, box.y + box.height / 2);
+  await page.waitForTimeout(250);
+  await expect(html).not.toHaveAttribute('data-world', /.+/);
+
+  await page.mouse.click(box.x + 140, box.y + box.height / 2);
+  await expect(card).toHaveAttribute('aria-expanded', 'true');
   await expect(html).toHaveAttribute('data-world', 'f');
   await expect(world).toBeVisible();
-  // ホーム画面は、カーソルの場所から円で広がる
-  expect(await world.evaluate((element) => [element.style.getPropertyValue('--x'), element.style.getPropertyValue('--y')])).toEqual([`${Math.round(box.x + 140)}px`, `${Math.round(box.y + box.height / 2)}px`]);
-  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toHaveCSS('opacity', '1');
-  // 色・角丸・書体は Material 3 のものへ、なめらかに変わる（Material Color Utilities の色・Google Sans Flex）
-  await expect.poll(surface).toBe('rgb(19, 19, 24)');
-  await expect(page.locator('.content-screen')).toHaveCSS('border-top-left-radius', '28px');
-  await expect(card).toHaveCSS('border-top-left-radius', '12px');
-  // タグ（チップ）は置かない
-  await expect(page.locator('.app-chip')).toHaveCount(0);
+  // ホーム画面は、押した場所から円で広がる
+  const [originX, originY] = await world.evaluate((element) => [parseFloat(element.style.getPropertyValue('--x')), parseFloat(element.style.getPropertyValue('--y'))]);
+  expect(Math.abs(originX - (box.x + 140))).toBeLessThanOrEqual(1);
+  expect(Math.abs(originY - (box.y + box.height / 2))).toBeLessThanOrEqual(1);
+  // 行が下へのびて、くわしい情報と F Launcher のページへのボタンが出る
+  await expect(detail).toBeVisible();
+  await expect.poll(async () => (await page.locator('#fLauncherItem').boundingBox()).height).toBeGreaterThan(closedHeight + 300);
+  await expect(detail.locator('.app-facts dt')).toHaveText(['対応OS', '価格', 'バージョン']);
+  await expect(detail.locator('.app-facts dd')).toHaveText(['Android 4.4〜Android 17', '無料', 'まだ公開していません']);
+  await expect(detail.getByRole('link', {name: /F Launcher のページへ/})).toHaveAttribute('href', '/f-launcher/');
+  // 色・角丸・書体は F Launcher（M3E）のものへ、なめらかに変わる
+  await expect.poll(surface).toBe('rgb(0, 0, 0)');
+  await expect(page.locator('.content-screen')).toHaveCSS('border-top-left-radius', '32px');
+  await expect(page.locator('#fLauncherItem')).toHaveCSS('border-top-left-radius', '28px');
   expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Google Sans Flex');
   expect(await boxes()).toEqual(layout);
   // ホーム画面の見本には文字を使わない
   expect(await world.evaluate((element) => element.textContent.trim())).toBe('');
-  // カーソルを乗せているあいだ、テンプレート・テーマ・壁紙が自動でランダムに入れかわる（止まっていても世界は閉じない）
-  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).not.toBe('custom');
+  expect(await preview.evaluate((element) => element.textContent.trim())).toBe('');
+  // 選んでいるあいだ、テンプレート・壁紙・アイコンの並びが自動でランダムに入れかわる
+  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).not.toBe('deck');
   await expect.poll(() => world.getAttribute('data-wall'), {timeout: 12000}).not.toBe('puffy');
+  await expect.poll(() => preview.evaluate((element) => [...element.querySelectorAll('.fl-lower-grid > *')].some((item) => item.style.gridArea)), {timeout: 8000}).toBe(true);
   expect(['material', 'blur', 'glass']).toContain(await world.getAttribute('data-style'));
-  await expect(html).toHaveAttribute('data-world', 'f');
   expect(await audit(page)).toEqual([]);
 
-  await page.mouse.move(10, 10);
+  // もう一度押すと閉じて、いつものテーマに戻る
+  await page.mouse.click(box.x + 140, box.y + box.height / 2);
+  await expect(card).toHaveAttribute('aria-expanded', 'false');
   await expect(html).not.toHaveAttribute('data-world', /.+/);
   await expect(world).toBeHidden();
+  await expect(detail).toBeHidden();
   await expect.poll(surface).toBe(before);
-  await expect(page.locator('.content-screen')).not.toHaveCSS('border-top-left-radius', '28px');
   expect(await boxes()).toEqual(layout);
 
-  // 通り過ぎただけでは切り替わらない
-  await page.mouse.move(box.x + 10, box.y + box.height / 2);
-  await page.mouse.move(box.x - 40, box.y - 60, {steps: 1});
-  await page.waitForTimeout(250);
-  await expect(html).not.toHaveAttribute('data-world', /.+/);
-
-  // キーボードで選んだときも世界に入り、離れると戻る
-  await page.locator('a[href="/#content"]').focus();
-  await page.keyboard.press('Tab');
-  await expect(card).toBeFocused();
+  // キーボード: Enter で開き、Esc で閉じる
+  await card.focus();
+  await page.keyboard.press('Enter');
   await expect(html).toHaveAttribute('data-world', 'f');
-  await page.keyboard.press('Shift+Tab');
+  await expect(detail.getByRole('link', {name: /F Launcher のページへ/})).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(preview).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(card).toBeFocused();
+  await expect(card).toHaveAttribute('aria-expanded', 'false');
   await expect(html).not.toHaveAttribute('data-world', /.+/);
 });
 
-test('the second space keeps square cells: 1x1 and 2x2 widgets are squares', async ({page}) => {
-  await mockNetwork(page);
-  await ready(page, '/apps/f-launcher/');
-  const ratio = (selector) => page.locator(`#flPhone ${selector}`).evaluate((element) => { const rect = element.getBoundingClientRect(); return Math.round((rect.width / rect.height) * 100) / 100; });
-  for (const selector of ['.fl-c-clock', '.fl-c-music', '.fl-c-ring1', '.fl-c-ring2', '.fl-apps']) expect(await ratio(selector), selector).toBeCloseTo(1, 1);
-  // 2x1 は横長の帯
-  expect(await ratio('.fl-c-date')).toBeGreaterThan(1.9);
-});
-
-test('without hover (phones), the app list stays in the usual theme', async ({browser}) => {
+test('on phones, tapping F Launcher opens its details and the home screen preview', async ({browser}) => {
   const context = await browser.newContext({viewport: {width: 390, height: 844}, hasTouch: true, isMobile: true});
   const page = await context.newPage();
   await mockNetwork(page);
@@ -1523,24 +1532,84 @@ test('without hover (phones), the app list stays in the usual theme', async ({br
   await page.waitForTimeout(250);
   await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   await expectNoHorizontalOverflow(page);
+  await page.locator('#fLauncherCard').tap();
+  await expect(page.locator('html')).toHaveAttribute('data-world', 'f');
+  const preview = page.locator('#appPreview');
+  await expect(preview).toBeVisible();
+  await expect.poll(async () => (await preview.boundingBox()).height).toBeGreaterThan(400);
+  const rect = await preview.boundingBox();
+  expect(rect.x).toBeGreaterThanOrEqual(0);
+  expect(rect.x + rect.width).toBeLessThanOrEqual(390);
+  await expect(page.getByRole('link', {name: /F Launcher のページへ/})).toBeVisible();
+  await expectNoHorizontalOverflow(page);
+  expect(await audit(page)).toEqual([]);
   await context.close();
 });
 
+test('the second space and the icon area keep square cells: 1x1, 2x2 and 3x3 widgets are squares', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await mockNetwork(page);
+  await ready(page, '/f-launcher/');
+  const phone = page.locator('#flPhone');
+  const ratio = (selector) => phone.locator(selector).evaluate((element) => { const rect = element.getBoundingClientRect(); return Math.round((rect.width / rect.height) * 100) / 100; });
+  const use = (template) => phone.evaluate((element, name) => { element.querySelector('.fl-space').dataset.template = name; }, template);
+  await expect(phone.locator('.fl-space')).toHaveAttribute('data-template', 'deck');
+  for (const selector of ['.fl-t-c1', '.fl-t-c2', '.fl-t-c3', '.fl-t-c4', '.fl-apps']) expect(await ratio(selector), selector).toBeCloseTo(1, 1);
+  // 2x1 は横長の帯
+  for (const selector of ['.fl-weather', '.fl-ai']) expect(await ratio(selector), selector).toBeGreaterThan(1.9);
+  await use('bedside');
+  for (const selector of ['.fl-t-bed', '.fl-t-b1', '.fl-t-b2', '.fl-t-b3']) expect(await ratio(selector), selector).toBeCloseTo(1, 1);
+  await use('clock');
+  for (const selector of ['.fl-t-r1', '.fl-t-r2']) expect(await ratio(selector), selector).toBeCloseTo(1, 1);
+  expect(await ratio('.fl-t-face')).toBeCloseTo(1.5, 1);
+  // 新しいテンプレートがそろっている
+  expect(await phone.locator('.fl-template').evaluateAll((elements) => elements.map((element) => element.className.replace('fl-template fl-tpl-', '')))).toEqual(['deck', 'blank', 'clock', 'stripe', 'bedside', 'three', 'radial', 'dot']);
+});
+
+test('the icons are rearranged at random, only inside their own half of the home screen', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/f-launcher/');
+  const phone = page.locator('#flPhone');
+  await expect.poll(() => phone.evaluate((element) => [...element.querySelectorAll('.fl-lower-grid > *')].some((item) => item.style.gridArea)), {timeout: 8000}).toBe(true);
+  await page.waitForTimeout(500);
+  await phone.click();
+  await expect(phone).toHaveAttribute('aria-label', /止めています/);
+  await page.waitForTimeout(500);
+  const result = await phone.evaluate((element) => {
+    const box = (node) => node.getBoundingClientRect();
+    const lower = box(element.querySelector('.fl-lower'));
+    const space = box(element.querySelector('.fl-space'));
+    const items = [...element.querySelectorAll('.fl-lower-grid > *')].map(box);
+    const inside = items.every((rect) => rect.left >= lower.left - 1 && rect.right <= lower.right + 1 && rect.top >= lower.top - 1 && rect.bottom <= lower.bottom + 1);
+    const overlap = items.some((a, i) => items.some((b, j) => i < j && a.left < b.right - 1 && b.left < a.right - 1 && a.top < b.bottom - 1 && b.top < a.bottom - 1));
+    return {inside, overlap, separate: lower.top >= space.bottom};
+  });
+  expect(result).toEqual({inside: true, overlap: false, separate: true});
+});
+
 for (const width of [320, 1440]) {
-  test(`the F Launcher page follows Material 3 and its home screen customizes itself at ${width}px`, async ({page}) => {
+  test(`the F Launcher page is its own M3E homepage and its home screen customizes itself at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
     await ready(page, '/apps/');
     await page.locator('#fLauncherCard').click();
-    await expect(page).toHaveURL(/\/apps\/f-launcher\/$/);
+    await page.getByRole('link', {name: /F Launcher のページへ/}).click();
+    await expect(page).toHaveURL(/\/f-launcher\/$/);
+    expect(new URL(page.url()).pathname).toBe('/f-launcher/');
     await expect(page.locator('h1')).toHaveText('F Launcher');
+    await expect(page.locator('.fl-tagline')).toHaveText('自分らしく整える、穏やかなホーム画面');
     // サイトのツールバーやテーマ・タグは使わない
     await expect(page.locator('#toolbar')).toHaveCount(0);
     await expect(page.locator('.md-assist-chip, .app-chip')).toHaveCount(0);
-    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(19, 19, 24)');
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(0, 0, 0)');
     // まだ配布していないので、ダウンロードは押せない
     await expect(page.getByRole('button', {name: /ダウンロード/})).toBeDisabled();
-    await expect(page.locator('.fl-spec')).toContainText('Launcher3（フォーク）');
+    // できることは名前だけ（説明の文章は置かない）
+    await expect(page.locator('.fl-feature h3').first()).toHaveText('セカンドスペース');
+    await expect(page.locator('.fl-feature p')).toHaveCount(0);
+    // 配布情報は、対応OS・バージョン・価格だけ
+    await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
+    await expect(page.locator('.fl-spec dd')).toHaveText(['Android 4.4〜Android 17', 'まだ公開していません', '無料']);
     // ホーム画面の見本: 文字は使わず、下の操作部品もない。カメラはパンチホール（丸）
     const phone = page.locator('#flPhone');
     expect(await phone.evaluate((element) => element.textContent.trim())).toBe('');
@@ -1548,31 +1617,40 @@ for (const width of [320, 1440]) {
     const punch = await phone.locator('.fl-phone-punch').evaluate((element) => { const rect = element.getBoundingClientRect(); return [Math.round(rect.width), Math.round(rect.height), getComputedStyle(element).borderTopLeftRadius]; });
     expect(punch[0]).toBe(punch[1]);
     expect(punch[2]).toBe('50%');
-    // 壁紙・テーマ・テンプレートが、それぞれ自動でランダムに入れかわる
+    // 壁紙・テーマ・テンプレート・アイコンの並びが、それぞれ自動でランダムに入れかわる
     const state = (name) => phone.evaluate((element, key) => (key === 'template' ? element.querySelector('.fl-space').dataset.template : element.dataset[key]), name);
-    await expect.poll(() => state('template'), {timeout: 8000}).not.toBe('custom');
+    await expect.poll(() => state('template'), {timeout: 8000}).not.toBe('deck');
     await expect.poll(() => state('style'), {timeout: 12000}).not.toBe('material');
     await expect.poll(() => state('wall'), {timeout: 14000}).not.toBe('puffy');
     // 自動で動き続けるので、見本を押すと止まる（もう一度押すと動く）
     await phone.click();
     await expect(phone).toHaveAttribute('aria-label', /止めています/);
-    const paused = await phone.evaluate((element) => `${element.dataset.wall}/${element.dataset.style}/${element.querySelector('.fl-space').dataset.template}`);
+    const snapshot = () => phone.evaluate((element) => `${element.dataset.wall}/${element.dataset.style}/${element.querySelector('.fl-space').dataset.template}/${[...element.querySelectorAll('.fl-lower-grid > *, .fl-dock > *')].map((item) => item.style.gridArea).join()}`);
+    const paused = await snapshot();
     await page.waitForTimeout(5500);
-    expect(await phone.evaluate((element) => `${element.dataset.wall}/${element.dataset.style}/${element.querySelector('.fl-space').dataset.template}`)).toBe(paused);
+    expect(await snapshot()).toBe(paused);
     await expectNoHorizontalOverflow(page);
     expect(await audit(page)).toEqual([]);
-    await page.getByRole('link', {name: 'アプリの一覧へ', exact: true}).click();
+    await page.getByRole('link', {name: 'アプリ一覧', exact: true}).click();
     await expect(page).toHaveURL(/\/apps\/$/);
     await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   });
 }
 
+test('the old F Launcher address moves to /f-launcher/', async ({page}) => {
+  await mockNetwork(page);
+  await page.goto('/apps/f-launcher/');
+  await expect(page).toHaveURL(/\/f-launcher\/$/);
+  expect(new URL(page.url()).pathname).toBe('/f-launcher/');
+  await expect(page.locator('h1')).toHaveText('F Launcher');
+});
+
 test('the icons follow the theme of the F Launcher home screen', async ({page}) => {
   await page.emulateMedia({reducedMotion: 'reduce'});
   await mockNetwork(page);
-  await ready(page, '/apps/f-launcher/');
+  await ready(page, '/f-launcher/');
   const phone = page.locator('#flPhone');
-  const icon = phone.locator('.fl-cells-1 .fl-icon').first();
+  const icon = phone.locator('.fl-lower-grid > .fl-icon').first();
   const look = () => icon.evaluate((element) => [getComputedStyle(element).borderTopLeftRadius, getComputedStyle(element).backgroundColor]);
   const material = await look();
   expect(material[0]).toBe('50%');
@@ -1584,14 +1662,15 @@ test('the icons follow the theme of the F Launcher home screen', async ({page}) 
 test('with reduced motion, the F Launcher home screen starts paused', async ({page}) => {
   await page.emulateMedia({reducedMotion: 'reduce'});
   await mockNetwork(page);
-  await ready(page, '/apps/f-launcher/');
+  await ready(page, '/f-launcher/');
   await expect(page.locator('#flPhone')).toHaveAttribute('aria-label', /止めています/);
 });
 
 test('the app pages are in the sitemap', async () => {
   const sitemap = fs.readFileSync(path.join(rootPath, 'sitemap.xml'), 'utf8');
   expect(sitemap).toContain('<loc>https://superzero1288.github.io/apps/</loc>');
-  expect(sitemap).toContain('<loc>https://superzero1288.github.io/apps/f-launcher/</loc>');
+  expect(sitemap).toContain('<loc>https://superzero1288.github.io/f-launcher/</loc>');
+  expect(sitemap).not.toContain('/apps/f-launcher/');
 });
 
 for (const width of [320, 1440]) {
