@@ -1,28 +1,42 @@
 // ZERO — 自作アプリ（/apps/）と F Launcher の配布ページの動き
-//  - 一覧: F Launcher のカードにカーソルを乗せる（キーボードで選ぶ）と、カーソルの場所から円が広がり、
-//          ページが F Launcher のホーム画面になる（View Transitions）。離れると、その場所へ円がしぼんで戻る。
-//          そのあいだ、セカンドスペースの中身がテンプレートごとに入れかわる
+//  - ホーム画面の見本: セカンドスペースのテンプレートとテーマが、自動でランダムに入れかわる
+//    （F Launcher の編集画面のように、ガラスの枠とマスの点を出してから入れかえる）
+//  - 一覧: F Launcher のカードにカーソルを乗せる（キーボードで選ぶ）と、後ろにホーム画面が円で広がり、
+//          ページの部品は同じ位置のまま、色・角丸・面が Material 3 のものへなめらかに変わる（CSS）。
+//          書体だけはなめらかに変えられないので、文字だけその場で重ねて入れかえる（View Transitions）
 //  - 一覧: カードを押した場所を覚えておき、配布ページではそこから広がる（配布ページの head）
-//  - 配布ページ: ホーム画面の見本のテンプレートとテーマを切り替える。上のバーは、下へスクロールすると名前が出る
+//  - 配布ページ: 自動の入れかえを止める・動かすボタン。上のバーは、下へスクロールすると名前が出る
 (() => {
   'use strict';
   const root = document.documentElement;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  const EMPHASIZED_DECELERATE = 'cubic-bezier(.05,.7,.1,1)';
-  const EMPHASIZED_ACCELERATE = 'cubic-bezier(.3,0,.8,.15)';
-  const CYCLE = ['custom', 'clock', 'stripe', 'deck'];
+  const TEMPLATE_NAMES = {custom: 'カスタム', blank: '空白', clock: '時計', stripe: 'ストライプ', deck: 'デッキ'};
+  const STYLE_NAMES = {material: 'マテリアル', blur: 'ブラー', glass: 'Liquid Glass'};
+  const STYLES = Object.keys(STYLE_NAMES);
+  const pickOther = (list, current) => {
+    const options = list.filter((item) => item !== current);
+    return options[Math.floor(Math.random() * options.length)];
+  };
 
-  /* ---------- セカンドスペースを入れかえる ----------
-     F Launcher の編集画面のように、ガラスの枠とマスの点を出してから、中身を入れかえる（フェードスルーは CSS） */
+  /* ---------- セカンドスペースを入れかえる ---------- */
   const editTimers = new WeakMap();
-  const switchTemplate = (space, template) => {
-    if (!space || space.dataset.template === template) return;
+  const customize = (space, styleHost, template, style, onChange) => {
     (editTimers.get(space) || []).forEach(clearTimeout);
     space.classList.add('is-editing');
     editTimers.set(space, [
-      setTimeout(() => { space.dataset.template = template; }, 220),
+      setTimeout(() => {
+        space.dataset.template = template;
+        if (style) styleHost.dataset.style = style;
+        onChange?.();
+      }, 220),
       setTimeout(() => space.classList.remove('is-editing'), 1000),
     ]);
+  };
+  // テンプレートは毎回ちがうものに、テーマはときどき変える
+  const randomStep = (space, styleHost, templates, onChange) => {
+    const template = pickOther(templates, space.dataset.template);
+    const style = Math.random() < 0.45 ? pickOther(STYLES, styleHost.dataset.style) : null;
+    customize(space, styleHost, template, style, onChange);
   };
 
   /* ---------- 一覧: F Launcher の世界に入る・出る ---------- */
@@ -30,22 +44,39 @@
   const world = document.getElementById('flWorld');
   if (card && world) {
     const space = world.querySelector('.fl-space');
+    const LIST_TEMPLATES = ['custom', 'clock', 'stripe', 'deck'];
+    // 書体が変わる文字（その場で重ねて入れかえる）
+    const TEXTS = '.toolbar .clock, .apps-hero .eyebrow, .page-title, .page-lead, .page-actions .btn, .card-title, .card-sub, .app-name, .app-desc, .app-chip, .app-go, .app-icon-soon, .app-card-soon strong, .app-card-soon .app-copy > span, .page-footer > *';
     let desired = false;
     let running = null;
     let origin = null;
-    let pointer = null; // ページの上の、いちばん新しいカーソルの位置
+    let pointer = null;
     let intentTimer = 0;
     let cycleTimer = 0;
     const isActive = () => root.dataset.world === 'f';
+    // F Launcher の書体を先に読み込んでおく（初めてカーソルを乗せたときに、文字が2回変わらないように）
+    addEventListener('load', () => {
+      const sample = document.querySelector('main')?.textContent.replace(/\s+/g, '') || '';
+      ['400', '500'].forEach((weight) => {
+        document.fonts?.load(`${weight} 16px "Google Sans Flex"`, sample).catch(() => {});
+        document.fonts?.load(`${weight} 16px "Noto Sans JP"`, sample).catch(() => {});
+      });
+    }, {once: true});
     const center = () => {
       const rect = card.getBoundingClientRect();
       return [rect.left + rect.width / 2, rect.top + rect.height / 2];
     };
+    const placeOrigin = ([x, y]) => {
+      world.style.setProperty('--x', `${Math.round(x)}px`);
+      world.style.setProperty('--y', `${Math.round(y)}px`);
+      world.style.setProperty('--r', `${Math.round(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 24)}px`);
+    };
     const stopCycle = () => clearInterval(cycleTimer);
     const startCycle = () => {
       stopCycle();
-      space.dataset.template = CYCLE[0];
-      cycleTimer = setInterval(() => switchTemplate(space, CYCLE[(CYCLE.indexOf(space.dataset.template) + 1) % CYCLE.length]), 2600);
+      space.dataset.template = 'custom';
+      world.dataset.style = 'material';
+      cycleTimer = setInterval(() => randomStep(space, world, LIST_TEMPLATES), 2600);
     };
     const apply = (on) => {
       if (on) { root.dataset.world = 'f'; startCycle(); }
@@ -55,27 +86,21 @@
     const sync = () => {
       if (running || desired === isActive()) return;
       const on = desired;
-      const [x, y] = origin || center();
+      placeOrigin(origin || center());
       if (!document.startViewTransition || reducedMotion.matches || document.hidden) { apply(on); return; }
-      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-      root.classList.add(on ? 'fl-reveal' : 'fl-conceal');
+      // 文字にだけ名前を付けて、ほかは CSS でなめらかに変える
+      const texts = [...document.querySelectorAll(TEXTS)].filter((element) => element.getClientRects().length);
+      texts.forEach((element, index) => { element.style.viewTransitionName = `fl-text-${index}`; });
+      root.classList.add('fl-morph');
       const transition = document.startViewTransition(() => apply(on));
       running = transition;
-      transition.ready.then(() => {
-        const small = `circle(0px at ${Math.round(x)}px ${Math.round(y)}px)`;
-        const large = `circle(${Math.round(radius)}px at ${Math.round(x)}px ${Math.round(y)}px)`;
-        // 入るときは新しい画面が広がり、出るときは今の画面がしぼむ（Material 3 の強調した減速・加速）
-        root.animate({clipPath: on ? [small, large] : [large, small]}, {
-          duration: on ? 550 : 350,
-          easing: on ? EMPHASIZED_DECELERATE : EMPHASIZED_ACCELERATE,
-          pseudoElement: on ? '::view-transition-new(root)' : '::view-transition-old(root)',
-        });
-      }).catch(() => {});
-      transition.finished.finally(() => {
-        root.classList.remove('fl-reveal', 'fl-conceal');
+      // ページを移るときなどに途中で止めた場合は、知らせなくてよい
+      transition.ready.catch(() => {});
+      transition.finished.catch(() => {}).finally(() => {
+        texts.forEach((element) => { element.style.viewTransitionName = ''; });
+        root.classList.remove('fl-morph');
         running = null;
-        // 切り替えのあいだは画面の上に切り替え用の層がかぶり、カーソルがカードから出たように見えるので、
-        // 終わってから、カーソルの本当の位置で決め直す
+        // 切り替えのあいだは、カーソルがカードから出たように見えることがあるので、終わってから本当の位置で決め直す
         if (pointer && !card.matches(':focus-visible')) {
           const over = card.contains(document.elementFromPoint(pointer[0], pointer[1]));
           if (over !== desired) { clearTimeout(intentTimer); desired = over; origin = pointer; }
@@ -123,6 +148,7 @@
       const x = event.detail ? event.clientX : cx;
       const y = event.detail ? event.clientY : cy;
       try { sessionStorage.setItem('fl-enter', JSON.stringify({x: Math.round(x), y: Math.round(y), t: Date.now(), world: isActive()})); } catch {}
+      running?.skipTransition();
       root.classList.add('fl-linking');
     });
     // 戻るボタンで戻ってきたときは、世界を閉じた状態から
@@ -131,26 +157,44 @@
       clearTimeout(intentTimer);
       desired = false;
       apply(false);
-      root.classList.remove('fl-reveal', 'fl-conceal');
+      root.classList.remove('fl-morph', 'fl-linking');
     });
   }
 
-  /* ---------- 配布ページ: ホーム画面の見本を切り替える ---------- */
+  /* ---------- 配布ページ: ホーム画面の見本が自動でランダムに入れかわる（止められる） ---------- */
   const phone = document.getElementById('flPhone');
-  if (phone) {
+  const toggle = document.getElementById('flAutoplay');
+  if (phone && toggle) {
     const phoneSpace = phone.querySelector('.fl-space');
-    const label = (name) => document.querySelector(`input[name="${name}"]:checked`)?.closest('label')?.textContent.trim() || '';
-    const describe = () => phone.setAttribute('aria-label', `F Launcher のホーム画面の見本（テンプレート: ${label('flTemplate')}、テーマ: ${label('flStyle')}）`);
-    document.querySelectorAll('input[name="flTemplate"]').forEach((input) => input.addEventListener('change', () => {
-      if (!input.checked) return;
-      switchTemplate(phoneSpace, input.value);
-      describe();
-    }));
-    document.querySelectorAll('input[name="flStyle"]').forEach((input) => input.addEventListener('change', () => {
-      if (!input.checked) return;
-      phone.dataset.style = input.value;
-      describe();
-    }));
+    const now = document.getElementById('flNow');
+    const label = toggle.querySelector('span');
+    const icon = toggle.querySelector('path');
+    const ICON_PAUSE = 'M6 5h4v14H6zm8 0h4v14h-4z';
+    const ICON_PLAY = 'M8 5.5v13a.8.8 0 0 0 1.2.7l10.3-6.5a.8.8 0 0 0 0-1.4L9.2 4.8A.8.8 0 0 0 8 5.5z';
+    let paused = reducedMotion.matches; // 「動きを減らす」設定のときは、止めた状態から
+    let visible = true;
+    let timer = 0;
+    const describe = () => {
+      if (now) now.innerHTML = `テンプレート: <b>${TEMPLATE_NAMES[phoneSpace.dataset.template]}</b>・テーマ: <b>${STYLE_NAMES[phone.dataset.style]}</b>`;
+    };
+    const schedule = () => {
+      clearInterval(timer);
+      if (paused || !visible || document.hidden) return;
+      timer = setInterval(() => randomStep(phoneSpace, phone, Object.keys(TEMPLATE_NAMES), describe), 3200);
+    };
+    const render = () => {
+      // ボタンの文字で「一時停止」「再生」を表す（aria-pressed は付けない）
+      label.textContent = paused ? '再生' : '一時停止';
+      icon.setAttribute('d', paused ? ICON_PLAY : ICON_PAUSE);
+      schedule();
+    };
+    toggle.addEventListener('click', () => { paused = !paused; render(); });
+    document.addEventListener('visibilitychange', schedule);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }).observe(phone);
+    }
+    describe();
+    render();
   }
 
   /* ---------- 配布ページ: 上のバー（見出しが隠れたら、色を付けて名前を出す） ---------- */

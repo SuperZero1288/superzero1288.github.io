@@ -116,9 +116,9 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 .fl-space.is-editing::before,.fl-space.is-editing::after{opacity:1}
 
 /* タイル（ウィジェット）・丸いアイコン・文字の代わりの横線 */
-.fl-tile{position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--fl-tile);border-radius:6cqi;transition:background-color .3s var(--md-sys-motion-easing-standard),box-shadow .3s var(--md-sys-motion-easing-standard)}
+.fl-tile{position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--fl-tile);border-radius:6cqi}
 .fl-tile.is-pill{border-radius:var(--md-sys-shape-corner-full)}
-.fl-icon{position:relative;display:grid;place-items:center;aspect-ratio:1;background:var(--fl-icon-bg);border-radius:50%;transition:background-color .3s var(--md-sys-motion-easing-standard),box-shadow .3s var(--md-sys-motion-easing-standard)}
+.fl-icon{position:relative;display:grid;place-items:center;aspect-ratio:1;background:var(--fl-icon-bg);border-radius:50%}
 .fl-icon svg{width:50%;height:50%;fill:var(--fl-on-tile-variant)}
 .fl-icon.has-badge::after{content:'';position:absolute;top:0;right:0;width:24%;aspect-ratio:1;background:var(--fl-badge);border-radius:50%}
 .fl-folder{grid-template-columns:1fr 1fr;place-items:stretch;align-content:center;gap:9%;padding:21%}
@@ -131,7 +131,7 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 /* テンプレート「カスタム」（スクリーンショットのホーム画面）: 2x2 の時計・1x1 の輪が2つ・2x1 の日付・2x2 の音楽 */
 .fl-c-clock{grid-area:1 / 1 / 3 / 3;display:grid;place-content:center;justify-items:center;gap:5cqi}
 .fl-c-clock .fl-line{--lw:28cqi;--lh:9cqi}
-.fl-ring{position:relative;display:grid;place-items:center;border-radius:50%;background:radial-gradient(closest-side,var(--fl-tile) 82%,transparent 83%),conic-gradient(from 200deg,var(--fl-on-tile-variant) calc(var(--p) * 1%),var(--fl-icon-bg) 0);transition:background-color .3s var(--md-sys-motion-easing-standard),box-shadow .3s var(--md-sys-motion-easing-standard)}
+.fl-ring{position:relative;display:grid;place-items:center;border-radius:50%;background-color:transparent;background-image:radial-gradient(closest-side,var(--fl-tile) 82%,transparent 83%),conic-gradient(from 200deg,var(--fl-on-tile-variant) calc(var(--p) * 1%),var(--fl-icon-bg) 0)}
 .fl-ring .fl-line{--lw:36%;--lh:3.6cqi}
 .fl-c-ring1{grid-area:1 / 3}
 .fl-c-ring2{grid-area:1 / 4}
@@ -195,13 +195,14 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 .fl-phone-dots{display:flex;justify-content:center;gap:1.4cqi}
 .fl-phone-dots i{width:2cqi;height:2cqi;background:rgb(255 255 255 / .5);border-radius:50%}
 .fl-phone-dots i:first-child{width:5cqi;background:#fff;border-radius:1cqi}
-.fl-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:3cqi;padding:3cqi 4cqi;background:var(--fl-dock);border-radius:var(--md-sys-shape-corner-full);transition:background-color .3s var(--md-sys-motion-easing-standard),box-shadow .3s var(--md-sys-motion-easing-standard)}
+.fl-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:3cqi;padding:3cqi 4cqi;background:var(--fl-dock);border-radius:var(--md-sys-shape-corner-full)}
 .fl-dock .fl-icon{background:var(--md-sys-color-surface-container-high)}
-/* テーマ: マテリアル（暗い面）・ブラー（後ろをぼかす）・Liquid Glass（ふちが光るガラス） */
-.fl-phone[data-style="blur"] :is(.fl-tile,.fl-ring,.fl-dock,.fl-cells-1 .fl-icon){background-color:rgb(31 31 37 / .55);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.fl-phone[data-style="blur"] .fl-ring{background:radial-gradient(closest-side,transparent 82%,transparent 83%),conic-gradient(from 200deg,var(--fl-on-tile-variant) calc(var(--p) * 1%),rgb(255 255 255 / .2) 0)}
-.fl-phone[data-style="glass"] :is(.fl-tile,.fl-ring,.fl-dock,.fl-cells-1 .fl-icon){background-color:rgb(255 255 255 / .16);box-shadow:inset 0 0 0 1.5px rgb(255 255 255 / .55);-webkit-backdrop-filter:blur(4px) saturate(1.4);backdrop-filter:blur(4px) saturate(1.4)}
-.fl-phone[data-style="glass"] .fl-ring{background:radial-gradient(closest-side,transparent 82%,transparent 83%),conic-gradient(from 200deg,#fff calc(var(--p) * 1%),rgb(255 255 255 / .3) 0)}
+/* テーマ: マテリアル（暗い面）・ブラー（後ろをぼかす）・Liquid Glass（ふちが光るガラス）。data-style を付けた中で切り替わる */
+[data-style="blur"] :is(.fl-tile,.fl-ring,.fl-dock,.fl-cells-1 .fl-icon){background-color:rgb(31 31 37 / .55);-webkit-backdrop-filter:blur(10px) saturate(1);backdrop-filter:blur(10px) saturate(1)}
+[data-style="blur"] .fl-ring{background-image:radial-gradient(closest-side,transparent 82%,transparent 83%),conic-gradient(from 200deg,var(--fl-on-tile-variant) calc(var(--p) * 1%),rgb(255 255 255 / .2) 0)}
+[data-style="glass"] :is(.fl-tile,.fl-ring,.fl-dock,.fl-cells-1 .fl-icon){background-color:rgb(255 255 255 / .16);box-shadow:inset 0 0 0 1.5px rgb(255 255 255 / .55);-webkit-backdrop-filter:blur(4px) saturate(1.4);backdrop-filter:blur(4px) saturate(1.4)}
+[data-style="glass"] .fl-ring{background-image:radial-gradient(closest-side,transparent 82%,transparent 83%),conic-gradient(from 200deg,#fff calc(var(--p) * 1%),rgb(255 255 255 / .3) 0)}
+.fl-tile,.fl-ring,.fl-dock,.fl-icon{-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1);transition:background-color .4s var(--md-sys-motion-easing-standard),box-shadow .4s var(--md-sys-motion-easing-standard),backdrop-filter .4s var(--md-sys-motion-easing-standard),-webkit-backdrop-filter .4s var(--md-sys-motion-easing-standard)}
 
 /* ===== Material 3 の部品（配布ページ） ===== */
 .md-icon-button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:var(--md-sys-shape-corner-full);background:none;color:var(--md-sys-color-on-surface-variant);cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard)}
@@ -210,26 +211,13 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 .md-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 24px;border:0;border-radius:var(--md-sys-shape-corner-full);font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px;text-decoration:none;cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard)}
 .md-button svg{width:18px;height:18px;margin-left:-8px;fill:currentColor}
 .md-button-filled{background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)}
+.md-button-tonal{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
 .md-button-outlined{background:none;box-shadow:inset 0 0 0 1px var(--md-sys-color-outline);color:var(--md-sys-color-primary)}
 @media(hover:hover){.md-button-outlined:hover{background:color-mix(in srgb,var(--md-sys-color-primary) 8%,transparent)}}
 /* 押せないボタン: 面は on-surface の12%、文字は38% */
 .md-button:disabled{background:color-mix(in srgb,var(--md-sys-color-on-surface) 12%,transparent);color:color-mix(in srgb,var(--md-sys-color-on-surface) 38%,transparent);cursor:not-allowed}
 .md-chip-set{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
 .md-assist-chip{display:inline-flex;align-items:center;height:32px;padding:0 16px;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-small);color:var(--md-sys-color-on-surface);font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
-/* セグメントボタン: 高さ40・線で囲み、選んだ項目は secondary-container とチェックの印 */
-.md-segmented{display:grid;margin:0;padding:0;border:0;min-width:0}
-.md-segmented legend{margin:0 0 8px;padding:0}
-.md-segmented-row{display:grid;grid-auto-columns:1fr;grid-auto-flow:column;height:40px;border-radius:var(--md-sys-shape-corner-full);box-shadow:inset 0 0 0 1px var(--md-sys-color-outline);overflow:hidden}
-.md-segmented label{position:relative;display:grid;min-width:0}
-.md-segmented label+label{box-shadow:inset 1px 0 0 var(--md-sys-color-outline)}
-.md-segmented input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
-.md-segmented span{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 12px;color:var(--md-sys-color-on-surface);white-space:nowrap;transition:background-color .2s var(--md-sys-motion-easing-standard)}
-.md-segmented span svg{display:none;width:18px;height:18px;flex:0 0 auto;fill:currentColor}
-.md-segmented input:checked+span{background:var(--md-sys-color-secondary-container);color:var(--md-sys-color-on-secondary-container)}
-.md-segmented input:checked+span svg{display:block}
-.md-segmented input:focus-visible+span{outline:3px solid var(--md-sys-color-secondary);outline-offset:-3px}
-@media(hover:hover){.md-segmented input:not(:checked):hover+span{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,transparent)}}
-
 /* ===== F Launcher の配布ページ ===== */
 .fl-page{margin:0;min-height:100vh;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:400 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px;color-scheme:dark}
 .fl-page *,.fl-page *::before,.fl-page *::after{box-sizing:border-box}
@@ -251,21 +239,13 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 .fl-title{width:fit-content;margin:0;view-transition-name:fl-name}
 .fl-lead{max-width:34em;margin:0;color:var(--md-sys-color-on-surface-variant)}
 .fl-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.fl-demo{display:grid;grid-template-columns:auto 300px;align-items:start;gap:24px}
-.fl-demo .fl-phone{--phone-w:280px}
-.fl-controls{display:grid;align-content:start;gap:24px}
-/* テンプレートを選ぶ（F Launcher のテンプレートのシートと同じ形のカード） */
-.fl-picker{display:grid;margin:0;padding:0;border:0;min-width:0}
-.fl-picker legend{margin:0 0 8px;padding:0}
-.fl-picker-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.fl-picker label{position:relative;display:grid;justify-items:center;gap:8px;padding:12px 12px 10px;background:var(--md-sys-color-surface-container-low);border-radius:var(--md-sys-shape-corner-large);color:var(--md-sys-color-on-surface);cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard),box-shadow .2s var(--md-sys-motion-easing-standard)}
-.fl-picker input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
-.fl-picker input:checked+.fl-thumb+span{color:var(--md-sys-color-on-secondary-container)}
-.fl-picker label:has(input:checked){background:var(--md-sys-color-secondary-container);box-shadow:inset 0 0 0 2px var(--md-sys-color-primary)}
-.fl-picker label:has(input:focus-visible){outline:3px solid var(--md-sys-color-secondary);outline-offset:2px}
-@media(hover:hover){.fl-picker label:not(:has(input:checked)):hover{background:color-mix(in srgb,var(--md-sys-color-on-surface) 8%,var(--md-sys-color-surface-container-low))}}
-.fl-thumb{display:block;width:100%;padding:8%;background:var(--md-sys-color-surface-container-lowest);border-radius:var(--md-sys-shape-corner-medium);pointer-events:none}
-.fl-thumb .fl-space{--fl-tile:var(--md-sys-color-surface-container-highest)}
+.fl-demo{--phone-w:300px;display:grid;justify-items:center;gap:16px}
+.fl-demo .fl-phone{--phone-w:inherit}
+/* 見本の下: いまのテンプレートとテーマ・一時停止のボタン（自動で動き続けるものは止められるようにする） */
+.fl-demo-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:var(--phone-w)}
+.fl-demo-now{margin:0;color:var(--md-sys-color-on-surface-variant)}
+.fl-demo-bar .md-button{flex:0 0 auto;white-space:nowrap}
+.fl-demo-now b{color:var(--md-sys-color-on-surface);font-weight:500}
 .fl-section{padding:32px 0 8px;border-top:1px solid var(--md-sys-color-outline-variant)}
 .fl-section h2{margin:0 0 16px}
 .fl-features{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
@@ -297,9 +277,7 @@ html.vt-arrived .fl-page .fl-app-icon,html.vt-arrived .fl-page .fl-title{animati
 .fl-features{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:700px){
-.fl-demo{grid-template-columns:minmax(0,1fr);justify-items:center}
-.fl-demo .fl-phone{--phone-w:min(280px,78vw)}
-.fl-controls{width:min(340px,100%)}
+.fl-demo{--phone-w:min(300px,calc(100vw - 32px))}
 .fl-features{grid-template-columns:minmax(0,1fr)}
 .fl-spec div{grid-template-columns:8em minmax(0,1fr)}
 .md-display-medium.fl-title{font-size:36px;line-height:44px}

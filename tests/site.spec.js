@@ -1449,7 +1449,13 @@ test('hovering F Launcher turns the app list into its Material 3 home screen, an
   const world = page.locator('#flWorld');
   const space = world.locator('.fl-space');
   const surface = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  // 世界に入っても、見出し・ボタン・パネル・カードの位置と大きさは変わらない
+  const boxes = () => page.evaluate(() => ['.apps-hero', '.page-title', '.page-lead', '.page-actions .btn', '.content-screen', '#fLauncherCard', '.app-card-soon', '.page-footer'].map((selector) => {
+    const rect = document.querySelector(selector).getBoundingClientRect();
+    return [selector, Math.round(rect.x), Math.round(rect.y), Math.round(rect.width), Math.round(rect.height)];
+  }));
   const before = await surface();
+  const layout = await boxes();
   await expect(world).toBeHidden();
 
   const card = page.locator('#fLauncherCard');
@@ -1457,14 +1463,21 @@ test('hovering F Launcher turns the app list into its Material 3 home screen, an
   await page.mouse.move(box.x + 140, box.y + box.height / 2);
   await expect(html).toHaveAttribute('data-world', 'f');
   await expect(world).toBeVisible();
-  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toBeVisible();
-  // ページの色・文字は Material 3（Google Sans Flex と、Material Color Utilities で作った色）
+  // ホーム画面は、カーソルの場所から円で広がる
+  expect(await world.evaluate((element) => [element.style.getPropertyValue('--x'), element.style.getPropertyValue('--y')])).toEqual([`${Math.round(box.x + 140)}px`, `${Math.round(box.y + box.height / 2)}px`]);
+  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toHaveCSS('opacity', '1');
+  // 色・角丸・書体は Material 3 のものへ、なめらかに変わる（Material Color Utilities の色・Google Sans Flex）
   await expect.poll(surface).toBe('rgb(19, 19, 24)');
+  await expect(page.locator('.content-screen')).toHaveCSS('border-top-left-radius', '28px');
+  await expect(card).toHaveCSS('border-top-left-radius', '12px');
+  await expect(card.locator('.app-chip').first()).toHaveCSS('border-top-left-radius', '8px');
   expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Google Sans Flex');
+  expect(await boxes()).toEqual(layout);
   // ホーム画面の見本には文字を使わない
   expect(await world.evaluate((element) => element.textContent.trim())).toBe('');
-  // カーソルを乗せているあいだ、セカンドスペースのテンプレートが入れかわる（止まっていても世界は閉じない）
-  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).toBe('clock');
+  // カーソルを乗せているあいだ、セカンドスペースのテンプレートとテーマが自動で入れかわる（止まっていても世界は閉じない）
+  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).not.toBe('custom');
+  expect(['material', 'blur', 'glass']).toContain(await world.getAttribute('data-style'));
   await expect(html).toHaveAttribute('data-world', 'f');
   expect(await audit(page)).toEqual([]);
 
@@ -1472,6 +1485,8 @@ test('hovering F Launcher turns the app list into its Material 3 home screen, an
   await expect(html).not.toHaveAttribute('data-world', /.+/);
   await expect(world).toBeHidden();
   await expect.poll(surface).toBe(before);
+  await expect(page.locator('.content-screen')).not.toHaveCSS('border-top-left-radius', '28px');
+  expect(await boxes()).toEqual(layout);
 
   // 通り過ぎただけでは切り替わらない
   await page.mouse.move(box.x + 10, box.y + box.height / 2);
@@ -1510,7 +1525,7 @@ test('without hover (phones), the app list stays in the usual theme', async ({br
 });
 
 for (const width of [320, 1440]) {
-  test(`the F Launcher page follows Material 3 and lets visitors try the templates at ${width}px`, async ({page}) => {
+  test(`the F Launcher page follows Material 3 and its home screen customizes itself at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
     await ready(page, '/apps/');
@@ -1524,14 +1539,22 @@ for (const width of [320, 1440]) {
     await expect(page.getByRole('button', {name: /ダウンロード/})).toBeDisabled();
     await expect(page.locator('.fl-spec')).toContainText('Launcher3（フォーク）');
     // ホーム画面の見本には文字を使わない
-    expect(await page.locator('#flPhone').evaluate((element) => element.textContent.trim())).toBe('');
-    // テンプレートとテーマを切り替えられる
     const phone = page.locator('#flPhone');
-    await page.locator('.fl-picker label', {hasText: '時計'}).click();
-    await expect(phone.locator('.fl-space')).toHaveAttribute('data-template', 'clock');
-    await page.locator('.md-segmented label', {hasText: 'Liquid Glass'}).click();
-    await expect(phone).toHaveAttribute('data-style', 'glass');
-    await expect(phone).toHaveAttribute('aria-label', 'F Launcher のホーム画面の見本（テンプレート: 時計、テーマ: Liquid Glass）');
+    expect(await phone.evaluate((element) => element.textContent.trim())).toBe('');
+    // 手で選ぶのではなく、テンプレートとテーマが自動でランダムに入れかわる
+    await expect(page.locator('input[name="flTemplate"], input[name="flStyle"]')).toHaveCount(0);
+    const state = () => phone.evaluate((element) => `${element.querySelector('.fl-space').dataset.template}/${element.dataset.style}`);
+    const first = await state();
+    await expect.poll(state, {timeout: 8000}).not.toBe(first);
+    await expect(page.locator('#flNow')).toContainText('テンプレート:');
+    // 自動で動き続けるので、止められる
+    const toggle = page.locator('#flAutoplay');
+    await expect(toggle).toHaveText('一時停止');
+    await toggle.click();
+    await expect(toggle).toHaveText('再生');
+    const paused = await state();
+    await page.waitForTimeout(3600);
+    expect(await state()).toBe(paused);
     await expectNoHorizontalOverflow(page);
     expect(await audit(page)).toEqual([]);
     await page.getByRole('link', {name: 'アプリの一覧へ', exact: true}).click();
@@ -1539,6 +1562,13 @@ for (const width of [320, 1440]) {
     await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   });
 }
+
+test('with reduced motion, the F Launcher home screen starts paused', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await mockNetwork(page);
+  await ready(page, '/apps/f-launcher/');
+  await expect(page.locator('#flAutoplay')).toHaveText('再生');
+});
 
 test('the app pages are in the sitemap', async () => {
   const sitemap = fs.readFileSync(path.join(rootPath, 'sitemap.xml'), 'utf8');
