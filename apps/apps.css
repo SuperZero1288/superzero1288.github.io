@@ -1,273 +1,125 @@
-/* ZERO — 自作アプリ（/apps/）と、F Launcher の配布ページ（/apps/f-launcher/）。
-   一覧はいつものテーマ。F Launcher のカードにカーソルを乗せると、ページ全体が F Launcher の世界になります。
-   F Launcher の世界の色は、下の「F Launcher の世界」の :root にまとめています（いまは仮のデザイン）。 */
+/* ZERO — 自作アプリの一覧（/apps/）。ふだんはいつものテーマ。
+   F Launcher のカードにカーソルを乗せると、ページが F Launcher のホーム画面になり、
+   ページの部品も Google の Material 3 のルール（色・文字・角丸・大きさ）に切り替わる。
+   F Launcher の色・文字・ホーム画面の見本は flauncher.css にまとめている。 */
 
-/* ===== ページの切り替え（一覧 ⇄ 配布ページ）: アイコンと名前がつながって動く ===== */
-@media(prefers-reduced-motion:no-preference){
-@view-transition{navigation:auto}
-}
-::view-transition-group(fl-icon),::view-transition-group(fl-name){animation-duration:.65s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
-::view-transition-old(root),::view-transition-new(root){animation-duration:.45s}
-/* 一覧から入るときは、押した場所から円で広がる（apps.js / 配布ページの head で動かす） */
-html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-new(root){animation:none;mix-blend-mode:normal}
-/* 戻ってきたときは、ロード画面を出さない */
+/* ===== 世界の切り替え: カーソルの場所から円で広がる・しぼむ（apps.js が View Transitions で動かす） ===== */
+html.fl-reveal::view-transition-old(root),html.fl-reveal::view-transition-new(root),html.fl-conceal::view-transition-old(root),html.fl-conceal::view-transition-new(root){animation:none;mix-blend-mode:normal}
+html.fl-conceal::view-transition-old(root){z-index:1}
+/* 配布ページから戻ってきたときは、ロード画面を出さない */
 html.vt-arrived .site-loader{display:none}
+/* 一覧と配布ページをつなぐ名前は、ページを移るときだけ付ける（世界の切り替えの円には入れない） */
+html.fl-linking #fLauncherCard .app-icon{view-transition-name:fl-icon}
+html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:fl-name}
 
-/* ===== F Launcher の世界（仮のデザイン） =====
-   色の名前は base.css と同じ。@property で登録して、切り替えのときに色がなめらかに変わるようにする */
-@property --primary{syntax:'<color>';inherits:true;initial-value:#000}
-@property --on-primary{syntax:'<color>';inherits:true;initial-value:#fff}
-@property --primary-container{syntax:'<color>';inherits:true;initial-value:#ccc}
-@property --on-primary-container{syntax:'<color>';inherits:true;initial-value:#000}
-@property --secondary-container{syntax:'<color>';inherits:true;initial-value:#ccc}
-@property --on-secondary-container{syntax:'<color>';inherits:true;initial-value:#000}
-@property --tertiary-container{syntax:'<color>';inherits:true;initial-value:#ccc}
-@property --on-tertiary-container{syntax:'<color>';inherits:true;initial-value:#000}
-@property --surface{syntax:'<color>';inherits:true;initial-value:#fff}
-@property --surface-container-lowest{syntax:'<color>';inherits:true;initial-value:#fff}
-@property --surface-container-low{syntax:'<color>';inherits:true;initial-value:#fff}
-@property --surface-container{syntax:'<color>';inherits:true;initial-value:#eee}
-@property --surface-container-high{syntax:'<color>';inherits:true;initial-value:#eee}
-@property --surface-container-highest{syntax:'<color>';inherits:true;initial-value:#ddd}
-@property --on-surface{syntax:'<color>';inherits:true;initial-value:#000}
-@property --on-surface-variant{syntax:'<color>';inherits:true;initial-value:#333}
-@property --outline{syntax:'<color>';inherits:true;initial-value:#888}
-@property --outline-variant{syntax:'<color>';inherits:true;initial-value:#ccc}
-@property --glass{syntax:'<color>';inherits:true;initial-value:transparent}
-@property --inverse-surface{syntax:'<color>';inherits:true;initial-value:#333}
-@property --inverse-on-surface{syntax:'<color>';inherits:true;initial-value:#fff}
-
-:root{
-/* F Launcher の差し色（世界に入っていないときも、アイコンなどで使う） */
---fl-ink:oklch(.15 .018 265);
---fl-lime:oklch(.91 .2 126);
---fl-cyan:oklch(.83 .12 215);
---fl-coral:oklch(.75 .15 25);
---fl-violet:oklch(.74 .14 295);
---fl-amber:oklch(.85 .14 78);
---fl-white:oklch(.97 .005 265);
-/* ばねの動き（行き過ぎてから戻る） */
---fl-spring:linear(0,.009,.035 2.1%,.141 4.4%,.723 12.9%,.938 16.7%,1.017 19.4%,1.067,1.099 24.3%,1.108 26%,1.103,1.085 30.9%,1.016 37.9%,.996 41.4%,.985 44.6%,.988 49.2%,1.001 57.4%,1.004 60.3%,.999 74.7%,1);
---fl-out:cubic-bezier(.16,.84,.24,1)
-}
-/* 世界に入る・出るあいだだけ、ページの色をなめらかに変える（テーマカラーの演出とは重ねない） */
-:root.fl-switching{transition:--primary .6s var(--effects),--on-primary .6s var(--effects),--primary-container .6s var(--effects),--on-primary-container .6s var(--effects),--secondary-container .6s var(--effects),--on-secondary-container .6s var(--effects),--tertiary-container .6s var(--effects),--on-tertiary-container .6s var(--effects),--surface .6s var(--effects),--surface-container-lowest .6s var(--effects),--surface-container-low .6s var(--effects),--surface-container .6s var(--effects),--surface-container-high .6s var(--effects),--surface-container-highest .6s var(--effects),--on-surface .6s var(--effects),--on-surface-variant .6s var(--effects),--outline .6s var(--effects),--outline-variant .6s var(--effects),--glass .6s var(--effects),--inverse-surface .6s var(--effects),--inverse-on-surface .6s var(--effects)}
-html:root[data-world="f"]{
---primary:var(--fl-lime);
---on-primary:oklch(.24 .07 126);
---primary-container:oklch(.36 .1 126);
---on-primary-container:oklch(.95 .12 126);
---secondary-container:oklch(.29 .03 265);
---on-secondary-container:oklch(.94 .012 265);
---tertiary-container:oklch(.34 .07 215);
---on-tertiary-container:oklch(.94 .05 215);
---surface:var(--fl-ink);
---surface-container-lowest:oklch(.12 .014 265);
---surface-container-low:oklch(.19 .018 265);
---surface-container:oklch(.22 .02 265);
---surface-container-high:oklch(.26 .022 265);
---surface-container-highest:oklch(.3 .024 265);
---on-surface:var(--fl-white);
---on-surface-variant:oklch(.82 .018 265);
---outline:oklch(.62 .022 265);
---outline-variant:oklch(.36 .02 265);
---glass:oklch(.16 .018 265 / .7);
---inverse-surface:oklch(.94 .01 265);
---inverse-on-surface:oklch(.22 .02 265);
-color-scheme:dark
-}
-
-/* ===== F Launcher の世界の背景（壁紙・時計・アプリ・ドック） ===== */
-/* 背景の図形（.stage）の上、ページの中身（main）の下に重ねる */
-.fl-world{position:fixed;top:0;left:0;z-index:0;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none;color:var(--fl-white);visibility:hidden;opacity:0;transition:opacity .35s var(--effects),visibility 0s .35s}
-:root[data-world="f"] .fl-world{visibility:visible;opacity:1;transition:opacity .35s var(--effects),visibility 0s}
+/* ===== F Launcher のホーム画面（ページの後ろ。背景の図形の上、ページの中身の下） ===== */
+.fl-world{position:fixed;top:0;left:0;z-index:0;display:none;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none}
+:root[data-world="f"] .fl-world{display:block}
+.fl-world .fl-shape-blue{--s:min(64vw,900px);right:-14vw;top:-36vw}
+.fl-world .fl-shape-red{--s:min(26vw,380px);right:8vw;top:26vh}
+.fl-world .fl-shape-orange{--s:min(40vw,560px);right:-10vw;top:44vh}
+.fl-world .fl-shape-pink{--s:min(24vw,340px);right:28vw;top:60vh}
+.fl-world .fl-shape-green{--s:min(46vw,640px);left:-14vw;bottom:-18vw}
+.fl-world .fl-status{position:absolute;top:10px;left:16px;right:16px}
+.fl-world .fl-space{position:absolute;top:92px;right:max(36px,calc((100vw - 1180px) / 2 + 28px));width:min(330px,27vw)}
 @media(prefers-reduced-motion:no-preference){
-/* カーソルの場所から円で広がり、離れた場所へ円でしぼむ */
-.fl-world{opacity:1;clip-path:circle(0 at var(--x,50%) var(--y,50%));transition:clip-path .55s cubic-bezier(.55,0,.75,.2),visibility 0s .55s}
-:root[data-world="f"] .fl-world{clip-path:circle(var(--r,150vmax) at var(--x,50%) var(--y,50%));transition:clip-path .9s var(--fl-out),visibility 0s}
+:root[data-world="f"] .fl-world .fl-wall{animation:flWallIn .8s var(--md-sys-motion-easing-emphasized-decelerate) backwards}
+:root[data-world="f"] .fl-world .fl-space{animation:flSpaceIn .5s var(--md-sys-motion-easing-emphasized-decelerate) backwards .15s}
 }
-.fl-world.is-static{visibility:visible;opacity:1;clip-path:none;transition:none}
-.fl-wall{position:absolute;inset:0;background:
-radial-gradient(60% 50% at 82% 8%,oklch(.42 .12 215 / .55),transparent 70%),
-radial-gradient(55% 60% at 8% 100%,oklch(.45 .14 126 / .38),transparent 70%),
-radial-gradient(40% 40% at 50% 55%,oklch(.3 .1 295 / .35),transparent 70%),
-var(--fl-ink)}
-/* 細かい点の格子（ホーム画面の配置の目安のように） */
-.fl-wall::after{content:'';position:absolute;inset:0;background:radial-gradient(circle,oklch(1 0 0 / .1) 1px,transparent 1.5px) 0 0 / 28px 28px;mask:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
-/* 壁紙の大きな F */
-/* 文字にかからないよう、右下にはみ出して置く */
-.fl-mark{position:absolute;right:-10vw;bottom:-38vh;width:min(60vw,700px);height:auto;opacity:.16;filter:drop-shadow(0 0 40px oklch(.91 .2 126 / .45))}
-.fl-mark path{fill:none;stroke:url(#flMarkStroke);stroke-width:5;stroke-linejoin:round}
+/* ロックを外したときのように、壁紙が少し大きいところから落ち着く */
+@keyframes flWallIn{from{scale:1.06}}
+@keyframes flSpaceIn{from{opacity:0;translate:0 16px}}
 
-/* 上のステータスバー */
-.fl-status{position:absolute;top:10px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;font-family:var(--flex);font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums;letter-spacing:.02em;opacity:.85}
-.fl-status-icons{display:flex;gap:6px}
-.fl-status-icons svg{width:16px;height:16px;fill:currentColor}
-
-/* 時計のウィジェット */
-.fl-widget{position:absolute;top:96px;right:max(28px,calc((100vw - 1180px) / 2 + 8px));text-align:right}
-.fl-widget-time{margin:0;font-family:var(--flex);font-size:clamp(3.4rem,7vw,5.6rem);line-height:1;font-variation-settings:'wdth' 125,'wght' 220,'opsz' 144;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.fl-widget-date{margin:6px 4px 0 0;font-family:var(--flex);font-weight:700;font-size:.92rem;color:oklch(.85 .02 265)}
-
-/* アプリのアイコン（ホーム画面の並び） */
-.fl-grid{position:absolute;top:232px;right:max(28px,calc((100vw - 1180px) / 2 + 8px));display:grid;grid-template-columns:repeat(4,52px);gap:18px 20px}
-.fl-app{display:grid;place-items:center;width:52px;height:52px;background:var(--c,var(--fl-lime));border-radius:30%;box-shadow:inset 0 1px 0 oklch(1 0 0 / .35),0 6px 16px oklch(0 0 0 / .35)}
-.fl-app svg{width:26px;height:26px;fill:var(--fl-ink)}
-/* 世界に入ると、アイコンがばねのように順に出てくる（出るときはすぐ消える） */
-.fl-app,.fl-widget,.fl-status,.fl-mark{opacity:0;transition:opacity .2s var(--effects)}
-:root[data-world="f"] :is(.fl-app,.fl-widget,.fl-status,.fl-mark),.fl-world.is-static :is(.fl-app,.fl-widget,.fl-status,.fl-mark){opacity:1}
-:root[data-world="f"] .fl-mark{opacity:.16}
-:root[data-world="f"] .fl-app{transition:opacity .3s var(--effects) calc(.12s + var(--i,0) * 32ms)}
-:root[data-world="f"] .fl-widget{transition:opacity .4s var(--effects) .1s}
-@media(prefers-reduced-motion:no-preference){
-.fl-app{scale:.3;translate:0 24px;transition:opacity .18s var(--effects),scale .25s var(--effects),translate .25s var(--effects)}
-:root[data-world="f"] .fl-app{scale:1;translate:0 0;transition:opacity .25s var(--effects) calc(.12s + var(--i,0) * 32ms),scale .7s var(--fl-spring) calc(.12s + var(--i,0) * 32ms),translate .7s var(--fl-spring) calc(.12s + var(--i,0) * 32ms)}
-.fl-widget{translate:0 -18px;filter:blur(8px);transition:opacity .2s var(--effects),translate .3s var(--effects),filter .3s var(--effects)}
-:root[data-world="f"] .fl-widget{translate:0 0;filter:blur(0);transition:opacity .5s var(--effects) .08s,translate .8s var(--fl-out) .08s,filter .6s var(--effects) .08s}
-.fl-mark{scale:.85;rotate:-8deg;transition:opacity .3s var(--effects),scale .4s var(--effects),rotate .4s var(--effects)}
-:root[data-world="f"] .fl-mark{scale:1;rotate:0deg;transition:opacity 1s var(--effects) .1s,scale 1.4s var(--fl-out) .05s,rotate 1.4s var(--fl-out) .05s}
-/* 円のふちを走る光の輪 */
-.fl-ring{position:absolute;left:var(--x,50%);top:var(--y,50%);width:40px;height:40px;margin:-20px 0 0 -20px;border:2px solid var(--fl-lime);border-radius:50%;opacity:0}
-:root[data-world="f"] .fl-world:not(.is-static) .fl-ring{animation:flRing .9s var(--fl-out)}
-}
-@keyframes flRing{0%{opacity:.9;scale:.2}70%{opacity:.35}100%{opacity:0;scale:calc(var(--r-num,1600) / 20)}}
-
-/* ===== 自作アプリの一覧 ===== */
-.apps-hero .eyebrow{position:relative;display:grid}
+/* ===== 自作アプリの一覧（いつものテーマ） ===== */
+.apps-hero .eyebrow{display:grid}
 /* 見出しの小さな文字: 世界に入ると「APPS」から「F LAUNCHER」に入れかわる */
-.eyebrow-swap{grid-area:1 / 1;transition:opacity .3s var(--effects),translate .45s var(--spring)}
-.eyebrow-swap+.eyebrow-swap{color:var(--fl-lime);opacity:0;translate:0 .9em}
-:root[data-world="f"] .apps-hero .eyebrow-swap:first-child{opacity:0;translate:0 -.9em}
-:root[data-world="f"] .apps-hero .eyebrow-swap+.eyebrow-swap{opacity:1;translate:0 0}
+.eyebrow-swap+.eyebrow-swap{display:none}
+:root[data-world="f"] .apps-hero .eyebrow-swap:first-child{display:none}
+:root[data-world="f"] .apps-hero .eyebrow-swap+.eyebrow-swap{display:block}
 
-.app-list{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.app-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:18px 24px;padding:18px 22px 18px 18px;background:var(--surface-container-high);border-radius:32px;color:var(--on-surface);text-decoration:none;isolation:isolate;overflow:hidden;transition:background-color .45s var(--effects),border-radius .5s var(--spring),box-shadow .45s var(--effects),opacity .4s var(--effects)}
+.app-list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.app-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px 24px;padding:20px 24px 20px 20px;background:var(--surface-container-high);border-radius:32px;color:var(--on-surface);text-decoration:none}
 .app-card:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
-.app-copy{display:grid;gap:6px;min-width:0}
-.app-name{font-family:var(--flex);font-size:clamp(1.5rem,2.6vw,2rem);line-height:1.1;font-variation-settings:'wdth' 100,'wght' 820,'opsz' 72;transition:font-variation-settings .7s var(--spring),letter-spacing .7s var(--spring)}
+.app-copy{display:grid;justify-items:start;gap:6px;min-width:0}
+.app-name{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,2.4vw,1.8rem);line-height:1.2}
 .app-desc{color:var(--on-surface-variant);font-weight:700;font-size:.92rem}
-.app-meta{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.app-chip{padding:2px 10px;background:var(--surface-container-highest);border-radius:999px;color:var(--on-surface-variant);font-family:var(--flex);font-weight:800;font-size:.74rem;letter-spacing:.04em}
+.app-meta{display:flex;flex-wrap:wrap;gap:6px}
+.app-chip{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;background:var(--surface-container-highest);border-radius:999px;color:var(--on-surface-variant);font-family:var(--flex);font-weight:800;font-size:.74rem;letter-spacing:.04em}
 .app-chip-status{background:var(--primary-container);color:var(--on-primary-container)}
 .app-go{display:inline-flex;align-items:center;gap:6px;margin-top:4px;color:var(--primary);font-weight:900;font-size:.92rem}
-.app-go svg{width:20px;height:20px;fill:currentColor;transition:translate .5s var(--spring)}
-
-/* アプリのアイコン（F Launcher は、黒地に F と小さな点） */
-.app-icon{position:relative;display:grid;place-items:center;width:88px;height:88px;background:var(--fl-ink);border-radius:30%;box-shadow:inset 0 1px 0 oklch(1 0 0 / .18),0 10px 24px oklch(0 0 0 / .22);transition:scale .7s var(--fl-spring),rotate .7s var(--fl-spring),box-shadow .5s var(--effects)}
-.app-icon svg{width:56%;height:56%;fill:var(--fl-lime)}
-.app-icon-dot{position:absolute;right:20%;bottom:20%;width:13%;height:13%;background:var(--fl-cyan);border-radius:50%}
-#fLauncherCard .app-icon{view-transition-name:fl-icon}
-#fLauncherCard .app-name{width:fit-content;view-transition-name:fl-name}
-
-/* カードの右の小さなスマホ（世界に入ると画面がつく） */
-.app-preview{display:grid;place-items:center;width:118px}
-.mini-phone{position:relative;display:grid;grid-template-rows:auto 1fr auto;width:84px;height:150px;padding:14px 9px 9px;background:var(--surface-container-highest);border:3px solid var(--outline-variant);border-radius:20px;overflow:hidden;transition:background-color .5s var(--effects),border-color .5s var(--effects),rotate .8s var(--fl-spring),translate .8s var(--fl-spring)}
-.mini-clock{font-family:var(--flex);font-weight:300;font-size:1.02rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--on-surface-variant);transition:color .4s var(--effects)}
-.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);align-content:start;gap:7px;margin-top:10px}
-.mini-grid i,.mini-dock i{display:block;aspect-ratio:1;background:var(--outline-variant);border-radius:30%;transition:background-color .4s var(--effects),scale .6s var(--fl-spring)}
-.mini-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:4px;background:oklch(1 0 0 / .08);border-radius:8px}
-
+.app-go svg{width:20px;height:20px;fill:currentColor}
+/* F Launcher のアイコン（配布ページと同じ。丸の中に F） */
+.app-icon{display:grid;place-items:center;width:80px;height:80px;background:var(--md-sys-color-primary-container);border-radius:50%}
+.app-icon svg{width:50%;height:50%;fill:var(--md-sys-color-on-primary-container)}
+/* カードの右の小さなスマホ（F Launcher のホーム画面の見本） */
+.app-preview{display:grid;place-items:center}
+.app-preview .fl-phone{--phone-w:86px}
 /* 準備中の枠 */
-.app-card-soon{grid-template-columns:auto minmax(0,1fr);background:none;border:2px dashed var(--outline-variant);color:var(--on-surface-variant)}
-.app-icon-soon{width:64px;height:64px;background:var(--surface-container-high);box-shadow:none;color:var(--on-surface-variant);font-family:var(--flex);font-weight:900;font-size:1.4rem}
-.app-card-soon strong{font-family:var(--flex);font-weight:900;font-size:1.05rem;letter-spacing:.12em}
+.app-card-soon{grid-template-columns:auto minmax(0,1fr);background:none;box-shadow:inset 0 0 0 2px var(--outline-variant);color:var(--on-surface-variant)}
+.app-icon-soon{width:56px;height:56px;background:var(--surface-container-high);color:var(--on-surface-variant);font-family:var(--flex);font-weight:900;font-size:1.3rem}
+.app-card-soon strong{font-family:var(--flex);font-weight:900;font-size:1rem;letter-spacing:.12em}
 .app-card-soon span{font-weight:700;font-size:.88rem}
 
-/* ----- F Launcher のカード: 世界に入ったとき ----- */
-.app-card-f::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),oklch(.91 .2 126 / .16),transparent 70%);opacity:0;transition:opacity .4s var(--effects)}
-.app-card-f::after{content:'';position:absolute;inset:0;border:1px solid oklch(.91 .2 126 / .5);border-radius:inherit;opacity:0;transition:opacity .4s var(--effects);pointer-events:none}
-:root[data-world="f"] .app-card-f{background:oklch(.2 .02 265 / .82);box-shadow:0 0 0 1px oklch(.91 .2 126 / .1),0 24px 60px -20px oklch(.91 .2 126 / .35)}
-:root[data-world="f"] .app-card-f::before,:root[data-world="f"] .app-card-f::after{opacity:1}
-:root[data-world="f"] .app-card-f .app-name{font-variation-settings:'wdth' 151,'wght' 1000,'opsz' 72;letter-spacing:-.01em}
-:root[data-world="f"] .app-card-f .app-icon{box-shadow:inset 0 1px 0 oklch(1 0 0 / .22),0 0 0 1px oklch(.91 .2 126 / .4),0 14px 40px oklch(.91 .2 126 / .35)}
-:root[data-world="f"] .app-card-f .mini-phone{background:var(--fl-ink);border-color:oklch(.45 .03 265)}
-:root[data-world="f"] .app-card-f .mini-clock{color:var(--fl-white)}
-:root[data-world="f"] .app-card-f .mini-grid i,:root[data-world="f"] .app-card-f .mini-dock i{background:var(--c,var(--fl-lime))}
-:root[data-world="f"] .app-card-soon{opacity:.45}
-@media(prefers-reduced-motion:no-preference){
-:root[data-world="f"] .app-card-f .app-icon{scale:1.08;rotate:-6deg}
-:root[data-world="f"] .app-card-f .app-go svg{translate:5px 0}
-:root[data-world="f"] .app-card-f .mini-phone{rotate:-4deg;translate:0 -4px}
-.mini-grid i,.mini-dock i{scale:.6}
-:root[data-world="f"] .app-card-f .mini-grid i,:root[data-world="f"] .app-card-f .mini-dock i{scale:1;transition:background-color .3s var(--effects) calc(var(--i,0) * 40ms),scale .6s var(--fl-spring) calc(var(--i,0) * 40ms)}
+/* ===== 世界に入ったとき: ページの部品も Material 3 に（色・文字・角丸・大きさ） ===== */
+html:root[data-world="f"]{
+--primary:var(--md-sys-color-primary);
+--on-primary:var(--md-sys-color-on-primary);
+--primary-container:var(--md-sys-color-primary-container);
+--on-primary-container:var(--md-sys-color-on-primary-container);
+--secondary-container:var(--md-sys-color-secondary-container);
+--on-secondary-container:var(--md-sys-color-on-secondary-container);
+--tertiary-container:var(--md-sys-color-tertiary-container);
+--on-tertiary-container:var(--md-sys-color-on-tertiary-container);
+--surface:var(--md-sys-color-surface);
+--surface-container-lowest:var(--md-sys-color-surface-container-lowest);
+--surface-container-low:var(--md-sys-color-surface-container-low);
+--surface-container:var(--md-sys-color-surface-container);
+--surface-container-high:var(--md-sys-color-surface-container-high);
+--surface-container-highest:var(--md-sys-color-surface-container-highest);
+--on-surface:var(--md-sys-color-on-surface);
+--on-surface-variant:var(--md-sys-color-on-surface-variant);
+--outline:var(--md-sys-color-outline);
+--outline-variant:var(--md-sys-color-outline-variant);
+--inverse-surface:var(--md-sys-color-inverse-surface);
+--inverse-on-surface:var(--md-sys-color-inverse-on-surface);
+--glass:var(--md-sys-color-surface-container-high);
+--display:var(--md-ref-typeface-brand);
+--body:var(--md-ref-typeface-plain);
+--flex:var(--md-ref-typeface-plain);
+color-scheme:dark
 }
+:root[data-world="f"] body{font-weight:400}
+:root[data-world="f"] .toolbar{background:var(--md-sys-color-surface-container-high);-webkit-backdrop-filter:none;backdrop-filter:none}
+/* ホーム画面の上に置くので、文字はすべて Material 3 の面（surface-container）の上にのせる */
+:root[data-world="f"] .apps-hero{width:fit-content;max-width:min(100%,660px);padding:24px;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-extra-large)}
+:root[data-world="f"] .apps-hero .eyebrow{font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px;color:var(--md-sys-color-primary);font-variation-settings:normal}
+:root[data-world="f"] .page-title{font:400 36px/44px var(--md-ref-typeface-brand)}
+:root[data-world="f"] .page-title-pop{margin:0;padding:0;background:none;color:inherit;border-radius:0;rotate:none}
+:root[data-world="f"] .page-lead{font:400 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px}
+:root[data-world="f"] .btn{min-height:40px;padding:0 24px;border-radius:var(--md-sys-shape-corner-full);font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
+:root[data-world="f"] .btn svg{width:18px;height:18px}
+:root[data-world="f"] .content-screen{background:var(--md-sys-color-surface-container);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border-radius:var(--md-sys-shape-corner-extra-large)}
+:root[data-world="f"] .card-title{font:400 22px/28px var(--md-ref-typeface-brand)}
+:root[data-world="f"] .card-sub{font:400 14px/20px var(--md-ref-typeface-plain);letter-spacing:.25px}
+/* Material 3 の filled card（surface-container-highest・角は medium） */
+:root[data-world="f"] .app-card{padding:16px;background:var(--md-sys-color-surface-container-highest);border-radius:var(--md-sys-shape-corner-medium)}
+:root[data-world="f"] .app-name{font:400 22px/28px var(--md-ref-typeface-brand)}
+:root[data-world="f"] .app-desc{font:400 14px/20px var(--md-ref-typeface-plain);letter-spacing:.25px}
+/* Material 3 の assist chip（高さ32・角は small・線で囲む） */
+:root[data-world="f"] .app-chip{height:32px;padding:0 16px;background:none;border:1px solid var(--md-sys-color-outline);border-radius:var(--md-sys-shape-corner-small);color:var(--md-sys-color-on-surface);font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
+:root[data-world="f"] .app-chip-status{background:var(--md-sys-color-secondary-container);border-color:transparent;color:var(--md-sys-color-on-secondary-container)}
+:root[data-world="f"] .app-go{font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
+:root[data-world="f"] .app-card-soon{background:none;box-shadow:inset 0 0 0 1px var(--md-sys-color-outline-variant);border-radius:var(--md-sys-shape-corner-medium)}
+:root[data-world="f"] .app-card-soon strong{font:500 16px/24px var(--md-ref-typeface-plain);letter-spacing:.15px}
+:root[data-world="f"] .app-card-soon span{font:400 14px/20px var(--md-ref-typeface-plain)}
+:root[data-world="f"] .app-icon-soon{font:400 22px/28px var(--md-ref-typeface-brand)}
+:root[data-world="f"] .page-footer{padding:16px 24px;background:var(--md-sys-color-surface-container);border:0;border-radius:var(--md-sys-shape-corner-extra-large);font:400 12px/16px var(--md-ref-typeface-plain);letter-spacing:.4px}
 
-/* ===== F Launcher の配布ページ ===== */
-.page-flauncher #hueButton,.page-flauncher #themeButton{display:none}
-.fl-main{padding-top:96px}
-.fl-hero{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:clamp(24px,5vw,72px);margin:0 0 28px;padding:clamp(8px,2vw,24px) clamp(4px,1vw,12px)}
-.fl-hero-copy{display:grid;justify-items:start;gap:16px;min-width:0}
-.fl-back{display:inline-flex;align-items:center;gap:6px;color:var(--on-surface-variant);font-weight:900;font-size:.9rem;text-decoration:none}
-@media(hover:hover){.fl-back:hover{color:var(--fl-lime)}}
-.fl-back svg{width:18px;height:18px;fill:currentColor}
-.fl-hero .app-icon{width:104px;height:104px;view-transition-name:fl-icon}
-.fl-hero .eyebrow{color:var(--fl-lime)}
-.fl-title{width:fit-content;margin:0;font-family:var(--flex);font-weight:400;font-size:clamp(2.6rem,7vw,5rem);line-height:.98;font-variation-settings:'wdth' 151,'wght' 1000,'opsz' 144;letter-spacing:-.015em;view-transition-name:fl-name}
-.fl-tagline{max-width:34em;margin:0;color:var(--on-surface-variant);font-weight:700;font-size:1.05rem}
-.fl-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.fl-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
-.fl-download{background:var(--fl-lime);color:oklch(.24 .07 126)}
-.fl-download small{font-family:var(--flex);font-weight:800;font-size:.72rem;letter-spacing:.06em;opacity:.8}
-.fl-download:disabled{background:oklch(.91 .2 126 / .16);color:var(--fl-lime);box-shadow:inset 0 0 0 1px oklch(.91 .2 126 / .45);cursor:not-allowed}
-
-/* 右の大きなスマホ（F Launcher のホーム画面のイメージ） */
-.fl-phone{--tilt-x:0deg;--tilt-y:0deg;position:relative;width:clamp(240px,26vw,300px);aspect-ratio:9 / 19;padding:10px;background:oklch(.1 .01 265);border:1px solid oklch(.4 .02 265);border-radius:44px;box-shadow:inset 0 0 0 2px oklch(.24 .02 265),0 40px 80px -30px oklch(0 0 0 / .8),0 0 80px -20px oklch(.91 .2 126 / .3);transform:perspective(1200px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));transition:transform .6s var(--fl-out)}
-.fl-phone-screen{position:relative;display:grid;grid-template-rows:auto auto 1fr auto auto;height:100%;padding:12px 16px 12px;overflow:hidden;background:radial-gradient(80% 50% at 90% 0%,oklch(.42 .12 215 / .7),transparent 70%),radial-gradient(70% 60% at 0% 100%,oklch(.45 .14 126 / .5),transparent 70%),var(--fl-ink);border-radius:34px}
-.fl-phone-status{display:flex;justify-content:space-between;font-family:var(--flex);font-weight:700;font-size:.7rem;font-variant-numeric:tabular-nums}
-.fl-phone-status svg{width:12px;height:12px;fill:currentColor}
-.fl-phone-widget{margin-top:18px}
-.fl-phone-widget p{margin:0}
-.fl-phone-time{font-family:var(--flex);font-size:3.1rem;line-height:1;font-variation-settings:'wdth' 125,'wght' 220,'opsz' 144;font-variant-numeric:tabular-nums}
-.fl-phone-date{margin-top:4px!important;color:oklch(.85 .02 265);font-family:var(--flex);font-weight:700;font-size:.72rem}
-.fl-phone-grid{display:grid;grid-template-columns:repeat(4,1fr);align-content:end;gap:16px 12px;padding-bottom:14px}
-.fl-phone .fl-app{width:100%;height:auto;aspect-ratio:1;opacity:1}
-.fl-phone .fl-app svg{width:52%;height:52%}
-.fl-phone-dots{display:flex;justify-content:center;gap:6px;margin-bottom:12px}
-.fl-phone-dots i{width:6px;height:6px;background:oklch(1 0 0 / .35);border-radius:50%}
-.fl-phone-dots i:first-child{width:16px;background:var(--fl-white);border-radius:3px}
-.fl-phone-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:10px;background:oklch(1 0 0 / .1);border:1px solid oklch(1 0 0 / .12);border-radius:24px}
-.fl-phone-dock .fl-app{box-shadow:none}
-
-/* 下の情報 */
-.fl-section-title{margin:0;font-family:var(--flex);font-weight:900;font-size:clamp(1.4rem,2.6vw,1.9rem);font-variation-settings:'wdth' 140,'wght' 950,'opsz' 72}
-.fl-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
-.fl-feature{display:grid;gap:8px;align-content:start;padding:18px;background:var(--surface-container-high);border-radius:24px}
-.fl-feature .fl-app{width:44px;height:44px;opacity:1}
-.fl-feature .fl-app svg{width:24px;height:24px}
-.fl-feature strong{font-family:var(--flex);font-size:1.05rem;font-variation-settings:'wdth' 120,'wght' 900}
-.fl-feature p{margin:0;color:var(--on-surface-variant);font-weight:700;font-size:.88rem}
-.fl-spec{display:grid;margin:0;border-top:1px solid var(--outline-variant)}
-.fl-spec div{display:grid;grid-template-columns:10em minmax(0,1fr);gap:16px;padding:12px 4px;border-bottom:1px solid var(--outline-variant)}
-.fl-spec dt{color:var(--on-surface-variant);font-weight:700;font-size:.9rem}
-.fl-spec dd{margin:0;font-weight:800}
-.fl-note{margin:0;color:var(--on-surface-variant);font-weight:700}
-
-/* 配布ページの登場（読み込んだら順に出てくる） */
-@media(prefers-reduced-motion:no-preference){
-.page-flauncher .fl-hero-copy>*{animation:flRise .9s var(--fl-out) backwards;animation-delay:calc(.08s + var(--n,0) * 70ms)}
-.page-flauncher .fl-hero .app-icon{animation:flPop 1s var(--fl-spring) backwards .05s}
-.page-flauncher .fl-phone{animation:flPhoneIn 1.2s var(--fl-out) backwards .15s}
-.page-flauncher .fl-phone-grid .fl-app,.page-flauncher .fl-phone-dock .fl-app{animation:flPop .8s var(--fl-spring) backwards;animation-delay:calc(.5s + var(--i,0) * 45ms)}
-.page-flauncher .fl-phone-widget{animation:flRise 1s var(--fl-out) backwards .4s}
-/* 一覧から移ってきたときは、アイコンと名前が一覧からつながって動くので、ここでは動かさない */
-html.vt-arrived .page-flauncher .fl-hero .app-icon,html.vt-arrived .page-flauncher .fl-title{animation:none}
-}
-@keyframes flRise{from{opacity:0;translate:0 26px;filter:blur(6px)}}
-@keyframes flPop{from{opacity:0;scale:.3}}
-@keyframes flPhoneIn{from{opacity:0;transform:perspective(1200px) translateY(80px) rotateX(24deg) rotateY(-18deg)}}
-
-/* ===== 画面幅ごと ===== */
-@media(max-width:1100px){
-.fl-grid,.fl-widget{display:none}
-}
-@media(max-width:840px){
-.fl-hero{grid-template-columns:minmax(0,1fr)}
-.fl-phone{justify-self:center;width:min(260px,72vw)}
-.fl-features{grid-template-columns:minmax(0,1fr)}
+@media(max-width:1060px){
+.fl-world .fl-space{display:none}
 }
 @media(max-width:640px){
 .app-card{grid-template-columns:auto minmax(0,1fr);padding:16px}
-.app-icon{width:68px;height:68px}
+.app-icon{width:64px;height:64px}
 .app-preview{display:none}
-.fl-spec div{grid-template-columns:7em minmax(0,1fr)}
 }

@@ -1442,11 +1442,12 @@ test('the right menu opens the app list, which offers F Launcher', async ({page}
   expect(await audit(page)).toEqual([]);
 });
 
-test('hovering F Launcher turns the whole app list into its world, and leaving turns it back', async ({page}) => {
+test('hovering F Launcher turns the app list into its Material 3 home screen, and leaving turns it back', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/apps/');
   const html = page.locator('html');
   const world = page.locator('#flWorld');
+  const space = world.locator('.fl-space');
   const surface = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   const before = await surface();
   await expect(world).toBeHidden();
@@ -1456,18 +1457,21 @@ test('hovering F Launcher turns the whole app list into its world, and leaving t
   await page.mouse.move(box.x + 140, box.y + box.height / 2);
   await expect(html).toHaveAttribute('data-world', 'f');
   await expect(world).toBeVisible();
-  // 世界は、カーソルのある場所から広がる
-  expect(await world.evaluate((element) => [element.style.getPropertyValue('--x'), element.style.getPropertyValue('--y')])).toEqual([`${Math.round(box.x + 140)}px`, `${Math.round(box.y + box.height / 2)}px`]);
-  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toHaveCSS('opacity', '1');
-  await expect(page.locator('.fl-widget-time')).toHaveText(/^\d{2}:\d{2}$/);
-  // ページの色も F Launcher の色（暗い色）になる
-  await expect.poll(surface, {timeout: 3000}).not.toBe(before);
+  await expect(page.locator('.apps-hero .eyebrow-swap').nth(1)).toBeVisible();
+  // ページの色・文字は Material 3（Google Sans Flex と、Material Color Utilities で作った色）
+  await expect.poll(surface).toBe('rgb(19, 19, 24)');
+  expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Google Sans Flex');
+  // ホーム画面の見本には文字を使わない
+  expect(await world.evaluate((element) => element.textContent.trim())).toBe('');
+  // カーソルを乗せているあいだ、セカンドスペースのテンプレートが入れかわる（止まっていても世界は閉じない）
+  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).toBe('clock');
+  await expect(html).toHaveAttribute('data-world', 'f');
   expect(await audit(page)).toEqual([]);
 
   await page.mouse.move(10, 10);
   await expect(html).not.toHaveAttribute('data-world', /.+/);
-  await expect(world).toBeHidden({timeout: 3000});
-  await expect.poll(surface, {timeout: 3000}).toBe(before);
+  await expect(world).toBeHidden();
+  await expect.poll(surface).toBe(before);
 
   // 通り過ぎただけでは切り替わらない
   await page.mouse.move(box.x + 10, box.y + box.height / 2);
@@ -1484,6 +1488,15 @@ test('hovering F Launcher turns the whole app list into its world, and leaving t
   await expect(html).not.toHaveAttribute('data-world', /.+/);
 });
 
+test('the second space keeps square cells: 1x1 and 2x2 widgets are squares', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/apps/f-launcher/');
+  const ratio = (selector) => page.locator(`#flPhone ${selector}`).evaluate((element) => { const rect = element.getBoundingClientRect(); return Math.round((rect.width / rect.height) * 100) / 100; });
+  for (const selector of ['.fl-c-clock', '.fl-c-music', '.fl-c-ring1', '.fl-c-ring2', '.fl-apps']) expect(await ratio(selector), selector).toBeCloseTo(1, 1);
+  // 2x1 は横長の帯
+  expect(await ratio('.fl-c-date')).toBeGreaterThan(1.9);
+});
+
 test('without hover (phones), the app list stays in the usual theme', async ({browser}) => {
   const context = await browser.newContext({viewport: {width: 390, height: 844}, hasTouch: true, isMobile: true});
   const page = await context.newPage();
@@ -1497,24 +1510,31 @@ test('without hover (phones), the app list stays in the usual theme', async ({br
 });
 
 for (const width of [320, 1440]) {
-  test(`the F Launcher page is shown in its own world at ${width}px`, async ({page}) => {
+  test(`the F Launcher page follows Material 3 and lets visitors try the templates at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
     await mockNetwork(page);
     await ready(page, '/apps/');
     await page.locator('#fLauncherCard').click();
     await expect(page).toHaveURL(/\/apps\/f-launcher\/$/);
-    await expect(page.locator('html')).toHaveAttribute('data-world', 'f');
     await expect(page.locator('h1')).toHaveText('F Launcher');
+    // サイトのツールバーやテーマは使わない
+    await expect(page.locator('#toolbar')).toHaveCount(0);
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(19, 19, 24)');
     // まだ配布していないので、ダウンロードは押せない
     await expect(page.getByRole('button', {name: /ダウンロード/})).toBeDisabled();
-    await expect(page.locator('.fl-spec')).toContainText('まだ公開していません');
-    await expect(page.locator('.fl-phone-time')).toHaveText(/^\d{2}:\d{2}$/);
-    // F Launcher の世界では、テーマカラーとダーク/ライトのボタンは出さない
-    await expect(page.locator('#hueButton')).toBeHidden();
-    await expect(page.locator('#themeButton')).toBeHidden();
+    await expect(page.locator('.fl-spec')).toContainText('Launcher3（フォーク）');
+    // ホーム画面の見本には文字を使わない
+    expect(await page.locator('#flPhone').evaluate((element) => element.textContent.trim())).toBe('');
+    // テンプレートとテーマを切り替えられる
+    const phone = page.locator('#flPhone');
+    await page.locator('.fl-picker label', {hasText: '時計'}).click();
+    await expect(phone.locator('.fl-space')).toHaveAttribute('data-template', 'clock');
+    await page.locator('.md-segmented label', {hasText: 'Liquid Glass'}).click();
+    await expect(phone).toHaveAttribute('data-style', 'glass');
+    await expect(phone).toHaveAttribute('aria-label', 'F Launcher のホーム画面の見本（テンプレート: 時計、テーマ: Liquid Glass）');
     await expectNoHorizontalOverflow(page);
     expect(await audit(page)).toEqual([]);
-    await page.locator('.fl-back').click();
+    await page.getByRole('link', {name: 'アプリの一覧へ', exact: true}).click();
     await expect(page).toHaveURL(/\/apps\/$/);
     await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   });
