@@ -1716,6 +1716,36 @@ test('choosing DroidHub opens its details and turns the app list into its green 
   await expect(page.locator('.fl-world.is-on')).toHaveCount(0);
 });
 
+test('pressing a row in the app list gives immediate feedback before the theme changes', async ({page}) => {
+  // 対応する端末で震えるかを確かめるため、振動の呼び出しを記録する
+  await page.addInitScript(() => { window.vibrations = []; navigator.vibrate = (pattern) => { window.vibrations.push(pattern); return true; }; });
+  await mockNetwork(page);
+  await ready(page, '/apps/');
+  const card = page.locator('#fLauncherCard');
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + 200, box.y + box.height / 2);
+  await page.mouse.down();
+  // 押した瞬間: 行が沈み、押した場所から波紋が広がる
+  await expect(card).toHaveClass(/is-pressed/);
+  await expect(card.locator('.app-ripple')).toHaveCount(1);
+  expect(await card.locator('.app-ripple').evaluate((element) => [element.style.getPropertyValue('--rx'), element.style.getPropertyValue('--ry')])).toEqual(['200px', `${Math.round(box.height / 2)}px`]);
+  await expect.poll(() => card.evaluate((element) => getComputedStyle(element).scale)).not.toBe('1');
+  await page.mouse.up();
+  // 離すと: アイコンが弾み、「詳細」のボタンが少しつぶれ、短く震える。そのあとでテーマが波で変わる
+  await expect(card).not.toHaveClass(/is-pressed/);
+  await expect(card.locator('.app-icon')).toHaveClass(/is-bump/);
+  await expect(card.locator('.app-get')).toHaveClass(/is-bump/);
+  expect(await page.evaluate(() => window.vibrations)).toEqual([12]);
+  await expect(page.locator('html')).toHaveAttribute('data-world', 'f');
+  await expect(card.locator('.app-ripple')).toHaveCount(0);
+  await expect(card.locator('.app-icon')).not.toHaveClass(/is-bump/);
+  // キーボードで押したときも、行の真ん中から波紋が出る
+  await page.locator('#droidHubCard').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#droidHubCard .app-ripple')).toHaveCount(1);
+  await expect(page.locator('html')).toHaveAttribute('data-world', 'dh');
+});
+
 test('while the wave runs, the tapped row stays in place and the page cannot be scrolled', async ({page}) => {
   // 上の行が閉じた分だけ上へスクロールできる高さの画面（スクロールできる分が足りないときは、行は上へ動く）
   await page.setViewportSize({width: 1440, height: 520});

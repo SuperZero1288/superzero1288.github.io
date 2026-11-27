@@ -105,9 +105,22 @@ html.dh-linking #droidHubCard .app-name{width:fit-content;view-transition-name:d
 .app-item.is-open::before,.app-item.is-open+.app-item::before{opacity:0}
 .app-item.is-open{background:var(--surface-container-high)}
 .app-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px 20px;width:100%;min-height:104px;margin:0;padding:16px 20px 16px 16px;border:0;background:none;color:inherit;font:inherit;text-align:left;border-radius:inherit}
-button.app-row{cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard)}
+button.app-row{position:relative;isolation:isolate;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .2s var(--md-sys-motion-easing-standard),scale .45s var(--md-sys-motion-spring),border-radius .45s var(--md-sys-motion-spring)}
 @media(hover:hover){button.app-row:hover{background-color:color-mix(in srgb,var(--on-surface) 6%,transparent)}}
-button.app-row:active{background-color:color-mix(in srgb,var(--on-surface) 10%,transparent)}
+/* 押したときの手ごたえ（M3E）: 行が少し沈んで角が丸くなり、押した場所から波紋が広がる。離すとばねで戻る */
+button.app-row:active,button.app-row.is-pressed{background-color:color-mix(in srgb,var(--on-surface) 12%,transparent)}
+@media(prefers-reduced-motion:no-preference){
+button.app-row.is-pressed{scale:.975;border-radius:40px;transition:background-color .1s var(--md-sys-motion-easing-standard),scale .16s var(--md-sys-motion-easing-standard),border-radius .16s var(--md-sys-motion-easing-standard)}
+}
+.app-ripple{position:absolute;left:var(--rx);top:var(--ry);z-index:-1;width:var(--rs);aspect-ratio:1;margin:calc(var(--rs) / -2) 0 0 calc(var(--rs) / -2);background:currentColor;border-radius:50%;opacity:0;pointer-events:none;animation:appRipple .6s var(--md-sys-motion-easing-standard) forwards}
+@keyframes appRipple{0%{scale:0;opacity:.18}55%{opacity:.14}100%{scale:1;opacity:0}}
+/* 選んだ瞬間: アイコンが弾み、「詳細」のボタンが少しつぶれて戻る */
+@media(prefers-reduced-motion:no-preference){
+.app-icon.is-bump{animation:appBump .55s var(--md-sys-motion-spring)}
+.app-get.is-bump{animation:appSquish .5s var(--md-sys-motion-spring)}
+}
+@keyframes appBump{0%{scale:1;rotate:0deg}30%{scale:.84;rotate:-8deg}100%{scale:1;rotate:0deg}}
+@keyframes appSquish{0%{scale:1}30%{scale:1.12 .82}100%{scale:1}}
 button.app-row:focus-visible{outline:3px solid var(--primary);outline-offset:-3px}
 .app-copy{display:grid;justify-items:start;gap:3px;min-width:0}
 .app-name{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,2.2vw,1.6rem);line-height:1.25}

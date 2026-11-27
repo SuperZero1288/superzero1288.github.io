@@ -307,6 +307,23 @@
       window[method]('touchmove', stopScroll, {passive: false});
       window[method]('keydown', stopKeys);
     };
+    // 押した場所から広がる波紋（M3 の押したときの表現）
+    let pressTimer = 0;
+    const ripple = (card, x, y) => {
+      if (reducedMotion.matches) return;
+      const rect = card.getBoundingClientRect();
+      const px = x ?? rect.width / 2;
+      const py = y ?? rect.height / 2;
+      const size = 2 * Math.hypot(Math.max(px, rect.width - px), Math.max(py, rect.height - py));
+      const wave = document.createElement('span');
+      wave.className = 'app-ripple';
+      wave.setAttribute('aria-hidden', 'true');
+      wave.style.setProperty('--rx', `${Math.round(px)}px`);
+      wave.style.setProperty('--ry', `${Math.round(py)}px`);
+      wave.style.setProperty('--rs', `${Math.round(size)}px`);
+      card.append(wave);
+      wave.addEventListener('animationend', () => wave.remove(), {once: true});
+    };
     // 押した行が、押したときと同じ場所に見えるように、スクロールの位置を合わせる（上の行が閉じても動かない）
     const keepInPlace = (card, top) => {
       if (!card) return;
@@ -350,11 +367,40 @@
     };
     const byId = (id) => APPS.find((app) => app.id === id);
     APPS.forEach((app) => {
-      app.card.addEventListener('click', () => {
+      // 押した手ごたえ: 押した瞬間に行が沈み、押した場所から波紋が広がる
+      app.card.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0 || running) return;
+        app.card.classList.add('is-pressed');
+        const rect = app.card.getBoundingClientRect();
+        ripple(app.card, event.clientX - rect.left, event.clientY - rect.top);
+      });
+      ['pointerup', 'pointerleave', 'pointercancel'].forEach((type) => app.card.addEventListener(type, () => app.card.classList.remove('is-pressed')));
+      app.card.addEventListener('click', (event) => {
+        // キーボードで押したときは、行の真ん中から波紋を出して、少しだけ沈める
+        if (!event.detail) {
+          ripple(app.card);
+          app.card.classList.add('is-pressed');
+          setTimeout(() => app.card.classList.remove('is-pressed'), 140);
+        }
+        // 選んだ瞬間: アイコンが弾み、ボタンが少しつぶれ、対応する端末では短く震える
+        [app.card.querySelector('.app-icon'), app.card.querySelector('.app-get')].forEach((element) => {
+          if (!element) return;
+          element.classList.remove('is-bump');
+          void element.offsetWidth;
+          element.classList.add('is-bump');
+        });
+        try { navigator.vibrate?.(12); } catch {}
         pressed = app.card;
         desired = desired === app.id ? null : app.id;
-        sync();
+        // 手ごたえを見せてから、テーマを波で切り替える（そのあいだもスクロールは止めておく）
+        lockScroll(true);
+        clearTimeout(pressTimer);
+        pressTimer = setTimeout(() => {
+          sync();
+          if (!running && !root.classList.contains('fl-switching')) lockScroll(false);
+        }, reducedMotion.matches ? 0 : 180);
       });
+      app.card.querySelectorAll('.app-icon, .app-get').forEach((element) => element.addEventListener('animationend', () => element.classList.remove('is-bump')));
       // 開いているときは、Esc で閉じる
       app.item.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape' || desired !== app.id) return;
