@@ -1,7 +1,8 @@
 /* ZERO — 自作アプリの一覧（/apps/）。ふだんはいつものテーマ。
    アプリは、アイコンと名前だけのリスト。押す（タップする）と選んだ状態になり、そのアプリの行が下へのびて、
    くわしい情報と、アプリのページへのボタンが出てくる。
-   F Launcher を選ぶと、後ろに F Launcher のホーム画面が押した場所から円で広がり、
+   F Launcher を選ぶと、後ろに F Launcher の世界（落ち着いた黒い背景に、アイコンやウィジェットの形が浮かぶ）が
+   押した場所から円で広がり、
    ページの部品は同じ位置のまま、色・角丸・面が F Launcher（Material 3 Expressive）のものへなめらかに変わる。
    F Launcher の色・文字・ホーム画面の見本は flauncher.css にまとめている。 */
 
@@ -16,32 +17,70 @@ html.vt-arrived .site-loader{display:none}
 html.fl-linking #fLauncherCard .app-icon{view-transition-name:fl-icon}
 html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:fl-name}
 
-/* ===== F Launcher のホーム画面（ページの後ろ。背景の図形の上、ページの中身の下） ===== */
-.fl-world{position:fixed;top:0;left:0;z-index:0;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;transition:opacity .2s var(--md-sys-motion-easing-standard),visibility 0s .2s}
+/* ===== F Launcher の世界（ページの後ろ。背景の図形の上、ページの中身の下） =====
+   落ち着いた黒い背景に、アプリのアイコンやウィジェットの形が、ゆっくり浮かんでいる。
+   アイコンの形は、ときどき M3E の別の形へなめらかに変わる（apps.js） */
+@property --p{syntax:'<number>';inherits:true;initial-value:0}
+.fl-world{--edge:max(24px,calc((100vw - 1180px) / 2 + 28px));position:fixed;top:0;left:0;z-index:0;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;background:radial-gradient(90% 70% at 100% 0%,#17171b 0%,transparent 70%),radial-gradient(70% 60% at 0% 100%,#111114 0%,transparent 70%),#000;transition:opacity .2s var(--md-sys-motion-easing-standard),visibility 0s .2s}
 :root[data-world="f"] .fl-world{visibility:visible;opacity:1;transition:opacity .25s var(--md-sys-motion-easing-standard),visibility 0s}
 @media(prefers-reduced-motion:no-preference){
 /* 押した場所から円で広がり、閉じるときはそこへしぼむ */
 .fl-world{opacity:1;clip-path:circle(0 at var(--x,50%) var(--y,50%));transition:clip-path .28s var(--md-sys-motion-easing-emphasized-accelerate),visibility 0s .28s}
 :root[data-world="f"] .fl-world{clip-path:circle(var(--r,150vmax) at var(--x,50%) var(--y,50%));transition:clip-path .45s var(--md-sys-motion-easing-emphasized-decelerate),visibility 0s}
-/* ロックを外したときのように、壁紙が少し大きいところから落ち着く */
-.fl-world .fl-wall{scale:1.06;transition:scale .28s var(--md-sys-motion-easing-emphasized-accelerate),background-color .7s var(--md-sys-motion-easing-standard)}
-:root[data-world="f"] .fl-world .fl-wall{scale:1;transition:scale .55s var(--md-sys-motion-easing-emphasized-decelerate),background-color .7s var(--md-sys-motion-easing-standard)}
 }
-.fl-world .fl-shape-1{--s:min(64vw,900px);right:-14vw;top:-36vw}
-.fl-world .fl-shape-2{--s:min(26vw,380px);right:8vw;top:26vh}
-.fl-world .fl-shape-3{--s:min(40vw,560px);right:-10vw;top:44vh}
-.fl-world .fl-shape-4{--s:min(24vw,340px);right:28vw;top:60vh}
-.fl-world .fl-shape-5{--s:min(46vw,640px);left:-14vw;bottom:-18vw}
-.fl-world .fl-status{position:absolute;top:10px;left:16px;right:16px}
-.fl-world .fl-space{position:absolute;top:92px;right:max(36px,calc((100vw - 1180px) / 2 + 28px));width:min(330px,27vw)}
-/* ステータスバーとセカンドスペースは、円が広がってから出てくる */
-.fl-world .fl-status,.fl-world .fl-space{opacity:0;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate)}
-:root[data-world="f"] .fl-world .fl-status{opacity:1;transition:opacity .22s var(--md-sys-motion-easing-standard) .08s}
-:root[data-world="f"] .fl-world .fl-space{opacity:1;transition:opacity .22s var(--md-sys-motion-easing-standard) .12s}
+/* 浮かぶ形: アイコン（M3E の形）・ウィジェット（帯・輪・角の丸い四角） */
+.fl-float{position:absolute;display:grid;place-items:center;width:var(--size,64px);aspect-ratio:1;background-color:var(--md-sys-color-surface-container-high);rotate:var(--rot,0deg);opacity:0;scale:.6;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate)}
+:root[data-world="f"] .fl-float{opacity:1;scale:1;transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms)}
+.fl-float svg{width:44%;height:44%;fill:#a3a1a8;transition:fill .3s var(--md-sys-motion-easing-standard)}
+.fl-float .fl-line{--lc:var(--md-sys-color-on-surface-variant)}
+.fl-float .fl-line.is-dim{--lc:#6f6d75}
+/* アイコン: M3E の形。灰色と、ところどころ薄いラベンダー */
+.fl-float-icon{clip-path:var(--shape,var(--shape-circle));transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate),clip-path .7s var(--md-sys-motion-spring),background-color .3s var(--md-sys-motion-easing-standard)}
+:root[data-world="f"] .fl-float-icon{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),clip-path .7s var(--md-sys-motion-spring),background-color .3s var(--md-sys-motion-easing-standard)}
+.fl-float-icon.is-accent{background-color:var(--md-sys-color-primary-fixed)}
+.fl-float-icon.is-accent svg{fill:var(--md-sys-color-on-primary-fixed-variant)}
+/* ウィジェット: 時計・天気・検索の帯、電池の輪、アプリの四角 */
+.fl-float-pill{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:10px;width:var(--w,220px);height:var(--h,92px);aspect-ratio:auto;padding:0 28px;border-radius:var(--md-sys-shape-corner-full)}
+.fl-float-pill.is-row{flex-direction:row;align-items:center;gap:12px;padding:0 24px}
+.fl-float-pill svg{flex:0 0 auto;width:26px;height:26px}
+.fl-float-ring{border-radius:50%;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate),--p 1s var(--md-sys-motion-easing-emphasized-decelerate)}
+:root[data-world="f"] .fl-float-ring{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),--p 1s var(--md-sys-motion-easing-emphasized-decelerate)}
+.fl-float-ring::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 200deg,var(--md-sys-color-primary-fixed) calc(var(--p) * 1%),var(--md-sys-color-surface-container-highest) 0);-webkit-mask:radial-gradient(closest-side,transparent 80%,#000 81%);mask:radial-gradient(closest-side,transparent 80%,#000 81%)}
+.fl-float-ring .fl-line{position:relative;width:36%;height:8px}
+.fl-float-apps{grid-template-columns:1fr 1fr;place-items:stretch;align-content:center;gap:3cqi;padding:5cqi;border-radius:28%}
+.fl-float-apps i{display:block;width:100%;aspect-ratio:1;background:var(--md-sys-color-surface-container-highest);border-radius:50%}
+.fl-float-apps i:nth-child(2){background:var(--md-sys-color-primary-fixed)}
+/* ゆっくり浮かぶ（位置と傾きだけ。「動きを減らす」設定では動かさない） */
 @media(prefers-reduced-motion:no-preference){
-.fl-world .fl-space{translate:0 16px;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),translate .16s var(--md-sys-motion-easing-emphasized-accelerate)}
-:root[data-world="f"] .fl-world .fl-space{translate:0 0;transition:opacity .22s var(--md-sys-motion-easing-standard) .12s,translate .4s var(--md-sys-motion-easing-emphasized-decelerate) .12s}
+.fl-float{animation:flFloat var(--dur,7s) ease-in-out infinite;animation-delay:calc(var(--n,0) * -.9s);animation-play-state:paused}
+:root[data-world="f"] .fl-world:not(.is-paused) .fl-float{animation-play-state:running}
 }
+@keyframes flFloat{0%,100%{translate:0 0;rotate:var(--rot,0deg)}50%{translate:0 var(--fy,-10px);rotate:calc(var(--rot,0deg) + var(--fr,2deg))}}
+/* 見出しの右: ホーム画面のように集まった形（広い画面だけ） */
+.fl-cluster{position:absolute;top:80px;right:var(--edge);width:min(360px,27vw);aspect-ratio:100 / 84;container-type:inline-size}
+.fl-cluster .fl-float-pill{gap:3cqi;padding:0 8cqi}
+.fl-cluster .fl-float-pill.is-row{gap:3.4cqi;padding:0 7cqi}
+.fl-cluster .fl-float-pill svg{width:7.4cqi;height:7.4cqi}
+.fl-cluster .fl-float-ring .fl-line{height:2.4cqi}
+.fl-c1{--w:62cqi;--h:27cqi;left:0;top:0;--rot:-2deg}
+.fl-c1 .fl-line:first-child{width:30cqi;height:8cqi}
+.fl-c1 .fl-line:last-child{width:18cqi;height:2.6cqi}
+.fl-c2{--size:29cqi;left:69cqi;top:0;--rot:4deg;--dur:8s}
+.fl-c3{--size:21cqi;left:1cqi;top:31cqi;--rot:-6deg;--dur:6s}
+.fl-c4{--size:19cqi;left:26cqi;top:33cqi;--rot:8deg;--dur:7.5s}
+.fl-c5{--size:31cqi;left:66cqi;top:31cqi;--rot:3deg;--dur:9s}
+.fl-c6{--w:52cqi;--h:20cqi;left:2cqi;top:58cqi;--rot:2deg;--dur:8.5s}
+.fl-c6 .fl-line{width:24cqi;height:2.8cqi}
+.fl-c7{--size:16cqi;left:60cqi;top:66cqi;--rot:-4deg;--dur:6.5s}
+.fl-c8{--size:13cqi;left:82cqi;top:68cqi;--rot:10deg;--dur:7s}
+/* 画面のふち: 端から少しはみ出して浮かぶ */
+.fl-e1{--size:88px;left:-22px;top:46vh;--rot:-8deg;--dur:8s}
+.fl-e2{--size:64px;left:max(10px,calc(var(--edge) - 104px));bottom:10vh;--rot:12deg;--dur:6.5s}
+.fl-e3{--size:76px;right:-18px;top:60vh;--rot:6deg;--dur:7.5s}
+.fl-e4{--w:210px;--h:72px;right:-52px;bottom:4vh;--rot:-5deg;--dur:9s}
+.fl-e4 .fl-line{width:96px;height:8px}
+.fl-e5{--size:104px;left:-34px;bottom:-30px;--rot:0deg;--dur:10s}
+.fl-e6{--size:58px;right:-14px;top:14px;--rot:-10deg;--dur:6s}
 
 /* ===== 自作アプリの一覧（いつものテーマ） ===== */
 .apps-hero{position:relative}
@@ -94,9 +133,8 @@ button.app-row:focus-visible{outline:3px solid var(--primary);outline-offset:-3p
 .app-item.is-soon{background:none;box-shadow:inset 0 0 0 2px var(--outline-variant);color:var(--on-surface-variant)}
 .app-icon-soon{width:56px;height:56px;margin:4px;background:var(--surface-container-high);color:var(--on-surface-variant);font-family:var(--flex);font-weight:900;font-size:1.3rem}
 .is-soon .app-name{font-family:var(--flex);font-weight:900;font-size:1rem;letter-spacing:.12em}
-/* 見出しの後ろと、いちばん下の行の後ろの面（世界に入ったときだけ見える。大きさは変えずに、外側へ広げて描く） */
-.apps-hero::before,.page-apps .page-footer::before{content:'';position:absolute;z-index:-1;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-extra-large);opacity:0;transition:opacity .3s var(--md-sys-motion-easing-standard)}
-.apps-hero::before{top:-4px;bottom:-4px;left:-12px;width:min(calc(100% + 24px),720px)}
+/* いちばん下の行の後ろの面（世界に入ったときだけ見える。大きさは変えずに、外側へ広げて描く） */
+.page-apps .page-footer::before{content:'';position:absolute;z-index:-1;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-extra-large);opacity:0;transition:opacity .3s var(--md-sys-motion-easing-standard)}
 .page-apps .page-footer{position:relative;isolation:isolate}
 .page-apps .page-footer::before{inset:6px -12px -14px}
 .page-apps main{isolation:isolate}
@@ -135,7 +173,7 @@ html:root[data-world="f"]{
 color-scheme:dark
 }
 :root[data-world="f"] .toolbar{-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1)}
-:root[data-world="f"] .apps-hero::before,:root[data-world="f"] .page-apps .page-footer::before{opacity:1}
+:root[data-world="f"] .page-apps .page-footer::before{opacity:1}
 :root[data-world="f"] .apps-hero .eyebrow{color:var(--md-sys-color-primary-fixed)}
 :root[data-world="f"] .page-lead,:root[data-world="f"] .card-sub,:root[data-world="f"] .app-desc,:root[data-world="f"] .app-facts dt{font-weight:400}
 :root[data-world="f"] .app-facts dd{font-weight:500}
@@ -156,7 +194,7 @@ color-scheme:dark
 :root[data-world="f"] .page-footer{border-top-color:transparent}
 
 @media(max-width:1060px){
-.fl-world .fl-space{display:none}
+.fl-cluster{display:none}
 }
 @media(max-width:760px){
 .app-detail-inner{grid-template-columns:minmax(0,1fr);justify-items:center;padding:0 16px 20px}

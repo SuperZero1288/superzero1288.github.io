@@ -6,8 +6,9 @@
 //      テンプレート: F Launcher の編集画面のように、ガラスの枠とマスの点を出してから入れかえる
 //      アイコンの並び: 下半分（アイコンとウィジェット）とドックが、それぞれの場所の中だけで並びかわる（FLIP）
 //  - 一覧: アプリの行を押す（タップする）と選んだ状態になり、行が下へのびて、くわしい情報が出る。
-//          F Launcher を選ぶと、後ろにホーム画面が押した場所から円で広がり、ページの部品は同じ位置のまま、
-//          色・角丸・面が F Launcher のものへなめらかに変わる（CSS）。
+//          F Launcher を選ぶと、後ろに F Launcher の世界（落ち着いた黒い背景に、アイコンやウィジェットの形が浮かぶ）が
+//          押した場所から円で広がり、ページの部品は同じ位置のまま、色・角丸・面が F Launcher のものへなめらかに変わる（CSS）。
+//          浮かぶアイコンは、ときどき M3E の別の形へ変わり、輪の量も変わる
 //          書体だけはなめらかに変えられないので、文字だけその場で重ねて入れかえる（View Transitions）
 //  - 一覧: F Launcher のページへ移るときは、アイコンと名前がつながって動く（F Launcher のページの head）
 //  - 見本を押すと、自動の入れかえが止まる・動く。F Launcher のページの上のバーは、下へスクロールすると色が付く
@@ -140,6 +141,31 @@
     };
   };
 
+  /* ---------- 一覧の後ろの F Launcher の世界: 浮かぶアイコンの形が、ときどき M3E の別の形へ変わる ---------- */
+  const SHAPES = ['circle', 'square', 'clover4', 'clover8', 'cookie4', 'cookie6', 'cookie9', 'cookie12', 'flower', 'gem', 'pentagon'];
+  const floaters = (host) => {
+    const icons = [...host.querySelectorAll('.fl-float-icon')];
+    const rings = [...host.querySelectorAll('.fl-float-ring')];
+    const initial = new Map([...icons, ...rings].map((element) => [element, element.getAttribute('style')]));
+    let timer = 0;
+    let running = false;
+    const step = () => {
+      const icon = icons[random(icons.length)];
+      if (icon) {
+        const current = icon.style.getPropertyValue('--shape').replace(/^var\(--shape-|\)$/g, '');
+        icon.style.setProperty('--shape', `var(--shape-${pickOther(SHAPES, current)})`);
+      }
+      const ring = rings[random(rings.length)];
+      if (ring && Math.random() < 0.5) ring.style.setProperty('--p', String(Math.round(between(18, 96))));
+      timer = setTimeout(step, between(1400, 2800));
+    };
+    return {
+      start() { if (running) return; running = true; host.classList.remove('is-paused'); timer = setTimeout(step, between(900, 1600)); },
+      stop() { running = false; clearTimeout(timer); host.classList.add('is-paused'); },
+      reset() { initial.forEach((style, element) => element.setAttribute('style', style)); },
+    };
+  };
+
   // 見本のスマホを押すと、自動の入れかえが止まる・動く（「動きを減らす」設定のときは、止めた状態から）
   const player = (button, homes, isActive = () => true) => {
     let paused = reducedMotion.matches;
@@ -165,8 +191,7 @@
   const world = document.getElementById('flWorld');
   if (item && card && world) {
     const preview = document.getElementById('appPreview');
-    const worldHome = showcase(world);
-    const homes = [worldHome];
+    const homes = [floaters(world)];
     if (preview) homes.push(showcase(preview));
     const isActive = () => root.dataset.world === 'f';
     const playback = player(preview, homes, isActive);

@@ -1445,12 +1445,11 @@ test('the right menu opens the app list, which lists F Launcher by its icon and 
   expect(await audit(page)).toEqual([]);
 });
 
-test('choosing F Launcher opens its details below and turns the app list into its M3E home screen', async ({page}) => {
+test('choosing F Launcher opens its details below and turns the app list into its calm M3E world of floating shapes', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/apps/');
   const html = page.locator('html');
   const world = page.locator('#flWorld');
-  const space = world.locator('.fl-space');
   const card = page.locator('#fLauncherCard');
   const detail = page.locator('#fLauncherDetail');
   const preview = page.locator('#appPreview');
@@ -1491,14 +1490,24 @@ test('choosing F Launcher opens its details below and turns the app list into it
   await expect(page.locator('#fLauncherItem')).toHaveCSS('border-top-left-radius', '28px');
   expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Google Sans Flex');
   expect(await boxes()).toEqual(layout);
-  // ホーム画面の見本には文字を使わない
+  // 見出しにはカードの面を付けない
+  expect(await page.locator('.apps-hero').evaluate((element) => getComputedStyle(element, '::before').content)).toBe('none');
+  // 後ろは落ち着いた黒い背景に、アイコンやウィジェットの形が浮かぶだけ（ステータスバーや壁紙の図形はない）
+  await expect(world).toHaveCSS('background-color', 'rgb(0, 0, 0)');
+  await expect(world.locator('.fl-status, .fl-wall, .fl-space, .fl-shape')).toHaveCount(0);
+  expect(await world.locator('.fl-float-icon').count()).toBeGreaterThanOrEqual(6);
+  expect(await world.locator('.fl-float-pill, .fl-float-ring, .fl-float-apps').count()).toBeGreaterThanOrEqual(4);
+  await expect(world.locator('.fl-float').first()).toHaveCSS('opacity', '1');
+  // 文字は使わない
   expect(await world.evaluate((element) => element.textContent.trim())).toBe('');
   expect(await preview.evaluate((element) => element.textContent.trim())).toBe('');
-  // 選んでいるあいだ、テンプレート・壁紙・アイコンの並びが自動でランダムに入れかわる
-  await expect.poll(() => space.getAttribute('data-template'), {timeout: 8000}).not.toBe('deck');
-  await expect.poll(() => world.getAttribute('data-wall'), {timeout: 12000}).not.toBe('puffy');
+  // 浮かぶアイコンは、ときどき M3E の別の形へ変わる
+  const shapes = () => world.locator('.fl-float-icon').evaluateAll((elements) => elements.map((element) => element.style.getPropertyValue('--shape')).join());
+  const firstShapes = await shapes();
+  await expect.poll(shapes, {timeout: 8000}).not.toBe(firstShapes);
+  // 見本のスマホは、テンプレート・アイコンの並びが自動でランダムに入れかわる
+  await expect.poll(() => preview.evaluate((element) => element.querySelector('.fl-space').dataset.template), {timeout: 8000}).not.toBe('deck');
   await expect.poll(() => preview.evaluate((element) => [...element.querySelectorAll('.fl-lower-grid > *')].some((item) => item.style.gridArea)), {timeout: 8000}).toBe(true);
-  expect(['material', 'blur', 'glass']).toContain(await world.getAttribute('data-style'));
   expect(await audit(page)).toEqual([]);
 
   // もう一度押すと閉じて、いつものテーマに戻る
