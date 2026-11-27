@@ -1,20 +1,16 @@
-// ZERO — 自作アプリ（/apps/）と、F Launcher（/f-launcher/）・DroidHub（/droidhub/）のページの動き
-//  - ホーム画面の見本: 壁紙・テーマ（アイコンも）・セカンドスペースのテンプレート・アイコンの並びが、
-//    それぞれ別々の間隔で、自動でランダムに入れかわる
+// ZERO — 配布アプリ（/apps/）と、F Launcher（/f-launcher/）・DroidHub（/droidhub/）のページの動き
+//  - ホーム画面の見本（F Launcher）: 壁紙・テーマ（アイコンも）・セカンドスペースのテンプレート・アイコンの配置が、
+//    それぞれ別々の間隔で、自動でランダムに切り替わる
 //      壁紙: 図形が形・色・向きを変えながら次の壁紙になる（CSS）
 //      テーマ: 面とアイコンの色・透け方・形が変わり、アイコンが順に小さく弾む
 //      テンプレート: F Launcher の編集画面のように、ガラスの枠とマスの点を出してから入れかえる
-//      アイコンの並び: 下半分（アイコンとウィジェット）とドックが、それぞれの場所の中だけで並びかわる（FLIP）
-//  - 一覧: アプリの行を押す（タップする）と選んだ状態になり、行が下へのびて、くわしい情報が出る。
-//          F Launcher を選ぶと、後ろに F Launcher の世界（落ち着いた黒い背景に、アイコンやウィジェットの形が浮かぶ）が
-//          押した場所から円で広がり、ページの部品は同じ位置のまま、色・角丸・面が F Launcher のものへなめらかに変わる（CSS）。
-//          浮かぶアイコンは、ときどき M3E の別の形へ変わり、輪の量も変わる
-//          書体だけはなめらかに変えられないので、文字だけその場で重ねて入れかえる（View Transitions）
-//  - 一覧: F Launcher のページへ移るときは、アイコンと名前がつながって動く（F Launcher のページの head）
-//  - DroidHub の画面の見本: ダウンロードが進み（波の形のプログレスバー）、端末が起動すると右に画面が出て、
-//    ナビゲーションがドロワーとレールで開け閉めされる
-//  - 一覧: DroidHub を選ぶと、DroidHub の世界（深い緑の黒に、端末のアイコンや進み具合の形が浮かぶ）に入る。開くのは1つだけ
-//  - 見本を押すと、自動の入れかえが止まる・動く。アプリのページの上のバーは、下へスクロールすると色が付く
+//      アイコンの配置: 下半分（アイコンとウィジェット）とドックが、それぞれの場所の中だけで並びかわる（FLIP）
+//  - 画面の見本（DroidHub）: ダウンロードが進み、エミュレーターが起動すると右に画面が出て、メニューが開いたり閉じたりする
+//  - 一覧: アプリの行を押す（タップする）と選んだ状態になり、行が下へのびて詳細が出る。開くのは1つだけ。
+//          アプリを選ぶと、上から波が押し寄せ、波が通ったところから、そのアプリのテーマと後ろの世界に置きかわる
+//          （View Transitions。新しい画面を波の形に切り抜き、上から下へ動かす。書体と太さはいつものまま）
+//  - 一覧からアプリのページへ移るときは、アイコンと名前がつながって動く（アプリのページの head）
+//  - 見本を押すと、自動の切り替えが止まる・動く。アプリのページの上のバーは、下へスクロールすると色が付く
 (() => {
   'use strict';
   const root = document.documentElement;
@@ -218,10 +214,10 @@
     };
   };
 
-  // 見本を押すと、自動の入れかえが止まる・動く（「動きを減らす」設定のときは、止めた状態から）
+  // 見本を押すと、自動の切り替えが止まる・動く（「動きを減らす」設定のときは、止めた状態から）
   const LABELS = {
-    phone: 'F Launcher のホーム画面の見本。壁紙・テーマ・テンプレート・アイコンの並びが自動で入れかわります。',
-    window: 'DroidHub の画面の見本。ダウンロードの進み具合・端末の起動と画面の表示・ナビゲーションの開け閉めが自動で動きます。',
+    phone: 'F Launcher のホーム画面の見本。壁紙・テーマ・テンプレート・アイコンの配置が自動で切り替わります。',
+    window: 'DroidHub の画面の見本。ダウンロードの進行、エミュレーターの起動と画面表示、メニューの開閉が自動で切り替わります。',
   };
   const player = (button, homes, isActive = () => true) => {
     let paused = reducedMotion.matches;
@@ -255,29 +251,50 @@
       if (app.preview) app.homes.push(app.make(app.preview));
       app.playback = player(app.preview, app.homes, () => current() === app.id);
     });
-    const byId = (id) => APPS.find((app) => app.id === id);
-    const items = [...document.querySelectorAll('#appList > .app-item')];
-    // 書体が変わる文字（その場で重ねて入れかえる）。行がのびると下の部品は動くので、選んだ行より上の文字だけ
-    const TEXTS = '.toolbar .clock, .apps-hero .eyebrow, .page-title, .page-lead, .page-actions .btn, .card-title, .card-sub';
+    // 波の先に見える帯の色（新しいテーマの色）
+    const WAVE_COLORS = {f: '#d1ddfa', dh: '#5bdbae'};
     let desired = null;
     let running = null;
-    let origin = null;
-    // アプリの書体を先に読み込んでおく（初めて選んだときに、文字が2回変わらないように）
-    addEventListener('load', () => {
-      const sample = document.querySelector('main')?.textContent.replace(/\s+/g, '') || '';
-      ['400', '500'].forEach((weight) => {
-        document.fonts?.load(`${weight} 16px "Google Sans Flex"`, sample).catch(() => {});
-        document.fonts?.load(`${weight} 16px "Noto Sans JP"`, sample).catch(() => {});
+    // 上から波が押し寄せ、波が通ったところから新しいテーマに置きかわる
+    const wave = (update, next) => {
+      if (!document.startViewTransition || reducedMotion.matches || document.hidden) { update(); return null; }
+      root.classList.add('fl-wave');
+      const transition = document.startViewTransition(() => {
+        update();
+        root.style.setProperty('--wave-color', WAVE_COLORS[next] || getComputedStyle(root).getPropertyValue('--primary').trim() || '#ffffff');
       });
-    }, {once: true});
-    const center = (app) => {
-      const rect = app.card.getBoundingClientRect();
-      return [rect.left + rect.width / 2, rect.top + rect.height / 2];
-    };
-    const placeOrigin = (world, [x, y]) => {
-      world.style.setProperty('--x', `${Math.round(x)}px`);
-      world.style.setProperty('--y', `${Math.round(y)}px`);
-      world.style.setProperty('--r', `${Math.round(Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 24)}px`);
+      transition.ready.then(() => {
+        const width = innerWidth;
+        const height = innerHeight;
+        const amplitude = Math.max(12, Math.min(28, height * 0.032));
+        const length = Math.max(240, width / 3);
+        const band = Math.max(10, Math.min(18, height * 0.02));
+        const points = 48;
+        const frames = 18;
+        // 波の線（左から右、または右から左の点）
+        const edge = (base, phase, reverse) => {
+          const xs = Array.from({length: points + 1}, (_, index) => (width * index) / points);
+          if (reverse) xs.reverse();
+          return xs.map((x) => `${x.toFixed(1)}px ${(base + amplitude * Math.sin((x / length) * Math.PI * 2 + phase)).toFixed(1)}px`).join(', ');
+        };
+        const from = -(amplitude + band) * 1.6;
+        const to = height + (amplitude + band) * 1.6;
+        const fresh = [];
+        const stale = [];
+        for (let frame = 0; frame <= frames; frame += 1) {
+          const t = frame / frames;
+          const base = from + (to - from) * t;
+          const phase = t * Math.PI * 3;
+          // 新しい画面: 波の線より上。古い画面: 帯の分だけ下の波の線より下
+          fresh.push({clipPath: `polygon(0px -2px, ${width}px -2px, ${edge(base, phase, true)})`});
+          stale.push({clipPath: `polygon(${edge(base + band, phase + 0.45, false)}, ${width}px ${height + 2}px, 0px ${height + 2}px)`});
+        }
+        const timing = {duration: 900, easing: 'cubic-bezier(.45,.05,.35,1)'};
+        root.animate(fresh, {...timing, pseudoElement: '::view-transition-new(root)'});
+        root.animate(stale, {...timing, pseudoElement: '::view-transition-old(root)'});
+      }).catch(() => {});
+      transition.finished.catch(() => {}).finally(() => root.classList.remove('fl-wave'));
+      return transition;
     };
     const apply = (id) => {
       const before = current();
@@ -293,50 +310,33 @@
     };
     // 今の状態を、なってほしい状態に合わせる（切り替えの途中なら、終わってから合わせる）
     const sync = () => {
-      const before = current();
-      if (running || desired === before) return;
+      if (running || desired === current()) return;
       const next = desired;
-      [before, next].filter(Boolean).forEach((id) => { const app = byId(id); placeOrigin(app.world, origin || center(byId(next || before))); });
-      // アプリからアプリへ移るときは、書体が同じなので CSS だけで変える
-      if (before && next) { apply(next); return; }
-      if (!document.startViewTransition || reducedMotion.matches || document.hidden) { apply(next); return; }
-      // 文字にだけ名前を付けて、ほかは CSS でなめらかに変える（選んだ行とそれより上の行の名前も、その場にとどまるので重ねて入れかえる）
-      const index = items.indexOf(byId(next || before).item);
-      const rows = items.slice(0, index + 1).map((item) => item.querySelector('.app-row .app-name')).filter(Boolean);
-      const texts = [...document.querySelectorAll(TEXTS), ...rows].filter((element) => element.getClientRects().length);
-      texts.forEach((element, number) => { element.style.viewTransitionName = `fl-text-${number}`; });
-      root.classList.add('fl-morph');
-      const transition = document.startViewTransition(() => apply(next));
+      const transition = wave(() => apply(next), next);
+      if (!transition) return;
       running = transition;
-      // ページを移るときなどに途中で止めた場合は、知らせなくてよい
-      transition.ready.catch(() => {});
       transition.finished.catch(() => {}).finally(() => {
-        texts.forEach((element) => { element.style.viewTransitionName = ''; });
-        root.classList.remove('fl-morph');
         running = null;
         sync();
       });
     };
     APPS.forEach((app) => {
-      // 押した（タップした）場所から広がる。キーボードで押したときは、行の真ん中から
-      app.card.addEventListener('click', (event) => {
-        origin = event.detail ? [event.clientX, event.clientY] : null;
+      app.card.addEventListener('click', () => {
         desired = desired === app.id ? null : app.id;
         sync();
       });
       // 開いているときは、Esc で閉じる
       app.item.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape' || desired !== app.id) return;
-        origin = null;
         desired = null;
         app.card.focus();
         sync();
       });
       // アプリのページへ: 押した場所を覚えておき、アイコンと名前をつなぐ
       app.item.querySelector('.app-link')?.addEventListener('click', (event) => {
-        const [cx, cy] = center(app);
-        const x = event.detail ? event.clientX : cx;
-        const y = event.detail ? event.clientY : cy;
+        const rect = app.card.getBoundingClientRect();
+        const x = event.detail ? event.clientX : rect.left + rect.width / 2;
+        const y = event.detail ? event.clientY : rect.top + rect.height / 2;
         try { sessionStorage.setItem(`${app.key}-enter`, JSON.stringify({x: Math.round(x), y: Math.round(y), t: Date.now(), world: current() === app.id})); } catch {}
         running?.skipTransition();
         app.homes.forEach((home) => home.stop());
@@ -348,7 +348,7 @@
       if (!event.persisted) return;
       desired = null;
       apply(null);
-      root.classList.remove('fl-morph', 'fl-linking', 'dh-linking');
+      root.classList.remove('fl-wave', 'fl-linking', 'dh-linking');
     });
     APPS.forEach((app) => app.playback.update());
   }

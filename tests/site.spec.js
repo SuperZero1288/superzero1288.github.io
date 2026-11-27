@@ -1421,20 +1421,20 @@ for (const width of [320, 1440]) {
   });
 }
 
-/* ===== 右のメニュー: note記事（記事一覧）と自作アプリ ===== */
+/* ===== 右のメニュー: note記事（記事一覧）と配布アプリ ===== */
 test('the right menu offers the article list and the (upcoming) app list', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/');
   await page.locator('#rightTab').click();
   const nav = page.locator('#rightSheet .sheet-nav a');
-  await expect(nav.locator('strong')).toHaveText(['リンク集', 'VRChat向けアセット', 'note記事', '自作アプリ']);
+  await expect(nav.locator('strong')).toHaveText(['リンク集', 'VRChat向けアセット', 'note記事', '配布アプリ']);
   await expect(page.locator('#rightSheet a', {hasText: '最新の記事'})).toHaveCount(0);
   await expect(nav.nth(2)).toHaveAttribute('href', '/blog/');
   await expect(nav.nth(3)).toHaveAttribute('href', '/apps/');
   expect(await audit(page)).toEqual([]);
 });
 
-/* ===== 自作アプリ（/apps/）と F Launcher のページ（/f-launcher/） ===== */
+/* ===== 配布アプリ（/apps/）と F Launcher のページ（/f-launcher/） ===== */
 test('the right menu opens the app list, which lists F Launcher by its icon and name', async ({page}) => {
   await mockNetwork(page);
   await ready(page, '/');
@@ -1442,12 +1442,16 @@ test('the right menu opens the app list, which lists F Launcher by its icon and 
   await page.locator('#rightSheet a[href="/apps/"]').click();
   await expect(page).toHaveURL(/\/apps\/$/);
   await expect(page.locator('#siteLoader')).toHaveCount(0);
-  await expect(page.locator('h1')).toHaveText('自作アプリ');
+  await expect(page.locator('h1')).toHaveText('配布アプリ');
   // リストの行は、アイコンと名前だけ。くわしい情報は閉じている
   const card = page.locator('#fLauncherCard');
   await expect(card).toHaveJSProperty('tagName', 'BUTTON');
   await expect(card).toHaveAttribute('aria-expanded', 'false');
-  await expect(card).toHaveText('F Launcher');
+  // ストアのように、アイコン・名前・ひとこと・種類と、右に「詳細」のボタン
+  await expect(card.locator('.app-name')).toHaveText('F Launcher');
+  await expect(card.locator('.app-sub')).toHaveText('自分らしく整える、穏やかなホーム画面');
+  await expect(card.locator('.app-meta')).toHaveText('Android・ホームアプリ');
+  await expect(card.locator('.app-get')).toHaveText('詳細');
   await expect(card.locator('.app-icon')).toBeVisible();
   await expect(page.locator('#fLauncherDetail')).toBeHidden();
   expect(await page.locator('html').getAttribute('data-world')).toBeNull();
@@ -1468,6 +1472,10 @@ test('choosing F Launcher opens its details below and turns the app list into it
     const rect = document.querySelector(selector).getBoundingClientRect();
     return [selector, Math.round(rect.x), Math.round(rect.y), Math.round(rect.width), Math.round(rect.height)];
   }));
+  // 書体と太さ（世界に入っても、いつものまま）
+  const TYPE = ['.page-title', '.page-lead', '.card-title', '.card-sub', '#fLauncherCard .app-name', '#fLauncherCard .app-sub', '#fLauncherCard .app-meta'];
+  const type = () => page.evaluate((selectors) => selectors.map((selector) => { const style = getComputedStyle(document.querySelector(selector)); return `${selector}: ${style.fontFamily} ${style.fontWeight}`; }), TYPE);
+  const typeBefore = await type();
   const before = await surface();
   const layout = await boxes();
   const closedHeight = (await page.locator('#fLauncherItem').boundingBox()).height;
@@ -1480,24 +1488,25 @@ test('choosing F Launcher opens its details below and turns the app list into it
   await expect(html).not.toHaveAttribute('data-world', /.+/);
 
   await page.mouse.click(box.x + 140, box.y + box.height / 2);
+  // 上から波が押し寄せて、波が通ったところから F Launcher のテーマに置きかわる（View Transitions）
+  await expect(html).toHaveClass(/fl-wave/);
   await expect(card).toHaveAttribute('aria-expanded', 'true');
   await expect(html).toHaveAttribute('data-world', 'f');
   await expect(world).toBeVisible();
-  // ホーム画面は、押した場所から円で広がる
-  const [originX, originY] = await world.evaluate((element) => [parseFloat(element.style.getPropertyValue('--x')), parseFloat(element.style.getPropertyValue('--y'))]);
-  expect(Math.abs(originX - (box.x + 140))).toBeLessThanOrEqual(1);
-  expect(Math.abs(originY - (box.y + box.height / 2))).toBeLessThanOrEqual(1);
-  // 行が下へのびて、くわしい情報と F Launcher のページへのボタンが出る
+  await expect(html).not.toHaveClass(/fl-wave/);
+  // 行が下へのびて、情報（対応OS・価格・バージョン）・見本・説明と、F Launcher のページを開くボタンが出る
   await expect(detail).toBeVisible();
   await expect.poll(async () => (await page.locator('#fLauncherItem').boundingBox()).height).toBeGreaterThan(closedHeight + 300);
   await expect(detail.locator('.app-facts dt')).toHaveText(['対応OS', '価格', 'バージョン']);
-  await expect(detail.locator('.app-facts dd')).toHaveText(['Android 4.4〜Android 17', '無料', 'まだ公開していません']);
-  await expect(detail.getByRole('link', {name: /F Launcher のページへ/})).toHaveAttribute('href', '/f-launcher/');
-  // 色・角丸・書体は F Launcher（M3E）のものへ、なめらかに変わる
+  await expect(detail.locator('.app-facts dd')).toHaveText(['Android 4.4〜Android 17', '無料', '未公開']);
+  await expect(detail.getByRole('link', {name: /F Launcher のページを開く/})).toHaveAttribute('href', '/f-launcher/');
+  // 色・角丸・面は F Launcher（M3E）のものに変わり、書体と太さはいつものまま（すべて太字）
   await expect.poll(surface).toBe('rgb(0, 0, 0)');
   await expect(page.locator('.content-screen')).toHaveCSS('border-top-left-radius', '32px');
   await expect(page.locator('#fLauncherItem')).toHaveCSS('border-top-left-radius', '28px');
-  expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).toContain('Google Sans Flex');
+  expect(await type()).toEqual(typeBefore);
+  expect(await page.locator('.page-lead, .card-sub, #fLauncherItem :is(.app-sub, .app-meta, .app-desc, .app-facts dd, .app-get)').evaluateAll((elements) => elements.map((element) => Number(getComputedStyle(element).fontWeight)).filter((weight) => weight < 700))).toEqual([]);
+  expect(await page.locator('.page-title').evaluate((element) => getComputedStyle(element).fontFamily)).not.toContain('Google Sans Flex');
   expect(await boxes()).toEqual(layout);
   // 見出しにはカードの面を付けない
   expect(await page.locator('.apps-hero').evaluate((element) => getComputedStyle(element, '::before').content)).toBe('none');
@@ -1532,7 +1541,7 @@ test('choosing F Launcher opens its details below and turns the app list into it
   await card.focus();
   await page.keyboard.press('Enter');
   await expect(html).toHaveAttribute('data-world', 'f');
-  await expect(detail.getByRole('link', {name: /F Launcher のページへ/})).toBeVisible();
+  await expect(detail.getByRole('link', {name: /F Launcher のページを開く/})).toBeVisible();
   await page.keyboard.press('Tab');
   await expect(preview).toBeFocused();
   await page.keyboard.press('Escape');
@@ -1558,7 +1567,7 @@ test('on phones, tapping F Launcher opens its details and the home screen previe
   const rect = await preview.boundingBox();
   expect(rect.x).toBeGreaterThanOrEqual(0);
   expect(rect.x + rect.width).toBeLessThanOrEqual(390);
-  await expect(page.getByRole('link', {name: /F Launcher のページへ/})).toBeVisible();
+  await expect(page.getByRole('link', {name: /F Launcher のページを開く/})).toBeVisible();
   await expectNoHorizontalOverflow(page);
   expect(await audit(page)).toEqual([]);
   await context.close();
@@ -1611,7 +1620,7 @@ for (const width of [320, 1440]) {
     await mockNetwork(page);
     await ready(page, '/apps/');
     await page.locator('#fLauncherCard').click();
-    await page.getByRole('link', {name: /F Launcher のページへ/}).click();
+    await page.getByRole('link', {name: /F Launcher のページを開く/}).click();
     await expect(page).toHaveURL(/\/f-launcher\/$/);
     expect(new URL(page.url()).pathname).toBe('/f-launcher/');
     await expect(page.locator('h1')).toHaveText('F Launcher');
@@ -1622,13 +1631,13 @@ for (const width of [320, 1440]) {
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(0, 0, 0)');
     // まだ配布していないので、ダウンロードは押せない
     await expect(page.getByRole('button', {name: /ダウンロード/})).toBeDisabled();
-    // できることは名前だけ（説明の文章は置かない）
+    // 主な機能は名前だけ（説明の文章は置かない）
     await expect(page.locator('.fl-feature h3').first()).toHaveText('セカンドスペース');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
     await expectFeatureTitlesInside(page);
     // 配布情報は、対応OS・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
-    await expect(page.locator('.fl-spec dd')).toHaveText(['Android 4.4〜Android 17', 'まだ公開していません', '無料']);
+    await expect(page.locator('.fl-spec dd')).toHaveText(['Android 4.4〜Android 17', '未公開', '無料']);
     // ホーム画面の見本: 文字は使わず、下の操作部品もない。カメラはパンチホール（丸）
     const phone = page.locator('#flPhone');
     expect(await phone.evaluate((element) => element.textContent.trim())).toBe('');
@@ -1650,7 +1659,7 @@ for (const width of [320, 1440]) {
     expect(await snapshot()).toBe(paused);
     await expectNoHorizontalOverflow(page);
     expect(await audit(page)).toEqual([]);
-    await page.getByRole('link', {name: 'アプリ一覧', exact: true}).click();
+    await page.getByRole('navigation', {name: 'ほかのページ'}).getByRole('link', {name: '配布アプリ'}).click();
     await expect(page).toHaveURL(/\/apps\/$/);
     await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   });
@@ -1667,7 +1676,8 @@ test('choosing DroidHub opens its details and turns the app list into its green 
   const world = page.locator('#dhWorld');
   const preview = page.locator('#dhPreview');
   // 行は、アイコンと名前だけ
-  await expect(card).toHaveText('DroidHub');
+  await expect(card.locator('.app-name')).toHaveText('DroidHub');
+  await expect(card.locator('.app-meta')).toHaveText('Windows・開発ツール');
   await expect(card).toHaveAttribute('aria-expanded', 'false');
   await expect(detail).toBeHidden();
 
@@ -1678,8 +1688,8 @@ test('choosing DroidHub opens its details and turns the app list into its green 
   await expect(page.locator('#flWorld')).toBeHidden();
   await expect(detail).toBeVisible();
   await expect(detail.locator('.app-facts dt')).toHaveText(['対応OS', '価格', 'バージョン']);
-  await expect(detail.locator('.app-facts dd')).toHaveText(['Windows', '無料', 'まだ公開していません']);
-  await expect(detail.getByRole('link', {name: /DroidHub のページへ/})).toHaveAttribute('href', '/droidhub/');
+  await expect(detail.locator('.app-facts dd')).toHaveText(['Windows', '無料', '未公開']);
+  await expect(detail.getByRole('link', {name: /DroidHub のページを開く/})).toHaveAttribute('href', '/droidhub/');
   // DroidHub の画面と同じ色（深い緑の黒・ミントのタイトル）
   await expect.poll(surface).toBe('rgb(15, 21, 19)');
   await expect(page.locator('.page-title')).toHaveCSS('color', 'rgb(91, 219, 174)');
@@ -1710,18 +1720,18 @@ for (const width of [320, 1440]) {
     await mockNetwork(page);
     await ready(page, '/apps/');
     await page.locator('#droidHubCard').click();
-    await page.getByRole('link', {name: /DroidHub のページへ/}).click();
+    await page.getByRole('link', {name: /DroidHub のページを開く/}).click();
     await expect(page).toHaveURL(/\/droidhub\/$/);
     await expect(page.locator('h1')).toHaveText('DroidHub');
     await expect(page.locator('#toolbar')).toHaveCount(0);
     expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(15, 21, 19)');
     await expect(page.getByRole('button', {name: 'ダウンロード（準備中）'})).toBeDisabled();
-    await expect(page.locator('.fl-feature h3').first()).toHaveText('仮想端末の作成と管理');
+    await expect(page.locator('.fl-feature h3').first()).toHaveText('エミュレーターの作成・起動・管理');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
     await expectFeatureTitlesInside(page);
     // 配布情報は、対応OS（Windows のみ）・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
-    await expect(page.locator('.fl-spec dd')).toHaveText(['Windows', 'まだ公開していません', '無料']);
+    await expect(page.locator('.fl-spec dd')).toHaveText(['Windows', '未公開', '無料']);
     // 画面の見本: 文字は使わず、ダウンロード・端末の起動と画面・ナビゲーションが自動で動く
     const demo = page.locator('#dhDemo');
     expect(await demo.evaluate((element) => element.textContent.trim())).toBe('');
@@ -1737,7 +1747,7 @@ for (const width of [320, 1440]) {
     expect(await snapshot()).toBe(paused);
     await expectNoHorizontalOverflow(page);
     expect(await audit(page)).toEqual([]);
-    await page.getByRole('link', {name: 'アプリ一覧', exact: true}).click();
+    await page.getByRole('navigation', {name: 'ほかのページ'}).getByRole('link', {name: '配布アプリ'}).click();
     await expect(page).toHaveURL(/\/apps\/$/);
     await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
   });
