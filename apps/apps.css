@@ -16,27 +16,31 @@ html.vt-arrived .site-loader{display:none}
 /* 一覧と F Launcher のページをつなぐ名前は、ページを移るときだけ付ける */
 html.fl-linking #fLauncherCard .app-icon{view-transition-name:fl-icon}
 html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:fl-name}
+html.dh-linking #droidHubCard .app-icon{view-transition-name:dh-icon}
+html.dh-linking #droidHubCard .app-name{width:fit-content;view-transition-name:dh-name}
 
 /* ===== F Launcher の世界（ページの後ろ。背景の図形の上、ページの中身の下） =====
    落ち着いた黒い背景に、アプリのアイコンやウィジェットの形が、ゆっくり浮かんでいる。
    アイコンの形は、ときどき M3E の別の形へなめらかに変わる（apps.js） */
 @property --p{syntax:'<number>';inherits:true;initial-value:0}
 .fl-world{--edge:max(24px,calc((100vw - 1180px) / 2 + 28px));position:fixed;top:0;left:0;z-index:0;width:100%;height:100vh;height:100lvh;overflow:hidden;pointer-events:none;visibility:hidden;opacity:0;background:radial-gradient(90% 70% at 100% 0%,#17171b 0%,transparent 70%),radial-gradient(70% 60% at 0% 100%,#111114 0%,transparent 70%),#000;transition:opacity .2s var(--md-sys-motion-easing-standard),visibility 0s .2s}
-:root[data-world="f"] .fl-world{visibility:visible;opacity:1;transition:opacity .25s var(--md-sys-motion-easing-standard),visibility 0s}
+/* 開いている世界は、閉じていく世界より上（アプリからアプリへ移るとき、新しい世界が押した場所から広がって見える） */
+.page-apps .page-main{z-index:2}
+.fl-world.is-on{z-index:1;visibility:visible;opacity:1;transition:opacity .25s var(--md-sys-motion-easing-standard),visibility 0s}
 @media(prefers-reduced-motion:no-preference){
 /* 押した場所から円で広がり、閉じるときはそこへしぼむ */
 .fl-world{opacity:1;clip-path:circle(0 at var(--x,50%) var(--y,50%));transition:clip-path .28s var(--md-sys-motion-easing-emphasized-accelerate),visibility 0s .28s}
-:root[data-world="f"] .fl-world{clip-path:circle(var(--r,150vmax) at var(--x,50%) var(--y,50%));transition:clip-path .45s var(--md-sys-motion-easing-emphasized-decelerate),visibility 0s}
+.fl-world.is-on{clip-path:circle(var(--r,150vmax) at var(--x,50%) var(--y,50%));transition:clip-path .45s var(--md-sys-motion-easing-emphasized-decelerate),visibility 0s}
 }
 /* 浮かぶ形: アイコン（M3E の形）・ウィジェット（帯・輪・角の丸い四角） */
 .fl-float{position:absolute;display:grid;place-items:center;width:var(--size,64px);aspect-ratio:1;background-color:var(--md-sys-color-surface-container-high);rotate:var(--rot,0deg);opacity:0;scale:.6;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate)}
-:root[data-world="f"] .fl-float{opacity:1;scale:1;transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms)}
+.fl-world.is-on .fl-float{opacity:1;scale:1;transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms)}
 .fl-float svg{width:44%;height:44%;fill:#a3a1a8;transition:fill .3s var(--md-sys-motion-easing-standard)}
 .fl-float .fl-line{--lc:var(--md-sys-color-on-surface-variant)}
 .fl-float .fl-line.is-dim{--lc:#6f6d75}
 /* アイコン: M3E の形。灰色と、ところどころ薄いラベンダー */
 .fl-float-icon{clip-path:var(--shape,var(--shape-circle));transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate),clip-path .7s var(--md-sys-motion-spring),background-color .3s var(--md-sys-motion-easing-standard)}
-:root[data-world="f"] .fl-float-icon{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),clip-path .7s var(--md-sys-motion-spring),background-color .3s var(--md-sys-motion-easing-standard)}
+.fl-world.is-on .fl-float-icon{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),clip-path .7s var(--md-sys-motion-spring),background-color .3s var(--md-sys-motion-easing-standard)}
 .fl-float-icon.is-accent{background-color:var(--md-sys-color-primary-fixed)}
 .fl-float-icon.is-accent svg{fill:var(--md-sys-color-on-primary-fixed-variant)}
 /* ウィジェット: 時計・天気・検索の帯、電池の輪、アプリの四角 */
@@ -44,7 +48,7 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 .fl-float-pill.is-row{flex-direction:row;align-items:center;gap:12px;padding:0 24px}
 .fl-float-pill svg{flex:0 0 auto;width:26px;height:26px}
 .fl-float-ring{border-radius:50%;transition:opacity .12s var(--md-sys-motion-easing-emphasized-accelerate),scale .2s var(--md-sys-motion-easing-emphasized-accelerate),--p 1s var(--md-sys-motion-easing-emphasized-decelerate)}
-:root[data-world="f"] .fl-float-ring{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),--p 1s var(--md-sys-motion-easing-emphasized-decelerate)}
+.fl-world.is-on .fl-float-ring{transition:opacity .3s var(--md-sys-motion-easing-standard) calc(.1s + var(--n,0) * 35ms),scale .7s var(--md-sys-motion-spring) calc(.1s + var(--n,0) * 35ms),--p 1s var(--md-sys-motion-easing-emphasized-decelerate)}
 .fl-float-ring::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 200deg,var(--md-sys-color-primary-fixed) calc(var(--p) * 1%),var(--md-sys-color-surface-container-highest) 0);-webkit-mask:radial-gradient(closest-side,transparent 80%,#000 81%);mask:radial-gradient(closest-side,transparent 80%,#000 81%)}
 .fl-float-ring .fl-line{position:relative;width:36%;height:8px}
 .fl-float-apps{grid-template-columns:1fr 1fr;place-items:stretch;align-content:center;gap:3cqi;padding:5cqi;border-radius:28%}
@@ -53,7 +57,7 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 /* ゆっくり浮かぶ（位置と傾きだけ。「動きを減らす」設定では動かさない） */
 @media(prefers-reduced-motion:no-preference){
 .fl-float{animation:flFloat var(--dur,7s) ease-in-out infinite;animation-delay:calc(var(--n,0) * -.9s);animation-play-state:paused}
-:root[data-world="f"] .fl-world:not(.is-paused) .fl-float{animation-play-state:running}
+.fl-world.is-on:not(.is-paused) .fl-float{animation-play-state:running}
 }
 @keyframes flFloat{0%,100%{translate:0 0;rotate:var(--rot,0deg)}50%{translate:0 var(--fy,-10px);rotate:calc(var(--rot,0deg) + var(--fr,2deg))}}
 /* 見出しの右: ホーム画面のように集まった形（広い画面だけ） */
@@ -88,8 +92,8 @@ html.fl-linking #fLauncherCard .app-name{width:fit-content;view-transition-name:
 /* 見出しの小さな文字: 世界に入ると「APPS」から「F LAUNCHER」に入れかわる */
 .eyebrow-swap{grid-area:1 / 1;transition:opacity .2s var(--md-sys-motion-easing-standard),translate .3s var(--md-sys-motion-easing-emphasized-decelerate)}
 .eyebrow-swap+.eyebrow-swap{opacity:0;translate:0 .8em}
-:root[data-world="f"] .apps-hero .eyebrow-swap:first-child{opacity:0;translate:0 -.8em}
-:root[data-world="f"] .apps-hero .eyebrow-swap+.eyebrow-swap{opacity:1;translate:0 0}
+:root[data-world] .apps-hero .eyebrow-swap:first-child{opacity:0;translate:0 -.8em}
+:root[data-world="f"] .apps-hero .eyebrow-swap.is-f,:root[data-world="dh"] .apps-hero .eyebrow-swap.is-dh{opacity:1;translate:0 0}
 
 /* アプリのリスト: アイコンと名前だけの行。押すと下へのびて、くわしい情報が出る */
 .app-list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
@@ -106,6 +110,9 @@ button.app-row:focus-visible{outline:3px solid var(--primary);outline-offset:-3p
 /* F Launcher のアイコン（F Launcher のページと同じ。丸の中に F） */
 .app-icon{display:grid;place-items:center;width:64px;height:64px;background:var(--md-sys-color-primary-fixed);border-radius:50%}
 .app-icon svg{width:50%;height:50%;fill:var(--md-sys-color-on-primary-fixed-variant)}
+/* DroidHub のアイコン（DroidHub のページと同じ。ミントのクッキーの形に Android の頭） */
+.app-icon.is-dh{background:var(--dh-primary);border-radius:0;clip-path:var(--shape-cookie9)}
+.app-icon.is-dh svg{width:54%;height:54%;fill:var(--dh-on-primary)}
 /* のびる部分: 行の高さを 0 から中身の高さへ（grid の行の大きさを動かす） */
 .app-detail{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .3s var(--md-sys-motion-easing-emphasized-accelerate),visibility 0s .3s}
 .app-item.is-open .app-detail{grid-template-rows:1fr;visibility:visible;transition:grid-template-rows .5s var(--md-sys-motion-easing-emphasized-decelerate),visibility 0s}
@@ -129,12 +136,13 @@ button.app-row:focus-visible{outline:3px solid var(--primary);outline-offset:-3p
 /* 見本のスマホ（F Launcher のホーム画面。押すと止まる・動く） */
 .app-preview{display:grid;place-items:center}
 .app-preview .fl-phone{--phone-w:200px}
+.app-preview .dh-window{--win-w:min(460px,42vw)}
 /* 準備中の枠 */
 .app-item.is-soon{background:none;box-shadow:inset 0 0 0 2px var(--outline-variant);color:var(--on-surface-variant)}
 .app-icon-soon{width:56px;height:56px;margin:4px;background:var(--surface-container-high);color:var(--on-surface-variant);font-family:var(--flex);font-weight:900;font-size:1.3rem}
 .is-soon .app-name{font-family:var(--flex);font-weight:900;font-size:1rem;letter-spacing:.12em}
 /* いちばん下の行の後ろの面（世界に入ったときだけ見える。大きさは変えずに、外側へ広げて描く） */
-.page-apps .page-footer::before{content:'';position:absolute;z-index:-1;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-extra-large);opacity:0;transition:opacity .3s var(--md-sys-motion-easing-standard)}
+.page-apps .page-footer::before{content:'';position:absolute;z-index:-1;background:var(--surface-container);border-radius:var(--md-sys-shape-corner-extra-large);opacity:0;transition:opacity .3s var(--md-sys-motion-easing-standard)}
 .page-apps .page-footer{position:relative;isolation:isolate}
 .page-apps .page-footer::before{inset:6px -12px -14px}
 .page-apps main{isolation:isolate}
@@ -170,34 +178,72 @@ html:root[data-world="f"]{
 --display:var(--md-ref-typeface-brand);
 --body:var(--md-ref-typeface-plain);
 --flex:var(--md-ref-typeface-plain);
+--world-accent:var(--md-sys-color-primary-fixed);
+--world-on-accent:var(--md-sys-color-on-primary-fixed-variant);
+--world-eyebrow:var(--md-sys-color-primary-fixed);
 color-scheme:dark
 }
-:root[data-world="f"] .toolbar{-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1)}
-:root[data-world="f"] .page-apps .page-footer::before{opacity:1}
-:root[data-world="f"] .apps-hero .eyebrow{color:var(--md-sys-color-primary-fixed)}
-:root[data-world="f"] .page-lead,:root[data-world="f"] .card-sub,:root[data-world="f"] .app-desc,:root[data-world="f"] .app-facts dt{font-weight:400}
-:root[data-world="f"] .app-facts dd{font-weight:500}
-:root[data-world="f"] .page-title-pop{background-color:transparent;color:inherit;rotate:0deg}
-:root[data-world="f"] .btn{font-weight:500}
+/* DroidHub を選んだとき: DroidHub の色（droidhub.css の --dh-*）。部品・文字・角丸は F Launcher と同じ Material 3 */
+html:root[data-world="dh"]{
+--primary:var(--dh-primary);
+--on-primary:var(--dh-on-primary);
+--primary-container:var(--dh-primary-container);
+--on-primary-container:var(--dh-on-primary-container);
+--secondary-container:var(--dh-secondary-container);
+--on-secondary-container:var(--dh-on-secondary-container);
+--tertiary-container:#294a5e;
+--on-tertiary-container:#c5e7ff;
+--surface:var(--dh-surface);
+--surface-container-lowest:var(--dh-surface-container-lowest);
+--surface-container-low:var(--dh-surface-container-low);
+--surface-container:var(--dh-surface-container);
+--surface-container-high:var(--dh-surface-container-high);
+--surface-container-highest:var(--dh-surface-container-highest);
+--on-surface:var(--dh-on-surface);
+--on-surface-variant:var(--dh-on-surface-variant);
+--outline:var(--dh-outline);
+--outline-variant:var(--dh-outline-variant);
+--inverse-surface:#dee4e0;
+--inverse-on-surface:#2b322f;
+--glass:var(--dh-surface-container-high);
+--display:var(--md-ref-typeface-brand);
+--body:var(--md-ref-typeface-plain);
+--flex:var(--md-ref-typeface-plain);
+--world-accent:var(--dh-primary-container);
+--world-on-accent:var(--dh-on-primary-container);
+--world-eyebrow:var(--dh-primary);
+color-scheme:dark
+}
+:root[data-world] .toolbar{-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1)}
+:root[data-world] .page-apps .page-footer::before{opacity:1}
+:root[data-world] .apps-hero .eyebrow{color:var(--world-eyebrow)}
+:root[data-world] .page-lead,:root[data-world] .card-sub,:root[data-world] .app-desc,:root[data-world] .app-facts dt{font-weight:400}
+:root[data-world] .app-facts dd{font-weight:500}
+:root[data-world] .page-title-pop{background-color:transparent;color:inherit;rotate:0deg}
+:root[data-world] .btn{font-weight:500}
 /* 大きな面: M3E の角丸 extra-large-increased（32）。ぼかしと影をなくし、surface-container の色に */
-:root[data-world="f"] .content-screen{background-color:var(--md-sys-color-surface-container);-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1);box-shadow:0 0 0 transparent;border-radius:var(--md-sys-shape-corner-extra-large-increased)}
-:root[data-world="f"] .card-title,:root[data-world="f"] .app-name{font-weight:400}
+:root[data-world] .content-screen{background-color:var(--surface-container);-webkit-backdrop-filter:blur(0) saturate(1);backdrop-filter:blur(0) saturate(1);box-shadow:0 0 0 transparent;border-radius:var(--md-sys-shape-corner-extra-large-increased)}
+:root[data-world] .card-title,:root[data-world] .app-name{font-weight:400}
 /* 行: surface-container-high・角は extra-large（28） */
-:root[data-world="f"] .app-item{background-color:var(--md-sys-color-surface-container-high);border-radius:var(--md-sys-shape-corner-extra-large)}
-:root[data-world="f"] .app-item.is-soon{background-color:transparent;box-shadow:inset 0 0 0 1px var(--md-sys-color-outline-variant)}
-:root[data-world="f"] .is-soon .app-name{font-weight:500}
-:root[data-world="f"] .app-facts div{background-color:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-extra-small)}
-:root[data-world="f"] .app-facts div:first-child{border-radius:var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small)}
-:root[data-world="f"] .app-facts div:last-child{border-radius:var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-large-increased)}
+:root[data-world] .app-item{background-color:var(--surface-container-high);border-radius:var(--md-sys-shape-corner-extra-large)}
+:root[data-world] .app-item.is-soon{background-color:transparent;box-shadow:inset 0 0 0 1px var(--outline-variant)}
+:root[data-world] .is-soon .app-name{font-weight:500}
+:root[data-world] .app-facts div{background-color:var(--surface-container);border-radius:var(--md-sys-shape-corner-extra-small)}
+:root[data-world] .app-facts div:first-child{border-radius:var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small)}
+:root[data-world] .app-facts div:last-child{border-radius:var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-large-increased) var(--md-sys-shape-corner-large-increased)}
 /* 開いた行の矢印: M3E の形（クッキー）に変わる */
-:root[data-world="f"] .app-item.is-open .app-chevron{background-color:var(--md-sys-color-primary-fixed);fill:var(--md-sys-color-on-primary-fixed-variant);border-radius:36%}
-:root[data-world="f"] .page-footer{border-top-color:transparent}
+:root[data-world] .app-item.is-open .app-chevron{background-color:var(--world-accent);fill:var(--world-on-accent);border-radius:36%}
+:root[data-world] .page-footer{border-top-color:transparent}
+/* DroidHub では、ページの見出しを DroidHub の画面のタイトルと同じミント色に */
+:root[data-world="dh"] .page-title{color:var(--dh-primary)}
 
 @media(max-width:1060px){
 .fl-cluster{display:none}
 }
 @media(max-width:760px){
 .app-detail-inner{grid-template-columns:minmax(0,1fr);justify-items:center;padding:0 16px 20px}
+.app-preview.is-window{width:100%}
+.app-preview .dh-window{--win-w:100%}
 .app-detail-copy{justify-items:stretch;width:100%}
 .app-link{justify-content:center}
 }

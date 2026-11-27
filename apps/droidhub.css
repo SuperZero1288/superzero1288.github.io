@@ -1,0 +1,236 @@
+/* DroidHub — Windows 向けの Android 開発補助アプリ。DroidHub の画面と同じ色・形でそろえる。
+   色:   Material Color Utilities（Google の公式ライブラリ）で、DroidHub の画面に合う元の色 #00876f から作った
+         ダークテーマ（SchemeTonalSpot）。ボタンやタイトルのミント色だけは、DroidHub の画面から取った少し鮮やかな色。
+   形:   アイコンの後ろは M3E のクッキーの形。進み具合は M3E の波の形のプログレスバー。
+   部品・文字・角丸・動きは、F Launcher と同じ Material 3 のもの（flauncher.css）を使う。 */
+
+:root{
+--dh-primary:#5bdbae;
+--dh-on-primary:#00382c;
+--dh-primary-container:#005141;
+--dh-on-primary-container:#6fe3b9;
+--dh-secondary:#b2ccc2;
+--dh-secondary-container:#344c44;
+--dh-on-secondary-container:#cde9de;
+--dh-surface:#0f1513;
+--dh-surface-container-lowest:#090f0d;
+--dh-surface-container-low:#171d1b;
+--dh-surface-container:#1b211f;
+--dh-surface-container-high:#252b29;
+--dh-surface-container-highest:#303634;
+--dh-on-surface:#dee4e0;
+--dh-on-surface-variant:#bfc9c4;
+--dh-outline:#89938e;
+--dh-outline-variant:#3f4945;
+--dh-badge:#ffb4ab;
+/* 波の形（1つ分）。プログレスバーの線をこの形でくりぬく */
+--dh-wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 8'%3E%3Cpath d='M0 4Q5 .9 10 4T20 4' fill='none' stroke='%23000' stroke-width='2.2'/%3E%3C/svg%3E")
+}
+/* DroidHub のページでは、Material 3 の色のトークンを DroidHub の色にする */
+html.dh-theme{
+--md-sys-color-primary:var(--dh-primary);
+--md-sys-color-on-primary:var(--dh-on-primary);
+--md-sys-color-primary-container:var(--dh-primary-container);
+--md-sys-color-on-primary-container:var(--dh-on-primary-container);
+--md-sys-color-secondary:var(--dh-secondary);
+--md-sys-color-on-secondary:#1d352e;
+--md-sys-color-secondary-container:var(--dh-secondary-container);
+--md-sys-color-on-secondary-container:var(--dh-on-secondary-container);
+--md-sys-color-tertiary:#a9cbe3;
+--md-sys-color-tertiary-container:#294a5e;
+--md-sys-color-on-tertiary-container:#c5e7ff;
+--md-sys-color-surface:var(--dh-surface);
+--md-sys-color-surface-container-lowest:var(--dh-surface-container-lowest);
+--md-sys-color-surface-container-low:var(--dh-surface-container-low);
+--md-sys-color-surface-container:var(--dh-surface-container);
+--md-sys-color-surface-container-high:var(--dh-surface-container-high);
+--md-sys-color-surface-container-highest:var(--dh-surface-container-highest);
+--md-sys-color-on-surface:var(--dh-on-surface);
+--md-sys-color-on-surface-variant:var(--dh-on-surface-variant);
+--md-sys-color-outline:var(--dh-outline);
+--md-sys-color-outline-variant:var(--dh-outline-variant);
+--md-sys-color-inverse-surface:#dee4e0;
+--md-sys-color-inverse-on-surface:#2b322f;
+--md-sys-color-primary-fixed:#a2f2da;
+--md-sys-color-on-primary-fixed:#002019;
+--md-sys-color-on-primary-fixed-variant:var(--dh-primary-container)
+}
+
+/* ===== ページの切り替え（一覧 ⇄ DroidHub のページ）: アイコンと名前がつながって動く ===== */
+::view-transition-group(dh-icon),::view-transition-group(dh-name){animation-duration:.42s;animation-timing-function:cubic-bezier(.05,.7,.1,1)}
+
+/* ===== DroidHub のアイコン: ミントのクッキーの形に、Android の頭 ===== */
+.dh-app-icon{display:grid;place-items:center;width:96px;aspect-ratio:1;background:var(--dh-primary);clip-path:var(--shape-cookie9);view-transition-name:dh-icon}
+.dh-app-icon svg{width:54%;height:54%;fill:var(--dh-on-primary)}
+.dh-app-icon.is-small{width:40px;view-transition-name:none}
+.dh-title{view-transition-name:dh-name}
+
+/* ===== DroidHub の画面の見本（Windows のウィンドウ。文字は使わず、文字の場所は横線） =====
+   ダウンロードが進み、端末が起動すると右に画面が出て、ナビゲーションが細くなったり戻ったりする（apps.js） */
+.dh-window{--win-w:100%;position:relative;display:flex;flex-direction:column;width:var(--win-w);aspect-ratio:1360 / 880;margin:0;padding:0;overflow:hidden;border:0;border-radius:clamp(8px,1.1vw,14px);background:var(--dh-surface-container);box-shadow:0 0 0 1px var(--dh-outline-variant),0 24px 60px rgb(0 0 0 / .45);color:var(--dh-on-surface);font:inherit;text-align:left;container-type:inline-size;color-scheme:dark}
+button.dh-window{cursor:pointer}
+button.dh-window:focus-visible{outline:3px solid var(--dh-primary);outline-offset:4px}
+.dh-window svg{display:block;flex:0 0 auto;fill:currentColor}
+.dh-bar{display:block;flex:0 0 auto;width:var(--w,8cqi);height:var(--h,.9cqi);background:var(--c,var(--dh-on-surface));border-radius:9999px;transition:width .4s var(--md-sys-motion-easing-emphasized-decelerate),opacity .2s var(--md-sys-motion-easing-standard)}
+.dh-bar.is-dim{--c:var(--dh-on-surface-variant);opacity:.6}
+/* タイトルバー */
+.dh-titlebar{display:flex;align-items:center;gap:1.1cqi;flex:0 0 auto;height:3.4cqi;padding:0 1.8cqi 0 2.2cqi}
+.dh-mark{display:grid;place-items:center;width:2cqi;aspect-ratio:1;background:var(--dh-primary);clip-path:var(--shape-cookie9)}
+.dh-mark svg{width:64%;height:64%;fill:var(--dh-on-primary)}
+.dh-titlebar .dh-bar{--w:5cqi;--h:.9cqi}
+.dh-controls{display:flex;gap:2.4cqi;margin-left:auto;color:var(--dh-on-surface-variant)}
+.dh-controls svg{width:1.1cqi;height:1.1cqi}
+/* 本体: 左のナビゲーション・まんなかの面・右の画面 */
+.dh-body{display:grid;grid-template-columns:var(--side,16.2cqi) minmax(0,1fr) var(--screen,0cqi);flex:1;min-height:0;padding:0 .8cqi .8cqi 0;transition:grid-template-columns .5s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-window[data-rail="1"] .dh-body{--side:7.6cqi}
+.dh-window[data-screen="1"] .dh-body{--screen:29.4cqi}
+/* ナビゲーション（ドロワー ⇄ レール） */
+.dh-side{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:3.2cqi 1.5cqi 0;overflow:hidden}
+.dh-menu{display:grid;place-items:center;width:3.6cqi;aspect-ratio:1;margin:0 0 2.6cqi .2cqi;color:var(--dh-on-surface-variant)}
+.dh-menu svg{width:1.8cqi;height:1.8cqi;transition:rotate .5s var(--md-sys-motion-spring)}
+.dh-window[data-rail="1"] .dh-menu svg{rotate:180deg}
+.dh-fab{display:flex;align-items:center;gap:1.2cqi;height:4.1cqi;padding:0 2.2cqi 0 1.4cqi;background:var(--dh-primary-container);color:var(--dh-on-primary-container);border-radius:2cqi;transition:padding .5s var(--md-sys-motion-easing-emphasized-decelerate),gap .5s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-fab svg{width:1.7cqi;height:1.7cqi}
+.dh-fab .dh-bar{--w:4.6cqi;--c:var(--dh-on-primary-container)}
+.dh-nav{display:grid;gap:.5cqi;width:100%;margin-top:5.4cqi}
+.dh-nav-item{position:relative;display:flex;align-items:center;gap:1.3cqi;width:fit-content;height:3.9cqi;padding:0 1.3cqi;border-radius:9999px;color:var(--dh-on-surface-variant);transition:background-color .3s var(--md-sys-motion-easing-standard),gap .5s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-nav-item svg{width:1.6cqi;height:1.6cqi}
+.dh-nav-item .dh-bar{--w:5.4cqi;--h:.8cqi;--c:var(--dh-on-surface-variant)}
+.dh-nav-item.is-on{background:var(--dh-secondary-container);color:var(--dh-on-secondary-container)}
+.dh-nav-item.is-badge::after{content:'';position:absolute;left:2.1cqi;top:.7cqi;width:.9cqi;aspect-ratio:1;background:var(--dh-badge);border-radius:50%}
+.dh-nav-item.is-settings{margin-top:3.4cqi}
+/* レールのときは、文字の横線をしまう */
+.dh-window[data-rail="1"] :is(.dh-fab,.dh-nav-item) .dh-bar{--w:0cqi;opacity:0}
+.dh-window[data-rail="1"] :is(.dh-fab,.dh-nav-item){gap:0}
+.dh-window[data-rail="1"] .dh-fab{padding:0 1.2cqi}
+/* まんなかの面 */
+.dh-pane{display:flex;flex-direction:column;gap:1.5cqi;min-width:0;min-height:0;padding:2.2cqi 2.3cqi 0;overflow:hidden;background:var(--dh-surface);border-radius:1.8cqi}
+.dh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:2cqi}
+.dh-head>span:first-child{display:grid;gap:.9cqi}
+.dh-head .is-title{--w:9.6cqi;--h:1.9cqi;--c:var(--dh-primary)}
+.dh-head .is-dim{--w:10.6cqi}
+.dh-head-actions{display:flex;gap:.7cqi}
+.dh-btn{display:inline-flex;align-items:center;gap:.7cqi;height:3cqi;padding:0 1.5cqi 0 1.2cqi;border-radius:9999px;color:var(--dh-on-surface)}
+.dh-btn svg{width:1.3cqi;height:1.3cqi}
+.dh-btn .dh-bar{--w:5cqi;--h:.8cqi}
+.dh-btn.is-filled{background:var(--dh-primary);color:var(--dh-on-primary)}
+.dh-btn.is-filled .dh-bar{--c:var(--dh-on-primary)}
+.dh-btn.is-outlined{box-shadow:inset 0 0 0 1px var(--dh-outline)}
+.dh-list{display:grid;align-content:start;gap:1.3cqi}
+.dh-card{display:grid;gap:1.4cqi;padding:1.7cqi 1.8cqi;background:var(--dh-surface-container-low);border-radius:2.1cqi}
+.dh-card-head{display:flex;align-items:center;gap:1.2cqi;min-width:0}
+.dh-cookie{display:grid;place-items:center;flex:0 0 auto;width:3.4cqi;aspect-ratio:1;background:var(--dh-primary-container);color:var(--dh-on-primary-container);clip-path:var(--shape-cookie9)}
+.dh-cookie svg{width:50%;height:50%}
+.dh-lines{display:grid;gap:.7cqi;min-width:0}
+.dh-lines>.dh-bar:first-child,.dh-name>.dh-bar{--w:13cqi;--h:1.1cqi}
+.dh-lines>.dh-bar.is-dim{--w:18cqi;--h:.7cqi}
+.dh-name{display:flex;align-items:center;gap:.8cqi}
+.dh-status{display:block;width:4cqi;height:1.7cqi;background:var(--dh-surface-container-highest);border-radius:.6cqi;transition:background-color .3s var(--md-sys-motion-easing-standard),width .4s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-x{margin-left:auto;color:var(--dh-on-surface)}
+.dh-x svg{width:1.5cqi;height:1.5cqi}
+/* ダウンロード中のイメージ: 段階（ダウンロード・検証・インストール）と、波の形のプログレスバー */
+.dh-dl{display:grid;gap:1.1cqi;padding:1.5cqi 1.5cqi 1.7cqi;background:var(--dh-surface-container-high);border-radius:1.5cqi}
+.dh-dl-head{display:flex;align-items:center;justify-content:space-between}
+.dh-dl-head>.dh-bar{--w:21cqi;--h:.9cqi}
+.dh-dl-icons{display:flex;gap:1.6cqi;color:var(--dh-on-surface)}
+.dh-dl-icons svg{width:1.4cqi;height:1.4cqi}
+.dh-chips{display:flex;gap:.5cqi}
+.dh-chips i{display:block;width:5.2cqi;height:1.7cqi;background:var(--dh-surface-container-highest);border-radius:9999px;transition:background-color .3s var(--md-sys-motion-easing-standard)}
+.dh-window[data-stage="0"] .dh-chips i:nth-child(1),.dh-window[data-stage="1"] .dh-chips i:nth-child(2),.dh-window[data-stage="2"] .dh-chips i:nth-child(3){background:var(--dh-primary)}
+.dh-dl>.dh-bar{--w:16cqi;--h:.7cqi}
+.dh-wave{--wh:1.6cqi}
+/* 端末の行: 起動ボタン・スペック・道具 */
+.dh-card-actions{display:flex;align-items:center;gap:1.2cqi}
+.dh-run{position:relative}
+.dh-run .dh-bar{--w:2.6cqi}
+.dh-run svg+svg{display:none}
+.dh-card[data-run="1"] .dh-run svg:first-child{display:none}
+.dh-card[data-run="1"] .dh-run svg+svg{display:block}
+.dh-card[data-run="1"] .dh-status{width:4.6cqi;background:var(--dh-primary)}
+.dh-link{--w:3.6cqi;--c:var(--dh-primary)}
+.dh-tools{display:flex;gap:1.5cqi;margin-left:auto;color:var(--dh-on-surface)}
+.dh-tools svg{width:1.6cqi;height:1.6cqi}
+/* 右の画面（端末の画面を表示する。起動していないときは閉じている） */
+.dh-screen{position:relative;display:grid;grid-template-rows:auto 1fr;min-width:0;margin-left:.8cqi;padding:1.6cqi 1.6cqi 1.6cqi;overflow:hidden;background:var(--dh-surface-container-low);border-radius:1.8cqi;opacity:0;transition:opacity .25s var(--md-sys-motion-easing-standard)}
+.dh-window[data-screen="1"] .dh-screen{opacity:1;transition:opacity .3s var(--md-sys-motion-easing-standard) .12s}
+.dh-screen>*{min-width:26.2cqi}
+.dh-screen-head{display:flex;align-items:flex-start;justify-content:space-between}
+.dh-screen-head>span:first-child{display:grid;gap:.6cqi}
+.dh-screen-head .dh-bar{--w:3.4cqi}
+.dh-screen-head .dh-bar.is-dim{--w:4.6cqi;--h:.7cqi}
+.dh-screen-icons{display:flex;gap:2cqi;color:var(--dh-on-surface)}
+.dh-screen-icons svg{width:1.4cqi;height:1.4cqi}
+.dh-screen-body{position:relative;display:grid;place-items:center;min-height:0}
+.dh-screen-empty,.dh-mirror{grid-area:1 / 1;transition:opacity .2s var(--md-sys-motion-easing-standard),scale .4s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-screen-empty{display:grid;justify-items:center;gap:1.1cqi}
+.dh-screen-empty .dh-cookie{width:4cqi;background:var(--dh-secondary-container);color:var(--dh-primary)}
+.dh-screen-empty>.dh-bar{--w:5.4cqi}
+.dh-screen-empty>.dh-bar.is-dim{--w:22cqi;--h:.7cqi}
+.dh-screen-empty>.dh-bar.is-dim+.dh-bar.is-dim{--w:15cqi}
+.dh-screen-empty .dh-btn{margin-top:.6cqi}
+.dh-screen-empty .dh-btn .dh-bar{--w:4.6cqi}
+/* 画面を表示したとき: 端末の画面（Android のホーム画面） */
+.dh-mirror{display:grid;place-items:center;height:100%;opacity:0;scale:.94}
+.dh-window[data-mirror="1"] .dh-mirror{opacity:1;scale:1}
+.dh-window[data-mirror="1"] .dh-screen-empty{opacity:0;scale:.94}
+.dh-phone{display:flex;flex-direction:column;gap:1.6cqi;height:94%;aspect-ratio:9 / 19.5;padding:2.4cqi 1.4cqi 1.4cqi;background:linear-gradient(160deg,#1d4a3d,#0f2a22 55%,#091712);border:.5cqi solid #000;border-radius:2.6cqi}
+.dh-phone>.dh-bar{--w:7cqi;--h:2.2cqi;margin:2cqi auto 0}
+.dh-phone>.dh-bar.is-dim{--w:5cqi;--h:.7cqi;margin-top:0}
+.dh-phone-apps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1cqi;margin-top:auto}
+.dh-phone-apps i{display:block;aspect-ratio:1;background:rgb(255 255 255 / .16);border-radius:50%}
+.dh-phone-apps i:nth-child(3n){background:var(--dh-primary)}
+.dh-phone-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1cqi;padding:.8cqi;background:rgb(255 255 255 / .1);border-radius:9999px}
+.dh-phone-dock i{display:block;aspect-ratio:1;background:rgb(255 255 255 / .22);border-radius:50%}
+/* 止めているあいだは、波も止める */
+.dh-window.is-paused .dh-wave-on{animation-play-state:paused}
+
+/* ===== 波の形のプログレスバー（M3E）: 進んだところは波、残りはまっすぐの線と、終わりの点 ===== */
+.dh-wave{position:relative;display:block;height:var(--wh,12px)}
+.dh-wave-on{position:absolute;left:0;top:0;bottom:0;width:calc(var(--dl,30) * 1%);background:var(--dh-primary);-webkit-mask:var(--dh-wave) repeat-x 0 50% / auto 100%;mask:var(--dh-wave) repeat-x 0 50% / auto 100%;transition:width .6s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-wave::before,.dh-wave::after{content:'';position:absolute;top:50%;border-radius:9999px}
+.dh-wave::after{left:calc(var(--dl,30) * 1% + var(--wh,12px) * .7);right:0;height:calc(var(--wh,12px) * .28);translate:0 -50%;background:var(--dh-secondary-container);transition:left .6s var(--md-sys-motion-easing-emphasized-decelerate)}
+.dh-wave::before{right:0;z-index:1;width:calc(var(--wh,12px) * .34);aspect-ratio:1;translate:0 -50%;background:var(--dh-primary)}
+@media(prefers-reduced-motion:no-preference){
+.dh-wave-on{animation:dhWave 1.1s linear infinite}
+}
+@keyframes dhWave{to{-webkit-mask-position:calc(var(--wh,12px) * 2.5) 50%;mask-position:calc(var(--wh,12px) * 2.5) 50%}}
+
+/* ===== DroidHub のページ（アプリのホームページ） ===== */
+.dh-page .fl-tagline{color:var(--dh-on-surface)}
+.dh-hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);align-items:center;gap:40px 56px;padding:40px 0 64px}
+.dh-hero .fl-hero-copy{align-self:center}
+.dh-demo{display:grid}
+/* 「Android 開発を、ひとつの場所で」: 緑のグラデーションのカード */
+.dh-page .fl-intro{background:linear-gradient(135deg,#1f4037,#172c26)}
+.dh-page .fl-intro h2{color:#a2f2da}
+.dh-page .fl-shape-icon{background:var(--dh-surface-container-highest)}
+.dh-page .fl-shape-icon svg{fill:var(--dh-on-surface-variant)}
+.dh-page .fl-shape-icon.is-accent{background:var(--dh-primary-container)}
+.dh-page .fl-shape-icon.is-accent svg{fill:var(--dh-on-primary-container)}
+@media(prefers-reduced-motion:no-preference){
+.dh-page .dh-demo{animation:flRise .5s var(--md-sys-motion-easing-emphasized-decelerate) backwards .16s}
+html.vt-arrived .dh-page .dh-app-icon,html.vt-arrived .dh-page .dh-title{animation:none}
+}
+@media(max-width:1000px){
+.dh-hero{grid-template-columns:minmax(0,1fr);padding:24px 0 48px}
+}
+
+/* ===== 一覧の後ろの DroidHub の世界: 深い緑の黒に、端末のアイコンや進み具合の形が浮かぶ ===== */
+#dhWorld{background:radial-gradient(90% 70% at 100% 0%,#14241f 0%,transparent 70%),radial-gradient(70% 60% at 0% 100%,#101b17 0%,transparent 70%),var(--dh-surface)}
+#dhWorld .fl-float{background-color:var(--dh-surface-container-high)}
+#dhWorld .fl-float svg{fill:#9fb0a9}
+#dhWorld .fl-float .fl-line{--lc:var(--dh-on-surface-variant)}
+#dhWorld .fl-float .fl-line.is-dim{--lc:#5f6e68}
+#dhWorld .fl-float-icon.is-accent{background-color:var(--dh-primary-container)}
+#dhWorld .fl-float-icon.is-accent svg{fill:var(--dh-on-primary-container)}
+#dhWorld .fl-float-ring::before{background:conic-gradient(from 200deg,var(--dh-primary) calc(var(--p) * 1%),var(--dh-surface-container-highest) 0)}
+#dhWorld .fl-float-pill.is-run{background-color:var(--dh-primary)}
+#dhWorld .fl-float-pill.is-run svg{fill:var(--dh-on-primary)}
+#dhWorld .fl-float-pill.is-run .fl-line{--lc:var(--dh-on-primary)}
+#dhWorld .fl-float-pill.is-wave{gap:2.6cqi;padding:0 7cqi}
+#dhWorld .fl-float-pill.is-wave .dh-wave{--wh:3.4cqi;width:100%}
+#dhWorld .fl-float-chips{display:flex;gap:2cqi;background:none}
+#dhWorld .fl-float-chips i{display:block;width:13cqi;height:5.4cqi;background:var(--dh-surface-container-highest);border-radius:9999px}
+#dhWorld .fl-float-chips i:first-child{background:var(--dh-primary)}
+#dhWorld.is-paused .dh-wave-on{animation-play-state:paused}
+#dhWorld .fl-c1 .fl-line:first-child{width:24cqi;height:3cqi}

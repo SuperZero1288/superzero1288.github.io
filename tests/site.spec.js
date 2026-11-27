@@ -1646,6 +1646,99 @@ for (const width of [320, 1440]) {
   });
 }
 
+test('choosing DroidHub opens its details and turns the app list into its green world, and only one app opens at a time', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/apps/');
+  const html = page.locator('html');
+  const surface = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const fCard = page.locator('#fLauncherCard');
+  const card = page.locator('#droidHubCard');
+  const detail = page.locator('#droidHubDetail');
+  const world = page.locator('#dhWorld');
+  const preview = page.locator('#dhPreview');
+  // 行は、アイコンと名前だけ
+  await expect(card).toHaveText('DroidHub');
+  await expect(card).toHaveAttribute('aria-expanded', 'false');
+  await expect(detail).toBeHidden();
+
+  await card.click();
+  await expect(card).toHaveAttribute('aria-expanded', 'true');
+  await expect(html).toHaveAttribute('data-world', 'dh');
+  await expect(world).toBeVisible();
+  await expect(page.locator('#flWorld')).toBeHidden();
+  await expect(detail).toBeVisible();
+  await expect(detail.locator('.app-facts dt')).toHaveText(['対応OS', '価格', 'バージョン']);
+  await expect(detail.locator('.app-facts dd')).toHaveText(['Windows', '無料', 'まだ公開していません']);
+  await expect(detail.getByRole('link', {name: /DroidHub のページへ/})).toHaveAttribute('href', '/droidhub/');
+  // DroidHub の画面と同じ色（深い緑の黒・ミントのタイトル）
+  await expect.poll(surface).toBe('rgb(15, 21, 19)');
+  await expect(page.locator('.page-title')).toHaveCSS('color', 'rgb(91, 219, 174)');
+  await expect(page.locator('.apps-hero .eyebrow-swap.is-dh')).toHaveCSS('opacity', '1');
+  // 後ろの世界と見本には文字を使わない。見本は自動で動く
+  expect(await world.evaluate((element) => element.textContent.trim())).toBe('');
+  expect(await preview.evaluate((element) => element.textContent.trim())).toBe('');
+  await expect.poll(() => preview.evaluate((element) => element.dataset.screen), {timeout: 8000}).toBe('1');
+  expect(await audit(page)).toEqual([]);
+
+  // F Launcher を選ぶと、DroidHub は閉じて F Launcher の世界になる
+  await fCard.click();
+  await expect(fCard).toHaveAttribute('aria-expanded', 'true');
+  await expect(card).toHaveAttribute('aria-expanded', 'false');
+  await expect(html).toHaveAttribute('data-world', 'f');
+  await expect(page.locator('#flWorld')).toBeVisible();
+  await expect(world).toBeHidden();
+  await expect(detail).toBeHidden();
+  await expect.poll(surface).toBe('rgb(0, 0, 0)');
+  await fCard.click();
+  await expect(html).not.toHaveAttribute('data-world', /.+/);
+  await expect(page.locator('.fl-world.is-on')).toHaveCount(0);
+});
+
+for (const width of [320, 1440]) {
+  test(`the DroidHub page uses the colors of the app and its window preview runs by itself at ${width}px`, async ({page}) => {
+    await page.setViewportSize({width, height: 900});
+    await mockNetwork(page);
+    await ready(page, '/apps/');
+    await page.locator('#droidHubCard').click();
+    await page.getByRole('link', {name: /DroidHub のページへ/}).click();
+    await expect(page).toHaveURL(/\/droidhub\/$/);
+    await expect(page.locator('h1')).toHaveText('DroidHub');
+    await expect(page.locator('#toolbar')).toHaveCount(0);
+    expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe('rgb(15, 21, 19)');
+    await expect(page.getByRole('button', {name: 'ダウンロード（準備中）'})).toBeDisabled();
+    await expect(page.locator('.fl-feature h3').first()).toHaveText('仮想端末の作成と管理');
+    await expect(page.locator('.fl-feature p')).toHaveCount(0);
+    // 配布情報は、対応OS（Windows のみ）・バージョン・価格だけ
+    await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
+    await expect(page.locator('.fl-spec dd')).toHaveText(['Windows', 'まだ公開していません', '無料']);
+    // 画面の見本: 文字は使わず、ダウンロード・端末の起動と画面・ナビゲーションが自動で動く
+    const demo = page.locator('#dhDemo');
+    expect(await demo.evaluate((element) => element.textContent.trim())).toBe('');
+    await expect.poll(() => demo.evaluate((element) => element.dataset.screen), {timeout: 8000}).toBe('1');
+    await expect.poll(() => demo.evaluate((element) => element.dataset.stage), {timeout: 14000}).not.toBe('0');
+    await expect.poll(() => demo.evaluate((element) => element.dataset.rail), {timeout: 12000}).toBe('1');
+    // 見本を押すと止まる
+    await demo.click();
+    await expect(demo).toHaveAttribute('aria-label', /止めています/);
+    const snapshot = () => demo.evaluate((element) => `${element.dataset.stage}/${element.dataset.rail}/${element.dataset.screen}/${element.dataset.mirror}/${element.style.getPropertyValue('--dl')}/${[...element.querySelectorAll('.dh-card.is-device')].map((device) => device.dataset.run).join('')}`);
+    const paused = await snapshot();
+    await page.waitForTimeout(5500);
+    expect(await snapshot()).toBe(paused);
+    await expectNoHorizontalOverflow(page);
+    expect(await audit(page)).toEqual([]);
+    await page.getByRole('link', {name: 'アプリ一覧', exact: true}).click();
+    await expect(page).toHaveURL(/\/apps\/$/);
+    await expect(page.locator('html')).not.toHaveAttribute('data-world', /.+/);
+  });
+}
+
+test('with reduced motion, the DroidHub window preview starts paused', async ({page}) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await mockNetwork(page);
+  await ready(page, '/droidhub/');
+  await expect(page.locator('#dhDemo')).toHaveAttribute('aria-label', /止めています/);
+});
+
 test('the old F Launcher address moves to /f-launcher/', async ({page}) => {
   await mockNetwork(page);
   await page.goto('/apps/f-launcher/');
@@ -1679,6 +1772,7 @@ test('the app pages are in the sitemap', async () => {
   const sitemap = fs.readFileSync(path.join(rootPath, 'sitemap.xml'), 'utf8');
   expect(sitemap).toContain('<loc>https://superzero1288.github.io/apps/</loc>');
   expect(sitemap).toContain('<loc>https://superzero1288.github.io/f-launcher/</loc>');
+  expect(sitemap).toContain('<loc>https://superzero1288.github.io/droidhub/</loc>');
   expect(sitemap).not.toContain('/apps/f-launcher/');
 });
 
