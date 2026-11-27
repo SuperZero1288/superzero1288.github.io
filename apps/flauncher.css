@@ -352,7 +352,7 @@ button.fl-phone:focus-visible{outline:3px solid var(--md-sys-color-primary-fixed
 .fl-page *,.fl-page *::before,.fl-page *::after{box-sizing:border-box}
 .fl-page :focus-visible{outline:3px solid var(--md-sys-color-primary-fixed);outline-offset:2px}
 .fl-page a{color:var(--md-sys-color-primary)}
-.fl-page :is(h1,h2,h3,p,dd){word-break:auto-phrase;text-wrap:pretty}
+.fl-page :is(h1,h2,h3,p,dd){word-break:auto-phrase;overflow-wrap:anywhere;text-wrap:pretty}
 .fl-skip{position:fixed;left:16px;top:-80px;z-index:20;padding:10px 20px;background:var(--md-sys-color-primary);color:var(--md-sys-color-on-primary)!important;border-radius:var(--md-sys-shape-corner-full);text-decoration:none}
 .fl-skip:focus{top:12px}
 /* 上のバー: 左にアプリの名前、右にほかのページ。下へスクロールすると面の色が付く */

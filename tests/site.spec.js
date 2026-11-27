@@ -57,6 +57,15 @@ async function audit(page) {
   return result.violations.map((item) => ({id: item.id, targets: item.nodes.map((node) => node.target)}));
 }
 
+// 名前だけのカード: 長い名前でも、カードの外へはみ出さない（狭い画面や、文字の幅が違う環境でも）
+async function expectFeatureTitlesInside(page) {
+  expect(await page.locator('.fl-feature').evaluateAll((items) => items.filter((item) => {
+    const card = item.getBoundingClientRect();
+    const title = item.querySelector('h3').getBoundingClientRect();
+    return title.right > card.right - parseFloat(getComputedStyle(item).paddingRight) + 0.5;
+  }).map((item) => item.textContent))).toEqual([]);
+}
+
 async function expectNoHorizontalOverflow(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 }
@@ -1616,6 +1625,7 @@ for (const width of [320, 1440]) {
     // できることは名前だけ（説明の文章は置かない）
     await expect(page.locator('.fl-feature h3').first()).toHaveText('セカンドスペース');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
+    await expectFeatureTitlesInside(page);
     // 配布情報は、対応OS・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
     await expect(page.locator('.fl-spec dd')).toHaveText(['Android 4.4〜Android 17', 'まだ公開していません', '無料']);
@@ -1708,6 +1718,7 @@ for (const width of [320, 1440]) {
     await expect(page.getByRole('button', {name: 'ダウンロード（準備中）'})).toBeDisabled();
     await expect(page.locator('.fl-feature h3').first()).toHaveText('仮想端末の作成と管理');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
+    await expectFeatureTitlesInside(page);
     // 配布情報は、対応OS（Windows のみ）・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
     await expect(page.locator('.fl-spec dd')).toHaveText(['Windows', 'まだ公開していません', '無料']);
