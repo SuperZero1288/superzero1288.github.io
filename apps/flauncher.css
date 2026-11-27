@@ -73,19 +73,19 @@ html.fl-entering::view-transition-old(root),html.fl-entering::view-transition-ne
 --fl-on-accent:var(--md-sys-color-on-primary-fixed-variant)
 }
 
-/* ===== タイプスケール ===== */
-.md-display-large{font:400 57px/64px var(--md-ref-typeface-brand);letter-spacing:-.25px}
-.md-display-medium{font:400 45px/52px var(--md-ref-typeface-brand);letter-spacing:0}
-.md-display-small{font:400 36px/44px var(--md-ref-typeface-brand);letter-spacing:0}
-.md-headline-large{font:400 32px/40px var(--md-ref-typeface-brand);letter-spacing:0}
-.md-headline-small{font:400 24px/32px var(--md-ref-typeface-brand);letter-spacing:0}
-.md-title-large{font:400 22px/28px var(--md-ref-typeface-brand);letter-spacing:0}
-.md-title-medium{font:500 16px/24px var(--md-ref-typeface-plain);letter-spacing:.15px}
-.md-body-large{font:400 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px}
-.md-body-medium{font:400 14px/20px var(--md-ref-typeface-plain);letter-spacing:.25px}
-.md-body-small{font:400 12px/16px var(--md-ref-typeface-plain);letter-spacing:.4px}
-.md-label-large{font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
-.md-label-medium{font:500 12px/16px var(--md-ref-typeface-plain);letter-spacing:.5px}
+/* ===== タイプスケール（大きさは Material 3 のとおり。文字はすべて太字） ===== */
+.md-display-large{font:700 57px/64px var(--md-ref-typeface-brand);letter-spacing:-.25px}
+.md-display-medium{font:700 45px/52px var(--md-ref-typeface-brand);letter-spacing:0}
+.md-display-small{font:700 36px/44px var(--md-ref-typeface-brand);letter-spacing:0}
+.md-headline-large{font:700 32px/40px var(--md-ref-typeface-brand);letter-spacing:0}
+.md-headline-small{font:700 24px/32px var(--md-ref-typeface-brand);letter-spacing:0}
+.md-title-large{font:700 22px/28px var(--md-ref-typeface-brand);letter-spacing:0}
+.md-title-medium{font:700 16px/24px var(--md-ref-typeface-plain);letter-spacing:.15px}
+.md-body-large{font:700 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px}
+.md-body-medium{font:700 14px/20px var(--md-ref-typeface-plain);letter-spacing:.25px}
+.md-body-small{font:700 12px/16px var(--md-ref-typeface-plain);letter-spacing:.4px}
+.md-label-large{font:700 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px}
+.md-label-medium{font:700 12px/16px var(--md-ref-typeface-plain);letter-spacing:.5px}
 
 /* ===== ホーム画面の見本 ===== */
 /* 壁紙: 5種類（いちばん上がスクリーンショットの壁紙）。data-wall を付けた中で切り替わる。
@@ -326,8 +326,8 @@ button.fl-phone:focus-visible{outline:3px solid var(--md-sys-color-primary-fixed
 @media(hover:hover){.md-icon-button:hover{background:color-mix(in srgb,var(--md-sys-color-on-surface-variant) 8%,transparent)}}
 .md-icon-button:active{border-radius:var(--md-sys-shape-corner-medium)}
 /* ボタン: M3E のボタンは丸く、押すと角が少し四角くなる */
-.md-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:var(--md-sys-shape-corner-full);font:500 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px;text-decoration:none;cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard),border-radius .35s var(--md-sys-motion-spring)}
-.md-button.is-medium{height:56px;padding:0 24px;font:500 16px/24px var(--md-ref-typeface-plain);letter-spacing:.15px}
+.md-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:var(--md-sys-shape-corner-full);font:700 14px/20px var(--md-ref-typeface-plain);letter-spacing:.1px;text-decoration:none;cursor:pointer;transition:background-color .2s var(--md-sys-motion-easing-standard),border-radius .35s var(--md-sys-motion-spring)}
+.md-button.is-medium{height:56px;padding:0 24px;font:700 16px/24px var(--md-ref-typeface-plain);letter-spacing:.15px}
 .md-button svg{width:20px;height:20px;fill:currentColor}
 .md-button:active:not(:disabled){border-radius:var(--md-sys-shape-corner-medium)}
 .md-button.is-medium:active:not(:disabled){border-radius:var(--md-sys-shape-corner-large)}
@@ -348,7 +348,7 @@ button.fl-phone:focus-visible{outline:3px solid var(--md-sys-color-primary-fixed
 .fl-shape-icon.is-accent svg{fill:var(--md-sys-color-on-primary-fixed-variant)}
 
 /* ===== F Launcher のページ（アプリのホームページ） ===== */
-.fl-page{margin:0;min-height:100vh;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:400 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px;color-scheme:dark}
+.fl-page{margin:0;min-height:100vh;background:var(--md-sys-color-surface);color:var(--md-sys-color-on-surface);font:700 16px/24px var(--md-ref-typeface-plain);letter-spacing:.5px;color-scheme:dark}
 .fl-page *,.fl-page *::before,.fl-page *::after{box-sizing:border-box}
 .fl-page :focus-visible{outline:3px solid var(--md-sys-color-primary-fixed);outline-offset:2px}
 .fl-page a{color:var(--md-sys-color-primary)}

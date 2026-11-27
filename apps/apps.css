@@ -11,6 +11,14 @@ html.fl-wave::view-transition-group(root){background:var(--wave-color,#fff)}
 /* 波で置きかえるあいだは、色のなめらかな切り替えをしない（波が通ったところは、すぐに新しいテーマ） */
 html.fl-wave .page-apps :is(.toolbar,.btn,.page-title-pop,.content-screen,.app-item,.page-footer,.page-lead,.card-sub,.app-desc,.app-sub,.app-meta,.app-note,.app-get,.app-name,.card-title,.page-title,.app-facts,.app-facts div,.app-facts dt,.fl-world){transition-duration:0s!important}
 html.fl-wave .page-apps .page-footer::before{transition-duration:0s}
+/* 演出のあいだは、押した行をその場に固定し、終わるまでスクロールできないようにする（apps.js）。
+   スクロールバーの幅はいつも取っておき、スクロールを止めても横にずれないようにする */
+html{scrollbar-gutter:stable}
+html.fl-lock{overflow:hidden}
+/* 押した行の位置は apps.js が合わせるので、ブラウザの自動の位置合わせ（scroll anchoring）は止める */
+html.fl-switching{overflow-anchor:none}
+/* 閉じる行はすぐに閉じて、押した行の位置を最後の場所で決める（波が通るまでは古い画面が見えている） */
+html.fl-switching .app-item:not(.is-open) :is(.app-detail,.app-detail-inner>*){transition:none!important}
 /* アプリのページから戻ってきたときは、ロード画面を出さない */
 html.vt-arrived .site-loader{display:none}
 /* 一覧とアプリのページをつなぐ名前は、ページを移るときだけ付ける */

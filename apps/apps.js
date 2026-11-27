@@ -296,6 +296,23 @@
       transition.finished.catch(() => {}).finally(() => root.classList.remove('fl-wave'));
       return transition;
     };
+    // 演出のあいだは、スクロールできないようにする（ホイール・タッチ・キー）
+    const SCROLL_KEYS = new Set([' ', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End']);
+    const stopScroll = (event) => event.preventDefault();
+    const stopKeys = (event) => { if (SCROLL_KEYS.has(event.key) && !event.target.closest?.('input, textarea, [contenteditable]')) event.preventDefault(); };
+    const lockScroll = (on) => {
+      root.classList.toggle('fl-lock', on);
+      const method = on ? 'addEventListener' : 'removeEventListener';
+      window[method]('wheel', stopScroll, {passive: false});
+      window[method]('touchmove', stopScroll, {passive: false});
+      window[method]('keydown', stopKeys);
+    };
+    // 押した行が、押したときと同じ場所に見えるように、スクロールの位置を合わせる（上の行が閉じても動かない）
+    const keepInPlace = (card, top) => {
+      if (!card) return;
+      const moved = card.getBoundingClientRect().top - top;
+      if (Math.abs(moved) >= 1) window.scrollBy({top: moved, behavior: 'instant'});
+    };
     const apply = (id) => {
       const before = current();
       APPS.forEach((app) => {
@@ -309,25 +326,39 @@
       APPS.forEach((app) => app.playback.update());
     };
     // 今の状態を、なってほしい状態に合わせる（切り替えの途中なら、終わってから合わせる）
+    // 押した行はその場に固定し、演出が終わるまでスクロールできないようにする
+    let pressed = null;
     const sync = () => {
       if (running || desired === current()) return;
       const next = desired;
-      const transition = wave(() => apply(next), next);
-      if (!transition) return;
+      const card = pressed || byId(next || current())?.card;
+      const top = card?.getBoundingClientRect().top ?? 0;
+      root.classList.add('fl-switching');
+      lockScroll(true);
+      const done = () => {
+        root.classList.remove('fl-switching');
+        lockScroll(false);
+      };
+      const transition = wave(() => { apply(next); keepInPlace(card, top); }, next);
+      if (!transition) { requestAnimationFrame(() => requestAnimationFrame(done)); return; }
       running = transition;
       transition.finished.catch(() => {}).finally(() => {
         running = null;
+        done();
         sync();
       });
     };
+    const byId = (id) => APPS.find((app) => app.id === id);
     APPS.forEach((app) => {
       app.card.addEventListener('click', () => {
+        pressed = app.card;
         desired = desired === app.id ? null : app.id;
         sync();
       });
       // 開いているときは、Esc で閉じる
       app.item.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape' || desired !== app.id) return;
+        pressed = app.card;
         desired = null;
         app.card.focus();
         sync();
@@ -348,7 +379,8 @@
       if (!event.persisted) return;
       desired = null;
       apply(null);
-      root.classList.remove('fl-wave', 'fl-linking', 'dh-linking');
+      root.classList.remove('fl-wave', 'fl-switching', 'fl-linking', 'dh-linking');
+      lockScroll(false);
     });
     APPS.forEach((app) => app.playback.update());
   }

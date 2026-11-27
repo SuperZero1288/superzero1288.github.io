@@ -1635,6 +1635,8 @@ for (const width of [320, 1440]) {
     await expect(page.locator('.fl-feature h3').first()).toHaveText('セカンドスペース');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
     await expectFeatureTitlesInside(page);
+    // 文字はすべて太字
+    expect(await page.locator('h1, .fl-tagline, .fl-lead, .fl-feature h3, .fl-section-label, .fl-intro :is(h2, p), .fl-spec :is(dt, dd), .fl-actions :is(a, button), .fl-appbar a, .fl-footer').evaluateAll((elements) => elements.filter((element) => Number(getComputedStyle(element).fontWeight) < 700).map((element) => element.textContent.trim()))).toEqual([]);
     // 配布情報は、対応OS・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
     await expect(page.locator('.fl-spec dd')).toHaveText(['Android 4.4〜Android 17', '未公開', '無料']);
@@ -1714,6 +1716,44 @@ test('choosing DroidHub opens its details and turns the app list into its green 
   await expect(page.locator('.fl-world.is-on')).toHaveCount(0);
 });
 
+test('while the wave runs, the tapped row stays in place and the page cannot be scrolled', async ({page}) => {
+  // 上の行が閉じた分だけ上へスクロールできる高さの画面（スクロールできる分が足りないときは、行は上へ動く）
+  await page.setViewportSize({width: 1440, height: 520});
+  await mockNetwork(page);
+  await ready(page, '/apps/');
+  const html = page.locator('html');
+  // F Launcher を開いてから下へスクロールし、DroidHub を押す（上の F Launcher は閉じる）
+  await page.locator('#fLauncherCard').click();
+  await expect(html).toHaveAttribute('data-world', 'f');
+  await expect(html).not.toHaveClass(/fl-lock/);
+  // 開いている F Launcher の詳細が画面の上に見えていて、DroidHub の行が画面の下にある
+  await page.evaluate(() => document.getElementById('droidHubCard').scrollIntoView({block: 'end', behavior: 'instant'}));
+  await expect.poll(() => page.locator('#fLauncherDetail').evaluate((element) => Math.round(element.getBoundingClientRect().bottom))).toBeGreaterThan(200);
+  const card = page.locator('#droidHubCard');
+  const top = () => card.evaluate((element) => Math.round(element.getBoundingClientRect().top));
+  const before = await top();
+  const box = await card.boundingBox();
+  await page.mouse.click(box.x + 140, box.y + box.height / 2);
+  // 演出のあいだはスクロールできない（ホイール・タッチ・キーを止め、ページのスクロールも止める）
+  await expect(html).toHaveClass(/fl-lock/);
+  expect(await page.evaluate(() => [
+    getComputedStyle(document.documentElement).overflowY,
+    !window.dispatchEvent(new WheelEvent('wheel', {deltaY: 300, cancelable: true})),
+    !window.dispatchEvent(new KeyboardEvent('keydown', {key: 'PageDown', cancelable: true})),
+  ])).toEqual(['hidden', true, true]);
+  await page.mouse.wheel(0, 600);
+  await expect(html).toHaveAttribute('data-world', 'dh');
+  await expect(html).not.toHaveClass(/fl-wave/);
+  await expect(html).not.toHaveClass(/fl-lock/);
+  // 押した行は、押したときと同じ場所にある（上の行が閉じても動かない）
+  expect(Math.abs((await top()) - before)).toBeLessThanOrEqual(2);
+  await expect(page.locator('#fLauncherCard')).toHaveAttribute('aria-expanded', 'false');
+  // 演出が終わったら、またスクロールできる
+  const scrolled = await page.evaluate(() => scrollY);
+  await page.mouse.wheel(0, 300);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(scrolled);
+});
+
 for (const width of [320, 1440]) {
   test(`the DroidHub page uses the colors of the app and its window preview runs by itself at ${width}px`, async ({page}) => {
     await page.setViewportSize({width, height: 900});
@@ -1729,6 +1769,8 @@ for (const width of [320, 1440]) {
     await expect(page.locator('.fl-feature h3').first()).toHaveText('エミュレーターの作成・起動・管理');
     await expect(page.locator('.fl-feature p')).toHaveCount(0);
     await expectFeatureTitlesInside(page);
+    // 文字はすべて太字
+    expect(await page.locator('h1, .fl-tagline, .fl-lead, .fl-feature h3, .fl-section-label, .fl-intro :is(h2, p), .fl-spec :is(dt, dd), .fl-actions :is(a, button), .fl-appbar a, .fl-footer').evaluateAll((elements) => elements.filter((element) => Number(getComputedStyle(element).fontWeight) < 700).map((element) => element.textContent.trim()))).toEqual([]);
     // 配布情報は、対応OS（Windows のみ）・バージョン・価格だけ
     await expect(page.locator('.fl-spec dt')).toHaveText(['対応OS', 'バージョン', '価格']);
     await expect(page.locator('.fl-spec dd')).toHaveText(['Windows', '未公開', '無料']);
