@@ -1360,6 +1360,22 @@ test('on PC the same elements still react to hover', async ({page}) => {
   await expect.poll(() => page.locator('#photoFrame').evaluate((element) => getComputedStyle(element).scale)).toBe('1.03');
 });
 
+/* ===== coming next: できた場所（VRChatアセット・note記事一覧・配布アプリ）と、まだの場所 ===== */
+test('coming next lists the VRChat assets, the note article list and the app list before the COMING SOON slots', async ({page}) => {
+  await mockNetwork(page);
+  await ready(page, '/');
+  const live = page.locator('.next-card .slot-live');
+  await expect(live).toHaveCount(3);
+  await expect(live.locator('strong')).toHaveText(['VRChatアセット', 'note記事一覧', '配布アプリ']);
+  await expect(live.locator('.slot-num')).toHaveText(['01', '02', '03']);
+  expect(await live.evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['/vrchat-assets/', '/blog/', '/apps/']);
+  await expect(page.locator('.next-card .slot-soon .slot-num')).toHaveText(['04', '05', '06']);
+  await live.nth(2).scrollIntoViewIfNeeded();
+  await live.nth(2).click();
+  await expect(page).toHaveURL(/\/apps\/$/);
+  await expect(page.locator('h1')).toHaveText('配布アプリ');
+});
+
 /* ===== COMING SOON は404へ ===== */
 test('the COMING SOON slots lead to the 404 page', async ({page}) => {
   await mockNetwork(page);
@@ -1368,14 +1384,14 @@ test('the COMING SOON slots lead to the 404 page', async ({page}) => {
   await page.route('**/coming-soon/**', (route) => route.fulfill({status: 404, contentType: 'text/html; charset=utf-8', body: notFound}));
   await ready(page, '/');
   const slots = page.locator('.slot-soon');
-  await expect(slots).toHaveCount(5);
-  await expect(slots.first()).toHaveAccessibleName('02 COMING SOON');
-  expect(await slots.evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['02', '03', '04', '05', '06'].map((number) => `/coming-soon/${number}/`));
-  await slots.nth(1).scrollIntoViewIfNeeded();
-  await slots.nth(1).click();
-  await expect(page).toHaveURL(/\/coming-soon\/03\/$/);
+  await expect(slots).toHaveCount(3);
+  await expect(slots.first()).toHaveAccessibleName('04 COMING SOON');
+  expect(await slots.evaluateAll((links) => links.map((link) => link.getAttribute('href')))).toEqual(['04', '05', '06'].map((number) => `/coming-soon/${number}/`));
+  await slots.nth(0).scrollIntoViewIfNeeded();
+  await slots.nth(0).click();
+  await expect(page).toHaveURL(/\/coming-soon\/04\/$/);
   await expect(page.locator('#errorTitle')).toHaveText('このページは、まだ存在しないみたいです。');
-  await expect(page.locator('#errorPath')).toHaveText('/coming-soon/03/');
+  await expect(page.locator('#errorPath')).toHaveText('/coming-soon/04/');
   await expect(page.locator('#errorZero')).toBeVisible();
 });
 
